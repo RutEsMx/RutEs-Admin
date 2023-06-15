@@ -9,17 +9,17 @@ const Rutes = () => {
   const { routes, setRoutes } = useRoutesStore()
   const [markers, setMarkers] = useState([])
 
-  useEffect(() => {
-    const data = routes.map(route => {
-      return {
-        id: route.id,
-        lat: route.tracking.lat,
-        lng: route.tracking.lng,
-        name: route.name
-      }
-    })
-    setMarkers(data)
-  }, [routes])
+  // useEffect(() => {
+  //   const data = routes.map(route => {
+  //     return {
+  //       id: route.id,
+  //       lat: route.tracking.lat,
+  //       lng: route.tracking.lng,
+  //       name: route.name
+  //     }
+  //   })
+  //   setMarkers(data)
+  // }, [routes])
   
   
   

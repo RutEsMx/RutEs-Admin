@@ -15,6 +15,7 @@
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
     "firebase": "^9.22.1",
+    "firebase-admin": "^11.9.0",
     "formik": "^2.4.1",
     "next": "13.4.4",
     "postcss": "8.4.24",
