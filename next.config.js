@@ -8,6 +8,14 @@ const nextConfig = {
     FIREBASE_MESSAGING_SENDER_ID: process.env.NEXT_PUBLIC_FIREBASE_MESSAGIN_SENDER_ID,
     FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     GOOGLE_API_KEY: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+    URL_API: process.env.NEXT_PUBLIC_URL_API,
+  },
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'pokeapi.co',
+      }
+    ]
   }
 }
 
