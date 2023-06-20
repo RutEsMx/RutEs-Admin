@@ -12,7 +12,7 @@ const emailExists = async (email) => {
 
 
 const validateStudent = Yup.object().shape({
-  firstName: Yup.string().nullable().required('Nombre requerido'),
+  name: Yup.string().nullable().required('Nombre requerido'),
   lastName: Yup.string().nullable().required('Apellido Paterno requerido'),
   secondLastName: Yup.string().nullable(),
   birthDate: Yup.date().nullable(),
@@ -41,7 +41,7 @@ const validateStudent = Yup.object().shape({
 
 const validateFather = Yup.object().shape({
   father: Yup.object().shape({
-    firstName: Yup.string().nullable().required('Nombre requerido'),
+    name: Yup.string().nullable().required('Nombre requerido'),
     lastName: Yup.string().nullable().required('Apellido Paterno requerido'),
     secondLastName: Yup.string().nullable(),
     phone: Yup.string().nullable().matches(REGEX_PHONE, 'Teléfono inválido').required('Teléfono requerido'),
@@ -54,7 +54,7 @@ const validateFather = Yup.object().shape({
 
 const validateMother = Yup.object().shape({
   mother: Yup.object().shape({
-    firstName: Yup.string().nullable().required('Nombre requerido'),
+    name: Yup.string().nullable().required('Nombre requerido'),
     lastName: Yup.string().nullable().required('Apellido Paterno requerido'),
     secondLastName: Yup.string().nullable(),
     phone: Yup.string().nullable().matches(REGEX_PHONE, 'Teléfono inválido').required('Teléfono requerido'),
@@ -67,7 +67,7 @@ const validateMother = Yup.object().shape({
 
 const validateTutors = (step) => Yup.object().shape({
   [`tutors_${step}`]: Yup.object().shape({
-    firstName: Yup.string().nullable().required('Nombre requerido'),
+    name: Yup.string().nullable().required('Nombre requerido'),
     lastName: Yup.string().nullable().required('Apellido Paterno requerido'),
     secondLastName: Yup.string().nullable(),
     phone: Yup.string().nullable().matches(REGEX_PHONE, 'Teléfono inválido').required('Teléfono requerido'),

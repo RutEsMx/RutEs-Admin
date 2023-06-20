@@ -16,7 +16,7 @@ const MultiStepFormStudent = () => {
 
 
   const initialValues = {
-    firstName: 'Johan Gabriel',
+    name: 'Johan Gabriel',
     lastName: 'Blanco',
     secondLastName: '',
     birthDate: '',
@@ -30,7 +30,7 @@ const MultiStepFormStudent = () => {
     includeFather: false,
     includeMother: false,
     father: {
-      firstName: 'Jonathan',
+      name: 'Jonathan',
       lastName: 'Blanco',
       secondLastName: '',
       phone: '9933600042',
@@ -38,7 +38,7 @@ const MultiStepFormStudent = () => {
       avatar: '',
     },
     mother: {
-      firstName: '',
+      name: '',
       lastName: '',
       secondLastName: '',
       phone: '',
@@ -71,7 +71,7 @@ const MultiStepFormStudent = () => {
       for (let index = 0; index < values?.countTutors; index++) {
         newSteps.push(StepTutors)
         newValidationSchema.push(validateTutors(index))
-        // setFieldValue(`tutors[${index}].firstName`, '')
+        // setFieldValue(`tutors[${index}].name`, '')
         // setFieldValue(`tutors[${index}].lastName`, '')
         // setFieldValue(`tutors[${index}].secondLastName`, '')
         // setFieldValue(`tutors[${index}].phone`, '')

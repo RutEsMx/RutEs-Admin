@@ -15,10 +15,10 @@ const StepStudent = () => {
             <InputField
               label="Nombre(s)"
               type="text"
-              name="firstName"
-              value={values.firstName}
+              name="name"
+              value={values.name}
               onChange={handleChange}
-              error={errors.firstName}
+              error={errors.name}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">

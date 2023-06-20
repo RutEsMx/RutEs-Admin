@@ -33,10 +33,10 @@ const StepParents = ({ validation }) => {
             <InputField
               label="Nombre(s)"
               type="text"
-              name={`${type}.firstName`}
-              value={values[type].firstName}
+              name={`${type}.name`}
+              value={values[type].name}
               onChange={handleChange}
-              error={errors[type]?.firstName}
+              error={errors[type]?.name}
             />
             <InputField
               label="Apellido Paterno"
