@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { createColumnHelper, flexRender, getCoreRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table'
 import HeaderTable from './HeaderTable';
 import CellTable from './CellTable';
@@ -80,8 +80,7 @@ const columns = [
 ]
 
 const DataTable = () => {
-  const [data, setData] = useState(
-    [
+  const [data, setData] = useState([
       {
         "id": 135662,
         "tutors": [
@@ -121,8 +120,9 @@ const DataTable = () => {
         "phone": "1234567890",
         "email": "example2@rutes.mx",
       },
-
-    ])
+    ]
+  )
+  
   const [rowSelection, setRowSelection] = useState([])
   const table = useReactTable({
     data,
@@ -176,7 +176,7 @@ const DataTable = () => {
     })
     setData(newData)
   }
-  
+
   return (
     <>
       <div className="grid grid-cols-2 gap-4">

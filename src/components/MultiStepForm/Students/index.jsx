@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Formik, Form } from "formik";
+import { useRouter} from 'next/navigation'
 import StepStudent from "@/components/Forms/StepStudent";
 import StepParents from "@/components/Forms/StepParents";
 import StepTutors from "@/components/Forms/StepTutors";
 import { validateStudent, validateFather, validateMother, validateTutors } from "@/utils/validationSchemas";
+import Button from "@/components/Button";
 
 const STEPS = [StepStudent]
 const VALIDATE_SCHEMA = [validateStudent]
@@ -13,7 +15,7 @@ const MultiStepFormStudent = () => {
   const [step, setStep] = useState(0)
   const [steps, setSteps] = useState(STEPS);
   const [validationSchemas, setValidationSchemas] = useState(VALIDATE_SCHEMA);
-
+  const navigation = useRouter()
 
   const initialValues = {
     name: 'Johan Gabriel',
@@ -71,13 +73,6 @@ const MultiStepFormStudent = () => {
       for (let index = 0; index < values?.countTutors; index++) {
         newSteps.push(StepTutors)
         newValidationSchema.push(validateTutors(index))
-        // setFieldValue(`tutors[${index}].name`, '')
-        // setFieldValue(`tutors[${index}].lastName`, '')
-        // setFieldValue(`tutors[${index}].secondLastName`, '')
-        // setFieldValue(`tutors[${index}].phone`, '')
-        // setFieldValue(`tutors[${index}].email`, '')
-        // setFieldValue(`tutors[${index}].avatar`, '')
-        // setFieldValue(`tutors[${index}].active`, false)
       }
 
       setSteps(newSteps);
@@ -93,6 +88,7 @@ const MultiStepFormStudent = () => {
     }
   }
   const handleBack = () => {
+    if(step === 0) return navigation.replace('/dashboard/parents')
     setStep(step - 1)
     if(step === 1) {
       setSteps([STEPS[0]])
@@ -110,15 +106,25 @@ const MultiStepFormStudent = () => {
       onSubmit={handleNext}
       validationSchema={CurrentValidateSchema}
     >
-      {({ isSubmitting}) => (
+      {({ isSubmitting, handleSubmit}) => (
         <Form>
+          <div className="flex justify-end gap-4">
+            <Button
+              onClick={handleBack}
+              color="bg-light-gray"
+              type="button"
+            >
+              Atrás
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              type="button"
+            >
+              {step !== steps.length - 1 || step === 0 ? 'Siguiente' : 'Enviar'}
+            </Button>
+          </div>
           <CurrentStep validation={validationSchemas[step]} steps={steps} step={step}/>
-          <button type="button" onClick={handleBack} disabled={step === 0}>
-            Atrás
-          </button>
-          <button type="submit" disabled={isSubmitting}>
-            {step === steps.length - 1 ? 'Enviar' : 'Siguiente'}
-          </button>
         </Form>
       )}
     </Formik>
