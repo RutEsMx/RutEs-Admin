@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState, useMemo, use } from 'react'
 import {
-  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -9,16 +8,10 @@ import {
   getFilteredRowModel,
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import HeaderTable from './HeaderTable';
-import CellTable from './CellTable';
-import ButtonAction from './ButtonAction';
-import CheckboxTable from './CheckboxTable';
-import { STATUS, STATUS_TRAVEL } from '@/utils/options';
+import ButtonAction from '@/components/Table/elements/ButtonAction';
 import { fetchData } from '@/services/TableServices';
-import { CheckCircleIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
-import FilterInput from './FilterInputTable';
-
-const columnHelper = createColumnHelper();
+import FilterInput from '@/components/Table/elements/FilterInputTable';
+import ColumnSelected from './columns';
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   console.log("🚀 ~ file: Table.jsx:24 ~ fuzzyFilter ~ columnId:", columnId)
@@ -32,121 +25,11 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed
 }
 
-const COLORS = {
-  active: "text-green",
-  inactive: "text-red",
-  absent: "text-yellow",
-  toSchool: "text-green",
-  toHome: "text-blue",
-}
 
-const DataTableParents = () => {
+const DataTable = ({type}) => {
   const columns = useMemo(
     () => (
-      [
-        columnHelper.accessor('select', {
-          cell: ({ row }) => (
-            <div className="flex justify-center p-3">
-              <CheckboxTable
-                {...{
-                  checked: row.getIsSelected(),
-                  disabled: !row.getCanSelect(),
-                  indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler(),
-                }}
-              />
-            </div>
-          ),
-          header: ({ table }) => <HeaderTable>
-            <CheckboxTable
-              {...{
-                checked: table.getIsAllRowsSelected(),
-                indeterminate: table.getIsSomeRowsSelected(),
-                onChange: table.getToggleAllRowsSelectedHandler(),
-              }}
-            />
-          </HeaderTable>,
-        }),
-        {
-          header: () => <HeaderTable>Padre/Madre</HeaderTable>,
-          accessorKey: 'parents',
-          accessorFn: (data) => {
-            const { name, lastName, secondLastName } = data
-            return `${name} ${lastName} ${secondLastName}`
-          },
-          cell: (data) => {
-            const { row } = data
-            
-            return <div
-              className='flex flex-row items-center cursor-pointer'
-              onClick={() => console.log('>>>>Padre/Madre', row?.original?.id)}
-            >
-              {data.getValue()}
-              
-            </div>
-          },
-        },
-        {
-          header: () => <HeaderTable>Estudiante</HeaderTable>,
-          accessorKey: 'students',
-          accessorFn: (data) => {
-            const { students } = data
-            return `${students.name} ${students.lastName} ${students.secondLastName}`
-          },
-        },
-        {
-          header: () => <HeaderTable>Estado</HeaderTable>,
-          accessorKey: 'statusTravel',
-          cell: (data) => {
-            const { row } = data
-            const isActive = row?.original?.students?.status === 'active'
-            if(!isActive) return null
-            const colorStatusTravel = COLORS[row?.original?.students?.statusTravel] ?? ''
-            return (
-              <div
-                className='flex flex-row items-center justify-center'
-              >
-                <CellTable className={colorStatusTravel} >
-                  {STATUS_TRAVEL[row?.original?.students?.statusTravel]}
-                </CellTable>
-              </div>
-            )
-          },
-        },
-        {
-          header: () => <HeaderTable>Servicio</HeaderTable>,
-          accessorKey: 'service',
-          cell: (data) => {
-            const {row} = data
-            const isActive = row?.original?.students?.status === 'active'
-            return (
-              <div
-                className='flex flex-row items-center justify-center'
-              >
-                <CellTable>
-                  {
-                    isActive ? (
-                      <CheckCircleIcon className='h-5 w-5 text-green' />
-                    ) : (
-                      <NoSymbolIcon className='h-5 w-5 text-red' />
-                    )
-                  }
-
-                </CellTable>
-              </div>
-            )
-          },
-        },
-        columnHelper.accessor('phone', {
-          cell: info => info.getValue(),
-          header: () => <HeaderTable>Teléfono</HeaderTable>,
-        }),
-        columnHelper.accessor('email', {
-          cell: info => info.getValue(),
-          header: () => <HeaderTable>Correo electrónico</HeaderTable>,
-          enableGlobalFilter: false,
-        }),
-      ]
+      ColumnSelected(type)
     ), []
   )
   const [data, setData] = useState(() => [])
@@ -312,10 +195,9 @@ const DataTableParents = () => {
             })}
           </tbody>
       </table>
-
     </>
   )
 }
 
-export default DataTableParents
+export default DataTable
 
