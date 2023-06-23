@@ -1,7 +1,7 @@
 import LogoLayout from "@/components/LogoLayout";
 import AddButton from "./AddButton";
 import Image from "next/image";
-import DataTable from "@/components/Table/Table";
+import DataTableParents from "@/components/Table/DataTableParents";
 
 async function getAllUsers() {
   // const res = await fetch(`${process.env.NEXT_PUBLIC_URL_API}dashboard/parents/api/`, { next: { cache: "no-store" }})
@@ -18,12 +18,11 @@ const Parents = async () => {
       <div className="grid grid-cols-2 gap-4 p-2">
         <LogoLayout />
         <div className="flex justify-end items-center gap-4">
-          <span>Filtrar padres</span>
           <AddButton />
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">
-        <DataTable />
+        <DataTableParents />
       </div>
     </div>
   );

@@ -36,3 +36,54 @@ export const generateRoutes = () => {
   }
   return routes
 }
+
+const newPerson = () => {
+  const name = faker.person.firstName()
+  const lastName = faker.person.lastName()
+  const secondLastName = faker.person.lastName()
+  const fullName = `${name} ${lastName} ${secondLastName}`
+  return {
+    name,
+    lastName,
+    secondLastName,
+    fullName: fullName,
+    phone: faker.phone.number('+52 55 ### ## ##'),
+    age: faker.helpers.rangeToNumber({ min: 18, max: 70}),
+    email: faker.internet.email(),
+    status: faker.helpers.arrayElement(['active', 'inactive']),
+    id: faker.string.uuid()
+  }
+}
+const newStudent = () => {
+  return {
+    name: faker.person.firstName(),
+    lastName: faker.person.lastName(),
+    secondLastName: faker.person.lastName(),
+    age: faker.helpers.rangeToNumber(5, 12),
+    status: faker.helpers.arrayElement(['active', 'inactive']),
+    statusTravel: faker.helpers.arrayElement(['absent', 'toSchool', 'toHome', '']),
+    id: faker.string.uuid()
+  }
+}
+
+export const generateParents = (length) => {
+    const parents = []
+    for (let i = 0; i < length; i++) {
+      const person = {
+        "tutors": [
+          {
+            ...newPerson()
+          },
+          {
+            ...newPerson()
+          },
+        ],
+        ...newPerson(),
+        "students": {
+          ...newStudent()
+        },
+      }
+      parents.push(person)
+    }
+    return parents
+}
