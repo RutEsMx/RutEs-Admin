@@ -18,7 +18,7 @@ const Maps = ({ markers }) => {
   );
   
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: process.env.GOOGLE_MAPS_KEY,
+    googleMapsApiKey: process.env.GOOGLE_API_KEY,
     libraries: libraries,
   });
 
