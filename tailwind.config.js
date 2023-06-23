@@ -18,6 +18,7 @@ const WARNING_BACKGROUND = '#FFF176';
 const WARNING_TEXT = '#F57F17';
 const DANGER_BACKGROUND = '#FF8A65';
 const DANGER_TEXT = '#AF0101';
+const BLUE = '#1E88E5'
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -33,30 +34,30 @@ module.exports = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      colors: {
+        'black': BLACK,
+        'gray': GRAY,
+        'gray-hover': GRAY_HOVER,
+        'gray-pressed': GRAY_PRESSED,
+        'light-gray': LIGHT_GRAY,
+        'soft-gray': SOFT_GRAY,
+        'white': WHITE,
+        'green': GREEN,
+        'red': RED,
+        'nandor': NANDOR,
+        'yellow': YELLOW,
+        'yellow-hover': YELLOW_HOVER,
+        'border-yellow': BORDER_YELLOW,
+        'yellow-pressed': YELLOW_PRESSED,
+        'success-background': SUCCESS_BACKGROUND,
+        'success': SUCCESS_TEXT,
+        'warning-background': WARNING_BACKGROUND,
+        'warning': WARNING_TEXT,
+        'danger-background': DANGER_BACKGROUND,
+        'danger': DANGER_TEXT,
+        'blue': BLUE,
+      },
     },
-    colors: {
-      'black': BLACK,
-      'gray': GRAY,
-      'gray-hover': GRAY_HOVER,
-      'gray-pressed': GRAY_PRESSED,
-      'light-gray': LIGHT_GRAY,
-      'soft-gray': SOFT_GRAY,
-      'white': WHITE,
-      'green': GREEN,
-      'red': RED,
-      'nandor': NANDOR,
-      'yellow': YELLOW,
-      'yellow-hover': YELLOW_HOVER,
-      'border-yellow': BORDER_YELLOW,
-      'yellow-pressed': YELLOW_PRESSED,
-      'success-background': SUCCESS_BACKGROUND,
-      'success-text': SUCCESS_TEXT,
-      'warning-background': WARNING_BACKGROUND,
-      'warning-text': WARNING_TEXT,
-      'danger-background': DANGER_BACKGROUND,
-      'danger-text': DANGER_TEXT,
-    },
-      
   },
   plugins: [],
 }

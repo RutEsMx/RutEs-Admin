@@ -29,7 +29,29 @@ const OPTIONS_BLOOD_TYPES = [
   { value: 'O-', label: 'O-' }
 ]
 
+const STATUS = {
+  active: 'Activo',
+  inactive: 'Inactivo',
+}
+
+const STATUS_TRAVEL = {
+  absent: 'Ausente',
+  toSchool: 'En camino a escuela',
+  toHome: 'En camino a casa',
+}
+
+const COLORS = {
+  active: "text-green",
+  inactive: "text-red",
+  absent: "text-yellow",
+  toSchool: "text-warning",
+  toHome: "text-blue",
+}
+
 export {
   OPTIONS_TYPE_SERVICES,
   OPTIONS_BLOOD_TYPES,
+  STATUS,
+  COLORS,
+  STATUS_TRAVEL,
 }
