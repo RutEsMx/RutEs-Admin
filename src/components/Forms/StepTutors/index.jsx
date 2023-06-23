@@ -42,10 +42,10 @@ const StepTutors = ({ step }) => {
             <InputField
               label="Nombre(s)"
               type="text"
-              name={`tutors_${stepTutors}.firstName`}
-              value={values?.['tutors_'+stepTutors]?.firstName || ''}
+              name={`tutors_${stepTutors}.name`}
+              value={values?.['tutors_'+stepTutors]?.name || ''}
               onChange={handleChange}
-              error={errors?.['tutors_'+stepTutors]?.firstName}
+              error={errors?.['tutors_'+stepTutors]?.name}
             />
            <InputField
               label="Apellido Paterno"

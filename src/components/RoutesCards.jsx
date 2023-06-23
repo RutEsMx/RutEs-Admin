@@ -7,7 +7,6 @@ const RoutesCards = () => {
   const { routes, setRoutes } = useRoutesStore()
 
   useEffect(() => {
-    console.log("🚀 ~ file: RoutesCards.jsx:13 ~ useEffect ~ useEffect:")
     const data = generateRoutes()
     setRoutes(data)
   }, [])

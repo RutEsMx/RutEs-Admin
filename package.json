@@ -11,6 +11,8 @@
   "dependencies": {
     "@heroicons/react": "^2.0.18",
     "@react-google-maps/api": "^2.18.1",
+    "@tanstack/match-sorter-utils": "^8.8.4",
+    "@tanstack/react-table": "^8.9.2",
     "autoprefixer": "10.4.14",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
@@ -26,6 +28,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.0.2"
+    "@faker-js/faker": "^8.0.2",
+    "@types/react": "18.2.12"
   }
 }

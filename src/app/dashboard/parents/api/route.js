@@ -33,6 +33,3 @@ function nextPage(lastVisible) {
       })
     })
 }
-
-// other next page
-
