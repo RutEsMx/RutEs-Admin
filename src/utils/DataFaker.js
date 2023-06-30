@@ -59,7 +59,7 @@ const newStudent = () => {
     name: faker.person.firstName(),
     lastName: faker.person.lastName(),
     secondLastName: faker.person.lastName(),
-    age: faker.helpers.rangeToNumber(5, 12),
+    age: faker.helpers.rangeToNumber({min: 5, max: 12}),
     status: faker.helpers.arrayElement(['active', 'inactive']),
     statusTravel: faker.helpers.arrayElement(['absent', 'toSchool', 'toHome', '']),
     id: faker.string.uuid()
@@ -69,6 +69,11 @@ const newStudent = () => {
 export const generateParents = (length) => {
     const parents = []
     for (let i = 0; i < length; i++) {
+      const students = []
+      // create a randowm array of students
+      for (let j = 0; j < faker.helpers.rangeToNumber({min: 1, max: 3}); j++) {
+        students.push(newStudent())
+      }
       const person = {
         "tutors": [
           {
@@ -79,9 +84,7 @@ export const generateParents = (length) => {
           },
         ],
         ...newPerson(),
-        "students": {
-          ...newStudent()
-        },
+        "students": students
       }
       parents.push(person)
     }

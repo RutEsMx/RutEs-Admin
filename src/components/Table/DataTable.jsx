@@ -94,7 +94,7 @@ const DataTable = ({type}) => {
         <FilterInput
           value={globalFilter ?? ''}
           onChange={value => setGlobalFilter(String(value))}
-          
+          placeholder="Buscar"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -163,7 +163,7 @@ const DataTable = ({type}) => {
           </div>
         </div>
       </div>  
-      <table className='table-fixed rounded-md border'>
+      <table className='table-auto rounded-md border'>
           {table?.getHeaderGroups()?.map(headerGroup => (
             <thead key={headerGroup.id}>
               <tr>
@@ -183,10 +183,13 @@ const DataTable = ({type}) => {
             </thead>
           ))}
           <tbody>
-            {table.getRowModel()?.rows.map(row => {
+            {table.getRowModel()?.rows.map((row, index) => {
+              console.log("🚀 ~ file: DataTable.jsx:187 ~ {table.getRowModel ~ index:", index)
+              let color = index % 2 === 0 ? 'bg-light-gray' : 'bg-white'
+               
               return <tr key={row.id}>
                 {row.getVisibleCells().map(cell => {
-                  return <td key={cell.id}>
+                  return <td key={cell.id} className={`${color}`}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 }
