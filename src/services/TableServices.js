@@ -1,4 +1,5 @@
-import { generateParents } from "@/utils/DataFaker"
+import { generateParents, generateStudents } from "@/utils/DataFaker"
+import { getStudents } from "./StudentsServices"
 
 const data = generateParents(25)
 
@@ -11,5 +12,18 @@ export async function fetchData(options) {
       (options.pageIndex + 1) * options.pageSize
     ),
     pageCount: Math.ceil(data.length / options.pageSize),
+  }
+}
+
+
+export async function fetchDataStudents(options) {
+  const data = await getStudents()
+  
+  return {
+    rows: data?.slice(
+      options.pageIndex * options.pageSize,
+      (options.pageIndex + 1) * options.pageSize
+    ),
+    pageCount: Math.ceil(data?.length / options.pageSize),
   }
 }

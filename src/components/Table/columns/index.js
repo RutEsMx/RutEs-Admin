@@ -4,6 +4,7 @@ import CellTable from "@/components/Table/elements/CellTable"
 import CheckboxTable from "@/components/Table/elements/CheckboxTable"
 import { STATUS, STATUS_TRAVEL } from "@/utils/options"
 import { CheckCircleIcon, NoSymbolIcon } from "@heroicons/react/24/outline"
+import Link from 'next/link'
 
 const COLORS = {
   active: "text-green",
@@ -43,17 +44,18 @@ const studentsColumns = [
     header: () => <HeaderTable>Estudiante</HeaderTable>,
     accessorKey: 'students',
     accessorFn: (data) => {
-      const { students } = data
-      return `${students.name} ${students.lastName} ${students.secondLastName}`
+      return `${data.name} ${data.lastName} ${data.secondLastName}`
     },
     cell: (data) => {
       const { row } = data
       return (
         <div
           className='flex flex-row items-center cursor-pointer'
-          onClick={() => console.log('>>>>Estudiante', row?.original?.id)}
         >
-          {data.getValue()}
+          {/* <Link href={`/dashboard/students/${row?.original?.id}`}> */}
+          <Link href={`/dashboard/students/CU19ABvDJ3j8dFvdluPE`}>
+            {data.getValue()}
+          </Link>
         </div>
       )
     },
@@ -63,15 +65,15 @@ const studentsColumns = [
     accessorKey: 'statusTravel',
     cell: (data) => {
       const { row } = data
-      const isActive = row?.original?.students?.status === 'active'
+      const isActive = row?.original?.status === 'active'
       if (!isActive) return null
-      const colorStatusTravel = COLORS[row?.original?.students?.statusTravel] ?? ''
+      const colorStatusTravel = COLORS[data.getValue()] ?? ''
       return (
         <div
           className='flex flex-row items-center justify-center'
         >
           <CellTable className={colorStatusTravel} >
-            {STATUS_TRAVEL[row?.original?.students?.statusTravel]}
+            {STATUS_TRAVEL[data.getValue()]}
           </CellTable>
         </div>
       )
@@ -82,7 +84,7 @@ const studentsColumns = [
     accessorKey: 'service',
     cell: (data) => {
       const { row } = data
-      const isActive = row?.original?.students?.status === 'active'
+      const isActive = row?.original?.status === 'active'
       return (
         <div
           className='flex flex-row items-center justify-center'
@@ -101,8 +103,19 @@ const studentsColumns = [
       )
     },
   },
-  columnHelper.accessor('route', {
-    cell: info => info.getValue(),
+  columnHelper.accessor('dayRoute', {
+    cell: info => {
+      return (
+        <div
+          className='flex flex-row items-center justify-center'
+        >
+          <CellTable>
+            {info.getValue()?.route?.nameRoute}
+          </CellTable>
+        </div>
+      )
+    }
+    ,
     header: () => <HeaderTable>Ruta</HeaderTable>,
   }),
 ]
@@ -155,17 +168,17 @@ const parentsColumns = [
     accessorKey: 'students',
     accessorFn: (data) => {
       const { students } = data
-      return students.map((student) => {
+      return students?.map((student) => {
         return `${student.name} ${student.lastName} ${student.secondLastName}`
       }).join(',')
     },
     cell: (data) => {
-      const dataFormat = data.getValue().split(',')
+      const dataFormat = data.getValue()?.split(',')
       return (
         <div
           className='flex flex-col'
         >
-          {dataFormat.map((student) => {
+          {dataFormat?.map((student) => {
             return <div>{student}</div>
           }
           )}

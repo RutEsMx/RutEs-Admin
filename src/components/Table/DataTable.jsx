@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import ButtonAction from '@/components/Table/elements/ButtonAction';
-import { fetchData } from '@/services/TableServices';
+import { fetchData, fetchDataStudents } from '@/services/TableServices';
 import FilterInput from '@/components/Table/elements/FilterInputTable';
 import ColumnSelected from './columns';
 
@@ -48,7 +48,8 @@ const DataTable = ({type}) => {
   const [rowSelection, setRowSelection] = useState([])
 
   useEffect(() => {
-    fetchData({ pageIndex, pageSize }).then((data) => setData(data))
+    if(type === 'parents') fetchData({ pageIndex, pageSize }).then((data) => setData(data))
+    if(type === 'students') fetchDataStudents({ pageIndex, pageSize }).then((data) => setData(data))
   }, [pageIndex, pageSize])
       
   const table = useReactTable({
@@ -163,7 +164,7 @@ const DataTable = ({type}) => {
           </div>
         </div>
       </div>  
-      <table className='table-auto rounded-md border'>
+      <table className='table-fixed rounded-md border'>
           {table?.getHeaderGroups()?.map(headerGroup => (
             <thead key={headerGroup.id}>
               <tr>
@@ -184,9 +185,7 @@ const DataTable = ({type}) => {
           ))}
           <tbody>
             {table.getRowModel()?.rows.map((row, index) => {
-              console.log("🚀 ~ file: DataTable.jsx:187 ~ {table.getRowModel ~ index:", index)
               let color = index % 2 === 0 ? 'bg-light-gray' : 'bg-white'
-               
               return <tr key={row.id}>
                 {row.getVisibleCells().map(cell => {
                   return <td key={cell.id} className={`${color}`}>
