@@ -11,7 +11,7 @@ const Sidebar = ({ children }) => {
   
   
   return (
-    <div className="flex">
+    <div className="flex pt-8">
       <div className="fixed w-60 h-screen py-4 bg-nandor border-r-[1px] flex-col justify-between">
         <div className="flex flex-col items-center p-2">
           <Link

@@ -6,6 +6,7 @@ import StepParents from "@/components/Forms/StepParents";
 import StepTutors from "@/components/Forms/StepTutors";
 import { validateStudent, validateFather, validateMother, validateTutors } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
+import { createParentsByForm } from "@/services/StudentsServices";
 
 const STEPS = [StepStudent]
 const VALIDATE_SCHEMA = [validateStudent]
@@ -18,25 +19,25 @@ const MultiStepFormStudent = () => {
   const navigation = useRouter()
 
   const initialValues = {
-    name: 'Johan Gabriel',
-    lastName: 'Blanco',
+    name: '',
+    lastName: '',
     secondLastName: '',
     birthDate: '',
     bloodType: '',
     allergies: '',
     grade: '',
     group: '',
-    enrollment: 'asds',
-    serviceType: 'complete',
+    enrollment: '',
+    serviceType: '',
     avatar: '',
     includeFather: false,
     includeMother: false,
     father: {
-      name: 'Jonathan',
-      lastName: 'Blanco',
+      name: '',
+      lastName: '',
       secondLastName: '',
-      phone: '9933600042',
-      email: 'jblancoh26@gmail.com',
+      phone: '',
+      email: '',
       avatar: '',
     },
     mother: {
@@ -51,7 +52,7 @@ const MultiStepFormStudent = () => {
     // tutors: [],
   };
   
-  const handleNext = (values, { setSubmitting, setFieldValue, validateField }) => {
+  const handleNext = async (values, { setSubmitting, setFieldValue, validateField }) => {
     let newSteps = [...steps];
     let newValidationSchema = [...validationSchemas];
     
@@ -79,12 +80,20 @@ const MultiStepFormStudent = () => {
       setValidationSchemas(newValidationSchema);
     }
 
-    setSubmitting(false)
-
+    
     if (step + 1 < newSteps.length) {
+      setSubmitting(false)
       setStep(step + 1)
     } else {
-      console.log('Enviar formulario')
+      createParentsByForm(values)
+        .then((response) => {
+          if (response?.success) {
+            alert('Se ha registrado correctamente')
+            return navigation.replace('/dashboard/parents')
+          }
+        })
+        .catch((error) => alert(`Ocurrio un error, ${error}`))
+        .finally(() => setSubmitting(false))      
     }
   }
   const handleBack = () => {
@@ -106,7 +115,7 @@ const MultiStepFormStudent = () => {
       onSubmit={handleNext}
       validationSchema={CurrentValidateSchema}
     >
-      {({ isSubmitting, handleSubmit}) => (
+      {({ isSubmitting, handleSubmit }) => (
         <Form>
           <div className="flex justify-end gap-4">
             <Button
