@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth, EmailAuthProvider } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -14,11 +15,13 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
 };
 
-let app, db;
+let app, db, auth, provider;
 
 // Initialize Firebase
-if (!firebase.apps.length) {
+if (!getApps()?.apps?.length) {
   app = initializeApp(firebaseConfig);
+  provider = new EmailAuthProvider();
   db = getFirestore(app);
+  auth = getAuth(app);
 }
-export { app, db };
+export { app, db, auth, provider };

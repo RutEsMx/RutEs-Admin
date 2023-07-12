@@ -54,21 +54,62 @@ const newPerson = () => {
     id: faker.string.uuid()
   }
 }
+
+const travels = [
+  {
+    day: 'Lunes',
+    type: 'ida',
+    route: {
+      nameRoute: faker.helpers.arrayElement(['Ruta 1', 'Ruta 2', 'Ruta 3', 'Ruta 4', 'Ruta 5']),
+    }
+  },
+  {
+    day: 'Lunes',
+    type: 'vuelta',
+    route: {
+      nameRoute: faker.helpers.arrayElement(['Ruta 1', 'Ruta 2', 'Ruta 3', 'Ruta 4', 'Ruta 5']),
+    }
+  },
+  {
+    day: 'Martes',
+    type: 'ida',
+    route: {
+      nameRoute: faker.helpers.arrayElement(['Ruta 1', 'Ruta 2', 'Ruta 3', 'Ruta 4', 'Ruta 5']),
+    }
+  },
+  {
+    day: 'Martes',
+    type: 'vuelta',
+    route: {
+      nameRoute: faker.helpers.arrayElement(['Ruta 1', 'Ruta 2', 'Ruta 3', 'Ruta 4', 'Ruta 5']),
+    }
+  },
+]
+
+// El statusTravel va a venir dentro del documento de viajes
+
+
 const newStudent = () => {
   return {
     name: faker.person.firstName(),
     lastName: faker.person.lastName(),
     secondLastName: faker.person.lastName(),
-    age: faker.helpers.rangeToNumber(5, 12),
+    age: faker.helpers.rangeToNumber({min: 5, max: 12}),
     status: faker.helpers.arrayElement(['active', 'inactive']),
     statusTravel: faker.helpers.arrayElement(['absent', 'toSchool', 'toHome', '']),
-    id: faker.string.uuid()
+    id: faker.string.uuid(),
+    dayRoute: faker.helpers.arrayElement(travels)
   }
 }
 
 export const generateParents = (length) => {
     const parents = []
     for (let i = 0; i < length; i++) {
+      const students = []
+      // create a randowm array of students
+      for (let j = 0; j < faker.helpers.rangeToNumber({min: 1, max: 3}); j++) {
+        students.push(newStudent())
+      }
       const person = {
         "tutors": [
           {
@@ -79,11 +120,17 @@ export const generateParents = (length) => {
           },
         ],
         ...newPerson(),
-        "students": {
-          ...newStudent()
-        },
+        "students": students
       }
       parents.push(person)
     }
     return parents
+}
+
+export const generateStudents = (length) => {
+  const students = []
+  for (let i = 0; i < length; i++) {
+    students.push(newStudent())
+  }
+  return students
 }

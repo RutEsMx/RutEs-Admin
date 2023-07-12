@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import ButtonAction from '@/components/Table/elements/ButtonAction';
-import { fetchData } from '@/services/TableServices';
+import { fetchData, fetchDataStudents } from '@/services/TableServices';
 import FilterInput from '@/components/Table/elements/FilterInputTable';
 import ColumnSelected from './columns';
 
@@ -48,7 +48,8 @@ const DataTable = ({type}) => {
   const [rowSelection, setRowSelection] = useState([])
 
   useEffect(() => {
-    fetchData({ pageIndex, pageSize }).then((data) => setData(data))
+    if(type === 'parents') fetchData({ pageIndex, pageSize }).then((data) => setData(data))
+    if(type === 'students') fetchDataStudents({ pageIndex, pageSize }).then((data) => setData(data))
   }, [pageIndex, pageSize])
       
   const table = useReactTable({
@@ -94,7 +95,7 @@ const DataTable = ({type}) => {
         <FilterInput
           value={globalFilter ?? ''}
           onChange={value => setGlobalFilter(String(value))}
-          
+          placeholder="Buscar"
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -183,10 +184,11 @@ const DataTable = ({type}) => {
             </thead>
           ))}
           <tbody>
-            {table.getRowModel()?.rows.map(row => {
+            {table.getRowModel()?.rows.map((row, index) => {
+              let color = index % 2 === 0 ? 'bg-light-gray' : 'bg-white'
               return <tr key={row.id}>
                 {row.getVisibleCells().map(cell => {
-                  return <td key={cell.id}>
+                  return <td key={cell.id} className={`${color}`}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 }

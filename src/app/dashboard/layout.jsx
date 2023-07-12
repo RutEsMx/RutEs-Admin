@@ -1,10 +1,14 @@
+import NavBar from '@/components/NavBar';
 import Sidebar from '@/components/Sidebar';
 
 const DashboardLayout = ({children}) => {
   return (
-    <Sidebar>
-      {children}
-    </Sidebar>
+    <>
+      <NavBar />
+      <Sidebar>
+        {children}
+      </Sidebar>
+    </>
   );
 }
 
