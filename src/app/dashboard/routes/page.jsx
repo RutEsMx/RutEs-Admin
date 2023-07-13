@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRoutesStore } from "@/store/routesStore";
 import { useEffect, useState } from "react";
 
-const Rutes = () => {
+const Routes = () => {
   const { routes, setRoutes } = useRoutesStore()
   const [markers, setMarkers] = useState([])
 
@@ -55,4 +55,4 @@ const Rutes = () => {
   );
 }
 
-export default Rutes;
+export default Routes;

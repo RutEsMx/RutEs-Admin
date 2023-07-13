@@ -25,4 +25,20 @@ async function signIn(email, password) {
   return { result, error };
 }
 
-export { signUp, signIn };
+async function signOut() {
+  let result = null,
+    error = null;
+  try {
+    result = await auth.signOut();
+  } catch (e) {
+    error = e;
+  }
+  
+  return { result, error };
+}
+
+export {
+  signUp,
+  signIn,
+  signOut,
+};
