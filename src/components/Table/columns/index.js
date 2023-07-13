@@ -179,7 +179,7 @@ const parentsColumns = [
           className='flex flex-col'
         >
           {dataFormat?.map((student) => {
-            return <div>{student}</div>
+            return <div key={student?.id}>{student}</div>
           }
           )}
         </div>

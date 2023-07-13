@@ -1,10 +1,15 @@
+'use client'
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ButtonStep from "@/components/Button";
+import { useAuthContext } from "@/context/AuthContext";
 
 
 export default function School() {
+  const { profile } = useAuthContext()
   const navigation = useRouter()
+  // Check if the user has the 'admin-rutes' role
+  const isAdminRutes = profile?.role.includes('admin-rutes')
   return (
     <>
       <div className="grid grid-cols-2">
@@ -19,12 +24,16 @@ export default function School() {
             >
               Editar
             </ButtonStep>
-            <ButtonStep
-              color="bg-yellow"
-              onClick={() => navigation.push('/dashboard/admin/school/create')}
-            >
-              Crear
-            </ButtonStep>
+            {
+              isAdminRutes && (
+                <ButtonStep
+                  color="bg-yellow"
+                  onClick={() => navigation.push('/dashboard/admin/school/create')}
+                >
+                  Crear
+                </ButtonStep>
+              )
+            }
           </div>
         </div>
       </div>
