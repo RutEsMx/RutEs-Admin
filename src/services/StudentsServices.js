@@ -1,12 +1,3 @@
-
-// This is a service file that will contain all the functions for the students by firestore
-// Get student by id
-// Create a new student
-// Edit a student
-// Delete a student
-
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "@/firebase/client"
 import {signUp} from "@/firebase/auth"
 import { generatePassword, validateEmail } from "@/utils"
 import { createDocument, getDocumentById, getDocuments, updateDocument } from "@/firebase/crud"
@@ -36,7 +27,7 @@ const createParentProfile = async (parent) => {
         ...parent,
         id: uid,
         password,
-        role: ["user"],
+        roles: ["user"],
       };
 
       const responseCreateDocument = await createDocument('profile', profileData);

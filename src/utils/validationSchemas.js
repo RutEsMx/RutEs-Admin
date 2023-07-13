@@ -77,10 +77,21 @@ const validateTutors = (step) => Yup.object().shape({
   })
 });
 
+const validateUsers = Yup.object().shape({
+  name: Yup.string().nullable().required('Nombre requerido'),
+  lastName: Yup.string().nullable().required('Apellido Paterno requerido'),
+  secondLastName: Yup.string().nullable(),
+  phone: Yup.string().nullable().matches(REGEX_PHONE, 'Teléfono inválido').required('Teléfono requerido'),
+  roles: Yup.array().nullable().required('Rol requerido'),
+  email: Yup.string().nullable().email('Correo inválido').required('Correo requerido').test('email-exists', 'Correo ya existe', emailExists),
+  // avatar: Yup.string().nullable().required('Avatar requerido'),
+});
+
 
 export {
   validateStudent,
   validateFather,
   validateMother,
   validateTutors,
+  validateUsers,
 }
