@@ -9,7 +9,7 @@ export default function School() {
   const { profile } = useAuthContext()
   const navigation = useRouter()
   // Check if the user has the 'admin-rutes' role
-  const isAdminRutes = profile?.role.includes('admin-rutes')
+  const isAdminRutes = profile?.roles?.includes('admin-rutes')
   return (
     <>
       <div className="grid grid-cols-2">
