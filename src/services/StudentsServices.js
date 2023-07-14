@@ -1,4 +1,4 @@
-import {signUp} from "@/firebase/auth"
+import { signUp } from "@/services/AuthServices";
 import { generatePassword, validateEmail } from "@/utils"
 import { createDocument, getDocumentById, getDocuments, updateDocument } from "@/firebase/crud"
 
@@ -11,17 +11,18 @@ const getStudentById = async(id) => {
 
 const createParentProfile = async (parent) => {
   const { email } = parent;
-  const password = generatePassword();
 
   if (validateEmail(email)) {
     try {
-      const signUpResult = await signUp(email, password);
+      const signUpResult = await signUp(email);
       if (signUpResult?.error) {
         return {
           error: signUpResult.error
         }
       }
-      const uid = signUpResult?.result?.user?.uid;
+
+      const uid = signUpResult?.result?.uid;
+      const password = signUpResult?.result?.password;
 
       const profileData = {
         ...parent,
