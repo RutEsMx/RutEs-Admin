@@ -87,6 +87,14 @@ const validateUsers = Yup.object().shape({
   // avatar: Yup.string().nullable().required('Avatar requerido'),
 });
 
+const validateSchool = Yup.object().shape({
+  name: Yup.string().nullable().required('Nombre requerido'),
+  address: Yup.string().nullable(),
+  phone: Yup.string().nullable().matches(REGEX_PHONE, 'Teléfono inválido').required('Teléfono requerido'),
+  email: Yup.string().nullable().email('Correo inválido').required('Correo requerido').test('email-exists', 'Correo ya existe', emailExists),
+  // logo: Yup.string().nullable().required('Avatar requerido'),
+});
+
 
 export {
   validateStudent,
@@ -94,4 +102,5 @@ export {
   validateMother,
   validateTutors,
   validateUsers,
+  validateSchool,
 }

@@ -18,7 +18,6 @@ export default function Page () {
   
   const handleForm = async (event) => {
     const { email, password } = event;
-    console.log("🚀 ~ file: page.jsx:21 ~ handleForm ~ email, password:", email, password)
     try {
       const { result, error } = await signIn(email, password);
       

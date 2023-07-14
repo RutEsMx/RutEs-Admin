@@ -1,21 +1,21 @@
-import {signUp} from "@/firebase/auth"
 import { generatePassword, validateEmail } from "@/utils"
 import { createDocument, getDocumentById, getDocuments, updateDocument } from "@/firebase/crud"
+import { signUp } from "./AuthServices";
 
 const createUsersByForm = async (data) => {
   const dataCopy = { ...data };
   const { email } = dataCopy;
-  const password = generatePassword();
 
   if(validateEmail(email)) {
     try {
-      const signUpResult = await signUp(email, password);
+      const signUpResult = await signUp(email);
       if (signUpResult?.error) {
         return {
           error: signUpResult.error
         }
       }
       const uid = signUpResult?.result?.user?.uid;
+      const password = signUpResult?.result?.password;
       const profileData = {
         ...dataCopy,
         id: uid,

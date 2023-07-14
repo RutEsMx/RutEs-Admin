@@ -7,7 +7,6 @@ const AddButton = () => {
 
   // agregar padre funcion
   const handleAddParent = () => {
-    console.log('Agregar padre')
     router.push('/dashboard/parents/create')
   }
   

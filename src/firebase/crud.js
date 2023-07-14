@@ -1,8 +1,13 @@
-import { doc, getDoc, collection, addDoc, updateDoc, getDocs, query, where, onSnapshot } from "firebase/firestore"
+import { doc, getDoc, collection, addDoc, updateDoc, getDocs, query, where, onSnapshot, setDoc } from "firebase/firestore"
 import { db } from "@/firebase/client"
 
-const createDocument = async (collectionName, data) => {
+const createDocument = async (collectionName, data) => {  
   try {
+    if (collectionName === 'profile') {
+      const setDocRef = doc(db, collectionName, data?.id)
+      await setDoc(setDocRef, { ...data })
+      return setDocRef
+    }
     const docRef = await addDoc(collection(db, collectionName), { ...data })
     return docRef
   } catch (error) {

@@ -1,9 +1,9 @@
-var admin = require("firebase-admin");
+import { initializeApp, getApps, cert } from 'firebase-admin/app';
 
-if(!admin.apps.length) {
-  try {
-    admin.initializeApp({
-      credential: admin.credential.cert({
+export function customInitApp() {
+  if (getApps().length <= 0) {
+    initializeApp({
+      credential: cert({
         private_key: JSON.parse(process.env.FIREBASE_ADMIN_PRIVATE_KEY),
         private_key_id: process.env.FIREBASE_ADMIN_PRIVATE_KEY_ID,
         client_email: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
@@ -17,10 +17,5 @@ if(!admin.apps.length) {
         universe_domain: "googleapis.com"
       })
     });
-  } catch (error) {
-    console.log(error);
   }
 }
-
-
-export const firestore = admin.firestore();
