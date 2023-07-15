@@ -7,6 +7,7 @@ import StepTutors from "@/components/Forms/StepTutors";
 import { validateStudent, validateFather, validateMother, validateTutors } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
 import { createParentsByForm } from "@/services/StudentsServices";
+import { useAuthContext } from "@/context/AuthContext";
 
 const STEPS = [StepStudent]
 const VALIDATE_SCHEMA = [validateStudent]
@@ -17,6 +18,7 @@ const MultiStepFormStudent = () => {
   const [steps, setSteps] = useState(STEPS);
   const [validationSchemas, setValidationSchemas] = useState(VALIDATE_SCHEMA);
   const navigation = useRouter()
+  const { profile } = useAuthContext()
 
   const initialValues = {
     name: '',
@@ -85,7 +87,7 @@ const MultiStepFormStudent = () => {
       setSubmitting(false)
       setStep(step + 1)
     } else {
-      createParentsByForm(values)
+      createParentsByForm(values, profile?.schoolId)
         .then((response) => {
           if (response?.success) {
             alert('Se ha registrado correctamente')

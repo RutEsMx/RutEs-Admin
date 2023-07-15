@@ -11,15 +11,14 @@ const FormSchool = () => {
   const navigation = useRouter()
 
   const initialValues = {
-    name: 'Hellen Keller 2',
-    email: 'hellenkeller@escuela.mx',
-    phone: '9922000000',
+    name: '',
+    email: '',
+    phone: '',
     address: '',
     coords: {},
   };
 
   const handleNext = async (values, { setSubmitting, setFieldValue, validateField }) => {
-    console.log("🚀 ~ file: index.jsx:23 ~ handleNext ~ values:", values)
     const { success, message, error } = await createSchoolByForm(values)
     if (error) return alert(error?.message)
       

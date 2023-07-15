@@ -1,5 +1,5 @@
 import { generatePassword, validateEmail } from "@/utils"
-import { createDocument, getDocumentById, getDocuments, updateDocument } from "@/firebase/crud"
+import { signInAuth } from "@/firebase/auth"
 
 const signUp = async (email) => {
   const password = generatePassword()
@@ -29,6 +29,20 @@ const signUp = async (email) => {
   }
 }
 
+const signIn = async (email, password) => {
+  try {
+    const { result, error } = await signInAuth(email, password);
+    if(error) throw new Error(error)
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
+
+
+
 export {
   signUp,
+  signIn,
 }

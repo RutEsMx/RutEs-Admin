@@ -3,13 +3,11 @@ import { generatePassword, validateEmail } from "@/utils"
 import { createDocument, getDocumentById, getDocuments, updateDocument } from "@/firebase/crud"
 
 const getStudentById = async(id) => {
-  console.log("🚀 ~ file: studentsServices.js:12 ~ getStudentById ~ id:", id)
   const studentData = await getDocumentById('students', id)
-  console.log("🚀 ~ file: studentsServices.js:14 ~ getStudentById ~ studentData", studentData)
   return studentData
 }
 
-const createParentProfile = async (parent) => {
+const createParentProfile = async (parent, schoolId) => {
   const { email } = parent;
 
   if (validateEmail(email)) {
@@ -29,6 +27,7 @@ const createParentProfile = async (parent) => {
         id: uid,
         password,
         roles: ["user"],
+        schoolId,
       };
 
       const responseCreateDocument = await createDocument('profile', profileData);
@@ -40,16 +39,16 @@ const createParentProfile = async (parent) => {
   }
 };
 
-const createParentsByForm = async (data) => {
+const createParentsByForm = async (data, schoolId) => {
   const dataCopy = { ...data };
   const { father, mother } = dataCopy;
   
-  const fatherProfile = await createParentProfile(father);
+  const fatherProfile = await createParentProfile(father, schoolId);
   if (fatherProfile?.error) {
     throw new Error(`Papá: ${fatherProfile.error?.code}`);
   }
   
-  const motherProfile = await createParentProfile(mother);
+  const motherProfile = await createParentProfile(mother, schoolId);
   if (motherProfile?.error) {
     throw new Error(`Mamá: ${motherProfile.error?.code}`);
   }
@@ -59,7 +58,7 @@ const createParentsByForm = async (data) => {
   delete dataCopy.mother;
   delete dataCopy.includeFather;
   delete dataCopy.includeMother;
-  
+  dataCopy.schoolId = schoolId;
 
   const studentProfile = await createDocument('students', dataCopy);
   if (studentProfile?.error) {
@@ -92,7 +91,6 @@ const createParentsByForm = async (data) => {
 };
 
 const getStudents = async (school) => {
-  console.log("🚀 ~ file: StudentsServices.js:104 ~ getStudents ~ students:")
   const students = await getDocuments('students', school)
   return students
 }

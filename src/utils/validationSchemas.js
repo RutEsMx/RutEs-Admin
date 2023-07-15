@@ -36,6 +36,7 @@ const validateStudent = Yup.object().shape({
       const { includeFather } = this.parent;
       return value || includeFather;
     }),
+  // schoolId: Yup.string().nullable().required('Escuela requerida'),
   // avatar: Yup.string().nullable().required('Avatar requerido'),
 })
 
@@ -48,6 +49,7 @@ const validateFather = Yup.object().shape({
     phoneEmergency: Yup.string().nullable().matches(REGEX_PHONE, 'Teléfono inválido'),
     phoneFamily: Yup.string().nullable().matches(REGEX_PHONE, 'Teléfono inválido'),
     email: Yup.string().nullable().email('Correo inválido').required('Correo requerido').test('email-exists', 'Correo ya existe', emailExists),
+    // schoolId: Yup.string().nullable().required('Escuela requerida'),
     // avatar: Yup.string().nullable().required('Avatar requerido'),
   })
 });
@@ -62,6 +64,7 @@ const validateMother = Yup.object().shape({
     phoneFamily: Yup.string().nullable().matches(REGEX_PHONE, 'Teléfono inválido'),
     email: Yup.string().nullable().email('Correo inválido').required('Correo requerido').test('email-exists', 'Correo ya existe', emailExists),
     // avatar: Yup.string().nullable().required('Avatar requerido'),
+    // schoolId: Yup.string().nullable().required('Escuela requerida'),
   }),
 });
 
@@ -74,6 +77,7 @@ const validateTutors = (step) => Yup.object().shape({
     active: Yup.boolean().nullable(),
     email: Yup.string().nullable().email('Correo inválido').required('Correo requerido').test('email-exists', 'Correo ya existe', emailExists),
     // avatar: Yup.string().nullable().required('Avatar requerido'),
+    // schoolId: Yup.string().nullable().required('Escuela requerida'),
   })
 });
 
@@ -85,6 +89,7 @@ const validateUsers = Yup.object().shape({
   roles: Yup.array().nullable().required('Rol requerido'),
   email: Yup.string().nullable().email('Correo inválido').required('Correo requerido').test('email-exists', 'Correo ya existe', emailExists),
   // avatar: Yup.string().nullable().required('Avatar requerido'),
+  // schoolId: Yup.string().nullable().required('Escuela requerida'),
 });
 
 const validateSchool = Yup.object().shape({
@@ -95,6 +100,11 @@ const validateSchool = Yup.object().shape({
   // logo: Yup.string().nullable().required('Avatar requerido'),
 });
 
+const validationLogin = Yup.object().shape({
+  email: Yup.string().nullable().email('Correo inválido').required('Correo requerido'),
+  password: Yup.string().nullable().required('Contraseña requerida'),
+});
+
 
 export {
   validateStudent,
@@ -103,4 +113,5 @@ export {
   validateTutors,
   validateUsers,
   validateSchool,
+  validationLogin,
 }
