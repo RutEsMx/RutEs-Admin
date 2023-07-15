@@ -14,7 +14,7 @@ const createUsersByForm = async (data) => {
           error: signUpResult.error
         }
       }
-      const uid = signUpResult?.result?.user?.uid;
+      const uid = signUpResult?.result?.uid;
       const password = signUpResult?.result?.password;
       const profileData = {
         ...dataCopy,

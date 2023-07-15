@@ -30,7 +30,6 @@ const OPTIONS_BLOOD_TYPES = [
 ]
 
 const OPTIONS_USER_ROLES = [
-  { value: 'admin', label: 'Admin escuela' },
   { value: 'user-school', label: 'Usuario' },
 ]
 

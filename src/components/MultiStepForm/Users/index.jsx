@@ -5,9 +5,11 @@ import StepUsers from "@/components/Forms/StepUsers";
 import { validateUsers } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
 import { createUsersByForm } from "@/services/UsersServices";
+import { useAuthContext } from "@/context/AuthContext";
 
 const FormUser = () => {
   const navigation = useRouter()
+  const { profile } = useAuthContext()
 
   const initialValues = {
     name: '',
@@ -20,10 +22,11 @@ const FormUser = () => {
 
   const handleNext = async (values, { setSubmitting, setFieldValue, validateField }) => {
     try {
+      values.schoolId = profile?.schoolId
       const response = await createUsersByForm(values)
       if(response.success) {
         alert(response.message)
-        return redirect('/dashboard/admin')
+        return navigation.replace('/dashboard/admin')
       }
     } catch (error) {
       alert(error.message)

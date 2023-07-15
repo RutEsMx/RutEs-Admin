@@ -14,9 +14,7 @@ import FilterInput from '@/components/Table/elements/FilterInputTable';
 import ColumnSelected from './columns';
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
-  console.log("🚀 ~ file: Table.jsx:24 ~ fuzzyFilter ~ columnId:", columnId)
   const itemRank = rankItem(row.getValue(columnId), value)
-  console.log("🚀 ~ file: Table.jsx:26 ~ fuzzyFilter ~ itemRank:", itemRank)
 
   addMeta({
     itemRank,
