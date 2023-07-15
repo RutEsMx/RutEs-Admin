@@ -5,7 +5,8 @@ import { useFormikContext } from "formik";
 
 const StepUsers = () => {
   const { values, handleChange, errors } = useFormikContext();
-  
+  const { profile } = values;
+  const isAdmin = profile?.roles?.includes('admin-rutes', 'admin');
   return (
     <div>
       <div className="grid grid-cols-3 gap-4 p-4 ">
@@ -55,7 +56,7 @@ const StepUsers = () => {
             <SelectField
               labelTitle="Tipo de usuario"
               name="roles"
-              options={OPTIONS_USER_ROLES_ADMIN}
+              options={isAdmin ? OPTIONS_USER_ROLES_ADMIN : OPTIONS_USER_ROLES}
               error={errors.roles}
               multiple={true}
             />
