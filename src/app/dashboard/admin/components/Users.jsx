@@ -1,8 +1,12 @@
 import { useRouter } from "next/navigation";
 import ButtonStep from "@/components/Button";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function Users() {
   const navigation = useRouter()
+  const { profile } = useAuthContext()
+
+  const isAdmin = profile?.roles?.includes('admin-rutes') || profile?.roles?.includes('admin')
 
   return (
     <>
@@ -12,20 +16,23 @@ export default function Users() {
           
         </div>
         <div className=" grid-start-2 me-5">
-            <div className="flex justify-end gap-2">
-              <ButtonStep
-                color="bg-light-gray"
-                onClick={() => navigation.push('/dashboard/admin/users/edit/1')}
-              >
-                Editar
-              </ButtonStep>
-              <ButtonStep
-                color="bg-yellow"
-                onClick={() => navigation.push('/dashboard/admin/users/create')}
-              >
-                Crear
-              </ButtonStep>
-            </div>
+            { isAdmin && (
+                <div className="flex justify-end gap-2">
+                  <ButtonStep
+                    color="bg-light-gray"
+                    onClick={() => navigation.push('/dashboard/admin/users/edit/1')}
+                  >
+                    Editar
+                  </ButtonStep>
+                  <ButtonStep
+                    color="bg-yellow"
+                    onClick={() => navigation.push('/dashboard/admin/users/create')}
+                  >
+                    Crear
+                  </ButtonStep>
+                </div>
+              )
+            }
           </div>
         </div>
       <div className="w-full">
