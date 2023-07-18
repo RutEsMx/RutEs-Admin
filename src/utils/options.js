@@ -29,14 +29,15 @@ const OPTIONS_BLOOD_TYPES = [
   { value: 'O-', label: 'O-' }
 ]
 
-const OPTIONS_USER_ROLES = [
+const OPTIONS_USER_ROLES_ADMIN  = [
+  { value: 'admin', label: 'Admin escuela' },
   { value: 'user-school', label: 'Usuario' },
 ]
 
-const OPTIONS_USER_ROLES_ADMIN  = [
+const OPTIONS_USER_ROLES_ADMIN_RUTES  = [
   { value: 'admin-rutes', label: 'Admin RutEs' },
-  { value: 'admin', label: 'Admin escuela' },
-  { value: 'user-school', label: 'Usuario' },
+  { value: 'admin', label: 'Admin Escuela' },
+  { value: 'user-school', label: 'Usuario Escuela' },
 ]
 
 const STATUS = {
@@ -64,6 +65,6 @@ export {
   STATUS,
   COLORS,
   STATUS_TRAVEL,
-  OPTIONS_USER_ROLES,
+  OPTIONS_USER_ROLES_ADMIN_RUTES,
   OPTIONS_USER_ROLES_ADMIN,
 }

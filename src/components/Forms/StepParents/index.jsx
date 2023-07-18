@@ -60,6 +60,7 @@ const StepParents = ({ validation }) => {
               value={values[type].phone}
               onChange={handleChange}
               error={errors[type]?.phone}
+              maxLength={10}
             />
             <InputField
               label="Teléfono de Emergencia"

@@ -6,7 +6,7 @@ import { useAuthContext } from "@/context/AuthContext";
 
 
 export default function School() {
-  const { profile } = useAuthContext()
+  const { profile, school } = useAuthContext()
   const navigation = useRouter()
   // Check if the user has the 'admin-rutes' role
   const isAdminRutes = profile?.roles?.includes('admin-rutes')
@@ -20,7 +20,7 @@ export default function School() {
           <div className="flex justify-end gap-2">
             <ButtonStep
               color="bg-light-gray"
-              onClick={() => navigation.push('/dashboard/admin/school/edit/1')}
+              onClick={() => navigation.push(`/dashboard/admin/school/edit/${profile?.schoolId}`)}
             >
               Editar
             </ButtonStep>
@@ -44,25 +44,19 @@ export default function School() {
           <label className="font-bold">Correo:</label>
           <label className="font-bold">Telefono:</label>
           <label className="font-bold">Dirección:</label>
-          <label className="font-bold">Estado:</label>
-          <label className="font-bold">Municipio:</label>
-          <label className="font-bold">Localidad:</label>
           <label className="font-bold">Código Postal:</label>
         </div>
         <div>
-          <p>Escuela 1</p>
-          <p>123456</p>
+          <p>{school?.name || <br/>}</p>
+          <p>{school?.clave || <br />}</p>
           <p>
             <a href={`mailto:`} className="text-blue-500">
-              Correo
+              {school?.email || <br/>}
             </a>
           </p>
-          <p>1234567890</p>
-          <p>Dirección 1</p>
-          <p>Estado 1</p>
-          <p>Municipio 1</p>
-          <p>Localidad 1</p>
-          <p>12345</p>
+          <p>{school?.phone || <br/>}</p>
+          <p>{school?.address || <br/>}</p>
+          <p>{school?.postalCode || <br/>}</p>
         </div>
         <div>
           <p>Logo: </p>
