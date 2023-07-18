@@ -34,6 +34,16 @@ const StepSchool = () => {
               value={values.phone}
               onChange={handleChange}
               error={errors.phone}
+              maxLength={10}
+            />
+            <InputField
+              label="Clave"
+              type="text"
+              name="clave"
+              value={values.clave}
+              onChange={handleChange}
+              error={errors.clave}
+              maxLength={10}
             />
           </div>
         </div>

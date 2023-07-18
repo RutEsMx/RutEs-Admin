@@ -3,26 +3,33 @@ import { Formik, Form } from "formik";
 import { useRouter } from 'next/navigation'
 import { validateSchool } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
-import { createSchoolByForm } from "@/services/SchoolServices";
+import { createSchoolByForm, updateSchoolByForm } from "@/services/SchoolServices";
 import StepSchool from "@/components/Forms/StepSchool";
+import { useAuthContext } from "@/context/AuthContext";
 
 
-const FormSchool = () => {
+const FormSchool = ({ data, isEdit = false }) => {
   const navigation = useRouter()
+  const { setSchool } = useAuthContext()
 
   const initialValues = {
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
-    coords: {},
+    name: data?.name || '',
+    email: data?.email || '',
+    phone: data?.phone || '',
+    address: data?.address || '',
+    clave: data?.clave || '',
+    postalCode: data?.postalCode || '',
+    coords: data?.coords || {},
   };
 
   const handleNext = async (values, { setSubmitting, setFieldValue, validateField }) => {
-    const { success, message, error } = await createSchoolByForm(values)
+    values.id = data?.id
+    const { success, message, error, result } = isEdit ? await updateSchoolByForm(values) : await createSchoolByForm(values)
     if (error) return alert(error?.message)
       
     if(success) {
+      setSchool(result)
+      alert(message)
       return navigation.replace('/dashboard/admin')
     }
     return alert(message)
@@ -53,7 +60,7 @@ const FormSchool = () => {
               disabled={isSubmitting}
               type="button"
             >
-              Enviar
+              {isEdit ? 'Editar': 'Enviar'}
             </Button>
           </div>
           <StepSchool />
