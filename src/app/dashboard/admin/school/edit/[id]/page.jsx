@@ -1,14 +1,26 @@
-import { useRouter } from 'next/navigation'
+import FormSchool from '@/components/MultiStepForm/School'
 
-const Page = ({ params }) => {
+const getSchool = async (id) => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/api/schools/${id}/`, { cache: 'no-store' })
+    const data = await response.json()
+    data.id = id
+    return data
+  } catch (error) {
+    alert(error?.message)
+  }
+}
+
+const Page = async ({ params }) => {
   const { id } = params
+  const school = await getSchool(id)
 
   return (
-    <div className="container mx-auto px-4 h-screen">
-      <div className="grid grid-cols-2 gap-4 p-2">
+    <div className="container mx-auto px-4 h-screen bg-white">
+      <div className="grid grid-cols-1 gap-4 p-2">
         <div>
-          <h1 className="font-bold">Formulario</h1>
-          <p>{id}</p>
+          <h1>Editar escuela</h1>
+          <FormSchool data={school} isEdit/>
         </div>
       </div>
     </div>

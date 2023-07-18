@@ -1,6 +1,5 @@
 import { auth } from 'firebase-admin'
 import { NextResponse } from 'next/server'
-import { cookies, headers } from "next/headers";
 import { customInitApp } from '@/firebase/admin'
 
 // Init the Firebase SDK every time the server is called

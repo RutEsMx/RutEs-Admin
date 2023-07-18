@@ -69,6 +69,7 @@ const StepTutors = ({ step }) => {
               value={values?.['tutors_'+stepTutors]?.phone || ''}
               onChange={handleChange}
               error={errors?.['tutors_'+stepTutors]?.phone}
+              maxLength={10}
             />
             <div className="grid grid-rows-1 p-4">
               <div className="grid grid-cols-3">

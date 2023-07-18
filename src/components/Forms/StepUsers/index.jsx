@@ -54,6 +54,7 @@ const StepUsers = () => {
               value={values.phone}
               onChange={handleChange}
               error={errors.phone}
+              maxLength={10}
             />
             <SelectField
               labelTitle="Tipo de usuario"

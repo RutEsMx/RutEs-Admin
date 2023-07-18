@@ -17,7 +17,8 @@ const createDocument = async (collectionName, data) => {
 
 const updateDocument = async (collectionName, id, data) => {
   try {
-    const docRef = await updateDoc(doc(db, collectionName, id), { ...data })
+    const setDocRef = doc(db, collectionName, id)
+    const docRef = await updateDoc(setDocRef, { ...data })
     return docRef
   } catch (error) {
     return { error }
