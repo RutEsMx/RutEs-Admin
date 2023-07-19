@@ -1,10 +1,8 @@
-'use client'
+"use client";
 import MultiStepFormStudent from "@/components/MultiStepForm/Students";
 
-
 const CreateForm = () => {
-
-  return <MultiStepFormStudent />
-}
+  return <MultiStepFormStudent />;
+};
 
 export default CreateForm;

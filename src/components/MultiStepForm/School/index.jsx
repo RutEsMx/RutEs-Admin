@@ -1,43 +1,50 @@
-'use client'
+"use client";
 import { Formik, Form } from "formik";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 import { validateSchool } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
-import { createSchoolByForm, updateSchoolByForm } from "@/services/SchoolServices";
+import {
+  createSchoolByForm,
+  updateSchoolByForm,
+} from "@/services/SchoolServices";
 import StepSchool from "@/components/Forms/StepSchool";
 import { useAuthContext } from "@/context/AuthContext";
 
-
 const FormSchool = ({ data, isEdit = false }) => {
-  const navigation = useRouter()
-  const { setSchool } = useAuthContext()
+  const navigation = useRouter();
+  const { setSchool } = useAuthContext();
 
   const initialValues = {
-    name: data?.name || '',
-    email: data?.email || '',
-    phone: data?.phone || '',
-    address: data?.address || '',
-    clave: data?.clave || '',
-    postalCode: data?.postalCode || '',
+    name: data?.name || "",
+    email: data?.email || "",
+    phone: data?.phone || "",
+    address: data?.address || "",
+    clave: data?.clave || "",
+    postalCode: data?.postalCode || "",
     coords: data?.coords || {},
   };
 
-  const handleNext = async (values, { setSubmitting, setFieldValue, validateField }) => {
-    values.id = data?.id
-    const { success, message, error, result } = isEdit ? await updateSchoolByForm(values) : await createSchoolByForm(values)
-    if (error) return alert(error?.message)
-      
-    if(success) {
-      setSchool(result)
-      alert(message)
-      return navigation.replace('/dashboard/admin')
+  const handleNext = async (
+    values,
+    { setSubmitting, setFieldValue, validateField },
+  ) => {
+    values.id = data?.id;
+    const { success, message, error, result } = isEdit
+      ? await updateSchoolByForm(values)
+      : await createSchoolByForm(values);
+    if (error) return alert(error?.message);
+
+    if (success) {
+      setSchool(result);
+      alert(message);
+      return navigation.replace("/dashboard/admin");
     }
-    return alert(message)
-  }
-  
+    return alert(message);
+  };
+
   const handleBack = () => {
-    return navigation.replace('/dashboard/admin')
-  }
+    return navigation.replace("/dashboard/admin");
+  };
 
   return (
     <Formik
@@ -48,11 +55,7 @@ const FormSchool = ({ data, isEdit = false }) => {
       {({ isSubmitting, handleSubmit }) => (
         <Form>
           <div className="flex justify-end gap-4">
-            <Button
-              onClick={handleBack}
-              color="bg-light-gray"
-              type="button"
-            >
+            <Button onClick={handleBack} color="bg-light-gray" type="button">
               Atrás
             </Button>
             <Button
@@ -60,7 +63,7 @@ const FormSchool = ({ data, isEdit = false }) => {
               disabled={isSubmitting}
               type="button"
             >
-              {isEdit ? 'Editar': 'Enviar'}
+              {isEdit ? "Editar" : "Enviar"}
             </Button>
           </div>
           <StepSchool />
@@ -68,6 +71,6 @@ const FormSchool = ({ data, isEdit = false }) => {
       )}
     </Formik>
   );
-}
+};
 
 export default FormSchool;

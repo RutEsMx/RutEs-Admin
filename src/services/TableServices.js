@@ -1,29 +1,28 @@
-import { generateParents, generateStudents } from "@/utils/DataFaker"
-import { getStudents } from "./StudentsServices"
+import { generateParents, generateStudents } from "@/utils/DataFaker";
+import { getStudents } from "./StudentsServices";
 
-const data = generateParents(25)
+const data = generateParents(25);
 
 export async function fetchData(options) {
-  await new Promise(r => setTimeout(r, 500))
-  
+  await new Promise((r) => setTimeout(r, 500));
+
   return {
     rows: data.slice(
       options.pageIndex * options.pageSize,
-      (options.pageIndex + 1) * options.pageSize
+      (options.pageIndex + 1) * options.pageSize,
     ),
     pageCount: Math.ceil(data.length / options.pageSize),
-  }
+  };
 }
 
-
 export async function fetchDataStudents(options) {
-  const data = await getStudents()
-  
+  const data = await getStudents();
+
   return {
     rows: data?.slice(
       options.pageIndex * options.pageSize,
-      (options.pageIndex + 1) * options.pageSize
+      (options.pageIndex + 1) * options.pageSize,
     ),
     pageCount: Math.ceil(data?.length / options.pageSize),
-  }
+  };
 }

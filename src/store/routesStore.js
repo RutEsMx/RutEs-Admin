@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { create } from "zustand";
 
 export const useRoutesStore = create((set) => ({
   routes: [],
@@ -11,7 +11,7 @@ export const useRoutesStore = create((set) => ({
   updateRoute: (routeId, route) =>
     set((state) => ({
       routes: state.routes.map((route) =>
-        route.id === routeId ? { ...route, ...route } : route
+        route.id === routeId ? { ...route, ...route } : route,
       ),
     })),
-}))
+}));

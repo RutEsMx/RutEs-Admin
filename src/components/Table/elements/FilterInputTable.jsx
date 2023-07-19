@@ -1,29 +1,31 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
-export default function FilterInput ({
+export default function FilterInput({
   value: initialValue,
   onChange,
   debounce = 500,
   ...props
 }) {
-  const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState(initialValue);
 
   useEffect(() => {
-    setValue(initialValue)
-  }, [initialValue])
+    setValue(initialValue);
+  }, [initialValue]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      onChange(value)
-    }, debounce)
+      onChange(value);
+    }, debounce);
 
-    return () => clearTimeout(timeout)
-  }, [value])
+    return () => clearTimeout(timeout);
+  }, [value]);
 
   return (
-    <input 
+    <input
       className="p-1 m-1 shadow-md border rounded w-1/4"
-      {...props} value={value} onChange={e => setValue(e.target.value)} 
+      {...props}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
     />
-  )
+  );
 }

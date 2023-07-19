@@ -1,9 +1,11 @@
-import { Field, ErrorMessage } from "formik"
+import { Field, ErrorMessage } from "formik";
 
-const SelectField = ({ name, labelTitle, options, error, ...props}) => {
+const SelectField = ({ name, labelTitle, options, error, ...props }) => {
   return (
     <div className="flex flex-col">
-      <label htmlFor={name} className="mb-1">{labelTitle}</label>
+      <label htmlFor={name} className="mb-1">
+        {labelTitle}
+      </label>
       <Field
         name={name}
         component="select"
@@ -11,12 +13,14 @@ const SelectField = ({ name, labelTitle, options, error, ...props}) => {
         {...props}
       >
         {options.map(({ value, label }) => (
-          <option key={value} value={value}>{label}</option>
+          <option key={value} value={value}>
+            {label}
+          </option>
         ))}
       </Field>
       {error && <span className="text-red">{error}</span>}
     </div>
-  )
-}
+  );
+};
 
-export default SelectField
+export default SelectField;

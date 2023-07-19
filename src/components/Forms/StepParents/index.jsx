@@ -6,11 +6,10 @@ const StepParents = ({ validation }) => {
   const { values, handleChange, errors } = useFormikContext();
   const [type, setType] = useState("father");
   const [title, setTitle] = useState("Padre");
-  
+
   useEffect(() => {
-    setType(validation?._nodes[0])
-    setTitle(validation?._nodes[0] === "father" ? "Padre" : "Madre")
-    
+    setType(validation?._nodes[0]);
+    setTitle(validation?._nodes[0] === "father" ? "Padre" : "Madre");
   }, [validation]);
 
   return (
@@ -89,6 +88,6 @@ const StepParents = ({ validation }) => {
       </div>
     </div>
   );
-}
+};
 
-export default StepParents
+export default StepParents;

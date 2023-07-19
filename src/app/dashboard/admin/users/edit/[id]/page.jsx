@@ -1,7 +1,7 @@
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 const Page = ({ params }) => {
-  const { id } = params
+  const { id } = params;
 
   return (
     <div className="container mx-auto px-4 h-screen">
@@ -12,7 +12,7 @@ const Page = ({ params }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

@@ -1,18 +1,23 @@
-import { generatePassword, validateEmail } from "@/utils"
-import { createDocument, getDocumentById, getDocuments, updateDocument } from "@/firebase/crud"
+import { generatePassword, validateEmail } from "@/utils";
+import {
+  createDocument,
+  getDocumentById,
+  getDocuments,
+  updateDocument,
+} from "@/firebase/crud";
 import { signUp } from "./AuthServices";
 
 const createUsersByForm = async (data) => {
   const dataCopy = { ...data };
   const { email } = dataCopy;
 
-  if(validateEmail(email)) {
+  if (validateEmail(email)) {
     try {
       const signUpResult = await signUp(email);
       if (signUpResult?.error) {
         return {
-          error: signUpResult.error
-        }
+          error: signUpResult.error,
+        };
       }
       const uid = signUpResult?.result?.uid;
       const password = signUpResult?.result?.password;
@@ -21,7 +26,7 @@ const createUsersByForm = async (data) => {
         id: uid,
         password,
       };
-      await createDocument("profile", profileData)
+      await createDocument("profile", profileData);
       return { success: true, message: "Usuario creado correctamente" };
     } catch (error) {
       return { error };
@@ -31,8 +36,4 @@ const createUsersByForm = async (data) => {
   }
 };
 
-
-
-export {
-  createUsersByForm,
-}
+export { createUsersByForm };

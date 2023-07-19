@@ -12,6 +12,6 @@ const RouteCard = ({ route }) => {
       </div>
     </div>
   );
-}
+};
 
 export default RouteCard;

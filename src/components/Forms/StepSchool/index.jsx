@@ -3,7 +3,7 @@ import { useFormikContext } from "formik";
 
 const StepSchool = () => {
   const { values, handleChange, errors } = useFormikContext();
-  
+
   return (
     <div>
       <div className="grid grid-cols-3 gap-4 p-4 ">
@@ -56,6 +56,6 @@ const StepSchool = () => {
       </div>
     </div>
   );
-}
+};
 
 export default StepSchool;

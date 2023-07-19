@@ -7,11 +7,9 @@ const CreateParentLayout = ({ children }) => {
       <div className="grid grid-cols-2 gap-4 p-2">
         <LogoLayout />
       </div>
-      <div className="grid grid-rows-1 gap-4">
-        {children}
-      </div>
+      <div className="grid grid-rows-1 gap-4">{children}</div>
     </div>
-  )
-}
+  );
+};
 
-export default CreateParentLayout
+export default CreateParentLayout;

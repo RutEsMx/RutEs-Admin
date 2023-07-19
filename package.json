@@ -30,6 +30,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.0.2",
     "@types/react": "18.2.12",
-    "encoding": "^0.1.13"
+    "encoding": "^0.1.13",
+    "prettier": "3.0.0"
   }
 }
