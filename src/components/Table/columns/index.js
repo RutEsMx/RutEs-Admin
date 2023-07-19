@@ -221,12 +221,74 @@ const parentsColumns = [
   }),
 ]
 
+const usersColumns = [
+  columnHelper.accessor('select', {
+    cell: ({ row }) => (
+      <div className="flex justify-center p-3">
+        <CheckboxTable
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            indeterminate: row.getIsSomeSelected(),
+            onChange: row.getToggleSelectedHandler(),
+          }}
+        />
+      </div>
+    ),
+    header: ({ table }) => <HeaderTable>
+      <CheckboxTable
+        {...{
+          checked: table.getIsAllRowsSelected(),
+          indeterminate: table.getIsSomeRowsSelected(),
+          onChange: table.getToggleAllRowsSelectedHandler(),
+        }}
+      />
+    </HeaderTable>,
+  }),
+  {
+    header: () => <HeaderTable>Nombre</HeaderTable>,
+    accessorKey: 'name',
+    cell: (data) => {
+      const { row } = data
+      return (
+        <div
+          className='flex flex-row items-center cursor-pointer'
+          onClick={() => console.log('>>>>usuario', row?.original?.id)}
+        >
+          {data.getValue()}
+        </div>
+      )
+    },
+  },
+  {
+    header: () => <HeaderTable>Correo electrónico</HeaderTable>,
+    accessorKey: 'email',
+  },
+  {
+    header: () => <HeaderTable>Roles</HeaderTable>,
+    accessorKey: 'roles',
+    cell: (data) => {
+      const { row } = data
+      return (
+        <div
+          className='flex flex-row items-center cursor-pointer'
+          onClick={() => console.log('>>>>roles', row?.original?.id)}
+        >
+          {data.getValue()}
+        </div>
+      )
+    },
+  },
+]
+
 const COLUMNS = {
   'parents': parentsColumns,
   'students': studentsColumns,
   'auxiliars': [],
   'drivers': [],
   'units': [],
+  'users': usersColumns,
+  'schools': [],
 }
 
 export default function ColumnSelected(type) {

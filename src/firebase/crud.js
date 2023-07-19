@@ -25,9 +25,13 @@ const updateDocument = async (collectionName, id, data) => {
   }
 }
 
-const getDocuments = async (collectionName, school) => {
-  // const q = query(collection(db, collectionName), where("school", "==", school));
-  const querySnapshot = await getDocs(collection(db, collectionName))
+const getDocuments = async (collectionName, school, typeQuery) => {
+  if(!school) return
+  let q = query(collection(db, collectionName), where("schoolId", "==", school));
+  if (typeQuery === 'users') {
+    q = query(collection(db, collectionName), where("schoolId", "==", school), where('roles', 'array-contains-any', ['user-school', 'admin']));
+  }
+  const querySnapshot = await getDocs(q)
   const documents = []
   querySnapshot.forEach((doc) => {
     documents.push({ ...doc.data(), id: doc.id })
