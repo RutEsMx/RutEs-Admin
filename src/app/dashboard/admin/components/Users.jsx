@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import ButtonStep from "@/components/Button";
 import { useAuthContext } from "@/context/AuthContext";
+import DataTable from "@/components/Table/DataTable";
 
 export default function Users() {
   const navigation = useRouter()
@@ -35,45 +36,10 @@ export default function Users() {
             }
           </div>
         </div>
-      <div className="w-full">
-        <table className="table-auto">
-          <thead>
-            <tr>
-              <th className="px-4 py-2">Nombre</th>
-              <th className="px-4 py-2">Correo</th>
-              <th className="px-4 py-2">Rol</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="border px-4 py-2">Usuario 1</td>
-              <td className="border px-4 py-2">
-                <a href={`mailto:`} className="text-blue-500">
-                  Correo
-                </a>
-              </td>
-              <td className="border px-4 py-2">Administrador</td>
-            </tr>
-            <tr>
-              <td className="border px-4 py-2">Usuario 2</td>
-              <td className="border px-4 py-2">
-                <a href={`mailto:`} className="text-blue-500">
-                  Correo 2
-                </a>
-              </td>
-              <td className="border px-4 py-2">Administrador</td>
-            </tr>
-            <tr>
-              <td className="border px-4 py-2">Usuario 3</td>
-              <td className="border px-4 py-2">
-                <a href={`mailto:`} className="text-blue-500">
-                  Correo 3
-                </a>
-              </td>
-              <td className="border px-4 py-2">Usuario</td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="grid grid-rows-1 gap-4">
+        <DataTable
+          type={'users'}
+        />
       </div>
     </>
   )

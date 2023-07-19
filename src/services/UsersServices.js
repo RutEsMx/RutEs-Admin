@@ -31,8 +31,12 @@ const createUsersByForm = async (data) => {
   }
 };
 
-
+const getUsers = async (school) => {
+  const users = await getDocuments('profile', school, 'users')
+  return users
+}
 
 export {
   createUsersByForm,
+  getUsers
 }

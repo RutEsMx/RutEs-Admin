@@ -9,9 +9,10 @@ import {
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
 import ButtonAction from '@/components/Table/elements/ButtonAction';
-import { fetchData, fetchDataStudents } from '@/services/TableServices';
+import { fetchData, fetchDataStudents, fetchDataUsers } from '@/services/TableServices';
 import FilterInput from '@/components/Table/elements/FilterInputTable';
 import ColumnSelected from './columns';
+import { useAuthContext } from '@/context/AuthContext';
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value)
@@ -25,6 +26,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 
 
 const DataTable = ({type}) => {
+  const { profile } = useAuthContext()
   const columns = useMemo(
     () => (
       ColumnSelected(type)
@@ -46,9 +48,10 @@ const DataTable = ({type}) => {
   const [rowSelection, setRowSelection] = useState([])
 
   useEffect(() => {
-    if(type === 'parents') fetchData({ pageIndex, pageSize }).then((data) => setData(data))
-    if(type === 'students') fetchDataStudents({ pageIndex, pageSize }).then((data) => setData(data))
-  }, [pageIndex, pageSize])
+    if (type === 'parents') fetchData({ schoolId: profile?.schoolId, pageIndex, pageSize }).then((data) => setData(data))
+    if (type === 'students') fetchDataStudents({ schoolId: profile?.schoolId, pageIndex, pageSize }).then((data) => setData(data))
+    if (type === 'users') fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then((data) => setData(data))
+  }, [pageIndex, pageSize, profile])
       
   const table = useReactTable({
     data: data?.rows ?? [],
@@ -161,7 +164,7 @@ const DataTable = ({type}) => {
             </select>
           </div>
         </div>
-      </div>  
+      </div>
       <table className='table-fixed rounded-md border'>
           {table?.getHeaderGroups()?.map(headerGroup => (
             <thead key={headerGroup.id}>
