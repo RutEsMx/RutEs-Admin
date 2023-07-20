@@ -1,5 +1,4 @@
 import LogoLayout from "@/components/LogoLayout";
-import Image from "next/image";
 
 const CreateParentLayout = ({ children }) => {
   return (

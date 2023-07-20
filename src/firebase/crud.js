@@ -7,7 +7,6 @@ import {
   getDocs,
   query,
   where,
-  onSnapshot,
   setDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase/client";
@@ -36,7 +35,7 @@ const updateDocument = async (collectionName, id, data) => {
   }
 };
 
-const getDocuments = async (collectionName, school) => {
+const getDocuments = async (collectionName) => {
   // const q = query(collection(db, collectionName), where("school", "==", school));
   const querySnapshot = await getDocs(collection(db, collectionName));
   const documents = [];

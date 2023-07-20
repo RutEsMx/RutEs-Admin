@@ -2,7 +2,6 @@ import { validateEmail } from "@/utils";
 import {
   createDocument,
   getDocumentById,
-  getDocuments,
   updateDocument,
 } from "@/firebase/crud";
 import { signOut } from "@/firebase/auth";

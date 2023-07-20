@@ -1,10 +1,7 @@
 "use client";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { useRouter } from "next/navigation";
 
 const AddButton = () => {
-  const router = useRouter();
-
   // agregar padre funcion
   const handleAddStudent = () => {
     console.log("Agregar estudiante");

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { generateRoutes } from "@/utils/DataFaker";
 import RouteCard from "@/components/RouteCard";
 import { useRoutesStore } from "@/store/routesStore";

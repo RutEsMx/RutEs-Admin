@@ -31,7 +31,7 @@ const Maps = ({ markers }) => {
           options={mapOptions}
           zoom={14}
           center={mapCenter}
-          mapTypeId={google.maps.MapTypeId.ROADMAP}
+          // mapTypeId={google.maps.MapTypeId.ROADMAP}
           mapContainerStyle={{ width: "100%", height: "500px" }}
           onLoad={() => console.log("Map Component Loaded...")}
         >

@@ -1,10 +1,5 @@
-import { generatePassword, validateEmail } from "@/utils";
-import {
-  createDocument,
-  getDocumentById,
-  getDocuments,
-  updateDocument,
-} from "@/firebase/crud";
+import { validateEmail } from "@/utils";
+import { createDocument } from "@/firebase/crud";
 import { signUp } from "./AuthServices";
 
 const createUsersByForm = async (data) => {

@@ -1,9 +1,14 @@
 import * as Yup from "yup";
 const REGEX_PHONE = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+import { auth } from "@/firebase/client";
 
 const emailExists = async (email) => {
   try {
-    // await firebase.auth().fetchSignInMethodsForEmail(email);
+    const exist = await auth.fetchSignInMethodsForEmail(email);
+    console.log(
+      "🚀 ~ file: validationSchemas.js:7 ~ emailExists ~ exist:",
+      exist,
+    );
     return true;
   } catch (error) {
     return false;

@@ -1,6 +1,6 @@
 "use client";
 import { Formik, Form } from "formik";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import StepUsers from "@/components/Forms/StepUsers";
 import { validateUsers } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
@@ -20,10 +20,7 @@ const FormUser = () => {
     phone: "",
   };
 
-  const handleNext = async (
-    values,
-    { setSubmitting, setFieldValue, validateField },
-  ) => {
+  const handleNext = async (values) => {
     try {
       values.schoolId = profile?.schoolId;
       const response = await createUsersByForm(values);

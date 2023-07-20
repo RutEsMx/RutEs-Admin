@@ -24,10 +24,7 @@ const FormSchool = ({ data, isEdit = false }) => {
     coords: data?.coords || {},
   };
 
-  const handleNext = async (
-    values,
-    { setSubmitting, setFieldValue, validateField },
-  ) => {
+  const handleNext = async (values) => {
     values.id = data?.id;
     const { success, message, error, result } = isEdit
       ? await updateSchoolByForm(values)

@@ -2,7 +2,7 @@ import { createColumnHelper } from "@tanstack/table-core";
 import HeaderTable from "@/components/Table/elements/HeaderTable";
 import CellTable from "@/components/Table/elements/CellTable";
 import CheckboxTable from "@/components/Table/elements/CheckboxTable";
-import { STATUS, STATUS_TRAVEL } from "@/utils/options";
+import { STATUS_TRAVEL } from "@/utils/options";
 import { CheckCircleIcon, NoSymbolIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
@@ -52,8 +52,7 @@ const studentsColumns = [
       const { row } = data;
       return (
         <div className="flex flex-row items-center cursor-pointer">
-          {/* <Link href={`/dashboard/students/${row?.original?.id}`}> */}
-          <Link href={`/dashboard/students/CU19ABvDJ3j8dFvdluPE`}>
+          <Link href={`/dashboard/students/${row?.original?.id}`}>
             {data.getValue()}
           </Link>
         </div>

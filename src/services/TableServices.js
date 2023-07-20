@@ -1,4 +1,4 @@
-import { generateParents, generateStudents } from "@/utils/DataFaker";
+import { generateParents } from "@/utils/DataFaker";
 import { getStudents } from "./StudentsServices";
 
 const data = generateParents(25);

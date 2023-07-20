@@ -1,7 +1,7 @@
 // Create route card component
 
 const RouteCard = ({ route }) => {
-  const { name, description, image, distance, time } = route;
+  const { name, distance, time } = route;
   return (
     <div className="max-w-sm rounded overflow-hidden shadow-lg">
       {/* <img src={image} alt={name} /> */}

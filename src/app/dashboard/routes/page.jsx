@@ -2,12 +2,10 @@
 import Maps from "@/components/Maps";
 import RoutesCards from "@/components/RoutesCards";
 import Image from "next/image";
-import { useRoutesStore } from "@/store/routesStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Routes = () => {
-  const { routes, setRoutes } = useRoutesStore();
-  const [markers, setMarkers] = useState([]);
+  const [markers] = useState([]);
 
   // useEffect(() => {
   //   const data = routes.map(route => {

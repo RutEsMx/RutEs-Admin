@@ -58,10 +58,7 @@ const MultiStepFormStudent = () => {
     // tutors: [],
   };
 
-  const handleNext = async (
-    values,
-    { setSubmitting, setFieldValue, validateField },
-  ) => {
+  const handleNext = async (values, { setSubmitting }) => {
     let newSteps = [...steps];
     let newValidationSchema = [...validationSchemas];
 

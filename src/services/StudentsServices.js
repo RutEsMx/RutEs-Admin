@@ -1,5 +1,5 @@
 import { signUp } from "@/services/AuthServices";
-import { generatePassword, validateEmail } from "@/utils";
+import { validateEmail } from "@/utils";
 import {
   createDocument,
   getDocumentById,
