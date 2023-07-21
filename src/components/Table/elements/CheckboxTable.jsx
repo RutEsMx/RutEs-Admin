@@ -1,20 +1,13 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from "react";
 
-export default function CheckboxTable ({ indeterminate, ...props }) {
-  const ref = useRef(null)
+export default function CheckboxTable({ indeterminate, ...props }) {
+  const ref = useRef(null);
 
   useEffect(() => {
-    if (typeof indeterminate === 'boolean') {
-      ref.current.indeterminate = !props.checked && indeterminate
+    if (typeof indeterminate === "boolean") {
+      ref.current.indeterminate = !props.checked && indeterminate;
     }
-  }, [ref, indeterminate])
+  }, [ref, indeterminate]);
 
-
-  return (
-    <input
-      type="checkbox"
-      ref={ref}
-      {...props}
-    />
-  )
+  return <input type="checkbox" ref={ref} {...props} />;
 }

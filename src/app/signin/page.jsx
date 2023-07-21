@@ -1,42 +1,47 @@
-'use client'
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import ButtonStep from "@/components/Button"
-import InputField from "@/components/InputField"
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import ButtonStep from "@/components/Button";
+import InputField from "@/components/InputField";
 import { Formik, Form } from "formik";
-import Image from "next/image"
-import Link from "next/link"
+import Image from "next/image";
+import Link from "next/link";
 import { signIn } from "@/services/AuthServices";
 import { validationLogin } from "@/utils/validationSchemas";
 
+export default function Page() {
+  const router = useRouter();
 
-export default function Page () {
-  const router = useRouter()
-  
   const initialValues = {
-    email: '',
-    password: '',
-  }
+    email: "",
+    password: "",
+  };
 
   const handleForm = async (event) => {
     const { email, password } = event;
     try {
       await signIn(email, password);
-      return router.push('/dashboard')
+      return router.push("/dashboard");
     } catch (error) {
-      alert(error.message)
+      alert(error.message);
     }
-  }
-  
+  };
+
   return (
     <div className="text-black container h-screen mx-auto">
-    {/* Center grid  */}
+      {/* Center grid  */}
       <div className="grid grid-cols-2 h-full">
         {/* Left grid  */}
         <div className="col-span-1 bg-gray-100">
           <div className="flex flex-col justify-center items-center h-full">
             <div className="flex flex-col justify-center items-center">
-              <Image src="/rutes_logo.png" width={550} height={550} priority alt="Rutes Logo"/>
+              <Image
+                src="/rutes_logo.png"
+                width={550}
+                height={550}
+                priority
+                alt="Rutes Logo"
+              />
             </div>
           </div>
         </div>
@@ -45,14 +50,14 @@ export default function Page () {
           <div className="flex flex-col justify-center items-center h-full">
             <div className="flex flex-col justify-center items-center border-2 border-gray py-4 w-full rounded-lg">
               <h1 className="text-3xl font-bold">Iniciar Sesión</h1>
-              <Formik 
+              <Formik
                 initialValues={initialValues}
                 onSubmit={handleForm}
                 validationSchema={validationLogin}
                 validateOnBlur={false}
                 validateOnMount={false}
               >
-                {({ values, handleChange, errors, setValues}) => (
+                {({ values, handleChange, errors, setValues }) => (
                   <Form className="flex flex-col justify-center items-center w-full">
                     <AutofillSync values={values} setValues={setValues} />
                     <div className="p-4 w-3/5">
@@ -78,16 +83,15 @@ export default function Page () {
                       />
                     </div>
                     <div className="p-4 text-white font-bold w-3/5">
-                      <ButtonStep
-                        type="submit"
-                        className="w-full text-2xl"
-                      >
+                      <ButtonStep type="submit" className="w-full text-2xl">
                         INGRESAR
                       </ButtonStep>
                     </div>
                     <div>
                       <Link href="/fortgot-password">
-                        <span className="text-gray">Olvidaste tu contraseña?</span>
+                        <span className="text-gray">
+                          Olvidaste tu contraseña?
+                        </span>
                       </Link>
                     </div>
                   </Form>
@@ -98,22 +102,23 @@ export default function Page () {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-const AutofillSync = ({values, setValues}) => {
+const AutofillSync = ({ values, setValues }) => {
   useEffect(() => {
     if (
-      (document.querySelector('input[name="email"]'))?.value ||
-      (document.querySelector('input[name="password"]'))?.value
+      document.querySelector('input[name="email"]')?.value ||
+      document.querySelector('input[name="password"]')?.value
     ) {
       if (!values.email || !values.password) {
         setValues({
-          email: (document.querySelector('input[name="email"]'))?.value || "",
-          password: (document.querySelector('input[name="password"]'))?.value || "",
+          email: document.querySelector('input[name="email"]')?.value || "",
+          password:
+            document.querySelector('input[name="password"]')?.value || "",
         });
       }
     }
   }, []);
   return null;
-}
+};

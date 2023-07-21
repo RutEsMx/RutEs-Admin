@@ -1,5 +1,4 @@
-
-// OPTIONS_TYPE_SERVICES 
+// OPTIONS_TYPE_SERVICES
 // Completo - Servicio completo (mañana y tarde)
 // Media ruta de mañana - el servicio brindado es solo por la mañana, costo reducido del servicio
 // Media ruta de tarde - el servicio brindado es solo por la tarde, costo reducido del servicio
@@ -8,48 +7,48 @@
 // Tercer hijo o más - si el alumno tiene dos o más hermanos en el colegio, el servicio es con costo reducido
 
 const OPTIONS_TYPE_SERVICES = [
-  { value: '', label: 'Seleccione una opción' },
-  { value: 'complete', label: 'Completo' },
-  { value: 'halfMorning', label: 'Media Ruta Mañana' },
-  { value: 'halfAfternoon', label: 'Media Ruta Tarde' },
-  { value: 'scholarship', label: 'Beca' },
-  { value: 'secondChild', label: 'Segundo Hijo' },
-  { value: 'thirdChild', label: 'Tercer Hijo o más' }
-]
+  { value: "", label: "Seleccione una opción" },
+  { value: "complete", label: "Completo" },
+  { value: "halfMorning", label: "Media Ruta Mañana" },
+  { value: "halfAfternoon", label: "Media Ruta Tarde" },
+  { value: "scholarship", label: "Beca" },
+  { value: "secondChild", label: "Segundo Hijo" },
+  { value: "thirdChild", label: "Tercer Hijo o más" },
+];
 
 const OPTIONS_BLOOD_TYPES = [
-  { value: '', label: 'Seleccione una opción' },
-  { value: 'A+', label: 'A+' },
-  { value: 'A-', label: 'A-' },
-  { value: 'B+', label: 'B+' },
-  { value: 'B-', label: 'B-' },
-  { value: 'AB+', label: 'AB+' },
-  { value: 'AB-', label: 'AB-' },
-  { value: 'O+', label: 'O+' },
-  { value: 'O-', label: 'O-' }
-]
+  { value: "", label: "Seleccione una opción" },
+  { value: "A+", label: "A+" },
+  { value: "A-", label: "A-" },
+  { value: "B+", label: "B+" },
+  { value: "B-", label: "B-" },
+  { value: "AB+", label: "AB+" },
+  { value: "AB-", label: "AB-" },
+  { value: "O+", label: "O+" },
+  { value: "O-", label: "O-" },
+];
 
-const OPTIONS_USER_ROLES_ADMIN  = [
-  { value: 'admin', label: 'Admin escuela' },
-  { value: 'user-school', label: 'Usuario' },
-]
+const OPTIONS_USER_ROLES_ADMIN = [
+  { value: "admin", label: "Admin escuela" },
+  { value: "user-school", label: "Usuario" },
+];
 
-const OPTIONS_USER_ROLES_ADMIN_RUTES  = [
-  { value: 'admin-rutes', label: 'Admin RutEs' },
-  { value: 'admin', label: 'Admin Escuela' },
-  { value: 'user-school', label: 'Usuario Escuela' },
-]
+const OPTIONS_USER_ROLES_ADMIN_RUTES = [
+  { value: "admin-rutes", label: "Admin RutEs" },
+  { value: "admin", label: "Admin Escuela" },
+  { value: "user-school", label: "Usuario Escuela" },
+];
 
 const STATUS = {
-  active: 'Activo',
-  inactive: 'Inactivo',
-}
+  active: "Activo",
+  inactive: "Inactivo",
+};
 
 const STATUS_TRAVEL = {
-  absent: 'Ausente',
-  toSchool: 'En camino a escuela',
-  toHome: 'En camino a casa',
-}
+  absent: "Ausente",
+  toSchool: "En camino a escuela",
+  toHome: "En camino a casa",
+};
 
 const COLORS = {
   active: "text-green",
@@ -57,7 +56,7 @@ const COLORS = {
   absent: "text-yellow",
   toSchool: "text-warning",
   toHome: "text-blue",
-}
+};
 
 export {
   OPTIONS_TYPE_SERVICES,
@@ -67,4 +66,4 @@ export {
   STATUS_TRAVEL,
   OPTIONS_USER_ROLES_ADMIN_RUTES,
   OPTIONS_USER_ROLES_ADMIN,
-}
+};

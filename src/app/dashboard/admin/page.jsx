@@ -1,8 +1,7 @@
-import ListContainer from "./components/ListContainer"
+import ListContainer from "./components/ListContainer";
 
 const Page = () => {
-  
-  return <ListContainer />
-}
+  return <ListContainer />;
+};
 // FormUser
-export default Page
+export default Page;

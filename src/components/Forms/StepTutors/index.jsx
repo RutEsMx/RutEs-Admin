@@ -20,8 +20,8 @@ const StepTutors = ({ step }) => {
       setStepTutors(0);
     }
     setOldStep(step);
-  }, [step])
-  
+  }, [step]);
+
   return (
     <div>
       <h1>{`Nuevo tutor (${title})`}</h1>
@@ -32,10 +32,10 @@ const StepTutors = ({ step }) => {
               label="Correo Electrónico"
               type="email"
               name={`tutors_${stepTutors}.email`}
-              value={values?.['tutors_'+stepTutors]?.email || ''}
+              value={values?.["tutors_" + stepTutors]?.email || ""}
               onChange={handleChange}
               placeholder="Dato requerido para iniciar sesión"
-              error={errors?.['tutors_'+stepTutors]?.email}
+              error={errors?.["tutors_" + stepTutors]?.email}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -43,32 +43,32 @@ const StepTutors = ({ step }) => {
               label="Nombre(s)"
               type="text"
               name={`tutors_${stepTutors}.name`}
-              value={values?.['tutors_'+stepTutors]?.name || ''}
+              value={values?.["tutors_" + stepTutors]?.name || ""}
               onChange={handleChange}
-              error={errors?.['tutors_'+stepTutors]?.name}
+              error={errors?.["tutors_" + stepTutors]?.name}
             />
-           <InputField
+            <InputField
               label="Apellido Paterno"
               type="text"
               name={`tutors_${stepTutors}.lastName`}
-              value={values?.['tutors_'+stepTutors]?.lastName || ''}
+              value={values?.["tutors_" + stepTutors]?.lastName || ""}
               onChange={handleChange}
-              error={errors?.['tutors_'+stepTutors]?.lastName}
+              error={errors?.["tutors_" + stepTutors]?.lastName}
             />
             <InputField
               label="Apellido Materno"
               type="text"
               name={`tutors_${stepTutors}.secondLastName`}
-              value={values?.['tutors_'+stepTutors]?.secondLastName || ''}
+              value={values?.["tutors_" + stepTutors]?.secondLastName || ""}
               onChange={handleChange}
             />
             <InputField
               label="Teléfono"
               type="text"
               name={`tutors_${stepTutors}.phone`}
-              value={values?.['tutors_'+stepTutors]?.phone || ''}
+              value={values?.["tutors_" + stepTutors]?.phone || ""}
               onChange={handleChange}
-              error={errors?.['tutors_'+stepTutors]?.phone}
+              error={errors?.["tutors_" + stepTutors]?.phone}
               maxLength={10}
             />
             <div className="grid grid-rows-1 p-4">
@@ -78,11 +78,20 @@ const StepTutors = ({ step }) => {
                     <input
                       type="checkbox"
                       name={`tutors_${stepTutors}.active`}
-                      onChange={() => setFieldValue(`tutors_${stepTutors}.active`, !values?.['tutors_'+stepTutors]?.active)}
+                      onChange={() =>
+                        setFieldValue(
+                          `tutors_${stepTutors}.active`,
+                          !values?.["tutors_" + stepTutors]?.active,
+                        )
+                      }
                       id={`active_${stepTutors}`}
-                      checked={values?.['tutors_'+stepTutors]?.active || false}
+                      checked={
+                        values?.["tutors_" + stepTutors]?.active || false
+                      }
                     />
-                    <label htmlFor={`active_${stepTutors}`} className="p-2">Activo</label>
+                    <label htmlFor={`active_${stepTutors}`} className="p-2">
+                      Activo
+                    </label>
                   </div>
                 </div>
               </div>
@@ -93,10 +102,10 @@ const StepTutors = ({ step }) => {
           <div className="flex flex-col">
             <label htmlFor="avatar">Avatar</label>
           </div>
-        </div> 
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export default StepTutors
+export default StepTutors;

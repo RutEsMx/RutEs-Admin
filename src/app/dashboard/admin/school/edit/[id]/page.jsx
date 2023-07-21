@@ -1,30 +1,33 @@
-import FormSchool from '@/components/MultiStepForm/School'
+import FormSchool from "@/components/MultiStepForm/School";
 
 const getSchool = async (id) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/api/schools/${id}/`, { cache: 'no-store' })
-    const data = await response.json()
-    data.id = id
-    return data
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}/api/schools/${id}/`,
+      { cache: "no-store" },
+    );
+    const data = await response.json();
+    data.id = id;
+    return data;
   } catch (error) {
-    alert(error?.message)
+    alert(error?.message);
   }
-}
+};
 
 const Page = async ({ params }) => {
-  const { id } = params
-  const school = await getSchool(id)
+  const { id } = params;
+  const school = await getSchool(id);
 
   return (
     <div className="container mx-auto px-4 h-screen bg-white">
       <div className="grid grid-cols-1 gap-4 p-2">
         <div>
           <h1>Editar escuela</h1>
-          <FormSchool data={school} isEdit/>
+          <FormSchool data={school} isEdit />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

@@ -1,13 +1,16 @@
 import InputField from "@/components/InputField";
 import SelectField from "@/components/SelectField";
 import { useAuthContext } from "@/context/AuthContext";
-import { OPTIONS_USER_ROLES_ADMIN_RUTES, OPTIONS_USER_ROLES_ADMIN } from "@/utils/options";
+import {
+  OPTIONS_USER_ROLES_ADMIN_RUTES,
+  OPTIONS_USER_ROLES_ADMIN,
+} from "@/utils/options";
 import { useFormikContext } from "formik";
 
 const StepUsers = () => {
   const { values, handleChange, errors } = useFormikContext();
   const { profile } = useAuthContext();
-  const isAdminRutes = profile?.roles?.includes('admin-rutes');
+  const isAdminRutes = profile?.roles?.includes("admin-rutes");
 
   return (
     <div>
@@ -59,7 +62,11 @@ const StepUsers = () => {
             <SelectField
               labelTitle="Tipo de usuario"
               name="roles"
-              options={isAdminRutes ? OPTIONS_USER_ROLES_ADMIN_RUTES : OPTIONS_USER_ROLES_ADMIN}
+              options={
+                isAdminRutes
+                  ? OPTIONS_USER_ROLES_ADMIN_RUTES
+                  : OPTIONS_USER_ROLES_ADMIN
+              }
               error={errors.roles}
               multiple={true}
             />
@@ -74,6 +81,6 @@ const StepUsers = () => {
       </div>
     </div>
   );
-}
+};
 
 export default StepUsers;
