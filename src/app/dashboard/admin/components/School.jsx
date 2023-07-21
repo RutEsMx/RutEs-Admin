@@ -7,8 +7,8 @@ import { useAuthContext } from "@/context/AuthContext";
 export default function School() {
   const { profile, school } = useAuthContext();
   const navigation = useRouter();
-  // Check if the user has the 'admin-rutes' role
   const isAdminRutes = profile?.roles?.includes("admin-rutes");
+
   return (
     <>
       <div className="grid grid-cols-2">

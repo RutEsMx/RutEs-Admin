@@ -56,6 +56,7 @@ export default function Page() {
                 validationSchema={validationLogin}
                 validateOnBlur={false}
                 validateOnMount={false}
+                validateOnChange={false}
               >
                 {({ values, handleChange, errors, setValues }) => (
                   <Form className="flex flex-col justify-center items-center w-full">
