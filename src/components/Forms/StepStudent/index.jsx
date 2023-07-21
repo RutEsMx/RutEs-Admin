@@ -5,7 +5,7 @@ import { useFormikContext } from "formik";
 
 const StepStudent = () => {
   const { values, handleChange, errors } = useFormikContext();
-  
+
   return (
     <div>
       <h1>Nuevo Alumno</h1>
@@ -90,30 +90,50 @@ const StepStudent = () => {
             <div className="grid grid-cols-3">
               <div className="flex justify-around">
                 <div className="flex items-center">
-                  <input type="checkbox" name="includeFather" onChange={handleChange} id="includeFather" checked={values?.includeFather}/>
-                  <label htmlFor="includeFather" className="p-2">Incluir papá</label>
+                  <input
+                    type="checkbox"
+                    name="includeFather"
+                    onChange={handleChange}
+                    id="includeFather"
+                    checked={values?.includeFather}
+                  />
+                  <label htmlFor="includeFather" className="p-2">
+                    Incluir papá
+                  </label>
                 </div>
-                <div className="flex items-center">
-                  <input type="checkbox" name="includeMother" onChange={handleChange} id="includeMother" checked={values?.includeMother} />
-                  <label htmlFor="includeMother" className="p-2">Incluir mamá</label>
-                </div>
-              </div>
                 <div className="flex items-center">
                   <input
-                    type="number"
-                    name="countTutors"
-                    id="countTutors"
-                    value={values?.countTutors}
+                    type="checkbox"
+                    name="includeMother"
                     onChange={handleChange}
-                    className="border border-black rounded-md p-1 w-12"
-                    max={10}
-                    min={0}
+                    id="includeMother"
+                    checked={values?.includeMother}
                   />
-                  <label htmlFor="countTutors" className="p-2">Cantidad de Tutores?</label>
+                  <label htmlFor="includeMother" className="p-2">
+                    Incluir mamá
+                  </label>
                 </div>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="number"
+                  name="countTutors"
+                  id="countTutors"
+                  value={values?.countTutors}
+                  onChange={handleChange}
+                  className="border border-black rounded-md p-1 w-12"
+                  max={10}
+                  min={0}
+                />
+                <label htmlFor="countTutors" className="p-2">
+                  Cantidad de Tutores?
+                </label>
+              </div>
             </div>
             <div>
-              <span className="text-red ">{errors?.includeFather || errors?.includeMother}</span>
+              <span className="text-red ">
+                {errors?.includeFather || errors?.includeMother}
+              </span>
             </div>
           </div>
         </div>
@@ -126,6 +146,6 @@ const StepStudent = () => {
       </div>
     </div>
   );
-}
+};
 
 export default StepStudent;

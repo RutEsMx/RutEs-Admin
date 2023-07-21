@@ -1,9 +1,19 @@
-import { Field } from "formik"
+import { Field } from "formik";
 
-const InputField = ({ label, type, name, value, onChange, error, ...props }) => {
+const InputField = ({
+  label,
+  type,
+  name,
+  value,
+  onChange,
+  error,
+  ...props
+}) => {
   return (
     <div className="flex flex-col">
-      <label htmlFor={name} className="mb-1">{label}</label>
+      <label htmlFor={name} className="mb-1">
+        {label}
+      </label>
       <Field
         name={name}
         type={type}
@@ -14,7 +24,7 @@ const InputField = ({ label, type, name, value, onChange, error, ...props }) => 
       />
       {error && <span className="text-red">{error}</span>}
     </div>
-  )
-}
+  );
+};
 
-export default InputField
+export default InputField;

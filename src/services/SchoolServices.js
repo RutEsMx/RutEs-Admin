@@ -1,15 +1,19 @@
-import { validateEmail } from "@/utils"
-import { createDocument, getDocumentById, getDocuments, updateDocument } from "@/firebase/crud"
+import { validateEmail } from "@/utils";
+import {
+  createDocument,
+  getDocumentById,
+  updateDocument,
+} from "@/firebase/crud";
 import { signOut } from "@/firebase/auth";
 
 const createSchoolByForm = async (data) => {
   const dataCopy = { ...data };
   const { email } = dataCopy;
 
-  if(validateEmail(email)) {
+  if (validateEmail(email)) {
     try {
-      const response = await createDocument("schools", dataCopy)
-      if (response?.error) return { error: response.error }
+      const response = await createDocument("schools", dataCopy);
+      if (response?.error) return { error: response.error };
       return { success: true, message: "Escuela creada correctamente" };
     } catch (error) {
       return { error };
@@ -23,12 +27,16 @@ const updateSchoolByForm = async (data) => {
   const dataCopy = { ...data };
   const { email } = dataCopy;
 
-  if(validateEmail(email)) {
+  if (validateEmail(email)) {
     try {
-      const response = await updateDocument("schools", dataCopy.id, dataCopy)
-      
-      if(response?.error) return { error: response.error }
-      return { success: true, message: "Escuela actualizada correctamente", result: dataCopy };
+      const response = await updateDocument("schools", dataCopy.id, dataCopy);
+
+      if (response?.error) return { error: response.error };
+      return {
+        success: true,
+        message: "Escuela actualizada correctamente",
+        result: dataCopy,
+      };
     } catch (error) {
       return { error };
     }
@@ -39,18 +47,14 @@ const updateSchoolByForm = async (data) => {
 
 const getSchooldById = async (id) => {
   try {
-    const response = await getDocumentById("schools", id)
-    if (response?.error) return { error: response.error }
+    const response = await getDocumentById("schools", id);
+    if (response?.error) return { error: response.error };
     return { success: true, data: response };
   } catch (error) {
-    signOut()
-    error.message = "No se pudo obtener datos de la escuela"
+    signOut();
+    error.message = "No se pudo obtener datos de la escuela";
     return { error };
   }
 };
 
-export {
-  createSchoolByForm,
-  getSchooldById,
-  updateSchoolByForm,
-}
+export { createSchoolByForm, getSchooldById, updateSchoolByForm };

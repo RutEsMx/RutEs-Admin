@@ -1,10 +1,10 @@
-import { createColumnHelper } from "@tanstack/table-core"
-import HeaderTable from "@/components/Table/elements/HeaderTable"
-import CellTable from "@/components/Table/elements/CellTable"
-import CheckboxTable from "@/components/Table/elements/CheckboxTable"
-import { STATUS, STATUS_TRAVEL } from "@/utils/options"
-import { CheckCircleIcon, NoSymbolIcon } from "@heroicons/react/24/outline"
-import Link from 'next/link'
+import { createColumnHelper } from "@tanstack/table-core";
+import HeaderTable from "@/components/Table/elements/HeaderTable";
+import CellTable from "@/components/Table/elements/CellTable";
+import CheckboxTable from "@/components/Table/elements/CheckboxTable";
+import { STATUS_TRAVEL } from "@/utils/options";
+import { CheckCircleIcon, NoSymbolIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
 
 const COLORS = {
   active: "text-green",
@@ -12,12 +12,12 @@ const COLORS = {
   absent: "text-yellow",
   toSchool: "text-green",
   toHome: "text-blue",
-}
+};
 
-const columnHelper = createColumnHelper()
+const columnHelper = createColumnHelper();
 
 const studentsColumns = [
-  columnHelper.accessor('select', {
+  columnHelper.accessor("select", {
     cell: ({ row }) => (
       <div className="flex justify-center p-3">
         <CheckboxTable
@@ -30,98 +30,85 @@ const studentsColumns = [
         />
       </div>
     ),
-    header: ({ table }) => <HeaderTable>
-      <CheckboxTable
-        {...{
-          checked: table.getIsAllRowsSelected(),
-          indeterminate: table.getIsSomeRowsSelected(),
-          onChange: table.getToggleAllRowsSelectedHandler(),
-        }}
-      />
-    </HeaderTable>,
+    header: ({ table }) => (
+      <HeaderTable>
+        <CheckboxTable
+          {...{
+            checked: table.getIsAllRowsSelected(),
+            indeterminate: table.getIsSomeRowsSelected(),
+            onChange: table.getToggleAllRowsSelectedHandler(),
+          }}
+        />
+      </HeaderTable>
+    ),
   }),
   {
     header: () => <HeaderTable>Estudiante</HeaderTable>,
-    accessorKey: 'students',
+    accessorKey: "students",
     accessorFn: (data) => {
-      return `${data.name} ${data.lastName} ${data.secondLastName}`
+      return `${data.name} ${data.lastName} ${data.secondLastName}`;
     },
     cell: (data) => {
-      const { row } = data
+      const { row } = data;
       return (
-        <div
-          className='flex flex-row items-center cursor-pointer'
-        >
-          {/* <Link href={`/dashboard/students/${row?.original?.id}`}> */}
-          <Link href={`/dashboard/students/CU19ABvDJ3j8dFvdluPE`}>
+        <div className="flex flex-row items-center cursor-pointer">
+          <Link href={`/dashboard/students/${row?.original?.id}`}>
             {data.getValue()}
           </Link>
         </div>
-      )
+      );
     },
   },
   {
     header: () => <HeaderTable>Estado</HeaderTable>,
-    accessorKey: 'statusTravel',
+    accessorKey: "statusTravel",
     cell: (data) => {
-      const { row } = data
-      const isActive = row?.original?.status === 'active'
-      if (!isActive) return null
-      const colorStatusTravel = COLORS[data.getValue()] ?? ''
+      const { row } = data;
+      const isActive = row?.original?.status === "active";
+      if (!isActive) return null;
+      const colorStatusTravel = COLORS[data.getValue()] ?? "";
       return (
-        <div
-          className='flex flex-row items-center justify-center'
-        >
-          <CellTable className={colorStatusTravel} >
+        <div className="flex flex-row items-center justify-center">
+          <CellTable className={colorStatusTravel}>
             {STATUS_TRAVEL[data.getValue()]}
           </CellTable>
         </div>
-      )
+      );
     },
   },
   {
     header: () => <HeaderTable>Servicio</HeaderTable>,
-    accessorKey: 'service',
+    accessorKey: "service",
     cell: (data) => {
-      const { row } = data
-      const isActive = row?.original?.status === 'active'
+      const { row } = data;
+      const isActive = row?.original?.status === "active";
       return (
-        <div
-          className='flex flex-row items-center justify-center'
-        >
+        <div className="flex flex-row items-center justify-center">
           <CellTable>
-            {
-              isActive ? (
-                <CheckCircleIcon className='h-5 w-5 text-green' />
-              ) : (
-                <NoSymbolIcon className='h-5 w-5 text-red' />
-              )
-            }
-
+            {isActive ? (
+              <CheckCircleIcon className="h-5 w-5 text-green" />
+            ) : (
+              <NoSymbolIcon className="h-5 w-5 text-red" />
+            )}
           </CellTable>
         </div>
-      )
+      );
     },
   },
-  columnHelper.accessor('dayRoute', {
-    cell: info => {
+  columnHelper.accessor("dayRoute", {
+    cell: (info) => {
       return (
-        <div
-          className='flex flex-row items-center justify-center'
-        >
-          <CellTable>
-            {info.getValue()?.route?.nameRoute}
-          </CellTable>
+        <div className="flex flex-row items-center justify-center">
+          <CellTable>{info.getValue()?.route?.nameRoute}</CellTable>
         </div>
-      )
-    }
-    ,
+      );
+    },
     header: () => <HeaderTable>Ruta</HeaderTable>,
   }),
-]
+];
 
 const parentsColumns = [
-  columnHelper.accessor('select', {
+  columnHelper.accessor("select", {
     cell: ({ row }) => (
       <div className="flex justify-center p-3">
         <CheckboxTable
@@ -134,101 +121,162 @@ const parentsColumns = [
         />
       </div>
     ),
-    header: ({ table }) => <HeaderTable>
-      <CheckboxTable
-        {...{
-          checked: table.getIsAllRowsSelected(),
-          indeterminate: table.getIsSomeRowsSelected(),
-          onChange: table.getToggleAllRowsSelectedHandler(),
-        }}
-      />
-    </HeaderTable>,
+    header: ({ table }) => (
+      <HeaderTable>
+        <CheckboxTable
+          {...{
+            checked: table.getIsAllRowsSelected(),
+            indeterminate: table.getIsSomeRowsSelected(),
+            onChange: table.getToggleAllRowsSelectedHandler(),
+          }}
+        />
+      </HeaderTable>
+    ),
   }),
   {
     header: () => <HeaderTable>Padre/Madre</HeaderTable>,
-    accessorKey: 'parents',
+    accessorKey: "parents",
     accessorFn: (data) => {
-      const { name, lastName, secondLastName } = data
-      return `${name} ${lastName} ${secondLastName}`
+      const { name, lastName, secondLastName } = data;
+      return `${name} ${lastName} ${secondLastName}`;
     },
     cell: (data) => {
-      const { row } = data
+      const { row } = data;
 
-      return <div
-        className='flex flex-row items-center cursor-pointer'
-        onClick={() => console.log('>>>>Padre/Madre', row?.original?.id)}
-      >
-        {data.getValue()}
-
-      </div>
+      return (
+        <div
+          className="flex flex-row items-center cursor-pointer"
+          onClick={() => console.log(">>>>Padre/Madre", row?.original?.id)}
+        >
+          {data.getValue()}
+        </div>
+      );
     },
   },
   {
     header: () => <HeaderTable>Estudiante</HeaderTable>,
-    accessorKey: 'students',
+    accessorKey: "students",
     accessorFn: (data) => {
-      const { students } = data
-      return students?.map((student) => {
-        return `${student.name} ${student.lastName} ${student.secondLastName}`
-      }).join(',')
+      const { students } = data;
+      return students
+        ?.map((student) => {
+          return `${student.name} ${student.lastName} ${student.secondLastName}`;
+        })
+        .join(",");
     },
     cell: (data) => {
-      const dataFormat = data.getValue()?.split(',')
+      const dataFormat = data.getValue()?.split(",");
       return (
-        <div
-          className='flex flex-col'
-        >
+        <div className="flex flex-col">
           {dataFormat?.map((student) => {
-            return <div key={student?.id}>{student}</div>
-          }
-          )}
+            return <div key={student?.id}>{student}</div>;
+          })}
         </div>
-      )
+      );
     },
   },
   {
     header: () => <HeaderTable>Servicio</HeaderTable>,
-    accessorKey: 'service',
+    accessorKey: "service",
     cell: (data) => {
-      const { row } = data
-      const isActive = row?.original?.status === 'active'
+      const { row } = data;
+      const isActive = row?.original?.status === "active";
       return (
-        <div
-          className='flex flex-row items-center justify-center'
-        >
+        <div className="flex flex-row items-center justify-center">
           <CellTable>
-            {
-              isActive ? (
-                <CheckCircleIcon className='h-5 w-5 text-green' />
-              ) : (
-                <NoSymbolIcon className='h-5 w-5 text-red' />
-              )
-            }
-
+            {isActive ? (
+              <CheckCircleIcon className="h-5 w-5 text-green" />
+            ) : (
+              <NoSymbolIcon className="h-5 w-5 text-red" />
+            )}
           </CellTable>
         </div>
-      )
+      );
     },
   },
-  columnHelper.accessor('phone', {
-    cell: info => info.getValue(),
+  columnHelper.accessor("phone", {
+    cell: (info) => info.getValue(),
     header: () => <HeaderTable>Teléfono</HeaderTable>,
   }),
-  columnHelper.accessor('email', {
-    cell: info => info.getValue(),
+  columnHelper.accessor("email", {
+    cell: (info) => info.getValue(),
     header: () => <HeaderTable>Correo electrónico</HeaderTable>,
     enableGlobalFilter: false,
   }),
-]
+];
+
+const usersColumns = [
+  columnHelper.accessor("select", {
+    cell: ({ row }) => (
+      <div className="flex justify-center p-3">
+        <CheckboxTable
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            indeterminate: row.getIsSomeSelected(),
+            onChange: row.getToggleSelectedHandler(),
+          }}
+        />
+      </div>
+    ),
+    header: ({ table }) => (
+      <HeaderTable>
+        <CheckboxTable
+          {...{
+            checked: table.getIsAllRowsSelected(),
+            indeterminate: table.getIsSomeRowsSelected(),
+            onChange: table.getToggleAllRowsSelectedHandler(),
+          }}
+        />
+      </HeaderTable>
+    ),
+  }),
+  {
+    header: () => <HeaderTable>Nombre</HeaderTable>,
+    accessorKey: "name",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <div
+          className="flex flex-row items-center cursor-pointer"
+          onClick={() => console.log(">>>>usuario", row?.original?.id)}
+        >
+          {data.getValue()}
+        </div>
+      );
+    },
+  },
+  {
+    header: () => <HeaderTable>Correo electrónico</HeaderTable>,
+    accessorKey: "email",
+  },
+  {
+    header: () => <HeaderTable>Roles</HeaderTable>,
+    accessorKey: "roles",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <div
+          className="flex flex-row items-center cursor-pointer"
+          onClick={() => console.log(">>>>roles", row?.original?.id)}
+        >
+          {data.getValue()}
+        </div>
+      );
+    },
+  },
+];
 
 const COLUMNS = {
-  'parents': parentsColumns,
-  'students': studentsColumns,
-  'auxiliars': [],
-  'drivers': [],
-  'units': [],
-}
+  parents: parentsColumns,
+  students: studentsColumns,
+  auxiliars: [],
+  drivers: [],
+  units: [],
+  users: usersColumns,
+  schools: [],
+};
 
 export default function ColumnSelected(type) {
-  return  COLUMNS[type]
+  return COLUMNS[type];
 }
