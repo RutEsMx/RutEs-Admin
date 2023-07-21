@@ -2,9 +2,11 @@
 const nextConfig = {
   env: {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
-    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:
+      process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
     NEXT_PUBLIC_FIREBASE_PROJET_ID: process.env.NEXT_PUBLIC_FIREBASE_PROJET_ID,
-    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:
+      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
     FIREBASE_MESSAGING_SENDER_ID: process.env.FIREBASE_MESSAGING_SENDER_ID,
     NEXT_PUBLIC_FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
@@ -17,10 +19,10 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: 'pokeapi.co',
-      }
-    ]
-  }
-}
+        hostname: "pokeapi.co",
+      },
+    ],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

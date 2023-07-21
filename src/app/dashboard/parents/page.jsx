@@ -12,12 +12,10 @@ const Parents = () => {
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">
-        <DataTable 
-          type={'parents'}
-        />
+        <DataTable type={"parents"} />
       </div>
     </div>
   );
-}
+};
 
 export default Parents;

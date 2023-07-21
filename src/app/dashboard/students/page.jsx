@@ -12,12 +12,10 @@ const Students = () => {
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">
-        <DataTable
-          type={'students'}
-        />
+        <DataTable type={"students"} />
       </div>
     </div>
   );
-}
+};
 
 export default Students;

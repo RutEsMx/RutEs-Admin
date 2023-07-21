@@ -21,11 +21,8 @@ async function signOut() {
   } catch (e) {
     error = e;
   }
-  
+
   return { result, error };
 }
 
-export {
-  signInAuth,
-  signOut,
-};
+export { signInAuth, signOut };

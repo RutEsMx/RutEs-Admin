@@ -1,13 +1,11 @@
-'use client'
+"use client";
 import Maps from "@/components/Maps";
 import RoutesCards from "@/components/RoutesCards";
 import Image from "next/image";
-import { useRoutesStore } from "@/store/routesStore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Routes = () => {
-  const { routes, setRoutes } = useRoutesStore()
-  const [markers, setMarkers] = useState([])
+  const [markers] = useState([]);
 
   // useEffect(() => {
   //   const data = routes.map(route => {
@@ -20,9 +18,7 @@ const Routes = () => {
   //   })
   //   setMarkers(data)
   // }, [routes])
-  
-  
-  
+
   return (
     <div className="container mx-auto px-4 pb-12 h-full">
       <div className="grid grid-cols-2 gap-4 p-2">
@@ -37,11 +33,13 @@ const Routes = () => {
         </div>
         <div className="flex justify-end items-center gap-4">
           <span>Filtrar rutas</span>
-          <button className="bg-yellow text-white px-4 py-2 rounded-md">Nueva ruta</button>
+          <button className="bg-yellow text-white px-4 py-2 rounded-md">
+            Nueva ruta
+          </button>
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">
-        <Maps markers={markers}/>
+        <Maps markers={markers} />
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div>
@@ -53,6 +51,6 @@ const Routes = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Routes;
