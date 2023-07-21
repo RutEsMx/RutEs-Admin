@@ -1,14 +1,12 @@
 import * as Yup from "yup";
 const REGEX_PHONE = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 import { auth } from "@/firebase/client";
+import { fetchSignInMethodsForEmail } from "firebase/auth";
 
 const emailExists = async (email) => {
   try {
-    const exist = await auth.fetchSignInMethodsForEmail(email);
-    console.log(
-      "🚀 ~ file: validationSchemas.js:7 ~ emailExists ~ exist:",
-      exist,
-    );
+    const exist = await fetchSignInMethodsForEmail(auth, email);
+    if (exist.length > 0) return false;
     return true;
   } catch (error) {
     return false;
@@ -121,12 +119,27 @@ const validateUsers = Yup.object().shape({
     .nullable()
     .matches(REGEX_PHONE, "Teléfono inválido")
     .required("Teléfono requerido"),
-  roles: Yup.array().nullable().required("Rol requerido"),
+  roles: Yup.array()
+    .min(1, "Rol requerido")
+    .nullable()
+    .required("Rol requerido"),
   email: Yup.string()
     .nullable()
     .email("Correo inválido")
     .required("Correo requerido")
     .test("email-exists", "Correo ya existe", emailExists),
+  // avatar: Yup.string().nullable().required('Avatar requerido'),
+  // schoolId: Yup.string().nullable().required('Escuela requerida'),
+});
+const validateUpdateUsers = Yup.object().shape({
+  name: Yup.string().nullable().required("Nombre requerido"),
+  lastName: Yup.string().nullable().required("Apellido Paterno requerido"),
+  secondLastName: Yup.string().nullable(),
+  phone: Yup.string()
+    .nullable()
+    .matches(REGEX_PHONE, "Teléfono inválido")
+    .required("Teléfono requerido"),
+  roles: Yup.array().nullable().required("Rol requerido"),
   // avatar: Yup.string().nullable().required('Avatar requerido'),
   // schoolId: Yup.string().nullable().required('Escuela requerida'),
 });
@@ -162,4 +175,5 @@ export {
   validateUsers,
   validateSchool,
   validationLogin,
+  validateUpdateUsers,
 };

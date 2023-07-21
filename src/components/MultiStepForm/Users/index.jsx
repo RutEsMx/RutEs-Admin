@@ -2,32 +2,38 @@
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import StepUsers from "@/components/Forms/StepUsers";
-import { validateUsers } from "@/utils/validationSchemas";
+import { validateUsers, validateUpdateUsers } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
-import { createUsersByForm } from "@/services/UsersServices";
+import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
 
-const FormUser = () => {
+const FormUser = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
 
   const initialValues = {
-    name: "",
-    lastName: "",
-    secondLastName: "",
-    roles: [],
-    email: "",
-    phone: "",
+    name: data?.name || "",
+    lastName: data?.lastName || "",
+    secondLastName: data?.secondLastName || "",
+    roles: data?.roles || [],
+    email: data?.email || "",
+    phone: data?.phone || "",
   };
 
   const handleNext = async (values) => {
     try {
       values.schoolId = profile?.schoolId;
-      const response = await createUsersByForm(values);
-      if (response.success) {
-        alert(response.message);
+      if (isEdit) values.id = data?.id;
+      const { success, message, error } = isEdit
+        ? await updateUsersByForm(values)
+        : await createUsersByForm(values);
+
+      if (error) return alert(error?.message);
+      if (success) {
+        alert(message);
         return navigation.replace("/dashboard/admin");
       }
+      return alert(message);
     } catch (error) {
       alert(error.message);
     }
@@ -41,11 +47,14 @@ const FormUser = () => {
     <Formik
       initialValues={initialValues}
       onSubmit={handleNext}
-      validationSchema={validateUsers}
+      validationSchema={isEdit ? validateUpdateUsers : validateUsers}
+      validateOnBlur={false}
+      validateOnChange={false}
+      validateOnMount={false}
     >
       {({ isSubmitting, handleSubmit }) => (
         <Form>
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end gap-4 -mt-8">
             <Button onClick={handleBack} color="bg-light-gray" type="button">
               Atrás
             </Button>
@@ -54,10 +63,10 @@ const FormUser = () => {
               disabled={isSubmitting}
               type="button"
             >
-              Enviar
+              {isEdit ? "Editar" : "Enviar"}
             </Button>
           </div>
-          <StepUsers />
+          <StepUsers isEdit={isEdit} />
         </Form>
       )}
     </Formik>
