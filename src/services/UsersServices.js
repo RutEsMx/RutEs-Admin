@@ -1,5 +1,5 @@
 import { validateEmail } from "@/utils";
-import { createDocument, getDocuments } from "@/firebase/crud";
+import { createDocument, getDocuments, updateDocument } from "@/firebase/crud";
 import { signUp } from "./AuthServices";
 
 const createUsersByForm = async (data) => {
@@ -31,9 +31,31 @@ const createUsersByForm = async (data) => {
   }
 };
 
+const updateUsersByForm = async (data) => {
+  const dataCopy = { ...data };
+  const { email } = dataCopy;
+
+  if (validateEmail(email)) {
+    try {
+      const response = await updateDocument("profile", dataCopy.id, dataCopy);
+
+      if (response?.error) return { error: response.error };
+      return {
+        success: true,
+        message: "Usuario actualizado correctamente",
+        result: dataCopy,
+      };
+    } catch (error) {
+      return { error };
+    }
+  } else {
+    return { error: "El correo no es valido" };
+  }
+};
+
 const getUsers = async (school) => {
   const users = await getDocuments("profile", school, "users");
   return users;
 };
 
-export { createUsersByForm, getUsers };
+export { createUsersByForm, getUsers, updateUsersByForm };

@@ -5,7 +5,7 @@ const Page = () => {
     <div className="container mx-auto px-4 h-screen bg-white">
       <div className="grid grid-cols-1 gap-4 p-2">
         <div>
-          <h1>Nuevo Usuario</h1>
+          <p className=" text-2xl font-bold">Nuevo Usuario</p>
           <FormUser />
         </div>
       </div>

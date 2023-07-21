@@ -3,7 +3,12 @@ import HeaderTable from "@/components/Table/elements/HeaderTable";
 import CellTable from "@/components/Table/elements/CellTable";
 import CheckboxTable from "@/components/Table/elements/CheckboxTable";
 import { STATUS_TRAVEL } from "@/utils/options";
-import { CheckCircleIcon, NoSymbolIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  NoSymbolIcon,
+  BuildingLibraryIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 const COLORS = {
@@ -219,17 +224,7 @@ const usersColumns = [
         />
       </div>
     ),
-    header: ({ table }) => (
-      <HeaderTable>
-        <CheckboxTable
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      </HeaderTable>
-    ),
+    header: () => <HeaderTable>Seleccionar</HeaderTable>,
   }),
   {
     header: () => <HeaderTable>Nombre</HeaderTable>,
@@ -237,12 +232,9 @@ const usersColumns = [
     cell: (data) => {
       const { row } = data;
       return (
-        <div
-          className="flex flex-row items-center cursor-pointer"
-          onClick={() => console.log(">>>>usuario", row?.original?.id)}
-        >
+        <Link href={`/dashboard/admin/users/edit/${row?.original?.id}`}>
           {data.getValue()}
-        </div>
+        </Link>
       );
     },
   },
@@ -254,16 +246,40 @@ const usersColumns = [
     header: () => <HeaderTable>Roles</HeaderTable>,
     accessorKey: "roles",
     cell: (data) => {
-      const { row } = data;
+      const roles = data.getValue();
+
       return (
-        <div
-          className="flex flex-row items-center cursor-pointer"
-          onClick={() => console.log(">>>>roles", row?.original?.id)}
-        >
-          {data.getValue()}
+        <div className="flex flex-row items-center justify-center">
+          <CellTable>
+            <div className="flex flex-row items-center justify-center">
+              {roles.map((role) => {
+                if (role === "admin") {
+                  return (
+                    <BuildingLibraryIcon
+                      className="h-5 w-5 text-green"
+                      key={role}
+                    />
+                  );
+                } else if (role === "user-school") {
+                  return <UserIcon className="h-5 w-5 text-blue" key={role} />;
+                } else if (role === "admin-rutes") {
+                  return (
+                    <UserIcon
+                      className="h-5 w-5 text-yellow-pressed"
+                      key={role}
+                    />
+                  );
+                }
+              })}
+            </div>
+          </CellTable>
         </div>
       );
     },
+  },
+  {
+    header: () => <HeaderTable>Estado</HeaderTable>,
+    accessorKey: "status",
   },
 ];
 

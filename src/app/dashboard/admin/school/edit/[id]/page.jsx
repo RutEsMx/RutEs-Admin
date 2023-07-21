@@ -22,7 +22,7 @@ const Page = async ({ params }) => {
     <div className="container mx-auto px-4 h-screen bg-white">
       <div className="grid grid-cols-1 gap-4 p-2">
         <div>
-          <h1>Editar escuela</h1>
+          <p className=" text-2xl font-bold">Editar escuela</p>
           <FormSchool data={school} isEdit />
         </div>
       </div>

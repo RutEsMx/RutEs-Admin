@@ -21,12 +21,6 @@ export default function Users() {
           {isAdmin && (
             <div className="flex justify-end gap-2">
               <ButtonStep
-                color="bg-light-gray"
-                onClick={() => navigation.push("/dashboard/admin/users/edit/1")}
-              >
-                Editar
-              </ButtonStep>
-              <ButtonStep
                 color="bg-yellow"
                 onClick={() => navigation.push("/dashboard/admin/users/create")}
               >

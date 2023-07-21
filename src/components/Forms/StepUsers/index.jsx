@@ -7,7 +7,7 @@ import {
 } from "@/utils/options";
 import { useFormikContext } from "formik";
 
-const StepUsers = () => {
+const StepUsers = ({ isEdit }) => {
   const { values, handleChange, errors } = useFormikContext();
   const { profile } = useAuthContext();
   const isAdminRutes = profile?.roles?.includes("admin-rutes");
@@ -49,6 +49,7 @@ const StepUsers = () => {
               value={values.email}
               onChange={handleChange}
               error={errors.email}
+              disabled={isEdit}
             />
             <InputField
               label="Teléfono"

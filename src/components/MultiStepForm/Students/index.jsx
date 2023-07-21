@@ -117,6 +117,9 @@ const MultiStepFormStudent = () => {
       initialValues={initialValues}
       onSubmit={handleNext}
       validationSchema={CurrentValidateSchema}
+      validateOnBlur={false}
+      validateOnChange={false}
+      validateOnMount={false}
     >
       {({ isSubmitting, handleSubmit }) => (
         <Form>
