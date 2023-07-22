@@ -1,10 +1,8 @@
-import { useRouter } from "next/navigation";
-import ButtonStep from "@/components/Button";
 import { useAuthContext } from "@/context/AuthContext";
 import DataTable from "@/components/Table/DataTable";
+import ButtonLink from "@/components/ButtonLink";
 
 export default function Users() {
-  const navigation = useRouter();
   const { profile } = useAuthContext();
 
   const isAdmin =
@@ -14,20 +12,15 @@ export default function Users() {
   return (
     <>
       <div className="grid grid-cols-2">
-        <div>
-          <h1 className="font-bold text-3xl">Usuarios</h1>
-        </div>
-        <div className=" grid-start-2 me-5">
-          {isAdmin && (
-            <div className="flex justify-end gap-2">
-              <ButtonStep
-                color="bg-yellow"
-                onClick={() => navigation.push("/dashboard/admin/users/create")}
-              >
+        <h1 className="font-bold text-3xl">Usuarios</h1>
+        <div className="grid-start-2 me-5">
+          <div className="flex justify-end gap-2">
+            {isAdmin && (
+              <ButtonLink href="/dashboard/admin/users/create">
                 Crear
-              </ButtonStep>
-            </div>
-          )}
+              </ButtonLink>
+            )}
+          </div>
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">

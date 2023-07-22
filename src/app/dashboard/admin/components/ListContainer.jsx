@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import School from "./School";
 import Users from "./Users";
 import { useAuthContext } from "@/context/AuthContext";
+import Schools from "./Schools";
 
 const ListContainer = () => {
   const { profile } = useAuthContext();
@@ -16,14 +17,17 @@ const ListContainer = () => {
 
   useEffect(() => {
     if (type === "school") {
-      document.getElementById("school").classList.add("bg-slate-500");
-      document.getElementById("users").classList.remove("bg-slate-500");
+      document.getElementById("school")?.classList.add("bg-slate-500");
+      document.getElementById("users")?.classList.remove("bg-slate-500");
+      document.getElementById("schools")?.classList.remove("bg-slate-500");
     } else if (type === "schools") {
-      document.getElementById("schools").classList.add("bg-slate-500");
-      document.getElementById("users").classList.remove("bg-slate-500");
+      document.getElementById("schools")?.classList.add("bg-slate-500");
+      document.getElementById("users")?.classList.remove("bg-slate-500");
+      document.getElementById("school")?.classList.remove("bg-slate-500");
     } else {
-      document.getElementById("users").classList.add("bg-slate-500");
-      document.getElementById("school").classList.remove("bg-slate-500");
+      document.getElementById("users")?.classList.add("bg-slate-500");
+      document.getElementById("school")?.classList.remove("bg-slate-500");
+      document.getElementById("schools")?.classList.remove("bg-slate-500");
     }
   }, [type]);
 
@@ -33,7 +37,7 @@ const ListContainer = () => {
     } else if (type === "users") {
       return <Users />;
     } else if (type === "schools") {
-      return <School />;
+      return <Schools />;
     }
   };
 

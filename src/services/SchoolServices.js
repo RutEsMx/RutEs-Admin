@@ -57,4 +57,16 @@ const getSchooldById = async (id) => {
   }
 };
 
-export { createSchoolByForm, getSchooldById, updateSchoolByForm };
+const getSchools = async ({ pageIndex, pageSize }) => {
+  try {
+    const response = await fetch(
+      `/api/schools?pageIndex=${pageIndex}&pageSize=${pageSize}`,
+      { cache: "no-store" },
+    );
+    return { success: true, data: response };
+  } catch (error) {
+    return { error };
+  }
+};
+
+export { createSchoolByForm, getSchooldById, updateSchoolByForm, getSchools };

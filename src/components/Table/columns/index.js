@@ -283,6 +283,37 @@ const usersColumns = [
   },
 ];
 
+const schoolsColumns = [
+  {
+    header: () => <HeaderTable>Nombre</HeaderTable>,
+    accessorKey: "name",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/admin/schools/edit/${row?.original?.id}`}>
+          {data.getValue()}
+        </Link>
+      );
+    },
+  },
+  {
+    header: () => <HeaderTable>Clave</HeaderTable>,
+    accessorKey: "clave",
+  },
+  {
+    header: () => <HeaderTable>Correo electrónico</HeaderTable>,
+    accessorKey: "email",
+  },
+  {
+    header: () => <HeaderTable>Teléfono</HeaderTable>,
+    accessorKey: "phone",
+  },
+  {
+    header: () => <HeaderTable>Dirección</HeaderTable>,
+    accessorKey: "address",
+  },
+];
+
 const COLUMNS = {
   parents: parentsColumns,
   students: studentsColumns,
@@ -290,7 +321,7 @@ const COLUMNS = {
   drivers: [],
   units: [],
   users: usersColumns,
-  schools: [],
+  schools: schoolsColumns,
 };
 
 export default function ColumnSelected(type) {
