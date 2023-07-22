@@ -1,13 +1,10 @@
 "use client";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import ButtonStep from "@/components/Button";
 import { useAuthContext } from "@/context/AuthContext";
+import ButtonLink from "@/components/ButtonLink";
 
 export default function School() {
   const { profile, school } = useAuthContext();
-  const navigation = useRouter();
-  const isAdminRutes = profile?.roles?.includes("admin-rutes");
 
   return (
     <>
@@ -15,28 +12,14 @@ export default function School() {
         <div>
           <h1 className="font-bold text-3xl">Escuela</h1>
         </div>
-        <div className=" grid-start-2 me-5">
+        <div className="grid-start-2 me-5">
           <div className="flex justify-end gap-2">
-            <ButtonStep
+            <ButtonLink
               color="bg-light-gray"
-              onClick={() =>
-                navigation.push(
-                  `/dashboard/admin/school/edit/${profile?.schoolId}`,
-                )
-              }
+              href={`/dashboard/admin/schools/edit/${profile?.schoolId}`}
             >
               Editar
-            </ButtonStep>
-            {isAdminRutes && (
-              <ButtonStep
-                color="bg-yellow"
-                onClick={() =>
-                  navigation.push("/dashboard/admin/school/create")
-                }
-              >
-                Crear
-              </ButtonStep>
-            )}
+            </ButtonLink>
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { generateParents } from "@/utils/DataFaker";
 import { getStudents } from "./StudentsServices";
 import { getUsers } from "./UsersServices";
+import { getSchools } from "./SchoolServices";
 
 const data = generateParents(25);
 
@@ -38,4 +39,9 @@ export async function fetchDataUsers(options) {
     ),
     pageCount: Math.ceil(data?.length / options.pageSize),
   };
+}
+export async function fetchDataSchools(options) {
+  const { data } = await getSchools({ ...options });
+
+  return data.json();
 }
