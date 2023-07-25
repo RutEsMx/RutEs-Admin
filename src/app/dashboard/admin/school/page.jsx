@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useAuthContext } from "@/context/AuthContext";
 import ButtonLink from "@/components/ButtonLink";
 
-export default function School() {
+export default function Page() {
   const { profile, school } = useAuthContext();
 
   return (

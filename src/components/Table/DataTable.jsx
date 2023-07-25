@@ -58,7 +58,7 @@ const DataTable = ({ type, list = [] }) => {
         pageIndex,
         pageSize,
       }).then((data) => setData(data));
-    if (type === "users")
+    if (type === "users" && pageIndex !== 0)
       fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
         (data) => setData(data),
       );

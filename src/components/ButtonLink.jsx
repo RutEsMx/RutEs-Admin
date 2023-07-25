@@ -26,7 +26,7 @@ export default function ButtonLink({
 
   return (
     <div
-      className={`${colorClasses[color]} rounded-md h-full px-4 py-2 w-fit items-center justify-center ${className} `}
+      className={`${colorClasses[color]} rounded-md px-4 py-2 w-fit items-center justify-center ${className} `}
     >
       <Icon className="h-4 w-4 text-black" />
       <Link href={href}>{children}</Link>
