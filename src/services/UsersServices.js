@@ -1,5 +1,5 @@
 import { validateEmail } from "@/utils";
-import { createDocument, getDocuments, updateDocument } from "@/firebase/crud";
+import { createDocument, updateDocument } from "@/firebase/crud";
 import { signUp } from "./AuthServices";
 
 const createUsersByForm = async (data) => {
