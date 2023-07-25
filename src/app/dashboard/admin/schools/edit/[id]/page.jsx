@@ -1,9 +1,10 @@
+"use client";
 import FormSchool from "@/components/MultiStepForm/School";
 
 const getSchool = async (id) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}/api/schools/${id}/`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/schools/${id}/`,
       { cache: "no-store" },
     );
     if (!response.ok) return { error: response.statusText };

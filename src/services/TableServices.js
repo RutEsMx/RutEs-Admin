@@ -30,16 +30,11 @@ export async function fetchDataStudents(options) {
 }
 
 export async function fetchDataUsers(options) {
-  const data = await getUsers(options?.schoolId);
+  const data = await getUsers({ ...options });
 
-  return {
-    rows: data?.slice(
-      options.pageIndex * options.pageSize,
-      (options.pageIndex + 1) * options.pageSize,
-    ),
-    pageCount: Math.ceil(data?.length / options.pageSize),
-  };
+  return data.json();
 }
+
 export async function fetchDataSchools(options) {
   const { data } = await getSchools({ ...options });
 

@@ -10,6 +10,7 @@ import { useAuthContext } from "@/context/AuthContext";
 const FormUser = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
+  console.log("🚀 ~ file: index.jsx:14 ~ FormSchool ~ data:", data);
 
   const initialValues = {
     name: data?.name || "",
@@ -31,7 +32,7 @@ const FormUser = ({ data, isEdit = false }) => {
       if (error) return alert(error?.message);
       if (success) {
         alert(message);
-        return navigation.replace("/dashboard/admin");
+        return navigation.replace("/dashboard/admin/users");
       }
       return alert(message);
     } catch (error) {
@@ -40,7 +41,7 @@ const FormUser = ({ data, isEdit = false }) => {
   };
 
   const handleBack = () => {
-    return navigation.replace("/dashboard/admin");
+    return navigation.replace("/dashboard/admin/users");
   };
 
   return (

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
 import { signOut } from "@/firebase/auth";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const NavBar = () => {
   const { user, profile, school } = useAuthContext();
@@ -23,7 +24,14 @@ const NavBar = () => {
   return (
     <div className="flex justify-between items-center h-15 bg-yellow text-white fixed w-full z-10">
       <div className="flex items-center">
-        <img src={logoSrc} alt="l-sc" className="w-8 ml-10" />
+        <Image
+          src={logoSrc}
+          alt="l-sc"
+          className="ml-10"
+          priority
+          width={32}
+          height={32}
+        />
         <h1 className="text-2xl font-bold ml-5">{schoolName || ""}</h1>
       </div>
       <div className="flex items-center mr-10">
@@ -33,10 +41,13 @@ const NavBar = () => {
                 <p className="font-bold m-2">Mensajes</p>
               </Link> */}
             <div className="flex flex-row items-center">
-              <img
+              <Image
                 src={avatarSrc}
                 alt="avatar"
-                className="w-10 m-2 rounded-full ring-2 ring-white"
+                className="m-2 rounded-full ring-2 ring-white"
+                priority
+                width={32}
+                height={32}
               />
               <span className="">{name || ""}</span>
             </div>

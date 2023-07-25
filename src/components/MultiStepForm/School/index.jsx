@@ -34,13 +34,13 @@ const FormSchool = ({ data, isEdit = false }) => {
     if (success) {
       setSchool(result);
       alert(message);
-      return navigation.replace("/dashboard/admin");
+      return navigation.replace("/dashboard/admin/schools");
     }
     return alert(message);
   };
 
   const handleBack = () => {
-    return navigation.replace("/dashboard/admin");
+    return navigation.replace("/dashboard/admin/schools");
   };
 
   return (

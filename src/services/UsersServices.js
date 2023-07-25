@@ -53,9 +53,15 @@ const updateUsersByForm = async (data) => {
   }
 };
 
-const getUsers = async (school) => {
-  const users = await getDocuments("profile", school, "users");
-  return users;
+const getUsers = async ({ pageIndex, pageSize, schoolId }) => {
+  try {
+    const response = await fetch(
+      `/api/users?pageIndex=${pageIndex}&pageSize=${pageSize}&schoolId=${schoolId}`,
+    );
+    return { success: true, data: response };
+  } catch (error) {
+    return { error };
+  }
 };
 
 export { createUsersByForm, getUsers, updateUsersByForm };

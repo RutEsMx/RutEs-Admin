@@ -4,8 +4,8 @@ import ButtonLink from "@/components/ButtonLink";
 const getDataSchools = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}/api/schools?pageIndex=0&pageSize=1`,
-      { next: { revalidate: 15 } },
+      `${process.env.NEXT_PUBLIC_URL_API}api/schools?pageIndex=0&pageSize=10`,
+      { cache: "no-store" },
     );
     if (!response.ok) return { error: response.statusText };
     const data = await response.json();
@@ -15,7 +15,7 @@ const getDataSchools = async () => {
   }
 };
 
-export default async function Schools() {
+export default async function Page() {
   const dataSchools = await getDataSchools();
   return (
     <>

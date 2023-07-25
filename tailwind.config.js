@@ -31,6 +31,8 @@ module.exports = {
     extend: {
       fontFamily: {
         poppins: ["Poppins", "sans-serif"],
+        bold: ["Poppins-Bold", "sans-serif"],
+        thin: ["Poppins-Thin", "sans-serif"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
