@@ -1,10 +1,11 @@
+"use client";
 import FormUser from "@/components/MultiStepForm/Users";
 import Link from "next/link";
 
 const getUser = async (id) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}/api/users/${id}/`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/users/${id}/`,
       { cache: "no-store" },
     );
     if (!response.ok) return { error: true };

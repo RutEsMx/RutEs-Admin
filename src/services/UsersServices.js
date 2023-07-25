@@ -1,5 +1,5 @@
 import { validateEmail } from "@/utils";
-import { createDocument, getDocuments, updateDocument } from "@/firebase/crud";
+import { createDocument, updateDocument } from "@/firebase/crud";
 import { signUp } from "./AuthServices";
 
 const createUsersByForm = async (data) => {
@@ -53,9 +53,15 @@ const updateUsersByForm = async (data) => {
   }
 };
 
-const getUsers = async (school) => {
-  const users = await getDocuments("profile", school, "users");
-  return users;
+const getUsers = async ({ pageIndex, pageSize, schoolId }) => {
+  try {
+    const response = await fetch(
+      `/api/users?pageIndex=${pageIndex}&pageSize=${pageSize}&schoolId=${schoolId}`,
+    );
+    return { success: true, data: response };
+  } catch (error) {
+    return { error };
+  }
 };
 
 export { createUsersByForm, getUsers, updateUsersByForm };

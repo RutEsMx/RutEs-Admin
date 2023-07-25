@@ -11,6 +11,7 @@ import { rankItem } from "@tanstack/match-sorter-utils";
 import ButtonAction from "@/components/Table/elements/ButtonAction";
 import {
   fetchData,
+  fetchDataSchools,
   fetchDataStudents,
   fetchDataUsers,
 } from "@/services/TableServices";
@@ -28,10 +29,10 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-const DataTable = ({ type }) => {
+const DataTable = ({ type, list = [] }) => {
   const { profile } = useAuthContext();
   const columns = useMemo(() => ColumnSelected(type), []);
-  const [data, setData] = useState(() => []);
+  const [data, setData] = useState(() => list);
   const [globalFilter, setGlobalFilter] = useState("");
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -57,10 +58,15 @@ const DataTable = ({ type }) => {
         pageIndex,
         pageSize,
       }).then((data) => setData(data));
-    if (type === "users")
+    if (type === "users" && pageIndex !== 0)
       fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
         (data) => setData(data),
       );
+    if (type === "schools" && pageIndex !== 0) {
+      fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) =>
+        setData(data),
+      );
+    }
   }, [pageIndex, pageSize, profile]);
 
   const table = useReactTable({

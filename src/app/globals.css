@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -24,4 +25,19 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("../../public/fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Poppins-Bold";
+  src: url("../../public/fonts/Poppins-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Poppins-Thin";
+  src: url("../../public/fonts/Poppins-Thin.ttf");
 }
