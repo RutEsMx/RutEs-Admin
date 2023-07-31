@@ -149,12 +149,9 @@ const parentsColumns = [
       const { row } = data;
 
       return (
-        <div
-          className="flex flex-row items-center cursor-pointer"
-          onClick={() => console.log(">>>>Padre/Madre", row?.original?.id)}
-        >
+        <Link href={`/dashboard/parents/edit/${row?.original?.id}`}>
           {data.getValue()}
-        </div>
+        </Link>
       );
     },
   },
@@ -173,8 +170,8 @@ const parentsColumns = [
       const dataFormat = data.getValue()?.split(",");
       return (
         <div className="flex flex-col">
-          {dataFormat?.map((student) => {
-            return <div key={student?.id}>{student}</div>;
+          {dataFormat?.map((student, index) => {
+            return <div key={index}>{student}</div>;
           })}
         </div>
       );

@@ -51,7 +51,7 @@ const NavBar = () => {
               />
               <span className="">{name || ""}</span>
             </div>
-            <Link href="/dashboard/admin">
+            <Link href="/dashboard/admin/school">
               <p className="font-bold m-2">Admin</p>
             </Link>
             <div onClick={handleLogout} className="cursor-pointer">
