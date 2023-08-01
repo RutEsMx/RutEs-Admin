@@ -51,6 +51,7 @@ export function AuthContextProvider({ children }) {
         school,
         loading,
         setSchool,
+        setLoading,
       }}
     >
       {children}
