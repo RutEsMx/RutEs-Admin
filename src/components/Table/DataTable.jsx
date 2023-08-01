@@ -66,6 +66,10 @@ const DataTable = ({ type, list = [] }) => {
       fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) =>
         setData(data),
       );
+      // if (type === "units" && pageIndex !== 0)
+      // fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
+      //   (data) => setData(data),
+      // );
     }
   }, [pageIndex, pageSize, profile]);
 
