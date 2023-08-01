@@ -167,6 +167,25 @@ const validationLogin = Yup.object().shape({
   password: Yup.string().nullable().required("Contraseña requerida"),
 });
 
+const validateUnits = Yup.object().shape({
+  model: Yup.string().nullable().required("Modelo requerido"),
+  year: Yup.number()
+    .max(
+      new Date().getFullYear(),
+      `El valor debe ser menor o igual a ${new Date().getFullYear()}`,
+    )
+    .nullable()
+    .required("Año requerido"),
+  plate: Yup.string().nullable().required("Placa requerida"),
+  adminNumber: Yup.string()
+    .nullable()
+    .required("Número de administración requerido"),
+  passengers: Yup.number()
+    .max(100)
+    .nullable()
+    .required("Número de pasajeros requerido"),
+});
+
 export {
   validateStudent,
   validateFather,
@@ -176,4 +195,5 @@ export {
   validateSchool,
   validationLogin,
   validateUpdateUsers,
+  validateUnits,
 };

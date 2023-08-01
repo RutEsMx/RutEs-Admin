@@ -7,7 +7,7 @@ import { useAuthContext } from "@/context/AuthContext";
 const getInitialDataUnits = async (schoolId) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/drivers?pageIndex=0&pageSize=10&schoolId=${schoolId}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/units?pageIndex=0&pageSize=10&schoolId=${schoolId}`,
       { cache: "no-store" },
     );
     if (!response.ok) return { error: response.statusText };
@@ -18,10 +18,10 @@ const getInitialDataUnits = async (schoolId) => {
   }
 };
 
-const Units = () => {
+const Units = async () => {
   const { profile } = useAuthContext();
 
-  const units = getInitialDataUnits(profile?.schoolId);
+  const units = await getInitialDataUnits(profile?.schoolId);
 
   return (
     <div className="container mx-auto px-4 pb-12 h-full pt-10">
