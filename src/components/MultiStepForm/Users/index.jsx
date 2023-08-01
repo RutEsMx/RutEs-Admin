@@ -10,7 +10,6 @@ import { useAuthContext } from "@/context/AuthContext";
 const FormUser = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
-  console.log("🚀 ~ file: index.jsx:14 ~ FormSchool ~ data:", data);
 
   const initialValues = {
     name: data?.name || "",
