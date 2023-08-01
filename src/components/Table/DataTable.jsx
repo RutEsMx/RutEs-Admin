@@ -48,11 +48,11 @@ const DataTable = ({ type, list = [] }) => {
   const [rowSelection, setRowSelection] = useState([]);
 
   useEffect(() => {
-    if (type === "parents")
+    if (type === "parents" && pageIndex !== 0)
       fetchData({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
         (data) => setData(data),
       );
-    if (type === "students")
+    if (type === "students" && pageIndex !== 0)
       fetchDataStudents({
         schoolId: profile?.schoolId,
         pageIndex,
@@ -93,19 +93,6 @@ const DataTable = ({ type, list = [] }) => {
     globalFilterFn: fuzzyFilter,
   });
 
-  // onClick eliminar el rowSelection
-  function handleDelete() {
-    console.log("🚀 ~ handleDelete:", rowSelection);
-  }
-  // onClick suspender el rowSelection
-  function handleSuspend() {
-    console.log("🚀 ~ handleSuspend:", rowSelection);
-  }
-
-  function handleReactivate() {
-    console.log("🚀 ~ handleReactivate:", rowSelection);
-  }
-
   return (
     <>
       <div className="flex justify-end">
@@ -117,9 +104,9 @@ const DataTable = ({ type, list = [] }) => {
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div className="flex justify-around md:flex-row sm:flex-col ">
-          <ButtonAction onClick={handleDelete}>Eliminar</ButtonAction>
+          {/* <ButtonAction onClick={handleDelete}>Eliminar</ButtonAction>
           <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
-          <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction>
+          <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
         </div>
         <div className="col-start-2 flex items-center justify-end">
           <div className="flex items-center gap-2">

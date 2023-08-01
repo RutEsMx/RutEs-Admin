@@ -13,7 +13,7 @@ const DashboardLayout = ({ children }) => {
     if (!loading && !user) {
       return router.push("/signin");
     }
-  }, [user, loading]);
+  }, [user, loading, router]);
 
   return (
     <>

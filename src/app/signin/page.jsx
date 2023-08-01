@@ -8,9 +8,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "@/services/AuthServices";
 import { validationLogin } from "@/utils/validationSchemas";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function Page() {
   const router = useRouter();
+  const { setLoading } = useAuthContext();
 
   const initialValues = {
     email: "",
@@ -19,6 +21,7 @@ export default function Page() {
 
   const handleForm = async (event) => {
     const { email, password } = event;
+    setLoading(true);
     try {
       await signIn(email, password);
       return router.push("/dashboard");

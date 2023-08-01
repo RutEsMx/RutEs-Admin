@@ -149,12 +149,9 @@ const parentsColumns = [
       const { row } = data;
 
       return (
-        <div
-          className="flex flex-row items-center cursor-pointer"
-          onClick={() => console.log(">>>>Padre/Madre", row?.original?.id)}
-        >
+        <Link href={`/dashboard/parents/edit/${row?.original?.id}`}>
           {data.getValue()}
-        </div>
+        </Link>
       );
     },
   },
@@ -173,8 +170,8 @@ const parentsColumns = [
       const dataFormat = data.getValue()?.split(",");
       return (
         <div className="flex flex-col">
-          {dataFormat?.map((student) => {
-            return <div key={student?.id}>{student}</div>;
+          {dataFormat?.map((student, index) => {
+            return <div key={index}>{student}</div>;
           })}
         </div>
       );
@@ -314,12 +311,113 @@ const schoolsColumns = [
   },
 ];
 
+const auxiliarsColumns = [
+  {
+    header: () => <HeaderTable>Nombre</HeaderTable>,
+    accessorKey: "name",
+  },
+  {
+    header: () => <HeaderTable>Apellido Paterno</HeaderTable>,
+    accessorKey: "lastName",
+  },
+  {
+    header: () => <HeaderTable>Apellido Materno</HeaderTable>,
+    accessorKey: "secondLastName",
+  },
+  {
+    header: () => <HeaderTable># de Admin.</HeaderTable>,
+    accessorKey: "adminNumber",
+  },
+  {
+    header: () => <HeaderTable>Teléfono</HeaderTable>,
+    accessorKey: "phone",
+  },
+  {
+    header: () => <HeaderTable>Correo electrónico</HeaderTable>,
+    accessorKey: "email",
+  },
+  {
+    header: () => <HeaderTable>Ruta</HeaderTable>,
+    accessorKey: "route",
+  },
+  {
+    header: () => <HeaderTable>Último estado</HeaderTable>,
+    accessorKey: "lastStatus",
+  },
+];
+
+const driversColumns = [
+  {
+    header: () => <HeaderTable>Nombre</HeaderTable>,
+    accessorKey: "name",
+  },
+  {
+    header: () => <HeaderTable>Apellido Paterno</HeaderTable>,
+    accessorKey: "lastName",
+  },
+  {
+    header: () => <HeaderTable>Apellido Materno</HeaderTable>,
+    accessorKey: "secondLastName",
+  },
+  {
+    header: () => <HeaderTable># de Admin.</HeaderTable>,
+    accessorKey: "adminNumber",
+  },
+  {
+    header: () => <HeaderTable>Teléfono</HeaderTable>,
+    accessorKey: "phone",
+  },
+  {
+    header: () => <HeaderTable>Licencia</HeaderTable>,
+    accessorKey: "license",
+  },
+  {
+    header: () => <HeaderTable>Ruta</HeaderTable>,
+    accessorKey: "route",
+  },
+  {
+    header: () => <HeaderTable>Último estado</HeaderTable>,
+    accessorKey: "lastStatus",
+  },
+];
+
+const unitsColumns = [
+  {
+    header: () => <HeaderTable>Modelo</HeaderTable>,
+    accessorKey: "model",
+  },
+  {
+    header: () => <HeaderTable>Año</HeaderTable>,
+    accessorKey: "year",
+  },
+  {
+    header: () => <HeaderTable>Placa</HeaderTable>,
+    accessorKey: "plate",
+  },
+  {
+    header: () => <HeaderTable># de Admin.</HeaderTable>,
+    accessorKey: "adminNumber",
+  },
+  {
+    header: () => <HeaderTable>Pasajeros</HeaderTable>,
+    accessorKey: "passengers",
+  },
+  {
+    header: () => <HeaderTable>Ruta</HeaderTable>,
+    accessorKey: "route",
+  },
+  {
+    header: () => <HeaderTable>Último estado</HeaderTable>,
+    accessorKey: "lastStatus",
+  },
+];
+
 const COLUMNS = {
   parents: parentsColumns,
   students: studentsColumns,
-  auxiliars: [],
-  drivers: [],
-  units: [],
+  auxiliars: auxiliarsColumns,
+  drivers: driversColumns,
+  units: unitsColumns,
   users: usersColumns,
   schools: schoolsColumns,
 };
