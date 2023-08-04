@@ -315,34 +315,114 @@ const auxiliarsColumns = [
   {
     header: () => <HeaderTable>Nombre</HeaderTable>,
     accessorKey: "name",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Apellido Paterno</HeaderTable>,
     accessorKey: "lastName",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Apellido Materno</HeaderTable>,
     accessorKey: "secondLastName",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable># de Admin.</HeaderTable>,
     accessorKey: "adminNumber",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Teléfono</HeaderTable>,
     accessorKey: "phone",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Correo electrónico</HeaderTable>,
     accessorKey: "email",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Último estado</HeaderTable>,
     accessorKey: "lastStatus",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
 ];
 
@@ -350,34 +430,114 @@ const driversColumns = [
   {
     header: () => <HeaderTable>Nombre</HeaderTable>,
     accessorKey: "name",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Apellido Paterno</HeaderTable>,
     accessorKey: "lastName",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Apellido Materno</HeaderTable>,
     accessorKey: "secondLastName",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable># de Admin.</HeaderTable>,
     accessorKey: "adminNumber",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Teléfono</HeaderTable>,
     accessorKey: "phone",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Licencia</HeaderTable>,
     accessorKey: "license",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
   {
     header: () => <HeaderTable>Último estado</HeaderTable>,
     accessorKey: "lastStatus",
+    cell: (data) => {
+      const { row } = data;
+      return (
+        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
+          <div className="flex flex-row items-center justify-center">
+            <CellTable>{data.getValue()}</CellTable>
+          </div>
+        </Link>
+      );
+    },
   },
 ];
 

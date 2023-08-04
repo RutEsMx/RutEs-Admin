@@ -19,6 +19,7 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
     phone: data?.phone || "",
     adminNumber: data?.adminNumber || "",
     roles: ["auxiliar"],
+    isEdit,
   };
 
   const handleNext = async (values) => {

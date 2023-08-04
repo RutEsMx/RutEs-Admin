@@ -2,7 +2,7 @@
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import StepUsers from "@/components/Forms/StepUsers";
-import { validateUsers, validateUpdateUsers } from "@/utils/validationSchemas";
+import { validateUsers } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
 import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
@@ -18,6 +18,7 @@ const FormUser = ({ data, isEdit = false }) => {
     roles: data?.roles || [],
     email: data?.email || "",
     phone: data?.phone || "",
+    isEdit,
   };
 
   const handleNext = async (values) => {
@@ -47,7 +48,7 @@ const FormUser = ({ data, isEdit = false }) => {
     <Formik
       initialValues={initialValues}
       onSubmit={handleNext}
-      validationSchema={isEdit ? validateUpdateUsers : validateUsers}
+      validationSchema={validateUsers}
       validateOnBlur={false}
       validateOnChange={false}
       validateOnMount={false}
