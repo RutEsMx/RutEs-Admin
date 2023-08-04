@@ -5,7 +5,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = ({ children, ...props }) => {
   const { user, loading } = useAuthContext();
   const router = useRouter();
 
@@ -19,6 +19,7 @@ const DashboardLayout = ({ children }) => {
     <>
       <NavBar />
       <Sidebar>{children}</Sidebar>
+      {/* {props.dialog} */}
     </>
   );
 };
