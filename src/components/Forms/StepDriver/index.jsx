@@ -1,0 +1,76 @@
+import InputField from "@/components/InputField";
+import { useFormikContext } from "formik";
+
+const StepDriver = () => {
+  const { values, handleChange, errors } = useFormikContext();
+
+  return (
+    <div className="border border-black px-4 py-2 mt-4">
+      <h1 className="text-2xl font-bold">Nuevo Conductor</h1>
+      <div className="grid grid-cols-3 gap-4 p-4">
+        <div className="col-span-2">
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <InputField
+              label="Nombre(s)"
+              type="text"
+              name="name"
+              value={values.name}
+              onChange={handleChange}
+              error={errors.name}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Apellido Paterno"
+              type="text"
+              name="lastName"
+              value={values.lastName}
+              onChange={handleChange}
+              error={errors.lastName}
+            />
+            <InputField
+              label="Apellido Materno"
+              type="text"
+              name="secondLastName"
+              value={values.secondLastName}
+              onChange={handleChange}
+            />
+            <InputField
+              label="Teléfono"
+              type="text"
+              name="phone"
+              value={values.phone}
+              onChange={handleChange}
+              error={errors.phone}
+              maxLength={10}
+            />
+            <InputField
+              label="Número de administrador"
+              type="text"
+              name="adminNumber"
+              value={values.adminNumber}
+              onChange={handleChange}
+              error={errors.adminNumber}
+            />
+            <InputField
+              label="Licencia de conducir"
+              type="text"
+              name="license"
+              value={values.license}
+              onChange={handleChange}
+              error={errors.license}
+            />
+          </div>
+        </div>
+        <div className="">
+          {/* Avatar */}
+          <div className="flex flex-col">
+            <label htmlFor="avatar">Avatar</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default StepDriver;

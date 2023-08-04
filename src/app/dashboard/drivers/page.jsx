@@ -18,10 +18,10 @@ const getInitialDataDrivers = async (schoolId) => {
   }
 };
 
-const Drivers = () => {
+const Drivers = async () => {
   const { profile } = useAuthContext();
 
-  const drivers = getInitialDataDrivers(profile?.schoolId);
+  const drivers = await getInitialDataDrivers(profile?.schoolId);
 
   return (
     <div className="container mx-auto px-4 pb-12 h-full pt-10">
