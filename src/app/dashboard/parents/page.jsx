@@ -2,7 +2,6 @@
 import LogoLayout from "@/components/LogoLayout";
 import DataTable from "@/components/Table/DataTable";
 import { useAuthContext } from "@/context/AuthContext";
-import ButtonLink from "@/components/ButtonLink";
 
 const getInitialDataParents = async (schoolId) => {
   try {
@@ -27,11 +26,6 @@ const Parents = async () => {
     <div className="container mx-auto px-4 pb-12 h-full pt-10">
       <div className="grid grid-cols-2 gap-4 p-2">
         <LogoLayout />
-        <div className="flex justify-end items-center gap-4">
-          <ButtonLink icon={"plus"} href={"/dashboard/parents/create"}>
-            Agregar
-          </ButtonLink>
-        </div>
       </div>
       <div className="grid grid-rows-1 gap-4">
         <DataTable type={"parents"} list={parents} />

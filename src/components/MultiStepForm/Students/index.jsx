@@ -123,7 +123,7 @@ const MultiStepFormStudent = () => {
     >
       {({ isSubmitting, handleSubmit }) => (
         <Form>
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end gap-4 -mt-8">
             <Button onClick={handleBack} color="bg-light-gray" type="button">
               Atrás
             </Button>
