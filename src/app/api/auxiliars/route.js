@@ -40,7 +40,7 @@ export async function GET(request) {
       const lastVisibleSnapshot = await firestore()
         .collection("profile")
         .where("schoolId", "==", query.schoolId)
-        .where("roles", "array-contains-any", ["aux"])
+        .where("roles", "array-contains-any", ["auxiliar"])
         .orderBy("name")
         .limit(query?.pageIndex * query?.pageSize)
         .get();
@@ -50,7 +50,7 @@ export async function GET(request) {
     const response = await firestore()
       .collection("profile")
       .where("schoolId", "==", query.schoolId)
-      .where("roles", "array-contains-any", ["aux"])
+      .where("roles", "array-contains-any", ["auxiliar"])
       .orderBy("name")
       .startAfter(lastVisible)
       .limit(query.pageSize)
@@ -65,7 +65,7 @@ export async function GET(request) {
     const responseCount = await firestore()
       .collection("profile")
       .where("schoolId", "==", query.schoolId)
-      .where("roles", "array-contains-any", ["aux"])
+      .where("roles", "array-contains-any", ["auxiliar"])
       .get();
 
     const dataTable = {

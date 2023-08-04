@@ -186,6 +186,23 @@ const validateUnits = Yup.object().shape({
     .required("Número de pasajeros requerido"),
 });
 
+const validateAuxiliar = Yup.object().shape({
+  name: Yup.string().nullable().required("Nombre requerido"),
+  lastName: Yup.string().nullable().required("Apellido Paterno requerido"),
+  secondLastName: Yup.string().nullable(),
+  phone: Yup.string()
+    .nullable()
+    .matches(REGEX_PHONE, "Teléfono inválido")
+    .required("Teléfono requerido"),
+  email: Yup.string()
+    .nullable()
+    .email("Correo inválido")
+    .required("Correo requerido")
+    .test("email-exists", "Correo ya existe", emailExists),
+  adminNumber: Yup.string().nullable().required("Número de empleado requerido"),
+  // avatar: Yup.string().nullable().required('Avatar requerido'),
+});
+
 export {
   validateStudent,
   validateFather,
@@ -196,4 +213,5 @@ export {
   validationLogin,
   validateUpdateUsers,
   validateUnits,
+  validateAuxiliar,
 };
