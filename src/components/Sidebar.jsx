@@ -6,7 +6,8 @@ const Sidebar = ({ children }) => {
   const pathname = usePathname();
 
   const isActive = (href) => {
-    return pathname === href ? "bg-yellow" : "transparent";
+    const isSamePath = pathname.includes(href);
+    return isSamePath ? "bg-yellow" : "transparent";
   };
 
   return (
