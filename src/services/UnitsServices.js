@@ -20,7 +20,7 @@ const updateUnitsByForm = async (data) => {
     if (response?.error) return { error: response.error };
     return {
       success: true,
-      message: "Usuario actualizado correctamente",
+      message: "Unidad actualizado correctamente",
       result: dataCopy,
     };
   } catch (error) {

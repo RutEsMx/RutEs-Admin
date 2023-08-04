@@ -3,7 +3,8 @@ const REGEX_PHONE = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 import { auth } from "@/firebase/client";
 import { fetchSignInMethodsForEmail } from "firebase/auth";
 
-const emailExists = async (email) => {
+const emailExists = async (email, obj) => {
+  if (obj.parent.isEdit) return true;
   try {
     const exist = await fetchSignInMethodsForEmail(auth, email);
     if (exist.length > 0) return false;
@@ -131,18 +132,6 @@ const validateUsers = Yup.object().shape({
   // avatar: Yup.string().nullable().required('Avatar requerido'),
   // schoolId: Yup.string().nullable().required('Escuela requerida'),
 });
-const validateUpdateUsers = Yup.object().shape({
-  name: Yup.string().nullable().required("Nombre requerido"),
-  lastName: Yup.string().nullable().required("Apellido Paterno requerido"),
-  secondLastName: Yup.string().nullable(),
-  phone: Yup.string()
-    .nullable()
-    .matches(REGEX_PHONE, "Teléfono inválido")
-    .required("Teléfono requerido"),
-  roles: Yup.array().nullable().required("Rol requerido"),
-  // avatar: Yup.string().nullable().required('Avatar requerido'),
-  // schoolId: Yup.string().nullable().required('Escuela requerida'),
-});
 
 const validateSchool = Yup.object().shape({
   name: Yup.string().nullable().required("Nombre requerido"),
@@ -186,6 +175,37 @@ const validateUnits = Yup.object().shape({
     .required("Número de pasajeros requerido"),
 });
 
+const validateAuxiliar = Yup.object().shape({
+  isEdit: Yup.boolean().nullable(),
+  name: Yup.string().nullable().required("Nombre requerido"),
+  lastName: Yup.string().nullable().required("Apellido Paterno requerido"),
+  secondLastName: Yup.string().nullable(),
+  phone: Yup.string()
+    .nullable()
+    .matches(REGEX_PHONE, "Teléfono inválido")
+    .required("Teléfono requerido"),
+  email: Yup.string()
+    .nullable()
+    .email("Correo inválido")
+    .required("Correo requerido")
+    .test("email-exists", "Correo ya existe", emailExists),
+  adminNumber: Yup.string().nullable().required("Número de empleado requerido"),
+  // avatar: Yup.string().nullable().required('Avatar requerido'),
+});
+
+const validateDriver = Yup.object().shape({
+  name: Yup.string().nullable().required("Nombre requerido"),
+  lastName: Yup.string().nullable().required("Apellido Paterno requerido"),
+  secondLastName: Yup.string().nullable(),
+  phone: Yup.string()
+    .nullable()
+    .matches(REGEX_PHONE, "Teléfono inválido")
+    .required("Teléfono requerido"),
+  adminNumber: Yup.string().nullable().required("Número de empleado requerido"),
+  license: Yup.string().nullable().required("Licencia requerida"),
+  // avatar: Yup.string().nullable().required('Avatar requerido'),
+});
+
 export {
   validateStudent,
   validateFather,
@@ -194,6 +214,7 @@ export {
   validateUsers,
   validateSchool,
   validationLogin,
-  validateUpdateUsers,
   validateUnits,
+  validateAuxiliar,
+  validateDriver,
 };
