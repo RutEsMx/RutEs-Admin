@@ -5,7 +5,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-const DashboardLayout = ({ children, ...props }) => {
+const DashboardLayout = ({ children }) => {
   const { user, loading } = useAuthContext();
   const router = useRouter();
 
