@@ -19,6 +19,7 @@ const DashboardLayout = ({ children }) => {
     <>
       <NavBar />
       <Sidebar>{children}</Sidebar>
+      {/* {props.dialog} */}
     </>
   );
 };
