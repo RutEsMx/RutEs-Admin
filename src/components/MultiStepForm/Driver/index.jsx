@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import { validateDriver } from "@/utils/validationSchemas";
@@ -9,10 +10,13 @@ import {
   createDriverByForm,
   updateDriverByForm,
 } from "@/services/DriverServices";
+import Alert from "@/components/Alert";
 
 const FormDriver = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const initialValues = {
     name: data?.name || "",
@@ -31,14 +35,14 @@ const FormDriver = ({ data, isEdit = false }) => {
         ? await updateDriverByForm(values)
         : await createDriverByForm(values);
 
-      if (error) return alert(error?.message);
+      if (error) return setError(error?.message);
       if (success) {
-        alert(message);
+        setMessage(message);
         return navigation.replace("/dashboard/drivers");
       }
-      return alert(message);
+      return setMessage(message);
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
     }
   };
 
@@ -68,6 +72,13 @@ const FormDriver = ({ data, isEdit = false }) => {
             >
               {isEdit ? "Editar" : "Enviar"}
             </Button>
+          </div>
+          <div className="mt-4">
+            <Alert
+              isOpen={!!message || !!error}
+              message={message || error}
+              type={message ? "success" : "error"}
+            />
           </div>
           <StepDriver isEdit={isEdit} />
         </Form>
