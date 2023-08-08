@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import { validateAuxiliar } from "@/utils/validationSchemas";
@@ -6,10 +7,13 @@ import Button from "@/components/Button";
 import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
 import StepAuxiliar from "@/components/Forms/StepAuxiliar";
+import Alert from "@/components/Alert";
 
 const FormAuxiliar = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const initialValues = {
     name: data?.name || "",
@@ -32,12 +36,12 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
 
       if (error) return alert(error?.message);
       if (success) {
-        alert(message);
-        return navigation.replace("/dashboard/auxiliars");
+        return setMessage(message);
+        // return navigation.replace("/dashboard/auxiliars");
       }
-      return alert(message);
+      return setMessage(message);
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
     }
   };
 
@@ -46,32 +50,41 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={handleNext}
-      validationSchema={validateAuxiliar}
-      validateOnBlur={false}
-      validateOnChange={false}
-      validateOnMount={false}
-    >
-      {({ isSubmitting, handleSubmit }) => (
-        <Form>
-          <div className="flex justify-end gap-4 -mt-8">
-            <Button onClick={handleBack} color="bg-light-gray" type="button">
-              Atrás
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting}
-              type="button"
-            >
-              {isEdit ? "Editar" : "Enviar"}
-            </Button>
-          </div>
-          <StepAuxiliar isEdit={isEdit} />
-        </Form>
-      )}
-    </Formik>
+    <>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleNext}
+        validationSchema={validateAuxiliar}
+        validateOnBlur={false}
+        validateOnChange={false}
+        validateOnMount={false}
+      >
+        {({ isSubmitting, handleSubmit }) => (
+          <Form>
+            <div className="flex justify-end gap-4 -mt-8">
+              <Button onClick={handleBack} color="bg-light-gray" type="button">
+                Atrás
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                type="button"
+              >
+                {isEdit ? "Editar" : "Enviar"}
+              </Button>
+            </div>
+            <div className="mt-4">
+              <Alert
+                isOpen={!!message || !!error}
+                message={message || error}
+                type={message ? "success" : "error"}
+              />
+            </div>
+            <StepAuxiliar isEdit={isEdit} />
+          </Form>
+        )}
+      </Formik>
+    </>
   );
 };
 
