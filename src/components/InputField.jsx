@@ -7,10 +7,11 @@ const InputField = ({
   value,
   onChange,
   error,
+  className,
   ...props
 }) => {
   return (
-    <div className="flex flex-col">
+    <div className={`flex flex-col ${className || ''}`}>
       <label htmlFor={name} className="mb-1">
         {label}
       </label>
