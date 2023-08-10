@@ -1,4 +1,5 @@
 import { createDocument, updateDocument } from "@/firebase/crud";
+import { setAllDrivers } from "@/store/useDriversStore";
 
 const createDriverByForm = async (data) => {
   const dataCopy = { ...data };
@@ -39,4 +40,21 @@ const getDriver = async ({ pageIndex, pageSize, schoolId }) => {
   }
 };
 
-export { createDriverByForm, updateDriverByForm, getDriver };
+const getAllDrivers = async ({ all = false }) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/drivers?all=${all}`,
+    );
+
+    if (response?.redirected) {
+      return { error: true, redirect: response.url };
+    }
+    const data = await response.json();
+    setAllDrivers(data);
+    return data;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+export { createDriverByForm, updateDriverByForm, getDriver, getAllDrivers };

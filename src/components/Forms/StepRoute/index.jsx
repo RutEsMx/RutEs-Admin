@@ -1,5 +1,7 @@
 import Autocomplete from "@/components/Autocomplete";
 import InputField from "@/components/InputField";
+import { useAuxiliarsStore } from "@/store/useAuxiliarsStore";
+import { useDriversStore } from "@/store/useDriversStore";
 import { useUnitsStore } from "@/store/useUnitsStore";
 import { useFormikContext } from "formik";
 import { memo } from "react";
@@ -7,6 +9,8 @@ import { memo } from "react";
 const StepRoute = () => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
   const { allUnits } = useUnitsStore();
+  const { allAuxiliars } = useAuxiliarsStore();
+  const { allDrivers } = useDriversStore();
 
   return (
     <div className="border border-black px-4 py-2 mt-4">
@@ -43,11 +47,7 @@ const StepRoute = () => {
               name="unit"
             />
             <Autocomplete
-              options={[
-                { id: 1, name: "Susana" },
-                { id: 2, name: "Rodrigo" },
-                { id: 3, name: "Guadalupe" },
-              ]}
+              options={allAuxiliars}
               placeholder="Selecciona un auxiliar"
               label="Auxiliar"
               onSelect={(value) => setFieldValue("auxiliar", value)}
@@ -56,11 +56,7 @@ const StepRoute = () => {
               name="auxiliar"
             />
             <Autocomplete
-              options={[
-                { id: 1, name: "Luis" },
-                { id: 2, name: "Armando" },
-                { id: 3, name: "Rodolfo" },
-              ]}
+              options={allDrivers}
               placeholder="Selecciona un conductor"
               label="Conductor"
               onSelect={(value) => setFieldValue("driver", value)}

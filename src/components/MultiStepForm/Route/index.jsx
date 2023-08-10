@@ -27,6 +27,8 @@ const FormRoute = ({ data, isEdit = false }) => {
   };
 
   const handleNext = async (values) => {
+    setError("");
+    setMessage("");
     try {
       values.schoolId = profile?.schoolId;
       if (isEdit) values.id = data?.id;
@@ -34,8 +36,9 @@ const FormRoute = ({ data, isEdit = false }) => {
         ? await updateRoutesByForm(values)
         : await createRoutesByForm(values);
 
-      console.log("🚀 ~ file: index.jsx:31 ~ handleNext ~ error:", error);
-      if (error) return alert(error?.message);
+      if (error) {
+        setError(error?.message);
+      }
       if (success) {
         return setMessage(message);
       }

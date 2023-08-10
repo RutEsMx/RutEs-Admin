@@ -11,8 +11,8 @@ const createRoutesByForm = async (data) => {
     dataCopy.driver = driverRef;
     dataCopy.auxiliar = auxiliarRef;
     dataCopy.unit = unitRef;
-
-    await createDocument("routes", dataCopy);
+    const response = await createDocument("routes", dataCopy);
+    if (response?.error) return { error: response.error };
     return { success: true, message: "Ruta creada correctamente" };
   } catch (error) {
     return { error };

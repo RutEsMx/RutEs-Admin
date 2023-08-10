@@ -53,10 +53,6 @@ const getAllUnits = async ({ all = false }) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/units?all=${all}`,
     );
-    console.log(
-      "🚀 ~ file: UnitsServices.js:48 ~ getAllUnits ~ response:",
-      response,
-    );
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
