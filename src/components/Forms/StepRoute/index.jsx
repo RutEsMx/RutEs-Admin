@@ -1,6 +1,6 @@
 import Autocomplete from "@/components/Autocomplete";
 import InputField from "@/components/InputField";
-import { useUnitsStore } from "@/store/UnitsStore";
+import { useUnitsStore } from "@/store/useUnitsStore";
 import { useFormikContext } from "formik";
 import { memo } from "react";
 

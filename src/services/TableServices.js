@@ -3,7 +3,7 @@ import { getStudents } from "./StudentsServices";
 import { getUsers } from "./UsersServices";
 import { getSchools } from "./SchoolServices";
 import { getUnits } from "./UnitsServices";
-import { setUnits } from "@/store/UnitsStore";
+import { setUnits } from "@/store/useUnitsStore";
 
 const data = generateParents(25);
 

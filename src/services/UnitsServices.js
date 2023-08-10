@@ -4,7 +4,7 @@ import {
   setAllUnits,
   setUnits,
   updateUnits,
-} from "@/store/UnitsStore";
+} from "@/store/useUnitsStore";
 
 const createUnitsByForm = async (data) => {
   const dataCopy = { ...data };
