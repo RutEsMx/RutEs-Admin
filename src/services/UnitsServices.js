@@ -1,9 +1,16 @@
 import { createDocument, updateDocument } from "@/firebase/crud";
+import {
+  addUnits,
+  setAllUnits,
+  setUnits,
+  updateUnits,
+} from "@/store/UnitsStore";
 
 const createUnitsByForm = async (data) => {
   const dataCopy = { ...data };
   try {
     const response = await createDocument("units", dataCopy);
+    addUnits({ ...dataCopy, id: response.id });
     if (response?.error) return { error: response.error };
     return { success: true, message: "Unidad creada correctamente" };
   } catch (error) {
@@ -16,8 +23,8 @@ const updateUnitsByForm = async (data) => {
 
   try {
     const response = await updateDocument("units", dataCopy.id, dataCopy);
-
     if (response?.error) return { error: response.error };
+    updateUnits(dataCopy.id, dataCopy);
     return {
       success: true,
       message: "Unidad actualizado correctamente",
@@ -28,15 +35,52 @@ const updateUnitsByForm = async (data) => {
   }
 };
 
-const getUnits = async ({ pageIndex, pageSize, schoolId }) => {
+const getUnits = async ({ pageIndex, pageSize }) => {
   try {
     const response = await fetch(
-      `/api/units?pageIndex=${pageIndex}&pageSize=${pageSize}&schoolId=${schoolId}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/units?pageIndex=${pageIndex}&pageSize=${pageSize}`,
     );
-    return { success: true, data: response };
+    const data = await response.json();
+    setUnits(data);
+    return data;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+const getAllUnits = async ({ all = false }) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/units?all=${all}`,
+    );
+    console.log(
+      "🚀 ~ file: UnitsServices.js:48 ~ getAllUnits ~ response:",
+      response,
+    );
+    if (response?.redirected) {
+      return { error: true, redirect: response.url };
+    }
+    const data = await response.json();
+    setAllUnits(data);
+    return data;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+const getUnit = async (id) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/units/${id}/`,
+      { cache: "no-store" },
+    );
+    if (!response.ok) return { error: true };
+    const data = await response.json();
+    data.id = id;
+    return data;
   } catch (error) {
     return { error };
   }
 };
 
-export { createUnitsByForm, getUnits, updateUnitsByForm };
+export { createUnitsByForm, getUnits, updateUnitsByForm, getUnit, getAllUnits };
