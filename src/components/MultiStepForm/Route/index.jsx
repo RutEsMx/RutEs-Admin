@@ -2,12 +2,15 @@
 import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
-import { validateAuxiliar } from "@/utils/validationSchemas";
+import { validateRoute } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
-import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
 import Alert from "@/components/Alert";
 import StepRoute from "@/components/Forms/StepRoute";
+import {
+  createRoutesByForm,
+  updateRoutesByForm,
+} from "@/services/RoutesServices";
 
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
@@ -18,33 +21,32 @@ const FormRoute = ({ data, isEdit = false }) => {
   const initialValues = {
     name: data?.name || "",
     capacity: data?.capacity || "",
-    unit: data?.unit || "",
-    auxiliar: data?.auxiliar || "",
-    driver: data?.driver || "",
+    unit: data?.unit || null,
+    auxiliar: data?.auxiliar || null,
+    driver: data?.driver || null,
   };
 
   const handleNext = async (values) => {
-    console.log(values);
-    // try {
-    //   values.schoolId = profile?.schoolId;
-    //   if (isEdit) values.id = data?.id;
-    //   const { success, message, error } = isEdit
-    //     ? await updateUsersByForm(values)
-    //     : await createUsersByForm(values);
+    try {
+      values.schoolId = profile?.schoolId;
+      if (isEdit) values.id = data?.id;
+      const { success, message, error } = isEdit
+        ? await updateRoutesByForm(values)
+        : await createRoutesByForm(values);
 
-    //   if (error) return alert(error?.message);
-    //   if (success) {
-    //     return setMessage(message);
-    //     // return navigation.replace("/dashboard/auxiliars");
-    //   }
-    //   return setMessage(message);
-    // } catch (error) {
-    //   setError(error.message);
-    // }
+      console.log("🚀 ~ file: index.jsx:31 ~ handleNext ~ error:", error);
+      if (error) return alert(error?.message);
+      if (success) {
+        return setMessage(message);
+      }
+      return setMessage(message);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const handleBack = () => {
-    return navigation.replace("/dashboard/auxiliars");
+    return navigation.replace("/dashboard/routes");
   };
 
   return (
@@ -52,7 +54,7 @@ const FormRoute = ({ data, isEdit = false }) => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleNext}
-        // validationSchema={validateAuxiliar}
+        validationSchema={validateRoute}
         validateOnBlur={false}
         validateOnChange={false}
         validateOnMount={false}

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
-const Autocomplete = ({ options, onSelect, placeholder, label }) => {
+const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
   const [search, setSearch] = useState("");
   const [showOptions, setShowOptions] = useState(false);
   const ref = useRef(null);
@@ -18,8 +18,9 @@ const Autocomplete = ({ options, onSelect, placeholder, label }) => {
     setSearch(e.target.value);
     setShowOptions(true);
   };
-  
-  const handleClear = () => {
+
+  const handleClear = (e) => {
+    e.preventDefault();
     setSearch("");
     setShowOptions(false);
     onSelect(null);
@@ -40,11 +41,9 @@ const Autocomplete = ({ options, onSelect, placeholder, label }) => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [ref, setShowOptions]);
-  
-  
 
   const filteredOptions = options.filter((option) =>
-    option.name.toLowerCase().includes(search.toLowerCase())
+    option.name.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
@@ -67,6 +66,7 @@ const Autocomplete = ({ options, onSelect, placeholder, label }) => {
           <XMarkIcon className="w-5 h-5" />
         </button>
       </div>
+      {error && <span className="text-red">{error}</span>}
       {showOptions && (
         <div className="absolute z-10 w-full overflow-auto bg-white rounded-lg shadow top-auto">
           {filteredOptions.map((option) => (
@@ -75,7 +75,13 @@ const Autocomplete = ({ options, onSelect, placeholder, label }) => {
               className="px-3 py-2 cursor-pointer hover:bg-gray"
               onClick={() => handleSelect(option)}
             >
-              {option.name}
+              <span className="font-bold">Nombre:</span> {option.name}{" "}
+              {option?.passengers && (
+                <>
+                  <span className="font-bold">Pasajeros:</span>{" "}
+                  {option.passengers}
+                </>
+              )}
             </div>
           ))}
         </div>

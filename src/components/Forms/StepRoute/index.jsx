@@ -1,9 +1,12 @@
 import Autocomplete from "@/components/Autocomplete";
 import InputField from "@/components/InputField";
+import { useUnitsStore } from "@/store/UnitsStore";
 import { useFormikContext } from "formik";
+import { memo } from "react";
 
 const StepRoute = () => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
+  const { allUnits } = useUnitsStore();
 
   return (
     <div className="border border-black px-4 py-2 mt-4">
@@ -30,41 +33,37 @@ const StepRoute = () => {
               max={100}
               className="w-20"
             />
-            <Autocomplete 
-              options={[
-                { id: 1, name: 'Reforma' },
-                { id: 2, name: 'Polanco' },
-                { id: 3, name: 'Santa Fe' },
-              ]}
+            <Autocomplete
+              options={allUnits}
               placeholder="Selecciona una unidad"
               label="Unidad"
-              onSelect={(value) => setFieldValue('unit', value)}
+              onSelect={(value) => setFieldValue("unit", value)}
               error={errors.unit}
               value={values.unit}
               name="unit"
             />
-            <Autocomplete 
+            <Autocomplete
               options={[
-                { id: 1, name: 'Susana' },
-                { id: 2, name: 'Rodrigo' },
-                { id: 3, name: 'Guadalupe' },
+                { id: 1, name: "Susana" },
+                { id: 2, name: "Rodrigo" },
+                { id: 3, name: "Guadalupe" },
               ]}
               placeholder="Selecciona un auxiliar"
               label="Auxiliar"
-              onSelect={(value) => setFieldValue('aux', value)}
-              error={errors.aux}
-              value={values.aux}
-              name="aux"
+              onSelect={(value) => setFieldValue("auxiliar", value)}
+              error={errors.auxiliar}
+              value={values.auxiliar}
+              name="auxiliar"
             />
-            <Autocomplete 
+            <Autocomplete
               options={[
-                { id: 1, name: 'Luis' },
-                { id: 2, name: 'Armando' },
-                { id: 3, name: 'Rodolfo' },
+                { id: 1, name: "Luis" },
+                { id: 2, name: "Armando" },
+                { id: 3, name: "Rodolfo" },
               ]}
               placeholder="Selecciona un conductor"
               label="Conductor"
-              onSelect={(value) => setFieldValue('driver', value)}
+              onSelect={(value) => setFieldValue("driver", value)}
               error={errors.driver}
               value={values.driver}
               name="driver"
@@ -82,4 +81,6 @@ const StepRoute = () => {
   );
 };
 
-export default StepRoute;
+const MemoStepRoute = memo(StepRoute);
+
+export default MemoStepRoute;
