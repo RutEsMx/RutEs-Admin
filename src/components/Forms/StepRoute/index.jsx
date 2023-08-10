@@ -15,8 +15,13 @@ const StepRoute = () => {
   return (
     <div className="border border-black px-4 py-2 mt-4">
       <h1 className="text-2xl font-bold">Nueva ruta</h1>
-      <div className="grid grid-cols-3 gap-4 p-4">
-        <div className="col-span-1">
+      <div className="grid grid-cols-5 gap-4 p-4">
+        <div className="col-span-2 border-2 border-gray rounded-lg p-4">
+          <div className="tabs">
+            <a className="tab tab-bordered">DATOS</a>
+            <a className="tab tab-bordered tab-active">PARADAS</a>
+          </div>
+          <div className="divider"></div>
           <div className="grid grid-cols-1 gap-4 mb-4">
             <InputField
               label="Nombre"
@@ -66,7 +71,7 @@ const StepRoute = () => {
             />
           </div>
         </div>
-        <div className="">
+        <div className="col-span-3">
           {/* Map */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <label htmlFor="avatar">Maps</label>
