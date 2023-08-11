@@ -11,7 +11,7 @@ const InputField = ({
   ...props
 }) => {
   return (
-    <div className={`flex flex-col ${className || ''}`}>
+    <div className="flex flex-col text-xs m-2">
       <label htmlFor={name} className="mb-1">
         {label}
       </label>
@@ -20,7 +20,7 @@ const InputField = ({
         type={type}
         value={value}
         onChange={onChange}
-        className="border border-opacity-50 border-black rounded-sm p-1"
+        className={`h-8 border border-gray rounded-sm p-1 ${className || ''}`}
         {...props}
       />
       {error && <span className="text-red">{error}</span>}

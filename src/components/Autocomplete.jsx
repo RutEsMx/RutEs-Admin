@@ -47,20 +47,22 @@ const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
   );
 
   return (
-    <div className="relative" ref={ref}>
-      <label htmlFor={label} className="mb-1">
-        {label}
-      </label>
-      <div className="flex">
+    <div className="relative m-2 text-xs" ref={ref}>
+      {label && 
+        <label htmlFor={label} className="mb-1">
+          {label}
+        </label>
+      }
+      <div className="flex ">
         <input
           type="text"
-          className="w-full h-10 px-3 text-base placeholder-gray-600 border rounded-l-lg focus:shadow-outline"
+          className="w-full h-8 px-3 text-base placeholder-gray-600 placeholder:text-xs border rounded-l-sm border-gray focus:shadow-outline"
           placeholder={placeholder}
           value={search}
           onChange={handleSearch}
         />
         <button
-          className="h-10 px-3 text-base font-medium text-gray-600 bg-gray-200 border border-gray-200 rounded-r-lg hover:bg-gray-300 focus:outline-none focus:shadow-outline"
+          className="h-8 px-2 text-base font-medium text-gray-600 bg-gray-200 bg-gray border border-gray rounded-r-sm hover:bg-gray-300 focus:outline-none focus:shadow-outline"
           onClick={handleClear}
         >
           <XMarkIcon className="w-5 h-5" />
@@ -68,7 +70,7 @@ const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
       </div>
       {error && <span className="text-red">{error}</span>}
       {showOptions && (
-        <div className="absolute z-10 w-full overflow-auto bg-white rounded-lg shadow top-auto">
+        <div className="absolute z-10 w-full overflow-auto bg-white rounded-sm shadow top-auto">
           {filteredOptions.map((option) => (
             <div
               key={option.id}

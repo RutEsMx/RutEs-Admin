@@ -1,20 +1,36 @@
 import Autocomplete from "@/components/Autocomplete";
 import InputField from "@/components/InputField";
+import PlacesAutocomplete from "@/components/PlacesAutocomplete";
 import { useAuxiliarsStore } from "@/store/useAuxiliarsStore";
 import { useDriversStore } from "@/store/useDriversStore";
 import { useUnitsStore } from "@/store/useUnitsStore";
 import { useFormikContext } from "formik";
 import { memo } from "react";
+import { MapPinIcon } from "@heroicons/react/24/solid";
 
-const StepRoute = () => {
+const StepStops = () => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
-  const { allUnits } = useUnitsStore();
-  const { allAuxiliars } = useAuxiliarsStore();
-  const { allDrivers } = useDriversStore();
+  // const { allUnits } = useUnitsStore();
+  // const { allAuxiliars } = useAuxiliarsStore();
+  // const { allDrivers } = useDriversStore();
 
   return (
-    <div className="mb-4 ">
-      <InputField
+    <div className="mb-4">
+      <div className="flex flex-row items-center">
+        <MapPinIcon className="h-6 w-6 text-black" />
+        <PlacesAutocomplete 
+          
+        />
+      </div>
+      <Autocomplete
+        options={[]}
+        placeholder="Selecciona un alumno"
+        onSelect={(value) => setFieldValue("student", value)}
+        error={errors.student}
+        value={values.student}
+        name="student"
+      />
+      {/* <InputField
         label="Nombre"
         type="text"
         name="name"
@@ -33,15 +49,7 @@ const StepRoute = () => {
         max={100}
         className="w-20"
       />
-      <Autocomplete
-        options={allUnits}
-        placeholder="Selecciona una unidad"
-        label="Unidad"
-        onSelect={(value) => setFieldValue("unit", value)}
-        error={errors.unit}
-        value={values.unit}
-        name="unit"
-      />
+     
       <Autocomplete
         options={allAuxiliars}
         placeholder="Selecciona un auxiliar"
@@ -59,11 +67,11 @@ const StepRoute = () => {
         error={errors.driver}
         value={values.driver}
         name="driver"
-      />
+      /> */}
     </div>
   );
 };
 
-const MemoStepRoute = memo(StepRoute);
+const MemoStepStops = memo(StepStops);
 
-export default MemoStepRoute;
+export default MemoStepStops;

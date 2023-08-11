@@ -1,6 +1,7 @@
 import { AuthContextProvider } from "@/context/AuthContext";
 import "./globals.css";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,6 +16,9 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} font-poppins`}>
         <AuthContextProvider>{children}</AuthContextProvider>
       </body>
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_API_KEY}&libraries=places`}
+      />
     </html>
   );
 }

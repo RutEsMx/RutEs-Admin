@@ -7,6 +7,7 @@ import Button from "@/components/Button";
 import { useAuthContext } from "@/context/AuthContext";
 import Alert from "@/components/Alert";
 import StepRoute from "@/components/Forms/StepRoute";
+import StepStops from "@/components/Forms/StepStops";
 import {
   createRoutesByForm,
   updateRoutesByForm,
@@ -17,6 +18,7 @@ const FormRoute = ({ data, isEdit = false }) => {
   const { profile } = useAuthContext();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("DATOS");
 
   const initialValues = {
     name: data?.name || "",
@@ -66,14 +68,14 @@ const FormRoute = ({ data, isEdit = false }) => {
           <Form>
             <div className="flex justify-end gap-4 -mt-8">
               <Button onClick={handleBack} color="bg-light-gray" type="button">
-                Atrás
+                Cancelar
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 type="button"
               >
-                {isEdit ? "Editar" : "Enviar"}
+                {isEdit ? "Editar" : "Guardar"}
               </Button>
             </div>
             <div className="mt-4">
@@ -83,7 +85,34 @@ const FormRoute = ({ data, isEdit = false }) => {
                 type={message ? "success" : "error"}
               />
             </div>
-            <StepRoute isEdit={isEdit} />
+            <div className="grid grid-cols-5 gap-4">
+              <div className="col-span-2 border-2 border-gray rounded-lg p-4">
+                <div className="tabs">
+                  <a
+                    className={`tab tab-bordered ${activeTab === "DATOS" ? "tab-active" : ""
+                      }`}
+                    onClick={() => setActiveTab("DATOS")}
+                  >
+                    DATOS
+                  </a>
+                  <a
+                    className={`tab tab-bordered ${activeTab === "PARADAS" ? "tab-active" : ""
+                      }`}
+                    onClick={() => setActiveTab("PARADAS")}
+                  >
+                    PARADAS
+                  </a>
+                </div>
+                <div className="divider mx-0 my-2 before:h-2 after:h-2"></div>
+                {
+                  activeTab === "DATOS" ? <StepRoute /> : <StepStops /> 
+                }
+              </div>
+              <div className="col-span-3 border-2 border-gray rounded-lg p-4">
+                <h1>Mapa</h1>
+              </div>
+            </div>
+            {/* <StepRoute isEdit={isEdit} /> */}
           </Form>
         )}
       </Formik>
