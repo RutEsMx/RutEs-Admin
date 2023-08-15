@@ -1,73 +1,50 @@
 import Autocomplete from "@/components/Autocomplete";
 import InputField from "@/components/InputField";
 import PlacesAutocomplete from "@/components/PlacesAutocomplete";
-import { useAuxiliarsStore } from "@/store/useAuxiliarsStore";
-import { useDriversStore } from "@/store/useDriversStore";
-import { useUnitsStore } from "@/store/useUnitsStore";
+import { useStudentsStore } from "@/store/useStudentsStore";
 import { useFormikContext } from "formik";
 import { memo } from "react";
-import { MapPinIcon } from "@heroicons/react/24/solid";
+import { MapPinIcon, PlusIcon } from "@heroicons/react/24/solid";
+import ButtonAction from "@/components/Table/elements/ButtonAction";
 
 const StepStops = () => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
-  // const { allUnits } = useUnitsStore();
-  // const { allAuxiliars } = useAuxiliarsStore();
-  // const { allDrivers } = useDriversStore();
-
+  console.log("🚀 ~ file: index.jsx:12 ~ StepStops ~ values:", values)
+  const { allStudents } = useStudentsStore();
+  
   return (
-    <div className="mb-4">
-      <div className="flex flex-row items-center">
-        <MapPinIcon className="h-6 w-6 text-black" />
-        <PlacesAutocomplete 
-          
-        />
+    <div className="mb-4 grid grid-rows-2">
+      <div className="row-span-1">
+        <div className="grid grid-cols-4 gap-2">
+          <div className="col-span-3">
+            <div className="flex flex-row items-center">
+              {/* <MapPinIcon className="h-6 w-6 text-black" /> */}
+              <PlacesAutocomplete />
+            </div>
+            <Autocomplete
+              options={allStudents}
+              placeholder="Selecciona un alumno"
+              onSelect={(value) => setFieldValue("student", value)}
+              error={errors.student}
+              value={values.student}
+              name="student"
+            />
+          </div>
+          <div className="col-span-1">
+            <div className="flex flex-row items-center h-full">
+              <ButtonAction
+                onClick={() => console.log("click")}
+                disabled={false}
+              >
+                <PlusIcon className="h-6 w-6 text-black" />
+              </ButtonAction>
+            </div>
+          </div>
+        </div>
       </div>
-      <Autocomplete
-        options={[]}
-        placeholder="Selecciona un alumno"
-        onSelect={(value) => setFieldValue("student", value)}
-        error={errors.student}
-        value={values.student}
-        name="student"
-      />
-      {/* <InputField
-        label="Nombre"
-        type="text"
-        name="name"
-        value={values.name}
-        onChange={handleChange}
-        error={errors.name}
-      />
-      <InputField
-        label="Cantidad máx. de pasajeros"
-        type="number"
-        name="capacity"
-        value={values.capacity}
-        onChange={handleChange}
-        error={errors.capacity}
-        min={1}
-        max={100}
-        className="w-20"
-      />
-     
-      <Autocomplete
-        options={allAuxiliars}
-        placeholder="Selecciona un auxiliar"
-        label="Auxiliar"
-        onSelect={(value) => setFieldValue("auxiliar", value)}
-        error={errors.auxiliar}
-        value={values.auxiliar}
-        name="auxiliar"
-      />
-      <Autocomplete
-        options={allDrivers}
-        placeholder="Selecciona un conductor"
-        label="Conductor"
-        onSelect={(value) => setFieldValue("driver", value)}
-        error={errors.driver}
-        value={values.driver}
-        name="driver"
-      /> */}
+      <div className="mx-2">
+        Lista de alumnos agregados
+      </div>
     </div>
   );
 };

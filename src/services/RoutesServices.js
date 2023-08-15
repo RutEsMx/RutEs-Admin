@@ -2,21 +2,28 @@ import { db } from "@/firebase/client";
 import { createDocument, updateDocument } from "@/firebase/crud";
 import { doc } from "firebase/firestore";
 
+
+const createStopsIntoStudents = async (stops) => {
+  // create stops in firestore and add reference to each student
+  
+}
+
 const createRoutesByForm = async (data) => {
   const dataCopy = { ...data };
-  try {
-    const driverRef = doc(db, "drivers", dataCopy.driver);
-    const auxiliarRef = doc(db, "profile", dataCopy.auxiliar);
-    const unitRef = doc(db, "units", dataCopy.unit);
-    dataCopy.driver = driverRef;
-    dataCopy.auxiliar = auxiliarRef;
-    dataCopy.unit = unitRef;
-    const response = await createDocument("routes", dataCopy);
-    if (response?.error) return { error: response.error };
-    return { success: true, message: "Ruta creada correctamente" };
-  } catch (error) {
-    return { error };
-  }
+  const responseStops = await createStopsIntoStudents(dataCopy.stops);
+  // try {
+  //   const driverRef = doc(db, "drivers", dataCopy.driver);
+  //   const auxiliarRef = doc(db, "profile", dataCopy.auxiliar);
+  //   const unitRef = doc(db, "units", dataCopy.unit);
+  //   dataCopy.driver = driverRef;
+  //   dataCopy.auxiliar = auxiliarRef;
+  //   dataCopy.unit = unitRef;
+  //   const response = await createDocument("routes", dataCopy);
+  //   if (response?.error) return { error: response.error };
+  //   return { success: true, message: "Ruta creada correctamente" };
+  // } catch (error) {
+  //   return { error };
+  // }
 };
 
 const updateRoutesByForm = async (data) => {

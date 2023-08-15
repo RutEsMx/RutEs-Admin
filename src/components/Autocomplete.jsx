@@ -1,7 +1,7 @@
 // Create autocomplete component
 
 import { useState, useRef, useEffect } from "react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
 const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
   const [search, setSearch] = useState("");
@@ -17,13 +17,6 @@ const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
   const handleSearch = (e) => {
     setSearch(e.target.value);
     setShowOptions(true);
-  };
-
-  const handleClear = (e) => {
-    e.preventDefault();
-    setSearch("");
-    setShowOptions(false);
-    onSelect(null);
   };
 
   useEffect(() => {
@@ -63,9 +56,8 @@ const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
         />
         <button
           className="h-8 px-2 text-base font-medium text-gray-600 bg-gray-200 bg-gray border border-gray rounded-r-sm hover:bg-gray-300 focus:outline-none focus:shadow-outline"
-          onClick={handleClear}
         >
-          <XMarkIcon className="w-5 h-5" />
+          <ChevronDownIcon className="w-5 h-5" />
         </button>
       </div>
       {error && <span className="text-red">{error}</span>}
