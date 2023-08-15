@@ -1,4 +1,5 @@
 "use client";
+import ButtonLink from "@/components/ButtonLink";
 import Maps from "@/components/Maps";
 import RoutesCards from "@/components/RoutesCards";
 import Image from "next/image";
@@ -33,9 +34,12 @@ const Routes = () => {
         </div>
         <div className="flex justify-end items-center gap-4">
           <span>Filtrar rutas</span>
-          <button className="bg-yellow text-white px-4 py-2 rounded-md">
-            Nueva ruta
-          </button>
+          <ButtonLink
+            href="/dashboard/routes/create"
+            className="bg-yellow hover:bg-yellow-dark"
+          >
+            Crear ruta
+          </ButtonLink>
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">

@@ -4,6 +4,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import { signOut } from "@/firebase/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { removeCookies } from "@/services/CookiesServices";
 
 const NavBar = () => {
   const { user, profile, school } = useAuthContext();
@@ -18,6 +19,7 @@ const NavBar = () => {
     if (error) {
       return alert(error.message);
     }
+    await removeCookies();
     return router.push("/signin");
   };
 

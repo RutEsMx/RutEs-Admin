@@ -13,6 +13,7 @@ import {
   fetchData,
   fetchDataSchools,
   fetchDataStudents,
+  fetchDataUnits,
   fetchDataUsers,
 } from "@/services/TableServices";
 import FilterInput from "@/components/Table/elements/FilterInputTable";
@@ -32,7 +33,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const DataTable = ({ type, list = [] }) => {
   const { profile } = useAuthContext();
   const columns = useMemo(() => ColumnSelected(type), []);
-  const [data, setData] = useState(() => list);
+  const [data, setData] = useState(list);
   const [globalFilter, setGlobalFilter] = useState("");
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -66,10 +67,9 @@ const DataTable = ({ type, list = [] }) => {
       fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) =>
         setData(data),
       );
-      // if (type === "units" && pageIndex !== 0)
-      // fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
-      //   (data) => setData(data),
-      // );
+    }
+    if (type === "units") {
+      fetchDataUnits({ pageIndex, pageSize }).then((data) => setData(data));
     }
   }, [pageIndex, pageSize, profile]);
 

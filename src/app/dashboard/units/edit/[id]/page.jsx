@@ -1,21 +1,7 @@
 "use client";
 import FormUnits from "@/components/MultiStepForm/Units";
+import { getUnit } from "@/services/UnitsServices";
 import Link from "next/link";
-
-const getUnit = async (id) => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units/${id}/`,
-      { cache: "no-store" },
-    );
-    if (!response.ok) return { error: true };
-    const data = await response.json();
-    data.id = id;
-    return data;
-  } catch (error) {
-    return { error };
-  }
-};
 
 const Page = async ({ params }) => {
   const { id } = params;

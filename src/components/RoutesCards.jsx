@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { generateRoutes } from "@/utils/DataFaker";
 import RouteCard from "@/components/RouteCard";
-import { useRoutesStore } from "@/store/routesStore";
+import { useRoutesStore } from "@/store/useRoutesStore";
 
 const RoutesCards = () => {
   const { routes, setRoutes } = useRoutesStore();

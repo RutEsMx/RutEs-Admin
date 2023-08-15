@@ -54,9 +54,10 @@ const COLORS = {
   active: "text-green",
   inactive: "text-red",
   absent: "text-yellow",
-  toSchool: "text-warning",
+  toSchool: "text-green",
   toHome: "text-blue",
 };
+
 
 export {
   OPTIONS_TYPE_SERVICES,

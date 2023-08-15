@@ -1,5 +1,6 @@
 import { generatePassword, validateEmail } from "@/utils";
 import { signInAuth } from "@/firebase/auth";
+import { getCookies } from "./CookiesServices";
 
 const signUp = async (email) => {
   const password = generatePassword();
@@ -33,6 +34,8 @@ const signIn = async (email, password) => {
   try {
     const { result, error } = await signInAuth(email, password);
     if (error) throw new Error(error);
+    const jwt = await result?.user?.getIdToken();
+    await getCookies(jwt);
     return result;
   } catch (error) {
     throw new Error(error);

@@ -206,6 +206,14 @@ const validateDriver = Yup.object().shape({
   // avatar: Yup.string().nullable().required('Avatar requerido'),
 });
 
+const validateRoute = Yup.object().shape({
+  name: Yup.string().nullable().required("Nombre de ruta requerido"),
+  capacity: Yup.number().nullable().required("Capacidad requerida"),
+  unit: Yup.string().nullable().required("Unidad requerida"),
+  driver: Yup.string().nullable().required("Conductor requerido"),
+  auxiliar: Yup.string().nullable().required("Auxiliar requerido"),
+});
+
 export {
   validateStudent,
   validateFather,
@@ -217,4 +225,5 @@ export {
   validateUnits,
   validateAuxiliar,
   validateDriver,
+  validateRoute,
 };

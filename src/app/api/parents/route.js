@@ -64,7 +64,6 @@ export async function GET(request) {
 
     return NextResponse.json(dataTable);
   } catch (error) {
-    console.log("🚀 ~ file: route.js:60 ~ GET ~ error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

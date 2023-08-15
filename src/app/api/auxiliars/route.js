@@ -2,9 +2,23 @@ import { auth } from "firebase-admin";
 import { NextResponse } from "next/server";
 import { customInitApp } from "@/firebase/admin";
 import { firestore } from "firebase-admin";
+import { cookies } from "next/headers";
 
 // Init the Firebase SDK every time the server is called
 customInitApp();
+
+const getUSer = async (sessionid) => {
+  try {
+    const verifyIdToken = await auth().verifyIdToken(sessionid, true);
+    const profile = await firestore()
+      .collection("profile")
+      .doc(verifyIdToken?.uid)
+      .get();
+    return profile?.data();
+  } catch (error) {
+    return { error: error?.message, code: error?.code };
+  }
+};
 
 export async function POST(request) {
   const res = await request.json();
@@ -26,15 +40,45 @@ export async function POST(request) {
 
 export async function GET(request) {
   const url = new URL(request.url);
+  const sessionid = cookies().get("sessionid");
   const searchParams = new URLSearchParams(url.search);
-  const query = {
-    pageIndex: Number(searchParams.get("pageIndex")),
-    pageSize: Number(searchParams.get("pageSize")),
-    schoolId: searchParams.get("schoolId"),
-  };
-  if (!query)
-    return NextResponse.json({ error: "Missing query" }, { status: 400 });
+  const profile = await getUSer(sessionid?.value);
+
+  if (profile?.error) {
+    return NextResponse.redirect(new URL("/signin", request.url));
+  }
+
+  if (searchParams.get("all")) {
+    try {
+      const getAllAuxiliars = await firestore()
+        .collection("profile")
+        .where("schoolId", "==", profile.schoolId)
+        .where("roles", "array-contains-any", ["auxiliar"])
+        .orderBy("name")
+        .get();
+      if (getAllAuxiliars.empty) {
+        return NextResponse.json({ error: "No se encontraron auxiliares" });
+      }
+      const data = getAllAuxiliars.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+        name: `${doc.data().name} ${doc.data().lastName} ${
+          doc.data().secondLastName
+        }`,
+      }));
+      return NextResponse.json(data);
+    } catch (error) {
+      return NextResponse.json({ error });
+    }
+  }
+
   try {
+    const query = {
+      pageIndex: Number(searchParams.get("pageIndex")),
+      pageSize: Number(searchParams.get("pageSize")),
+      schoolId: searchParams.get("schoolId"),
+    };
+
     let lastVisible = 0;
     if (query?.pageIndex > 0) {
       const lastVisibleSnapshot = await firestore()
