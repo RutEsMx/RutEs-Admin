@@ -1,9 +1,16 @@
 // Create autocomplete component
 
 import { useState, useRef, useEffect } from "react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 
-const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
+const Autocomplete = ({
+  options,
+  onSelect,
+  placeholder,
+  label,
+  error,
+  value,
+}) => {
   const [search, setSearch] = useState("");
   const [showOptions, setShowOptions] = useState(false);
   const ref = useRef(null);
@@ -14,16 +21,21 @@ const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
     setShowOptions(false);
   };
 
-  const handleSearch = (e) => {
-    setSearch(e.target.value);
-    setShowOptions(true);
+  const handleDropdown = (e) => {
+    e.preventDefault();
+    setShowOptions(!showOptions);
   };
 
-  const handleClear = (e) => {
+  useEffect(() => {
+    if (value === null) {
+      setSearch("");
+    }
+  }, [value]);
+
+  const handleSearch = (e) => {
     e.preventDefault();
-    setSearch("");
-    setShowOptions(false);
-    onSelect(null);
+    setSearch(e.target.value);
+    setShowOptions(true);
   };
 
   useEffect(() => {
@@ -48,11 +60,11 @@ const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
 
   return (
     <div className="relative m-2 text-xs" ref={ref}>
-      {label && 
+      {label && (
         <label htmlFor={label} className="mb-1">
           {label}
         </label>
-      }
+      )}
       <div className="flex ">
         <input
           type="text"
@@ -63,9 +75,9 @@ const Autocomplete = ({ options, onSelect, placeholder, label, error }) => {
         />
         <button
           className="h-8 px-2 text-base font-medium text-gray-600 bg-gray-200 bg-gray border border-gray rounded-r-sm hover:bg-gray-300 focus:outline-none focus:shadow-outline"
-          onClick={handleClear}
+          onClick={handleDropdown}
         >
-          <XMarkIcon className="w-5 h-5" />
+          <ChevronDownIcon className="w-5 h-5" />
         </button>
       </div>
       {error && <span className="text-red">{error}</span>}

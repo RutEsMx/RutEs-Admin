@@ -1,22 +1,56 @@
-import { db } from "@/firebase/client";
 import { createDocument, updateDocument } from "@/firebase/crud";
-import { doc } from "firebase/firestore";
+
+const createStopsIntoStudents = async (student) => {
+  const arrayStops = [];
+  try {
+    return student?.stops.map(async (stop) => {
+      const stopRef = await createDocument("stops", stop);
+      arrayStops.push(stopRef);
+      const studentRef = await updateDocument("students", student.id, {
+        stops: arrayStops,
+      });
+
+      return studentRef;
+    });
+  } catch (error) {
+    console.log(
+      "🚀 ~ file: RoutesServices.js:31 ~ createRoutesByForm ~ error:",
+      error,
+    );
+
+    return { error };
+  }
+};
 
 const createRoutesByForm = async (data) => {
   const dataCopy = { ...data };
+  if (!dataCopy?.stops)
+    return { error: { message: "No se puede crear una ruta sin paradas" } };
   try {
-    const driverRef = doc(db, "drivers", dataCopy.driver);
-    const auxiliarRef = doc(db, "profile", dataCopy.auxiliar);
-    const unitRef = doc(db, "units", dataCopy.unit);
-    dataCopy.driver = driverRef;
-    dataCopy.auxiliar = auxiliarRef;
-    dataCopy.unit = unitRef;
-    const response = await createDocument("routes", dataCopy);
-    if (response?.error) return { error: response.error };
-    return { success: true, message: "Ruta creada correctamente" };
+    dataCopy?.students.map(async (student) => {
+      const responseStops = await createStopsIntoStudents(student);
+      console.log(
+        "🚀 ~ file: RoutesServices.js:14 ~ createRoutesByForm ~ responseStops",
+        responseStops,
+      );
+      return { success: true, message: "Ruta creada correctamente" };
+    });
   } catch (error) {
     return { error };
   }
+  // try {
+  //   const driverRef = doc(db, "drivers", dataCopy.driver);
+  //   const auxiliarRef = doc(db, "profile", dataCopy.auxiliar);
+  //   const unitRef = doc(db, "units", dataCopy.unit);
+  //   dataCopy.driver = driverRef;
+  //   dataCopy.auxiliar = auxiliarRef;
+  //   dataCopy.unit = unitRef;
+  //   const response = await createDocument("routes", dataCopy);
+  //   if (response?.error) return { error: response.error };
+  //   return { success: true, message: "Ruta creada correctamente" };
+  // } catch (error) {
+  //   return { error };
+  // }
 };
 
 const updateRoutesByForm = async (data) => {

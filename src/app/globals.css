@@ -43,5 +43,9 @@ body {
 }
 
 .text-black-svg {
-  color: #4F504F !important;
+  color: #4f504f !important;
+}
+
+.autocomplet-min-h {
+  min-height: 32px !important;
 }

@@ -13,6 +13,46 @@ import {
   updateRoutesByForm,
 } from "@/services/RoutesServices";
 
+// Students is an array of objects with the following structure:
+// Student id is the key of the object, this helps to order the stops by student
+
+// const students = [
+//   {
+//     "studentId": "1",
+//     "stops": [
+//       {
+//         "id": "1",
+//         "address": "Calle 1",
+//         "coords": {
+//           toSchool: {
+//             "lat": "1",
+//             "lng": "1"
+//           },
+//          toHome: {
+//             "lat": "1",
+//             "lng": "1"
+//           },
+//         },
+//         "day": "monday",
+//         "type": "regular"
+//       },
+//       {
+//         "id": "2",
+//         "address": "Calle 2",
+//         "coords": {
+//           toSchool: {
+//             "lat": "2",
+//             "lng": "2"
+//           },
+//          toHome: {
+//             "lat": "2",
+//             "lng": "2"
+//           },
+//         },
+//         "day": "tuesday",
+//         "type": "regular"
+//       }
+
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
@@ -26,6 +66,7 @@ const FormRoute = ({ data, isEdit = false }) => {
     unit: data?.unit || null,
     auxiliar: data?.auxiliar || null,
     driver: data?.driver || null,
+    students: data?.students || [],
   };
 
   const handleNext = async (values) => {
@@ -78,7 +119,7 @@ const FormRoute = ({ data, isEdit = false }) => {
                 {isEdit ? "Editar" : "Guardar"}
               </Button>
             </div>
-            <div className="mt-4">
+            <div className="my-4">
               <Alert
                 isOpen={!!message || !!error}
                 message={message || error}
@@ -89,24 +130,24 @@ const FormRoute = ({ data, isEdit = false }) => {
               <div className="col-span-2 border-2 border-gray rounded-lg p-4">
                 <div className="tabs">
                   <a
-                    className={`tab tab-bordered ${activeTab === "DATOS" ? "tab-active" : ""
-                      }`}
+                    className={`tab tab-bordered ${
+                      activeTab === "DATOS" ? "tab-active" : ""
+                    }`}
                     onClick={() => setActiveTab("DATOS")}
                   >
                     DATOS
                   </a>
                   <a
-                    className={`tab tab-bordered ${activeTab === "PARADAS" ? "tab-active" : ""
-                      }`}
+                    className={`tab tab-bordered ${
+                      activeTab === "PARADAS" ? "tab-active" : ""
+                    }`}
                     onClick={() => setActiveTab("PARADAS")}
                   >
                     PARADAS
                   </a>
                 </div>
                 <div className="divider mx-0 my-2 before:h-2 after:h-2"></div>
-                {
-                  activeTab === "DATOS" ? <StepRoute /> : <StepStops /> 
-                }
+                {activeTab === "DATOS" ? <StepRoute /> : <StepStops />}
               </div>
               <div className="col-span-3 border-2 border-gray rounded-lg p-4">
                 <h1>Mapa</h1>
