@@ -1,16 +1,43 @@
-import { db } from "@/firebase/client";
 import { createDocument, updateDocument } from "@/firebase/crud";
-import { doc } from "firebase/firestore";
 
+const createStopsIntoStudents = async (student) => {
+  const arrayStops = [];
+  try {
+    return student?.stops.map(async (stop) => {
+      const stopRef = await createDocument("stops", stop);
+      arrayStops.push(stopRef);
+      const studentRef = await updateDocument("students", student.id, {
+        stops: arrayStops,
+      });
 
-const createStopsIntoStudents = async (stops) => {
-  // create stops in firestore and add reference to each student
-  
-}
+      return studentRef;
+    });
+  } catch (error) {
+    console.log(
+      "🚀 ~ file: RoutesServices.js:31 ~ createRoutesByForm ~ error:",
+      error,
+    );
+
+    return { error };
+  }
+};
 
 const createRoutesByForm = async (data) => {
   const dataCopy = { ...data };
-  const responseStops = await createStopsIntoStudents(dataCopy.stops);
+  if (!dataCopy?.stops)
+    return { error: { message: "No se puede crear una ruta sin paradas" } };
+  try {
+    dataCopy?.students.map(async (student) => {
+      const responseStops = await createStopsIntoStudents(student);
+      console.log(
+        "🚀 ~ file: RoutesServices.js:14 ~ createRoutesByForm ~ responseStops",
+        responseStops,
+      );
+      return { success: true, message: "Ruta creada correctamente" };
+    });
+  } catch (error) {
+    return { error };
+  }
   // try {
   //   const driverRef = doc(db, "drivers", dataCopy.driver);
   //   const auxiliarRef = doc(db, "profile", dataCopy.auxiliar);

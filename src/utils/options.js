@@ -58,6 +58,22 @@ const COLORS = {
   toHome: "text-blue",
 };
 
+const DAYS = {
+  monday: "Lunes",
+  tuesday: "Martes",
+  wednesday: "Miércoles",
+  thursday: "Jueves",
+  friday: "Viernes",
+};
+
+const DAYS_OPTIONS = [
+  { value: "all", label: "Todos los días" },
+  { value: "monday", label: "Lunes" },
+  { value: "tuesday", label: "Martes" },
+  { value: "wednesday", label: "Miércoles" },
+  { value: "thursday", label: "Jueves" },
+  { value: "friday", label: "Viernes" },
+];
 
 export {
   OPTIONS_TYPE_SERVICES,
@@ -67,4 +83,6 @@ export {
   STATUS_TRAVEL,
   OPTIONS_USER_ROLES_ADMIN_RUTES,
   OPTIONS_USER_ROLES_ADMIN,
+  DAYS,
+  DAYS_OPTIONS,
 };
