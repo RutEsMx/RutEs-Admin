@@ -14,6 +14,7 @@ import { useState } from "react";
 import { setAlert } from "@/store/useSystemStore";
 import { DAYS, DAYS_OPTIONS } from "@/utils/options";
 import SelectField from "@/components/SelectField";
+import { addStops } from "@/store/useRoutesStore";
 
 const ALL_DAY = "all";
 
@@ -65,6 +66,7 @@ const StepStops = () => {
     };
 
     setFieldValue("students", [...values.students, studentObj]);
+    addStops(studentObj);
   };
 
   const handleClearStudent = (e) => {

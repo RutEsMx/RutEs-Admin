@@ -12,6 +12,7 @@ import {
   createRoutesByForm,
   updateRoutesByForm,
 } from "@/services/RoutesServices";
+import MapStops from "@/components/MapStops";
 
 // Students is an array of objects with the following structure:
 // Student id is the key of the object, this helps to order the stops by student
@@ -150,7 +151,7 @@ const FormRoute = ({ data, isEdit = false }) => {
                 {activeTab === "DATOS" ? <StepRoute /> : <StepStops />}
               </div>
               <div className="col-span-3 border-2 border-gray rounded-lg p-4">
-                <h1>Mapa</h1>
+                <MapStops />
               </div>
             </div>
             {/* <StepRoute isEdit={isEdit} /> */}
