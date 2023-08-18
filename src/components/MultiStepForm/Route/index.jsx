@@ -14,46 +14,6 @@ import {
 } from "@/services/RoutesServices";
 import MapStops from "@/components/MapStops";
 
-// Students is an array of objects with the following structure:
-// Student id is the key of the object, this helps to order the stops by student
-
-// const students = [
-//   {
-//     "studentId": "1",
-//     "stops": [
-//       {
-//         "id": "1",
-//         "address": "Calle 1",
-//         "coords": {
-//           toSchool: {
-//             "lat": "1",
-//             "lng": "1"
-//           },
-//          toHome: {
-//             "lat": "1",
-//             "lng": "1"
-//           },
-//         },
-//         "day": "monday",
-//         "type": "regular"
-//       },
-//       {
-//         "id": "2",
-//         "address": "Calle 2",
-//         "coords": {
-//           toSchool: {
-//             "lat": "2",
-//             "lng": "2"
-//           },
-//          toHome: {
-//             "lat": "2",
-//             "lng": "2"
-//           },
-//         },
-//         "day": "tuesday",
-//         "type": "regular"
-//       }
-
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();

@@ -13,26 +13,10 @@ export const useRoutesStore = create((set) => ({
         route.id === routeId ? { ...route, ...route } : route,
       ),
     })),
-  stops: [],
-  addStops: (stop) => set((state) => ({ stops: [...state.stops, stop] })),
-  removeStop: (stopId) =>
-    set((state) => ({
-      stops: state.stops.filter((stop) => stop.id !== stopId),
-    })),
-  updateStop: (stopId) =>
-    set((state) => ({
-      stops: state.stops.map((stop) =>
-        stop.id === stopId ? { ...stop, ...stop } : stop,
-      ),
-    })),
 }));
-
-const addStops = useRoutesStore.getState().addStops;
-const updateStop = useRoutesStore.getState().updateStop;
-const removeStop = useRoutesStore.getState().removeStop;
 
 const addRoute = useRoutesStore.getState().addRoute;
 const updateRoute = useRoutesStore.getState().updateRoute;
 const removeRoute = useRoutesStore.getState().removeRoute;
 
-export { addStops, updateStop, removeStop, addRoute, updateRoute, removeRoute };
+export { addRoute, updateRoute, removeRoute };

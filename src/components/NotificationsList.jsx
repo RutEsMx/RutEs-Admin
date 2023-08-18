@@ -20,7 +20,7 @@ const NotificationItem = ({ notification }) => {
 const NotificationList = ({ notifications }) => {
   return (
     <div className="overflow-auto h-32">
-      {notifications.map((notification) => (
+      {notifications?.map((notification) => (
         <NotificationItem notification={notification} key={notification?.id}/>
       ))}
     </div>

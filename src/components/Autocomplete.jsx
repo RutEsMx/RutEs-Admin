@@ -10,18 +10,22 @@ const Autocomplete = ({
   label,
   error,
   value,
+  disabled,
 }) => {
+
   const [search, setSearch] = useState("");
   const [showOptions, setShowOptions] = useState(false);
   const ref = useRef(null);
 
   const handleSelect = (option) => {
+    if (disabled) return
     onSelect(option.id);
     setSearch(option.name);
     setShowOptions(false);
   };
 
   const handleDropdown = (e) => {
+    if (disabled) return
     e.preventDefault();
     setShowOptions(!showOptions);
   };
@@ -29,8 +33,13 @@ const Autocomplete = ({
   useEffect(() => {
     if (value === null) {
       setSearch("");
+    } else {
+      const option = options.find((option) => {
+        return option.id === value
+      })
+      setSearch(option?.name);
     }
-  }, [value]);
+  }, [value, options]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -47,12 +56,12 @@ const Autocomplete = ({
       }
     };
 
-    document.addEventListener("click", handleClickOutside);
+    if (!disabled) document.addEventListener("click", handleClickOutside);
 
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [ref, setShowOptions]);
+  }, [ref, setShowOptions, disabled]);
 
   const filteredOptions = options.filter((option) =>
     option.name.toLowerCase().includes(search.toLowerCase()),
@@ -72,10 +81,12 @@ const Autocomplete = ({
           placeholder={placeholder}
           value={search}
           onChange={handleSearch}
+          disabled={disabled}
         />
         <button
           className="h-8 px-2 text-base font-medium text-gray-600 bg-gray-200 bg-gray border border-gray rounded-r-sm hover:bg-gray-300 focus:outline-none focus:shadow-outline"
           onClick={handleDropdown}
+          disabled={disabled}
         >
           <ChevronDownIcon className="w-5 h-5" />
         </button>

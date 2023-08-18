@@ -1,26 +1,55 @@
 import { useMemo } from "react";
-import { useLoadScript, GoogleMap, Marker } from "@react-google-maps/api";
+import { useLoadScript, GoogleMap, MarkerF, MarkerClusterer, Marker } from "@react-google-maps/api";
+import { MapPinIcon } from "@heroicons/react/24/solid";
+// import map_pin.svg from public 
 
-const Maps = ({ markers }) => {
+const Maps = ({ markers, setMarker, options, ...props }) => {
   const libraries = useMemo(() => ["places"], []);
   const mapCenter = useMemo(
-    () => ({ lat: 19.432902439607627, lng: -99.13365305513578 }),
-    [],
+    () => (markers[0] ? markers[0] : { lat: 19.432902439607627, lng: -99.13365305513578 }),
+    [markers],
   );
 
   const mapOptions = useMemo(
     () => ({
       disableDefaultUI: true,
-      clickableIcons: true,
-      scrollwheel: false,
+      clickableIcons: false,
+      scrollwheel: true,
+      draggable: true,
+      zoomControl: true,
+      minZoom: 13,
+      maxZoom: 18,
+      streetViewControl: false,
+      ...options,
     }),
-    [],
+    [options],
   );
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.GOOGLE_API_KEY,
     libraries: libraries,
   });
+  
+  const CustomMarker = ({ color, label,...props }) => {
+    const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6" >
+      <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" stroke="black"/>
+    </svg>
+    `
+    const svgColor = svgString?.replace('currentColor', color)
+    const svgURL = URL.createObjectURL(new Blob([svgColor], { type: 'image/svg+xml' }));
+    return (
+      <div className="tooltip" data-tip={label}>
+        <MarkerF
+          icon={{
+            url:svgURL,
+            anchor: new window.google.maps.Point(15, 30),
+            scaledSize: new window.google.maps.Size(30, 30)
+          }}
+          {...props}
+        />
+      </div>
+    );
+  };
 
   return (
     <div className="bg-gray lg:h-[500px] sm:h-[250px]">
@@ -31,17 +60,23 @@ const Maps = ({ markers }) => {
           options={mapOptions}
           zoom={14}
           center={mapCenter}
-          // mapTypeId={google.maps.MapTypeId.ROADMAP}
           mapContainerStyle={{ width: "100%", height: "500px" }}
           onLoad={() => console.log("Map Component Loaded...")}
+          {...props}
         >
-          {markers.map((marker) => (
-            <Marker
-              key={marker.id}
+          <>
+            {markers.map((marker) => {
+              return  <CustomMarker
+              key={marker.studentId}
               position={{ lat: marker.lat, lng: marker.lng }}
-              title={marker.name}
+              draggable={marker.draggable}
+              onDragEnd={(e) => setMarker(marker.studentId, e.latLng.toJSON())}
+              color={marker.color}
+              label={marker.name}
             />
-          ))}
+            }
+            )}
+          </>
         </GoogleMap>
       )}
     </div>
