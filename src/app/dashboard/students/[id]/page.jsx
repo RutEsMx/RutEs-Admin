@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getStudentById } from "@/services/StudentsServices";
+import { OPTIONS_TYPE_SERVICES } from "@/utils/options";
+// import ButtonLink from "@/components/ButtonLink";
 
 const Page = ({ params }) => {
   const [student, setStudent] = useState({});
@@ -14,22 +16,65 @@ const Page = ({ params }) => {
     getStudent();
   }, []);
 
+  const typeService = OPTIONS_TYPE_SERVICES.find(
+    (option) => option.value === student?.serviceType,
+  )?.label;
+
   return (
-    <div>
-      <h1>Estudiante: {params.id}</h1>
-      <div className="rounded-md">
-        <div className="flex flex-col">
-          <div className="flex flex-row gap-1">
-            <span className="font-bold">Nombre:</span>
-            <span className="">{student?.name}</span>
+    <div className="container mx-auto px-4 pb-12 h-full pt-10">
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-2">
+          <h1 className="font-bold text-3xl">Estudiante</h1>
+        </div>
+        <div className="flex justify-end">
+          {/* <ButtonLink
+            color="bg-light-gray"
+            href={`/dashboard/students/edit/${params.id}`}
+          >
+            Editar
+          </ButtonLink> */}
+        </div>
+      </div>
+      <div className="border border-black px-4 py-2 mt-4 h-screen">
+        <div className="grid grid-cols-3">
+          <div className="col-span-2">
+            <div className="flex flex-col h-screen justify-around">
+              <div className="flex flex-row gap-1">
+                <span className="font-bold">Nombre:</span>
+                <span className="">{student?.name}</span>
+              </div>
+              <div className="flex flex-row gap-1">
+                <span className="font-bold">Apellido Paterno:</span>
+                <span className="">{student?.lastName}</span>
+              </div>
+              <div className="flex flex-row gap-1">
+                <span className="font-bold">Apellido Materno:</span>
+                <span className="">{student?.secondLastName}</span>
+              </div>
+              <div className="flex flex-row gap-1">
+                <span className="font-bold">Grado:</span>
+                <span className="">{student?.grade}</span>
+              </div>
+              <div className="flex flex-row gap-1">
+                <span className="font-bold">Grupo:</span>
+                <span className="">{student?.group}</span>
+              </div>
+              <div className="flex flex-row gap-1">
+                <span className="font-bold">Tipo de servicio:</span>
+                <span className="">{typeService}</span>
+              </div>
+              <div className="flex flex-row gap-1">
+                <span className="font-bold">Grupo Sanguíneo:</span>
+                <span className="">{student?.bloodType}</span>
+              </div>
+              <div className="flex flex-row gap-1">
+                <span className="font-bold">Matricula:</span>
+                <span className="">{student?.enrollment}</span>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-row gap-1">
-            <span className="font-bold">Apellido Paterno:</span>
-            <span className="">{student?.lastName}</span>
-          </div>
-          <div className="flex flex-row gap-1">
-            <span className="font-bold">Apellido Materno:</span>
-            <span className="">{student?.secondLastName}</span>
+          <div>
+            <span>Avatar</span>
           </div>
         </div>
       </div>

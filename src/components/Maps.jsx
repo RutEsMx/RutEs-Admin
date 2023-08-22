@@ -65,7 +65,6 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
           zoom={14}
           center={mapCenter}
           mapContainerStyle={{ width: "100%", height: "500px" }}
-          onLoad={() => console.log("Map Component Loaded...")}
           {...props}
         >
           <>

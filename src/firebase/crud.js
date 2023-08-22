@@ -62,8 +62,6 @@ const getDocumentById = async (collectionName, id) => {
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     return docSnap.data();
-  } else {
-    console.log("No such document!");
   }
 };
 
@@ -72,7 +70,6 @@ const getDocumentByField = async (collectionName, field, value) => {
   const q = query(collection(db, collectionName), where(field, "==", value));
   const querySnapshot = await getDocs(q);
   if (querySnapshot.empty) {
-    console.log("No matching documents.");
     return;
   }
   if (collectionName === "profile") {

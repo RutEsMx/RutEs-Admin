@@ -7,7 +7,6 @@ import { getParents } from "./ParentsSevices";
 
 export async function fetchDataParents(options) {
   const data = await getParents({ ...options });
-  console.log("🚀 ~ file: TableServices.js:9 ~ fetchDataParents ~ data:", data);
   if (data?.error) return data;
   return data;
 }

@@ -149,10 +149,6 @@ const DataTable = ({ type, list = [] }) => {
             pageIndex,
             pageSize,
           }).then((data) => {
-            console.log(
-              "🚀 ~ file: DataTable.jsx:62 ~ fetchDataParents ~ data:",
-              data,
-            );
             setData(data);
           });
         })
