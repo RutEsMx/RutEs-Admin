@@ -5,7 +5,7 @@ import GooglePlacesAutocomplete, {
 } from "react-google-places-autocomplete";
 
 const PlacesAutocomplete = ({ label, place, setPlace }) => {
-  const [value, setValue] = useState(place?.label);
+  const [value, setValue] = useState(place);
 
   useEffect(() => {
     if (!place) {

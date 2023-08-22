@@ -8,6 +8,7 @@ import {
   CheckIcon,
   PencilIcon,
   XMarkIcon,
+  TrashIcon,
 } from "@heroicons/react/24/solid";
 import ButtonAction from "@/components/Table/elements/ButtonAction";
 import { useState } from "react";
@@ -20,37 +21,37 @@ const ALL_DAY = "all";
 const StepStops = () => {
   const { values, setFieldValue } = useFormikContext();
   const { allStudents } = useStudentsStore();
-  const [temporalToHome, setTemporalToHome] = useState(null);
-  const [temporalToSchool, setTemporalToSchool] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedDay, setSelectedDay] = useState(["all"]);
+  const [isEditStudent, setIsEditStudent] = useState(false);
 
   const handleAddStudent = (e) => {
     e.preventDefault();
     if (!selectedStudent)
       return setAlert({ title: "Selecciona un alumno", type: "error" });
-    if (values.students.find((s) => s.id === selectedStudent.id))
+   
+    if (values.students.find((s) => s.id === selectedStudent.id) && !isEditStudent)
       return setAlert({ title: "El alumno ya fue agregado", type: "error" });
 
     const stops = [];
     if (selectedDay.includes(ALL_DAY)) {
-      Object.keys(DAYS).forEach((day) => {
-        stops.push({
-          day,
-          coords: {
-            toHome: temporalToHome,
-            toSchool: bothTravels ? temporalToHome : temporalToSchool,
-          },
+        Object.keys(DAYS).forEach((day) => {
+          stops.push({
+            day,
+            coords: {
+              toHome: values?.temporalToHome,
+              toSchool: bothTravels ? values?.temporalToHome : values?.temporalToSchool,
+            },
+          });
         });
-      });
     } else {
       selectedDay.forEach((day) => {
         stops.push({
           day,
           coords: {
-            toHome: temporalToHome,
-            toSchool: bothTravels ? temporalToHome : temporalToSchool,
+            toHome: values?.temporalToHome,
+            toSchool: bothTravels ? values?.temporalToHome : values?.temporalToSchool,
           },
         });
       });
@@ -63,18 +64,43 @@ const StepStops = () => {
       secondLastName: selectedStudent?.secondLastName,
       stops,
     };
-
-    setFieldValue("students", [...values.students, studentObj]);
+    setFieldValue("temporalToHome", null);
+    setFieldValue("temporalToSchool", null);
+    if(isEditStudent) {
+      setFieldValue("students", values.students.map((s) => s.id === studentObj.id ? studentObj : s));
+    } else {
+      setFieldValue("students", [...values.students, studentObj]);
+    }
+    setSelectedStudent(null);
+    setIsEditStudent(false);
   };
 
   const handleClearStudent = (e) => {
     e.preventDefault();
     setSelectedStudent(null);
-    setTemporalToSchool(null);
-    setTemporalToHome(null);
+    setFieldValue("temporalToHome", null);
+    setFieldValue("temporalToSchool", null);
     setSelectedDay("all");
     setBothTravels(true);
+    setIsEditStudent(false);
+
   };
+  
+  const handleEditStudent = (e, student) => {
+    e.preventDefault();
+    setSelectedStudent(student);
+    setFieldValue("temporalToHome", student.stops[0].coords.toHome);
+    setFieldValue("temporalToSchool", student.stops[0].coords.toSchool);
+    setIsEditStudent(true);
+    // setSelectedDay(student.stops.map((stop) => stop.day));
+  }
+  
+  const handleRemoveStudent = (e, student) => {
+    e.preventDefault();
+    setFieldValue("students", values.students.filter((s) => s.id !== student?.id));
+    setIsEditStudent(false);
+  }
+    
 
   const travelName = bothTravels ? "Ambos viajes" : "Viaje a casa";
 
@@ -124,20 +150,21 @@ const StepStops = () => {
               }}
               name="student"
               value={selectedStudent?.id || null}
+              disabled={isEditStudent}
             />
             <div className="flex flex-row items-center">
               <PlacesAutocomplete
                 label={travelName}
-                setPlace={setTemporalToHome}
-                place={temporalToHome?.label}
+                setPlace={value => setFieldValue("temporalToHome", value)}
+                place={values?.temporalToHome}
               />
             </div>
             {!bothTravels && (
               <div className="flex flex-row items-center">
                 <PlacesAutocomplete
                   label={"A la escuela"}
-                  setPlace={setTemporalToSchool}
-                  place={temporalToSchool?.label}
+                  setPlace={value => setFieldValue("temporalToSchool", value)}
+                  place={values?.temporalToSchool}
                 />
               </div>
             )}
@@ -171,11 +198,16 @@ const StepStops = () => {
               </div>
             </div>
             <div className="col-span-1">
-              <div className="flex justify-end pe-4">
+              <div className="flex justify-end pe-4 gap-2">
                 <ButtonAction
-                  onClick={() => {
-                    console.log("Editar");
-                  }}
+                  onClick={e => handleRemoveStudent(e, student)}
+                  disabled={false}
+                  color="bg-light-gray"
+                >
+                  <TrashIcon className="h-4 w-4 text-black" />
+                </ButtonAction>
+                <ButtonAction
+                  onClick={e => handleEditStudent(e, student)}
                   disabled={false}
                 >
                   <PencilIcon className="h-4 w-4 text-black" />

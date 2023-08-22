@@ -3,22 +3,9 @@ import { NextResponse } from "next/server";
 import { customInitApp } from "@/firebase/admin";
 import { firestore } from "firebase-admin";
 import { cookies } from "next/headers";
-
+import { getUSer } from "@/utils/functions";
 // Init the Firebase SDK every time the server is called
 customInitApp();
-
-const getUSer = async (sessionid) => {
-  try {
-    const verifyIdToken = await auth().verifyIdToken(sessionid, true);
-    const profile = await firestore()
-      .collection("profile")
-      .doc(verifyIdToken?.uid)
-      .get();
-    return profile?.data();
-  } catch (error) {
-    return { error: error?.message, code: error?.code };
-  }
-};
 
 export async function POST(request) {
   const res = await request.json();

@@ -58,6 +58,12 @@ const COLORS = {
   toHome: "text-blue",
 };
 
+const COLORS_HEX = {
+  active: "#049818",
+  inactive: "#4F504F",
+  rutes: "#FFBF3B",
+}
+
 const DAYS = {
   monday: "Lunes",
   tuesday: "Martes",
@@ -85,4 +91,5 @@ export {
   OPTIONS_USER_ROLES_ADMIN,
   DAYS,
   DAYS_OPTIONS,
+  COLORS_HEX,
 };

@@ -13,7 +13,7 @@ const getStudentById = async (id) => {
   return studentData;
 };
 
-const createParentProfile = async (parent, schoolId) => {
+const createParentProfile = async (parent, schoolId, roles) => {
   const { email } = parent;
 
   if (validateEmail(email)) {
@@ -32,7 +32,7 @@ const createParentProfile = async (parent, schoolId) => {
         ...parent,
         id: uid,
         password,
-        roles: ["user"],
+        roles: roles || ["user"],
         schoolId,
       };
 
@@ -48,19 +48,20 @@ const createParentProfile = async (parent, schoolId) => {
 };
 
 const createParentsByForm = async (data, schoolId) => {
+  const { countTutors } = data;
   const dataCopy = { ...data };
   const { father, mother } = dataCopy;
+  const tutors = [];
 
-  const fatherProfile = await createParentProfile(father, schoolId);
+  const fatherProfile = await createParentProfile(father, schoolId, ["user"]);
   if (fatherProfile?.error) {
     throw new Error(`Papá: ${fatherProfile.error?.code}`);
   }
 
-  const motherProfile = await createParentProfile(mother, schoolId);
+  const motherProfile = await createParentProfile(mother, schoolId, ["user"]);
   if (motherProfile?.error) {
     throw new Error(`Mamá: ${motherProfile.error?.code}`);
   }
-
   delete dataCopy.countTutors;
   delete dataCopy.father;
   delete dataCopy.mother;
@@ -71,6 +72,22 @@ const createParentsByForm = async (data, schoolId) => {
   const studentProfile = await createDocument("students", dataCopy);
   if (studentProfile?.error) {
     throw new Error(`Estudiante: ${studentProfile.error?.code}`);
+  }
+
+  for (let i = 0; i < countTutors; i++) {
+    const tutor = `tutors_${i}`;
+    const tutorData = dataCopy[tutor];
+    tutorData.schoolId = schoolId;
+    tutorData.students = [studentProfile];
+    const responseTutor = await createParentProfile(tutorData, schoolId, [
+      "tutor",
+    ]);
+    if (responseTutor?.error) {
+      throw new Error(`Papá: ${responseTutor.error?.code}`);
+    }
+
+    delete dataCopy[tutor];
+    tutors.push(responseTutor);
   }
 
   let responseProfile;
@@ -97,7 +114,10 @@ const createParentsByForm = async (data, schoolId) => {
   const responseUpdateStudent = await updateDocument(
     "students",
     studentProfile.id,
-    { parents: parents },
+    {
+      parents: parents,
+      tutors: tutors,
+    },
   );
   if (responseUpdateStudent?.error) {
     throw new Error(`Estudiante: ${responseUpdateStudent.error?.code}`);
@@ -118,7 +138,11 @@ const getAllStudents = async ({ all = false }) => {
     );
 
     if (response?.redirected) {
-      return { error: true, redirect: response.url, message: "Redireccionando" };
+      return {
+        error: true,
+        redirect: response.url,
+        message: "Redireccionando",
+      };
     }
     const data = await response.json();
     setAllStudents(data);
