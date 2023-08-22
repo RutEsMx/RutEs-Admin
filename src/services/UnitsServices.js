@@ -40,11 +40,14 @@ const getUnits = async ({ pageIndex, pageSize }) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/units?pageIndex=${pageIndex}&pageSize=${pageSize}`,
     );
+    if (response?.redirected) {
+      return { error: true, redirect: response.url };
+    }
     const data = await response.json();
     setUnits(data);
     return data;
   } catch (error) {
-    return { error: error.message };
+    return { error: error?.message };
   }
 };
 

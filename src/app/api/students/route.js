@@ -2,30 +2,16 @@ import { NextResponse } from "next/server";
 import { customInitApp } from "@/firebase/admin";
 import { firestore } from "firebase-admin";
 import { cookies } from "next/headers";
-import { auth } from "firebase-admin";
-
+import { getUSer } from "@/utils/functions";
 // Init the Firebase SDK every time the server is called
 customInitApp();
-
-const getUSer = async (sessionid) => {
-  try {
-    const verifyIdToken = await auth().verifyIdToken(sessionid, true);
-    const profile = await firestore()
-      .collection("profile")
-      .doc(verifyIdToken?.uid)
-      .get();
-    return profile?.data();
-  } catch (error) {
-    return { error: error?.message, code: error?.code };
-  }
-};
-
 
 export async function GET(request) {
   const url = new URL(request.url);
   const sessionid = cookies().get("sessionid");
   const searchParams = new URLSearchParams(url.search);
   const profile = await getUSer(sessionid?.value);
+
   if (profile?.error) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
@@ -43,8 +29,9 @@ export async function GET(request) {
       const data = getAllStudents.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
-        name: `${doc.data().name} ${doc.data().lastName} ${doc.data().secondLastName
-          }`,
+        name: `${doc.data().name} ${doc.data().lastName} ${
+          doc.data().secondLastName
+        }`,
       }));
       return NextResponse.json(data);
     } catch (error) {

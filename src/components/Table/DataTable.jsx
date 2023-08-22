@@ -10,7 +10,7 @@ import {
 import { rankItem } from "@tanstack/match-sorter-utils";
 import ButtonAction from "@/components/Table/elements/ButtonAction";
 import {
-  fetchData,
+  fetchDataParents,
   fetchDataSchools,
   fetchDataStudents,
   fetchDataUnits,
@@ -19,6 +19,10 @@ import {
 import FilterInput from "@/components/Table/elements/FilterInputTable";
 import ColumnSelected from "./columns";
 import { useAuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { removeCookies } from "@/services/CookiesServices";
+import { deleteParents } from "@/services/ParentsSevices";
+import { setAlert } from "@/store/useSystemStore";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -32,6 +36,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 
 const DataTable = ({ type, list = [] }) => {
   const { profile } = useAuthContext();
+  const router = useRouter();
   const columns = useMemo(() => ColumnSelected(type), []);
   const [data, setData] = useState(list);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -49,27 +54,57 @@ const DataTable = ({ type, list = [] }) => {
   const [rowSelection, setRowSelection] = useState([]);
 
   useEffect(() => {
-    if (type === "parents" && pageIndex !== 0)
-      fetchData({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
-        (data) => setData(data),
-      );
+    if (type === "parents")
+      fetchDataParents({
+        schoolId: profile?.schoolId,
+        pageIndex,
+        pageSize,
+      }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     if (type === "students" && pageIndex !== 0)
       fetchDataStudents({
         schoolId: profile?.schoolId,
         pageIndex,
         pageSize,
-      }).then((data) => setData(data));
+      }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     if (type === "users" && pageIndex !== 0)
       fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
-        (data) => setData(data),
+        (data) => {
+          if (data?.error && data?.redirect) {
+            removeCookies();
+            return router.push(data?.redirect);
+          }
+          setData(data);
+        },
       );
     if (type === "schools" && pageIndex !== 0) {
-      fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) =>
-        setData(data),
-      );
+      fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     }
     if (type === "units") {
-      fetchDataUnits({ pageIndex, pageSize }).then((data) => setData(data));
+      fetchDataUnits({ pageIndex, pageSize }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     }
   }, [pageIndex, pageSize, profile]);
 
@@ -97,6 +132,36 @@ const DataTable = ({ type, list = [] }) => {
     globalFilterFn: fuzzyFilter,
   });
 
+  const handleDelete = async () => {
+    if (type === "parents") {
+      return deleteParents(rowSelection)
+        .then((data) => {
+          if (data?.error && data?.redirect) {
+            removeCookies();
+            return router.push(data?.redirect);
+          }
+          setAlert({
+            type: "success",
+            message: "Padres eliminados correctamente",
+          });
+          fetchDataParents({
+            schoolId: profile?.schoolId,
+            pageIndex,
+            pageSize,
+          }).then((data) => {
+            console.log(
+              "🚀 ~ file: DataTable.jsx:62 ~ fetchDataParents ~ data:",
+              data,
+            );
+            setData(data);
+          });
+        })
+        .catch((error) => {
+          setAlert({ type: "error", message: error?.message });
+        });
+    }
+  };
+
   return (
     <>
       <div className="flex justify-end">
@@ -107,13 +172,15 @@ const DataTable = ({ type, list = [] }) => {
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex justify-around md:flex-row sm:flex-col ">
-          {/* <ButtonAction onClick={handleDelete}>Eliminar</ButtonAction>
-          <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
+        <div className="flex items-center">
+          <ButtonAction onClick={handleDelete} color="bg-light-gray">
+            Eliminar
+          </ButtonAction>
+          {/* <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
           <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
         </div>
-        <div className="col-start-2 flex items-center justify-end">
-          <div className="flex items-center gap-2">
+        <div className="col-start-2">
+          <div className="flex items-center justify-end gap-2">
             <ButtonAction
               onClick={() => table.setPageIndex(0)}
               disabled={!table.getCanPreviousPage()}
@@ -145,7 +212,7 @@ const DataTable = ({ type, list = [] }) => {
                 {table.getPageCount()}
               </strong>
             </span>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1 md:hidden lg:flex">
               | Ir a la pagina:
               <input
                 type="number"
@@ -162,6 +229,7 @@ const DataTable = ({ type, list = [] }) => {
               onChange={(e) => {
                 table.setPageSize(Number(e.target.value));
               }}
+              className="md:hidden lg:flex"
             >
               {[10, 20, 30, 40, 50].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
