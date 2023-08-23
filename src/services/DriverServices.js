@@ -3,7 +3,23 @@ import { setAllDrivers } from "@/store/useDriversStore";
 
 const createDriverByForm = async (data) => {
   const dataCopy = { ...data };
+  const { avatar } = dataCopy;
+  let avatarFilename = avatar;
+
   try {
+    if (avatar instanceof File) {
+      const dataFile = new FormData();
+      dataFile.set("avatar", avatar);
+      dataFile.set("type", "drivers");
+
+      const responseAvatar = await fetch(`/api/images`, {
+        method: "POST",
+        body: dataFile,
+      });
+      const avatarData = await responseAvatar.json();
+      avatarFilename = avatarData?.result;
+    }
+    dataCopy.avatar = avatarFilename;
     const response = await createDocument("drivers", dataCopy);
     if (response?.error) return { error: response.error };
     return { success: true, message: "Conductor creado correctamente" };
@@ -14,8 +30,23 @@ const createDriverByForm = async (data) => {
 
 const updateDriverByForm = async (data) => {
   const dataCopy = { ...data };
+  const { avatar } = dataCopy;
 
   try {
+    if (avatar instanceof File) {
+      const dataFile = new FormData();
+      dataFile.set("avatar", avatar);
+      dataFile.set("type", "drivers");
+
+      const responseAvatar = await fetch(`/api/images`, {
+        method: "POST",
+        body: dataFile,
+      });
+
+      const { result: resultAvatar } = await responseAvatar.json();
+      if (resultAvatar) dataCopy.avatar = resultAvatar;
+    }
+
     const response = await updateDocument("drivers", dataCopy.id, dataCopy);
 
     if (response?.error) return { error: response.error };

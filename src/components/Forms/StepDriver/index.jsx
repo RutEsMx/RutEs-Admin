@@ -1,8 +1,9 @@
+import FileInput from "@/components/FileInput";
 import InputField from "@/components/InputField";
 import { useFormikContext } from "formik";
 
 const StepDriver = () => {
-  const { values, handleChange, errors } = useFormikContext();
+  const { values, handleChange, errors, setFieldValue } = useFormikContext();
 
   return (
     <div className="border border-black px-4 py-2 mt-4">
@@ -62,10 +63,17 @@ const StepDriver = () => {
             />
           </div>
         </div>
-        <div className="">
-          {/* Avatar */}
+        <div>
           <div className="flex flex-col">
-            <label htmlFor="avatar">Avatar</label>
+            <FileInput
+              label="Avatar"
+              name="avatar"
+              value={values.avatar}
+              onChange={(event) => {
+                setFieldValue("avatar", event.currentTarget.files[0]);
+              }}
+              error={errors.avatar}
+            />
           </div>
         </div>
       </div>

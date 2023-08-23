@@ -64,8 +64,7 @@ const StepAuxiliar = ({ isEdit }) => {
             />
           </div>
         </div>
-        <div className="">
-          {/* Avatar */}
+        <div>
           <div className="flex flex-col">
             <FileInput
               label="Avatar"
