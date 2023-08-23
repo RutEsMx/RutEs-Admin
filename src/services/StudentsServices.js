@@ -62,13 +62,14 @@ const createParentProfile = async (parent, schoolId, roles) => {
 };
 
 const createParentsByForm = async (data, schoolId) => {
-  // eslint-disable-next-line no-unused-vars
   const {
     countTutors,
     father,
     mother,
     avatar,
+    // eslint-disable-next-line no-unused-vars
     includeMother,
+    // eslint-disable-next-line no-unused-vars
     includeFather,
     ...studentData
   } = data;
