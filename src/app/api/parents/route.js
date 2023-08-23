@@ -86,8 +86,8 @@ export async function DELETE(request) {
   }
   try {
     const promises = Object.keys(data).forEach(async (key) => {
-      await auth().deleteUser(key);
       await firestore().collection("profile").doc(key).delete();
+      await auth().deleteUser(key);
     });
     await Promise.all(promises);
     return NextResponse.next();

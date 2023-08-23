@@ -62,28 +62,31 @@ const createParentProfile = async (parent, schoolId, roles) => {
 };
 
 const createParentsByForm = async (data, schoolId) => {
-  const { countTutors } = data;
-  const dataCopy = { ...data };
-  const studentData = { ...dataCopy };
-  const { father, mother, avatar } = dataCopy;
-  const tutors = [];
+  // eslint-disable-next-line no-unused-vars
+  const {
+    countTutors,
+    father,
+    mother,
+    avatar,
+    includeMother,
+    includeFather,
+    ...studentData
+  } = data;
 
-  const fatherProfile = await createParentProfile(father, schoolId, ["user"]);
+  const [fatherProfile, motherProfile] = await Promise.all([
+    createParentProfile(father, schoolId, ["user"]),
+    createParentProfile(mother, schoolId, ["user"]),
+  ]);
+
   if (fatherProfile?.error) {
-    throw new Error(`Papá: ${fatherProfile.error?.code}`);
+    throw new Error(`Papá: ${fatherProfile.error?.message}`);
   }
 
-  const motherProfile = await createParentProfile(mother, schoolId, ["user"]);
   if (motherProfile?.error) {
     throw new Error(`Mamá: ${motherProfile.error?.message}`);
   }
-  delete studentData.countTutors;
-  delete studentData.father;
-  delete studentData.mother;
-  delete studentData.includeFather;
-  delete studentData.includeMother;
+
   studentData.schoolId = schoolId;
-  dataCopy.schoolId = schoolId;
 
   if (avatar instanceof File) {
     const dataFile = new FormData();
@@ -108,21 +111,12 @@ const createParentsByForm = async (data, schoolId) => {
     throw new Error(`Estudiante: ${studentProfile.error?.code}`);
   }
 
-  for (let i = 0; i < countTutors; i++) {
+  const tutors = Array.from({ length: countTutors }, (_, i) => {
     const tutor = `tutors_${i}`;
-    const tutorData = dataCopy[tutor];
-    tutorData.schoolId = schoolId;
-    tutorData.students = [studentProfile];
-    const responseTutor = await createParentProfile(tutorData, schoolId, [
-      "tutor",
-    ]);
-    if (responseTutor?.error) {
-      throw new Error(`Papá: ${responseTutor.error?.code}`);
-    }
-
-    delete dataCopy[tutor];
-    tutors.push(responseTutor);
-  }
+    const tutorData = { ...data[tutor], schoolId, students: [studentProfile] };
+    delete studentData[tutor];
+    return createParentProfile(tutorData, schoolId, ["tutor"]);
+  });
 
   let responseProfile;
   const parents = [];
@@ -145,14 +139,24 @@ const createParentsByForm = async (data, schoolId) => {
     }
     parents.push(motherProfile);
   }
+
+  const tutorProfiles = await Promise.all(tutors);
+
+  if (tutorProfiles.some((profile) => profile?.error)) {
+    throw new Error(
+      `Tutor: ${tutorProfiles.find((profile) => profile?.error)?.code}`,
+    );
+  }
+
   const responseUpdateStudent = await updateDocument(
     "students",
     studentProfile.id,
     {
-      parents: parents,
-      tutors: tutors,
+      parents: parents.filter((parent) => parent?.id),
+      tutors: tutorProfiles.filter((profile) => profile?.id),
     },
   );
+
   if (responseUpdateStudent?.error) {
     throw new Error(`Estudiante: ${responseUpdateStudent.error?.code}`);
   }
