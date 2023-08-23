@@ -8,12 +8,13 @@ import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
 import StepAuxiliar from "@/components/Forms/StepAuxiliar";
 import Alert from "@/components/Alert";
+import { setAlert, useSystemStore } from "@/store/useSystemStore";
 
 const FormAuxiliar = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const { alert } = useSystemStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const initialValues = {
     name: data?.name || "",
@@ -24,9 +25,11 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
     adminNumber: data?.adminNumber || "",
     roles: ["auxiliar"],
     isEdit,
+    avatar: data?.avatar || "",
   };
 
   const handleNext = async (values) => {
+    setIsLoading(true);
     try {
       values.schoolId = profile?.schoolId;
       if (isEdit) values.id = data?.id;
@@ -34,14 +37,39 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
         ? await updateUsersByForm(values)
         : await createUsersByForm(values);
 
-      if (error) return alert(error?.message);
-      if (success) {
-        return setMessage(message);
-        // return navigation.replace("/dashboard/auxiliars");
+      if (error) {
+        setIsLoading(false);
+        return setAlert({
+          type: "error",
+          message: error?.message,
+          isOpen: true,
+        });
       }
-      return setMessage(message);
+      if (success) {
+        setAlert({
+          type: "success",
+          message: message,
+          isOpen: true,
+        });
+        setIsLoading(false);
+        navigation.replace("/dashboard/auxiliars");
+        return setAlert({
+          isOpen: false,
+        });
+      }
+      setIsLoading(false);
+      return setAlert({
+        type: "warning",
+        message: message,
+        isOpen: true,
+      });
     } catch (error) {
-      setError(error.message);
+      setIsLoading(false);
+      setAlert({
+        type: "error",
+        message: error?.message,
+        isOpen: true,
+      });
     }
   };
 
@@ -63,21 +91,31 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
           <Form>
             <div className="flex justify-end gap-4 -mt-8">
               <Button onClick={handleBack} color="bg-light-gray" type="button">
-                Atrás
+                {isLoading ? (
+                  <span className="loading loading-dots loading-xs"></span>
+                ) : (
+                  "Atrás"
+                )}
               </Button>
               <Button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 type="button"
               >
-                {isEdit ? "Editar" : "Enviar"}
+                {isLoading ? (
+                  <span className="loading loading-dots loading-xs"></span>
+                ) : isEdit ? (
+                  "Editar"
+                ) : (
+                  "Enviar"
+                )}
               </Button>
             </div>
             <div className="mt-4">
               <Alert
-                isOpen={!!message || !!error}
-                message={message || error}
-                type={message ? "success" : "error"}
+                isOpen={alert.isOpen}
+                message={alert.message}
+                type={alert.type}
               />
             </div>
             <StepAuxiliar isEdit={isEdit} />

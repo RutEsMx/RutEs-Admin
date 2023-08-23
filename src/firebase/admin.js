@@ -18,6 +18,7 @@ export function customInitApp() {
           "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-mhbzn%40rutesmx.iam.gserviceaccount.com",
         universe_domain: "googleapis.com",
       }),
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
     });
   }
 }
