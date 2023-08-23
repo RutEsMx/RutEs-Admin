@@ -4,10 +4,23 @@ import { signUp } from "./AuthServices";
 
 const createUsersByForm = async (data) => {
   const dataCopy = { ...data };
-  const { email } = dataCopy;
+  const { email, avatar } = dataCopy;
+
+  let avatarFilename = avatar;
 
   if (validateEmail(email)) {
     try {
+      if (avatar instanceof File) {
+        const dataFile = new FormData();
+        dataFile.set("avatar", avatar);
+
+        const responseAvatar = await fetch(`/api/images`, {
+          method: "POST",
+          body: dataFile,
+        });
+        const avatarData = await responseAvatar.json();
+        avatarFilename = avatarData?.result;
+      }
       const signUpResult = await signUp(email);
       if (signUpResult?.error) {
         return {
@@ -20,6 +33,7 @@ const createUsersByForm = async (data) => {
         ...dataCopy,
         id: uid,
         password,
+        avatar: avatarFilename,
       };
       await createDocument("profile", profileData);
       return { success: true, message: "Usuario creado correctamente" };
@@ -33,10 +47,23 @@ const createUsersByForm = async (data) => {
 
 const updateUsersByForm = async (data) => {
   const dataCopy = { ...data };
-  const { email } = dataCopy;
+  const { email, avatar } = dataCopy;
 
   if (validateEmail(email)) {
     try {
+      if (avatar instanceof File) {
+        const dataFile = new FormData();
+        dataFile.set("avatar", avatar);
+
+        const responseAvatar = await fetch(`/api/images`, {
+          method: "POST",
+          body: dataFile,
+        });
+
+        const { result: resultAvatar } = await responseAvatar.json();
+        if (resultAvatar) dataCopy.avatar = resultAvatar;
+      }
+
       const response = await updateDocument("profile", dataCopy.id, dataCopy);
 
       if (response?.error) return { error: response.error };

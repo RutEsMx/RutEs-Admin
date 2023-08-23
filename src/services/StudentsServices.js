@@ -14,10 +14,23 @@ const getStudentById = async (id) => {
 };
 
 const createParentProfile = async (parent, schoolId, roles) => {
-  const { email } = parent;
+  const { email, avatar } = parent;
+  let avatarFilename = avatar;
 
   if (validateEmail(email)) {
     try {
+      if (avatar instanceof File) {
+        const dataFile = new FormData();
+        dataFile.set("avatar", avatar);
+        const responseAvatar = await fetch(`/api/images`, {
+          method: "POST",
+          body: dataFile,
+        });
+
+        const { result: resultAvatar } = await responseAvatar.json();
+        if (resultAvatar) avatarFilename = resultAvatar;
+      }
+
       const signUpResult = await signUp(email);
       if (signUpResult?.error) {
         return {
@@ -34,6 +47,7 @@ const createParentProfile = async (parent, schoolId, roles) => {
         password,
         roles: roles || ["user"],
         schoolId,
+        avatar: avatarFilename,
       };
 
       const responseCreateDocument = await createDocument(
@@ -48,47 +62,61 @@ const createParentProfile = async (parent, schoolId, roles) => {
 };
 
 const createParentsByForm = async (data, schoolId) => {
-  const { countTutors } = data;
-  const dataCopy = { ...data };
-  const { father, mother } = dataCopy;
-  const tutors = [];
+  // eslint-disable-next-line no-unused-vars
+  const {
+    countTutors,
+    father,
+    mother,
+    avatar,
+    includeMother,
+    includeFather,
+    ...studentData
+  } = data;
 
-  const fatherProfile = await createParentProfile(father, schoolId, ["user"]);
+  const [fatherProfile, motherProfile] = await Promise.all([
+    createParentProfile(father, schoolId, ["user"]),
+    createParentProfile(mother, schoolId, ["user"]),
+  ]);
+
   if (fatherProfile?.error) {
-    throw new Error(`Papá: ${fatherProfile.error?.code}`);
+    throw new Error(`Papá: ${fatherProfile.error?.message}`);
   }
 
-  const motherProfile = await createParentProfile(mother, schoolId, ["user"]);
   if (motherProfile?.error) {
-    throw new Error(`Mamá: ${motherProfile.error?.code}`);
+    throw new Error(`Mamá: ${motherProfile.error?.message}`);
   }
-  delete dataCopy.countTutors;
-  delete dataCopy.father;
-  delete dataCopy.mother;
-  delete dataCopy.includeFather;
-  delete dataCopy.includeMother;
-  dataCopy.schoolId = schoolId;
 
-  const studentProfile = await createDocument("students", dataCopy);
-  if (studentProfile?.error) {
-    throw new Error(`Estudiante: ${studentProfile.error?.code}`);
+  studentData.schoolId = schoolId;
+
+  if (avatar instanceof File) {
+    const dataFile = new FormData();
+    dataFile.set("avatar", avatar);
+
+    const responseAvatar = await fetch(`/api/images`, {
+      method: "POST",
+      body: dataFile,
+    });
+
+    const { result: resultAvatar } = await responseAvatar.json();
+    if (resultAvatar) studentData.avatar = resultAvatar;
   }
 
   for (let i = 0; i < countTutors; i++) {
     const tutor = `tutors_${i}`;
-    const tutorData = dataCopy[tutor];
-    tutorData.schoolId = schoolId;
-    tutorData.students = [studentProfile];
-    const responseTutor = await createParentProfile(tutorData, schoolId, [
-      "tutor",
-    ]);
-    if (responseTutor?.error) {
-      throw new Error(`Papá: ${responseTutor.error?.code}`);
-    }
-
-    delete dataCopy[tutor];
-    tutors.push(responseTutor);
+    delete studentData[tutor];
   }
+
+  const studentProfile = await createDocument("students", studentData);
+  if (studentProfile?.error) {
+    throw new Error(`Estudiante: ${studentProfile.error?.code}`);
+  }
+
+  const tutors = Array.from({ length: countTutors }, (_, i) => {
+    const tutor = `tutors_${i}`;
+    const tutorData = { ...data[tutor], schoolId, students: [studentProfile] };
+    delete studentData[tutor];
+    return createParentProfile(tutorData, schoolId, ["tutor"]);
+  });
 
   let responseProfile;
   const parents = [];
@@ -111,14 +139,24 @@ const createParentsByForm = async (data, schoolId) => {
     }
     parents.push(motherProfile);
   }
+
+  const tutorProfiles = await Promise.all(tutors);
+
+  if (tutorProfiles.some((profile) => profile?.error)) {
+    throw new Error(
+      `Tutor: ${tutorProfiles.find((profile) => profile?.error)?.code}`,
+    );
+  }
+
   const responseUpdateStudent = await updateDocument(
     "students",
     studentProfile.id,
     {
-      parents: parents,
-      tutors: tutors,
+      parents: parents.filter((parent) => parent?.id),
+      tutors: tutorProfiles.filter((profile) => profile?.id),
     },
   );
+
   if (responseUpdateStudent?.error) {
     throw new Error(`Estudiante: ${responseUpdateStudent.error?.code}`);
   }

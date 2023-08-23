@@ -1,7 +1,8 @@
+import Image from "next/image";
 
 const LogoLayout = () => (
   <div>
-    <h1 className="text-3xl font-bold text-nandor">Nueva ruta</h1>
+    <Image src="/rutes_logo.png" alt="Rutes" width={150} height={70} priority />
   </div>
 );
 

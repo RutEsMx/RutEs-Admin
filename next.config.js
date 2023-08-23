@@ -19,7 +19,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: "pokeapi.co",
+        hostname: "firebasestorage.googleapis.com",
       },
     ],
   },

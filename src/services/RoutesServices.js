@@ -13,11 +13,6 @@ const createStopsIntoStudents = async (student) => {
       return studentRef;
     });
   } catch (error) {
-    console.log(
-      "🚀 ~ file: RoutesServices.js:31 ~ createRoutesByForm ~ error:",
-      error,
-    );
-
     return { error };
   }
 };
@@ -28,11 +23,7 @@ const createRoutesByForm = async (data) => {
     return { error: { message: "No se puede crear una ruta sin paradas" } };
   try {
     dataCopy?.students.map(async (student) => {
-      const responseStops = await createStopsIntoStudents(student);
-      console.log(
-        "🚀 ~ file: RoutesServices.js:14 ~ createRoutesByForm ~ responseStops",
-        responseStops,
-      );
+      await createStopsIntoStudents(student);
       return { success: true, message: "Ruta creada correctamente" };
     });
   } catch (error) {

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import InputField from "@/components/InputField";
 import { useFormikContext } from "formik";
+import FileInput from "@/components/FileInput";
 
 const StepParents = ({ validation }) => {
-  const { values, handleChange, errors } = useFormikContext();
+  const { values, handleChange, errors, setFieldValue } = useFormikContext();
   const [type, setType] = useState("father");
   const [title, setTitle] = useState("Padre");
 
@@ -79,10 +80,17 @@ const StepParents = ({ validation }) => {
             />
           </div>
         </div>
-        <div className="">
-          {/* Avatar */}
+        <div>
           <div className="flex flex-col">
-            <label htmlFor="avatar">Avatar</label>
+            <FileInput
+              label="Avatar"
+              name={`${type}.avatar`}
+              value={values[type].avatar}
+              onChange={(event) => {
+                setFieldValue(`${type}.avatar`, event.currentTarget.files[0]);
+              }}
+              error={errors.avatar}
+            />
           </div>
         </div>
       </div>
