@@ -14,10 +14,23 @@ const getStudentById = async (id) => {
 };
 
 const createParentProfile = async (parent, schoolId, roles) => {
-  const { email } = parent;
+  const { email, avatar } = parent;
+  let avatarFilename = avatar;
 
   if (validateEmail(email)) {
     try {
+      if (avatar instanceof File) {
+        const dataFile = new FormData();
+        dataFile.set("avatar", avatar);
+        const responseAvatar = await fetch(`/api/images`, {
+          method: "POST",
+          body: dataFile,
+        });
+
+        const { result: resultAvatar } = await responseAvatar.json();
+        if (resultAvatar) avatarFilename = resultAvatar;
+      }
+
       const signUpResult = await signUp(email);
       if (signUpResult?.error) {
         return {
@@ -34,6 +47,7 @@ const createParentProfile = async (parent, schoolId, roles) => {
         password,
         roles: roles || ["user"],
         schoolId,
+        avatar: avatarFilename,
       };
 
       const responseCreateDocument = await createDocument(
@@ -50,7 +64,8 @@ const createParentProfile = async (parent, schoolId, roles) => {
 const createParentsByForm = async (data, schoolId) => {
   const { countTutors } = data;
   const dataCopy = { ...data };
-  const { father, mother } = dataCopy;
+  const studentData = { ...dataCopy };
+  const { father, mother, avatar } = dataCopy;
   const tutors = [];
 
   const fatherProfile = await createParentProfile(father, schoolId, ["user"]);
@@ -60,16 +75,35 @@ const createParentsByForm = async (data, schoolId) => {
 
   const motherProfile = await createParentProfile(mother, schoolId, ["user"]);
   if (motherProfile?.error) {
-    throw new Error(`Mamá: ${motherProfile.error?.code}`);
+    throw new Error(`Mamá: ${motherProfile.error?.message}`);
   }
-  delete dataCopy.countTutors;
-  delete dataCopy.father;
-  delete dataCopy.mother;
-  delete dataCopy.includeFather;
-  delete dataCopy.includeMother;
+  delete studentData.countTutors;
+  delete studentData.father;
+  delete studentData.mother;
+  delete studentData.includeFather;
+  delete studentData.includeMother;
+  studentData.schoolId = schoolId;
   dataCopy.schoolId = schoolId;
 
-  const studentProfile = await createDocument("students", dataCopy);
+  if (avatar instanceof File) {
+    const dataFile = new FormData();
+    dataFile.set("avatar", avatar);
+
+    const responseAvatar = await fetch(`/api/images`, {
+      method: "POST",
+      body: dataFile,
+    });
+
+    const { result: resultAvatar } = await responseAvatar.json();
+    if (resultAvatar) studentData.avatar = resultAvatar;
+  }
+
+  for (let i = 0; i < countTutors; i++) {
+    const tutor = `tutors_${i}`;
+    delete studentData[tutor];
+  }
+
+  const studentProfile = await createDocument("students", studentData);
   if (studentProfile?.error) {
     throw new Error(`Estudiante: ${studentProfile.error?.code}`);
   }

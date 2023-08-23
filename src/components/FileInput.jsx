@@ -23,20 +23,29 @@ const FileInput = ({ label, onChange, value, ...props }) => {
 
   useEffect(() => {
     if (value) {
-      const fileRef = ref(storage, value);
-      getDownloadURL(fileRef)
-        .then((url) => {
-          setImageUrl(url);
-        })
-        .catch((error) => {
-          setAlert({
-            type: "error",
-            message: error?.message,
-            isOpen: true,
+      if (typeof value === "string") {
+        const fileRef = ref(storage, value);
+        getDownloadURL(fileRef)
+          .then((url) => {
+            setImageUrl(url);
+          })
+          .catch((error) => {
+            setAlert({
+              type: "error",
+              message: error?.message,
+              isOpen: true,
+            });
           });
-        });
+      } else {
+        const file = value;
+        const reader = new FileReader();
+        reader.onload = () => {
+          setImageUrl(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
     }
-  }, []);
+  }, [value]);
 
   return (
     <div className="grid grid-rows-1">
