@@ -165,51 +165,56 @@ const DataTable = ({ type, list = [] }) => {
           placeholder="Buscar"
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        {type === "parents" && (
-          <div className="flex items-center">
-            <ButtonAction onClick={handleDelete} color="bg-light-gray">
-              Eliminar
-            </ButtonAction>
-            {/* <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
-              <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
-          </div>
-        )}
-        <div className="col-start-2">
-          <div className="flex items-center justify-end gap-2">
-            <ButtonAction
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<<"}
-            </ButtonAction>
-            <ButtonAction
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<"}
-            </ButtonAction>
-            <ButtonAction
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              {">"}
-            </ButtonAction>
-            <ButtonAction
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              {">>"}
-            </ButtonAction>
-            <span className="flex items-center gap-1">
-              <div>Pagina</div>
+      <div className="grid grid-cols-4 gap-1">
+        <div className="col-span-1">
+          {type === "parents" && (
+            <div className="flex items-center">
+              <ButtonAction onClick={handleDelete} color="bg-light-gray">
+                Eliminar
+              </ButtonAction>
+              {/* <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
+                <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
+            </div>
+          )}
+        </div>
+        <div className="col-span-1 flex items-center justify-end gap-2">
+          <ButtonAction
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<<"}
+          </ButtonAction>
+          <ButtonAction
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<"}
+          </ButtonAction>
+          <ButtonAction
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {">"}
+          </ButtonAction>
+          <ButtonAction
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            {">>"}
+          </ButtonAction>
+        </div>
+        <div className="col-span-2 flex justify-between items-center">
+          <div className="flex flex-1 justify-center">
+            <span>
               <strong>
                 {table.getState().pagination.pageIndex + 1} de{" "}
                 {table.getPageCount()}
               </strong>
             </span>
-            <span className="flex items-center gap-1 md:hidden lg:flex">
-              | Ir a la pagina:
+          </div>
+          <div className="flex flex-1 justify-center">
+            <span>
+              | Ir a:
               <input
                 type="number"
                 defaultValue={table.getState().pagination.pageIndex + 1}
@@ -217,9 +222,11 @@ const DataTable = ({ type, list = [] }) => {
                   const page = e.target.value ? Number(e.target.value) - 1 : 0;
                   table.setPageIndex(page);
                 }}
-                className="border p-1 rounded w-16"
+                className="border p-1 rounded w-16 ms-2"
               />
             </span>
+          </div>
+          <div className="flex flex-1 justify-center">
             <select
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
@@ -242,7 +249,7 @@ const DataTable = ({ type, list = [] }) => {
             <tr>
               {headerGroup.headers.map((header) => {
                 return (
-                  <th className="" key={header.id}>
+                  <th className="bg-yellow" key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(

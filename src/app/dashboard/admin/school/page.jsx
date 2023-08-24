@@ -15,7 +15,7 @@ export default function Page() {
         <div className="grid-start-2 me-5">
           <div className="flex justify-end gap-2">
             <ButtonLink
-              color="bg-light-gray"
+              color="bg-yellow"
               href={`/dashboard/admin/schools/edit/${profile?.schoolId}`}
             >
               Editar
