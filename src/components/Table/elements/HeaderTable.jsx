@@ -1,7 +1,7 @@
 export default function HeaderTable({ className, children }) {
   return (
     <div
-      className={`bg-yellow p-1 flex items-center justify-center ${
+      className={`p-1 flex items-center justify-center font-bold ${
         className || ""
       }`}
     >

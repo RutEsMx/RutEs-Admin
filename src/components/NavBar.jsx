@@ -53,14 +53,16 @@ const NavBar = () => {
           </label>
         </div>
         <div className="flex items-center">
-          <Image
-            src={logoSrc}
-            alt="l-sc"
-            className="md:ml-10"
-            priority
-            width={40}
-            height={40}
-          />
+          <Link href="/dashboard/routes">
+            <Image
+              src={logoSrc}
+              alt="l-sc"
+              className="md:ml-5 lg:ml-10"
+              priority
+              width={40}
+              height={40}
+            />
+          </Link>
           <h1 className="text-2xl font-bold ml-5">{schoolName || ""}</h1>
         </div>
       </div>

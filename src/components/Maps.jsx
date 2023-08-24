@@ -56,7 +56,7 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
   };
 
   return (
-    <div className="bg-gray lg:h-[500px] sm:h-[250px]">
+    <div className="bg-gray h-full ">
       {!isLoaded ? (
         <p>Loading...</p>
       ) : (
