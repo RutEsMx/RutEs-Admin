@@ -23,6 +23,7 @@ const FormUser = ({ data, isEdit = false }) => {
     email: data?.email || "",
     phone: data?.phone || "",
     isEdit,
+    avatar: data?.avatar || "",
   };
 
   const handleNext = async (values) => {

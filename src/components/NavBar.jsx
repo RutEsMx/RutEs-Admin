@@ -10,6 +10,9 @@ import {
   ArrowLeftOnRectangleIcon,
 } from "@heroicons/react/24/solid";
 
+const ADMIN = "admin";
+const ADMIN_RUTES = "admin-rutes";
+
 const NavBar = () => {
   const { user, profile, school } = useAuthContext();
   const router = useRouter();
@@ -17,6 +20,8 @@ const NavBar = () => {
   const { name, avatar } = profile || {};
   const logoSrc = logo || "/rutes_logo_grey.png";
   const avatarSrc = avatar ? avatar : "/person.png";
+  const isAdmin =
+    profile?.roles?.includes(ADMIN) || profile?.roles?.includes(ADMIN_RUTES);
 
   const handleLogout = async () => {
     const { error } = await signOut();
@@ -73,18 +78,22 @@ const NavBar = () => {
               />
               <span className="">{name || ""}</span>
             </div>
-            <Link href="/dashboard/admin/school">
-              <Cog6ToothIcon
-                className="h-6 w-6 m-2 cursor-pointer"
-                aria-hidden="true"
-              />
-            </Link>
-            <div onClick={handleLogout} className="cursor-pointer">
-              <ArrowLeftOnRectangleIcon
-                className="h-6 w-6 m-2"
-                aria-hidden="true"
-              />
-            </div>
+            {isAdmin && (
+              <>
+                <Link href="/dashboard/admin/school">
+                  <Cog6ToothIcon
+                    className="h-6 w-6 m-2 cursor-pointer"
+                    aria-hidden="true"
+                  />
+                </Link>
+                <div onClick={handleLogout} className="cursor-pointer">
+                  <ArrowLeftOnRectangleIcon
+                    className="h-6 w-6 m-2"
+                    aria-hidden="true"
+                  />
+                </div>
+              </>
+            )}
           </>
         ) : (
           <Link href="/signin">

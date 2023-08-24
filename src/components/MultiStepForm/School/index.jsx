@@ -26,6 +26,7 @@ const FormSchool = ({ data, isEdit = false }) => {
     clave: data?.clave || "",
     postalCode: data?.postalCode || "",
     coords: data?.coords || {},
+    logo: data?.logo || "",
   };
 
   const handleNext = async (values) => {

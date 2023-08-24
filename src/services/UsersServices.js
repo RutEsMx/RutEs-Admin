@@ -3,16 +3,18 @@ import { createDocument, updateDocument } from "@/firebase/crud";
 import { signUp } from "./AuthServices";
 
 const createUsersByForm = async (data) => {
-  const dataCopy = { ...data };
-  const { email, avatar } = dataCopy;
+  // eslint-disable-next-line no-unused-vars
+  const { confirmPassword, ...restData } = data;
+  const { email, avatar } = restData;
 
-  let avatarFilename = avatar;
+  const avatarFile = avatar instanceof File ? avatar : null;
+  let avatarFilename = null;
 
   if (validateEmail(email)) {
     try {
-      if (avatar instanceof File) {
+      if (avatarFile) {
         const dataFile = new FormData();
-        dataFile.set("avatar", avatar);
+        dataFile.set("avatar", avatarFile);
 
         const responseAvatar = await fetch(`/api/images`, {
           method: "POST",
@@ -22,21 +24,22 @@ const createUsersByForm = async (data) => {
         avatarFilename = avatarData?.result;
       }
       const signUpResult = await signUp(email);
-      if (signUpResult?.error) {
+      if (!signUpResult?.error) {
+        const uid = signUpResult?.result?.uid;
+        const password = restData?.password || signUpResult?.result?.password;
+        const profileData = {
+          ...restData,
+          id: uid,
+          password,
+          avatar: avatarFilename,
+        };
+        await createDocument("profile", profileData);
+        return { success: true, message: "Usuario creado correctamente" };
+      } else {
         return {
-          error: signUpResult.error,
+          error: signUpResult?.error,
         };
       }
-      const uid = signUpResult?.result?.uid;
-      const password = signUpResult?.result?.password;
-      const profileData = {
-        ...dataCopy,
-        id: uid,
-        password,
-        avatar: avatarFilename,
-      };
-      await createDocument("profile", profileData);
-      return { success: true, message: "Usuario creado correctamente" };
     } catch (error) {
       return { error };
     }
