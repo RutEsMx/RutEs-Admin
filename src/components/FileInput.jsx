@@ -1,9 +1,6 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { setAlert } from "@/store/useSystemStore";
-
-const storage = getStorage();
+import { downloadURL } from "@/utils/functionsClient";
 
 const FileInput = ({ label, onChange, value, ...props }) => {
   const [fileName, setFileName] = useState("");
@@ -22,33 +19,26 @@ const FileInput = ({ label, onChange, value, ...props }) => {
   };
 
   useEffect(() => {
-    if (value) {
-      if (typeof value === "string") {
-        try {
-          const fileRef = ref(storage, value);
-          getDownloadURL(fileRef)
-            .then((url) => {
-              setImageUrl(url);
-            })
-            .catch((error) => {
-              setAlert({
-                type: "error",
-                message: error?.message,
-                isOpen: true,
-              });
-            });
-        } catch (error) {
-          console.error(error);
+    const getImage = async () => {
+      if (value) {
+        if (typeof value === "string") {
+          try {
+            const url = await downloadURL(value);
+            setImageUrl(url);
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          const file = value;
+          const reader = new FileReader();
+          reader.onload = () => {
+            setImageUrl(reader.result);
+          };
+          reader.readAsDataURL(file);
         }
-      } else {
-        const file = value;
-        const reader = new FileReader();
-        reader.onload = () => {
-          setImageUrl(reader.result);
-        };
-        reader.readAsDataURL(file);
       }
-    }
+    };
+    getImage();
   }, [value]);
 
   return (
