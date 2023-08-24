@@ -62,6 +62,22 @@ const StepAuxiliar = ({ isEdit }) => {
               onChange={handleChange}
               error={errors.adminNumber}
             />
+            <InputField
+              label="Contraseña"
+              type="password"
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+              error={errors.password}
+            />
+            <InputField
+              label="Confirmar contraseña"
+              type="password"
+              name="confirmPassword"
+              value={values.confirmPassword}
+              onChange={handleChange}
+              error={errors.confirmPassword}
+            />
           </div>
         </div>
         <div>

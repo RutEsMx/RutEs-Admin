@@ -30,13 +30,15 @@ const OPTIONS_BLOOD_TYPES = [
 
 const OPTIONS_USER_ROLES_ADMIN = [
   { value: "admin", label: "Admin escuela" },
-  { value: "user-school", label: "Usuario" },
+  { value: "user-school", label: "Usuario escuela" },
+  { value: "minor-user", label: "Usuario limitado" },
 ];
 
 const OPTIONS_USER_ROLES_ADMIN_RUTES = [
   { value: "admin-rutes", label: "Admin RutEs" },
-  { value: "admin", label: "Admin Escuela" },
-  { value: "user-school", label: "Usuario Escuela" },
+  { value: "admin", label: "Admin escuela" },
+  { value: "user-school", label: "Usuario escuela" },
+  { value: "minor-user", label: "Usuario limitado" },
 ];
 
 const STATUS = {
@@ -62,7 +64,7 @@ const COLORS_HEX = {
   active: "#049818",
   inactive: "#4F504F",
   rutes: "#FFBF3B",
-}
+};
 
 const DAYS = {
   monday: "Lunes",

@@ -24,18 +24,22 @@ const FileInput = ({ label, onChange, value, ...props }) => {
   useEffect(() => {
     if (value) {
       if (typeof value === "string") {
-        const fileRef = ref(storage, value);
-        getDownloadURL(fileRef)
-          .then((url) => {
-            setImageUrl(url);
-          })
-          .catch((error) => {
-            setAlert({
-              type: "error",
-              message: error?.message,
-              isOpen: true,
+        try {
+          const fileRef = ref(storage, value);
+          getDownloadURL(fileRef)
+            .then((url) => {
+              setImageUrl(url);
+            })
+            .catch((error) => {
+              setAlert({
+                type: "error",
+                message: error?.message,
+                isOpen: true,
+              });
             });
-          });
+        } catch (error) {
+          console.error(error);
+        }
       } else {
         const file = value;
         const reader = new FileReader();
