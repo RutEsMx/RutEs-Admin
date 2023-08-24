@@ -44,11 +44,32 @@ export const generateRoutes = () => {
         lng: tracking[1],
       },
       status: faker.helpers.arrayElement([
-        "active",
-        "inactive",
-        "schoolToHome",
-        "homeToSchool",
+        "toHome",
+        "toSchool",
+        "",
       ]),
+      notifications: [
+        {
+          title: faker.lorem.sentence(1),
+          message: faker.lorem.sentence(5),
+          date: faker.date.recent(),
+        },
+        {
+          title: faker.lorem.sentence(1),
+          message: faker.lorem.sentence(5),
+          date: faker.date.recent(),
+        },
+        {
+          title: faker.lorem.sentence(1),
+          message: faker.lorem.sentence(5),
+          date: faker.date.recent(),
+        },
+        {
+          title: faker.lorem.sentence(1),
+          message: faker.lorem.sentence(5),
+          date: faker.date.recent(),
+        },
+      ]
     });
   }
   return routes;

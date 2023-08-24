@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import StepUsers from "@/components/Forms/StepUsers";
@@ -6,10 +7,13 @@ import { validateUsers } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
 import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
+import Alert from "@/components/Alert";
 
 const FormUser = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const initialValues = {
     name: data?.name || "",
@@ -19,6 +23,7 @@ const FormUser = ({ data, isEdit = false }) => {
     email: data?.email || "",
     phone: data?.phone || "",
     isEdit,
+    avatar: data?.avatar || "",
   };
 
   const handleNext = async (values) => {
@@ -29,14 +34,14 @@ const FormUser = ({ data, isEdit = false }) => {
         ? await updateUsersByForm(values)
         : await createUsersByForm(values);
 
-      if (error) return alert(error?.message);
+      if (error) return setError(error?.message);
       if (success) {
-        alert(message);
+        setMessage(message);
         return navigation.replace("/dashboard/admin/users");
       }
-      return alert(message);
+      return setMessage(message);
     } catch (error) {
-      alert(error.message);
+      setError(error.message);
     }
   };
 
@@ -66,6 +71,13 @@ const FormUser = ({ data, isEdit = false }) => {
             >
               {isEdit ? "Editar" : "Enviar"}
             </Button>
+          </div>
+          <div className="mt-4">
+            <Alert
+              isOpen={!!message || !!error}
+              message={message || error}
+              type={message ? "success" : "error"}
+            />
           </div>
           <StepUsers isEdit={isEdit} />
         </Form>

@@ -162,7 +162,7 @@ const parentsColumns = [
       const { students } = data;
       return students
         ?.map((student) => {
-          return `${student.name} ${student.lastName} ${student.secondLastName}`;
+          return `${student?.name} ${student?.lastName} ${student?.secondLastName}`;
         })
         .join(",");
     },

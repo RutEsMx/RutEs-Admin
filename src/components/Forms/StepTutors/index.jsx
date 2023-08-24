@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import InputField from "@/components/InputField";
 import { useFormikContext } from "formik";
+import FileInput from "@/components/FileInput";
 
 const StepTutors = ({ step }) => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
@@ -98,9 +99,20 @@ const StepTutors = ({ step }) => {
             </div>
           </div>
         </div>
-        <div className="">
+        <div>
           <div className="flex flex-col">
-            <label htmlFor="avatar">Avatar</label>
+            <FileInput
+              label="Avatar"
+              name={`tutors_${stepTutors}.avatar`}
+              value={values?.["tutors_" + stepTutors]?.avatar || ""}
+              onChange={(event) => {
+                setFieldValue(
+                  `tutors_${stepTutors}.avatar`,
+                  event.currentTarget.files[0],
+                );
+              }}
+              error={errors.avatar}
+            />
           </div>
         </div>
       </div>

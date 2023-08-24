@@ -41,3 +41,11 @@ body {
   font-family: "Poppins-Thin";
   src: url("../../public/fonts/Poppins-Thin.ttf");
 }
+
+.text-black-svg {
+  color: #4f504f !important;
+}
+
+.autocomplet-min-h {
+  min-height: 32px !important;
+}

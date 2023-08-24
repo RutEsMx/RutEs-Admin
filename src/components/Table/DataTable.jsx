@@ -10,14 +10,19 @@ import {
 import { rankItem } from "@tanstack/match-sorter-utils";
 import ButtonAction from "@/components/Table/elements/ButtonAction";
 import {
-  fetchData,
+  fetchDataParents,
   fetchDataSchools,
   fetchDataStudents,
+  fetchDataUnits,
   fetchDataUsers,
 } from "@/services/TableServices";
 import FilterInput from "@/components/Table/elements/FilterInputTable";
 import ColumnSelected from "./columns";
 import { useAuthContext } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { removeCookies } from "@/services/CookiesServices";
+import { deleteParents } from "@/services/ParentsSevices";
+import { setAlert } from "@/store/useSystemStore";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -31,8 +36,9 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 
 const DataTable = ({ type, list = [] }) => {
   const { profile } = useAuthContext();
+  const router = useRouter();
   const columns = useMemo(() => ColumnSelected(type), []);
-  const [data, setData] = useState(() => list);
+  const [data, setData] = useState(list);
   const [globalFilter, setGlobalFilter] = useState("");
   const [{ pageIndex, pageSize }, setPagination] = useState({
     pageIndex: 0,
@@ -48,28 +54,55 @@ const DataTable = ({ type, list = [] }) => {
   const [rowSelection, setRowSelection] = useState([]);
 
   useEffect(() => {
-    if (type === "parents" && pageIndex !== 0)
-      fetchData({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
-        (data) => setData(data),
-      );
+    if (type === "parents")
+      fetchDataParents({
+        schoolId: profile?.schoolId,
+        pageIndex,
+        pageSize,
+      }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     if (type === "students" && pageIndex !== 0)
       fetchDataStudents({
         schoolId: profile?.schoolId,
         pageIndex,
         pageSize,
-      }).then((data) => setData(data));
-    if (type === "users" && pageIndex !== 0)
-      fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
-        (data) => setData(data),
-      );
+      }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
+    if (type === "users")
+      fetchDataUsers({ pageIndex, pageSize }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     if (type === "schools" && pageIndex !== 0) {
-      fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) =>
-        setData(data),
-      );
-      // if (type === "units" && pageIndex !== 0)
-      // fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
-      //   (data) => setData(data),
-      // );
+      fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
+    }
+    if (type === "units") {
+      fetchDataUnits({ pageIndex, pageSize }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     }
   }, [pageIndex, pageSize, profile]);
 
@@ -97,6 +130,32 @@ const DataTable = ({ type, list = [] }) => {
     globalFilterFn: fuzzyFilter,
   });
 
+  const handleDelete = async () => {
+    if (type === "parents") {
+      return deleteParents(rowSelection)
+        .then((data) => {
+          if (data?.error && data?.redirect) {
+            removeCookies();
+            return router.push(data?.redirect);
+          }
+          setAlert({
+            type: "success",
+            message: "Padres eliminados correctamente",
+          });
+          fetchDataParents({
+            schoolId: profile?.schoolId,
+            pageIndex,
+            pageSize,
+          }).then((data) => {
+            setData(data);
+          });
+        })
+        .catch((error) => {
+          setAlert({ type: "error", message: error?.message });
+        });
+    }
+  };
+
   return (
     <>
       <div className="flex justify-end">
@@ -106,47 +165,56 @@ const DataTable = ({ type, list = [] }) => {
           placeholder="Buscar"
         />
       </div>
-      <div className="grid grid-cols-2 gap-4">
-        <div className="flex justify-around md:flex-row sm:flex-col ">
-          {/* <ButtonAction onClick={handleDelete}>Eliminar</ButtonAction>
-          <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
-          <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
+      <div className="grid grid-cols-4 gap-1">
+        <div className="col-span-1">
+          {type === "parents" && (
+            <div className="flex items-center">
+              <ButtonAction onClick={handleDelete} color="bg-light-gray">
+                Eliminar
+              </ButtonAction>
+              {/* <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
+                <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
+            </div>
+          )}
         </div>
-        <div className="col-start-2 flex items-center justify-end">
-          <div className="flex items-center gap-2">
-            <ButtonAction
-              onClick={() => table.setPageIndex(0)}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<<"}
-            </ButtonAction>
-            <ButtonAction
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              {"<"}
-            </ButtonAction>
-            <ButtonAction
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              {">"}
-            </ButtonAction>
-            <ButtonAction
-              onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-              disabled={!table.getCanNextPage()}
-            >
-              {">>"}
-            </ButtonAction>
-            <span className="flex items-center gap-1">
-              <div>Pagina</div>
+        <div className="col-span-1 flex items-center justify-end gap-2">
+          <ButtonAction
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<<"}
+          </ButtonAction>
+          <ButtonAction
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<"}
+          </ButtonAction>
+          <ButtonAction
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {">"}
+          </ButtonAction>
+          <ButtonAction
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            {">>"}
+          </ButtonAction>
+        </div>
+        <div className="col-span-2 flex justify-between items-center">
+          <div className="flex flex-1 justify-center">
+            <span>
               <strong>
                 {table.getState().pagination.pageIndex + 1} de{" "}
                 {table.getPageCount()}
               </strong>
             </span>
-            <span className="flex items-center gap-1">
-              | Ir a la pagina:
+          </div>
+          <div className="flex flex-1 justify-center">
+            <span>
+              | Ir a:
               <input
                 type="number"
                 defaultValue={table.getState().pagination.pageIndex + 1}
@@ -154,14 +222,17 @@ const DataTable = ({ type, list = [] }) => {
                   const page = e.target.value ? Number(e.target.value) - 1 : 0;
                   table.setPageIndex(page);
                 }}
-                className="border p-1 rounded w-16"
+                className="border p-1 rounded w-16 ms-2"
               />
             </span>
+          </div>
+          <div className="flex flex-1 justify-center">
             <select
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
                 table.setPageSize(Number(e.target.value));
               }}
+              className="md:hidden lg:flex"
             >
               {[10, 20, 30, 40, 50].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
@@ -178,7 +249,7 @@ const DataTable = ({ type, list = [] }) => {
             <tr>
               {headerGroup.headers.map((header) => {
                 return (
-                  <th className="" key={header.id}>
+                  <th className="bg-yellow" key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(

@@ -5,6 +5,7 @@ import { auth } from "@/firebase/client";
 import { useContext } from "react";
 import { getDocumentByField } from "@/firebase/crud";
 import { getSchooldById } from "@/services/SchoolServices";
+import { getCookies } from "@/services/CookiesServices";
 
 export const AuthContext = createContext();
 
@@ -28,6 +29,8 @@ export function AuthContextProvider({ children }) {
       try {
         const profile = await getDocumentByField("profile", "id", user?.uid);
         setUser(user);
+        const jwt = await user?.getIdToken();
+        await getCookies(jwt)
         const school = await getSchooldById(profile?.schoolId);
         if (school?.error) {
           throw new Error(school?.error?.message);

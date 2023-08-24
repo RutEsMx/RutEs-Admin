@@ -1,10 +1,11 @@
+import FileInput from "@/components/FileInput";
 import InputField from "@/components/InputField";
 import SelectField from "@/components/SelectField";
 import { OPTIONS_BLOOD_TYPES, OPTIONS_TYPE_SERVICES } from "@/utils/options";
 import { useFormikContext } from "formik";
 
 const StepStudent = () => {
-  const { values, handleChange, errors } = useFormikContext();
+  const { values, handleChange, errors, setFieldValue } = useFormikContext();
 
   return (
     <div className="border border-black px-4 py-2 mt-4">
@@ -137,10 +138,17 @@ const StepStudent = () => {
             </div>
           </div>
         </div>
-        <div className="">
-          {/* Avatar */}
+        <div>
           <div className="flex flex-col">
-            <label htmlFor="avatar">Avatar</label>
+            <FileInput
+              label="Avatar"
+              name="avatar"
+              value={values.avatar}
+              onChange={(event) => {
+                setFieldValue("avatar", event.currentTarget.files[0]);
+              }}
+              error={errors.avatar}
+            />
           </div>
         </div>
       </div>

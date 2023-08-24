@@ -30,13 +30,15 @@ const OPTIONS_BLOOD_TYPES = [
 
 const OPTIONS_USER_ROLES_ADMIN = [
   { value: "admin", label: "Admin escuela" },
-  { value: "user-school", label: "Usuario" },
+  { value: "user-school", label: "Usuario escuela" },
+  { value: "minor-user", label: "Usuario limitado" },
 ];
 
 const OPTIONS_USER_ROLES_ADMIN_RUTES = [
   { value: "admin-rutes", label: "Admin RutEs" },
-  { value: "admin", label: "Admin Escuela" },
-  { value: "user-school", label: "Usuario Escuela" },
+  { value: "admin", label: "Admin escuela" },
+  { value: "user-school", label: "Usuario escuela" },
+  { value: "minor-user", label: "Usuario limitado" },
 ];
 
 const STATUS = {
@@ -54,9 +56,32 @@ const COLORS = {
   active: "text-green",
   inactive: "text-red",
   absent: "text-yellow",
-  toSchool: "text-warning",
+  toSchool: "text-green",
   toHome: "text-blue",
 };
+
+const COLORS_HEX = {
+  active: "#049818",
+  inactive: "#4F504F",
+  rutes: "#FFBF3B",
+};
+
+const DAYS = {
+  monday: "Lunes",
+  tuesday: "Martes",
+  wednesday: "Miércoles",
+  thursday: "Jueves",
+  friday: "Viernes",
+};
+
+const DAYS_OPTIONS = [
+  { value: "all", label: "Todos los días" },
+  { value: "monday", label: "Lunes" },
+  { value: "tuesday", label: "Martes" },
+  { value: "wednesday", label: "Miércoles" },
+  { value: "thursday", label: "Jueves" },
+  { value: "friday", label: "Viernes" },
+];
 
 export {
   OPTIONS_TYPE_SERVICES,
@@ -66,4 +91,7 @@ export {
   STATUS_TRAVEL,
   OPTIONS_USER_ROLES_ADMIN_RUTES,
   OPTIONS_USER_ROLES_ADMIN,
+  DAYS,
+  DAYS_OPTIONS,
+  COLORS_HEX,
 };

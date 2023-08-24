@@ -6,17 +6,31 @@ import {
   getDocuments,
   updateDocument,
 } from "@/firebase/crud";
+import { setAllStudents } from "@/store/useStudentsStore";
 
 const getStudentById = async (id) => {
   const studentData = await getDocumentById("students", id);
   return studentData;
 };
 
-const createParentProfile = async (parent, schoolId) => {
-  const { email } = parent;
+const createParentProfile = async (parent, schoolId, roles) => {
+  const { email, avatar } = parent;
+  let avatarFilename = avatar;
 
   if (validateEmail(email)) {
     try {
+      if (avatar instanceof File) {
+        const dataFile = new FormData();
+        dataFile.set("avatar", avatar);
+        const responseAvatar = await fetch(`/api/images`, {
+          method: "POST",
+          body: dataFile,
+        });
+
+        const { result: resultAvatar } = await responseAvatar.json();
+        if (resultAvatar) avatarFilename = resultAvatar;
+      }
+
       const signUpResult = await signUp(email);
       if (signUpResult?.error) {
         return {
@@ -31,8 +45,9 @@ const createParentProfile = async (parent, schoolId) => {
         ...parent,
         id: uid,
         password,
-        roles: ["user"],
+        roles: roles || ["user"],
         schoolId,
+        avatar: avatarFilename,
       };
 
       const responseCreateDocument = await createDocument(
@@ -47,30 +62,62 @@ const createParentProfile = async (parent, schoolId) => {
 };
 
 const createParentsByForm = async (data, schoolId) => {
-  const dataCopy = { ...data };
-  const { father, mother } = dataCopy;
+  const {
+    countTutors,
+    father,
+    mother,
+    avatar,
+    // eslint-disable-next-line no-unused-vars
+    includeMother,
+    // eslint-disable-next-line no-unused-vars
+    includeFather,
+    ...studentData
+  } = data;
 
-  const fatherProfile = await createParentProfile(father, schoolId);
+  const [fatherProfile, motherProfile] = await Promise.all([
+    createParentProfile(father, schoolId, ["user"]),
+    createParentProfile(mother, schoolId, ["user"]),
+  ]);
+
   if (fatherProfile?.error) {
-    throw new Error(`Papá: ${fatherProfile.error?.code}`);
+    throw new Error(`Papá: ${fatherProfile.error?.message}`);
   }
 
-  const motherProfile = await createParentProfile(mother, schoolId);
   if (motherProfile?.error) {
-    throw new Error(`Mamá: ${motherProfile.error?.code}`);
+    throw new Error(`Mamá: ${motherProfile.error?.message}`);
   }
 
-  delete dataCopy.countTutors;
-  delete dataCopy.father;
-  delete dataCopy.mother;
-  delete dataCopy.includeFather;
-  delete dataCopy.includeMother;
-  dataCopy.schoolId = schoolId;
+  studentData.schoolId = schoolId;
 
-  const studentProfile = await createDocument("students", dataCopy);
+  if (avatar instanceof File) {
+    const dataFile = new FormData();
+    dataFile.set("avatar", avatar);
+
+    const responseAvatar = await fetch(`/api/images`, {
+      method: "POST",
+      body: dataFile,
+    });
+
+    const { result: resultAvatar } = await responseAvatar.json();
+    if (resultAvatar) studentData.avatar = resultAvatar;
+  }
+
+  for (let i = 0; i < countTutors; i++) {
+    const tutor = `tutors_${i}`;
+    delete studentData[tutor];
+  }
+
+  const studentProfile = await createDocument("students", studentData);
   if (studentProfile?.error) {
     throw new Error(`Estudiante: ${studentProfile.error?.code}`);
   }
+
+  const tutors = Array.from({ length: countTutors }, (_, i) => {
+    const tutor = `tutors_${i}`;
+    const tutorData = { ...data[tutor], schoolId, students: [studentProfile] };
+    delete studentData[tutor];
+    return createParentProfile(tutorData, schoolId, ["tutor"]);
+  });
 
   let responseProfile;
   const parents = [];
@@ -93,11 +140,24 @@ const createParentsByForm = async (data, schoolId) => {
     }
     parents.push(motherProfile);
   }
+
+  const tutorProfiles = await Promise.all(tutors);
+
+  if (tutorProfiles.some((profile) => profile?.error)) {
+    throw new Error(
+      `Tutor: ${tutorProfiles.find((profile) => profile?.error)?.code}`,
+    );
+  }
+
   const responseUpdateStudent = await updateDocument(
     "students",
     studentProfile.id,
-    { parents: parents },
+    {
+      parents: parents.filter((parent) => parent?.id),
+      tutors: tutorProfiles.filter((profile) => profile?.id),
+    },
   );
+
   if (responseUpdateStudent?.error) {
     throw new Error(`Estudiante: ${responseUpdateStudent.error?.code}`);
   }
@@ -110,4 +170,25 @@ const getStudents = async (school) => {
   return students;
 };
 
-export { createParentsByForm, getStudentById, getStudents };
+const getAllStudents = async ({ all = false }) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/students?all=${all}`,
+    );
+
+    if (response?.redirected) {
+      return {
+        error: true,
+        redirect: response.url,
+        message: "Redireccionando",
+      };
+    }
+    const data = await response.json();
+    setAllStudents(data);
+    return data;
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+
+export { createParentsByForm, getStudentById, getStudents, getAllStudents };

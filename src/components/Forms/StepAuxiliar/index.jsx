@@ -1,8 +1,9 @@
+import FileInput from "@/components/FileInput";
 import InputField from "@/components/InputField";
 import { useFormikContext } from "formik";
 
 const StepAuxiliar = ({ isEdit }) => {
-  const { values, handleChange, errors } = useFormikContext();
+  const { values, handleChange, errors, setFieldValue } = useFormikContext();
 
   return (
     <div className="border border-black px-4 py-2 mt-4">
@@ -61,12 +62,35 @@ const StepAuxiliar = ({ isEdit }) => {
               onChange={handleChange}
               error={errors.adminNumber}
             />
+            <InputField
+              label="Contraseña"
+              type="password"
+              name="password"
+              value={values.password}
+              onChange={handleChange}
+              error={errors.password}
+            />
+            <InputField
+              label="Confirmar contraseña"
+              type="password"
+              name="confirmPassword"
+              value={values.confirmPassword}
+              onChange={handleChange}
+              error={errors.confirmPassword}
+            />
           </div>
         </div>
-        <div className="">
-          {/* Avatar */}
+        <div>
           <div className="flex flex-col">
-            <label htmlFor="avatar">Avatar</label>
+            <FileInput
+              label="Avatar"
+              name="avatar"
+              value={values.avatar}
+              onChange={(event) => {
+                setFieldValue("avatar", event.currentTarget.files[0]);
+              }}
+              error={errors.avatar}
+            />
           </div>
         </div>
       </div>

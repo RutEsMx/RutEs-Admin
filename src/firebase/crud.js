@@ -10,6 +10,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase/client";
+import { downloadURL } from "@/utils/functionsClient";
 
 const createDocument = async (collectionName, data) => {
   try {
@@ -62,8 +63,6 @@ const getDocumentById = async (collectionName, id) => {
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     return docSnap.data();
-  } else {
-    console.log("No such document!");
   }
 };
 
@@ -72,11 +71,15 @@ const getDocumentByField = async (collectionName, field, value) => {
   const q = query(collection(db, collectionName), where(field, "==", value));
   const querySnapshot = await getDocs(q);
   if (querySnapshot.empty) {
-    console.log("No matching documents.");
     return;
   }
   if (collectionName === "profile") {
-    return querySnapshot.docs[0]?.data();
+    const data = querySnapshot.docs[0]?.data();
+    if (typeof data?.avatar === "string") {
+      const avatar = await downloadURL(data?.avatar);
+      data.avatar = avatar;
+    }
+    return data;
   }
 
   const documents = querySnapshot.docs.map((doc) => ({

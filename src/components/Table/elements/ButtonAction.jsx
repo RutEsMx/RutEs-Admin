@@ -1,7 +1,13 @@
-export default function ButtonAction({ onClick, children, ...props }) {
+export default function ButtonAction({ onClick, children, color = "bg-yellow", ...props }) {
+  const colorClasses = {
+    "bg-yellow": "bg-yellow hover:bg-yellow-hover",
+    "bg-light-gray": "bg-light-gray hover:bg-gray",
+  };
   return (
     <button
-      className="bg-light-gray hover:bg-gray text-black text-xs font-bold py-2 sm:py-1 px-4 sm:px-2 rounded border"
+      className={
+        `${colorClasses[color]} rounded-md px-2 py-1 w-fit flex flex-row items-center justify-center cursor-pointer`
+      }
       onClick={onClick}
       {...props}
     >

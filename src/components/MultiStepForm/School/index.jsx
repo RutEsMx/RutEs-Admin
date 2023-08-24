@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import { validateSchool } from "@/utils/validationSchemas";
@@ -9,10 +10,14 @@ import {
 } from "@/services/SchoolServices";
 import StepSchool from "@/components/Forms/StepSchool";
 import { useAuthContext } from "@/context/AuthContext";
+import Alert from "@/components/Alert";
+import { downloadURL } from "@/utils/functionsClient";
 
 const FormSchool = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { setSchool } = useAuthContext();
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const initialValues = {
     name: data?.name || "",
@@ -22,6 +27,7 @@ const FormSchool = ({ data, isEdit = false }) => {
     clave: data?.clave || "",
     postalCode: data?.postalCode || "",
     coords: data?.coords || {},
+    logo: data?.logo || "",
   };
 
   const handleNext = async (values) => {
@@ -29,14 +35,19 @@ const FormSchool = ({ data, isEdit = false }) => {
     const { success, message, error, result } = isEdit
       ? await updateSchoolByForm(values)
       : await createSchoolByForm(values);
-    if (error) return alert(error?.message);
+    if (error) return setError(error?.message);
 
     if (success) {
-      setSchool(result);
-      alert(message);
+      const { logo, ...rest } = result;
+      if (typeof logo === "string") {
+        const responseLogo = await downloadURL(logo);
+        rest.logo = responseLogo;
+      }
+      setSchool(rest);
+      setMessage(message);
       return navigation.replace("/dashboard/admin/schools");
     }
-    return alert(message);
+    return setMessage(message);
   };
 
   const handleBack = () => {
@@ -65,6 +76,13 @@ const FormSchool = ({ data, isEdit = false }) => {
             >
               {isEdit ? "Editar" : "Enviar"}
             </Button>
+          </div>
+          <div className="mt-4">
+            <Alert
+              isOpen={!!message || !!error}
+              message={message || error}
+              type={message ? "success" : "error"}
+            />
           </div>
           <StepSchool />
         </Form>

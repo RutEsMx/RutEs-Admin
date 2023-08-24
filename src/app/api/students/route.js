@@ -1,21 +1,50 @@
 import { NextResponse } from "next/server";
 import { customInitApp } from "@/firebase/admin";
 import { firestore } from "firebase-admin";
-
+import { cookies } from "next/headers";
+import { getUSer } from "@/utils/functionsServer";
 // Init the Firebase SDK every time the server is called
 customInitApp();
 
 export async function GET(request) {
   const url = new URL(request.url);
+  const sessionid = cookies().get("sessionid");
   const searchParams = new URLSearchParams(url.search);
-  const query = {
-    pageIndex: Number(searchParams.get("pageIndex")),
-    pageSize: Number(searchParams.get("pageSize")),
-    schoolId: searchParams.get("schoolId"),
-  };
-  if (!query)
-    return NextResponse.json({ error: "Missing query" }, { status: 400 });
+  const profile = await getUSer(sessionid?.value);
+
+  if (profile?.error) {
+    return NextResponse.redirect(new URL("/signin", request.url));
+  }
+
+  if (searchParams.get("all")) {
+    try {
+      const getAllStudents = await firestore()
+        .collection("students")
+        .where("schoolId", "==", profile.schoolId)
+        .orderBy("name")
+        .get();
+      if (getAllStudents.empty) {
+        return NextResponse.json({ error: "No se encontraron estudiantes" });
+      }
+      const data = getAllStudents.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+        name: `${doc.data().name} ${doc.data().lastName} ${
+          doc.data().secondLastName
+        }`,
+      }));
+      return NextResponse.json(data);
+    } catch (error) {
+      return NextResponse.json({ error });
+    }
+  }
+
   try {
+    const query = {
+      pageIndex: Number(searchParams.get("pageIndex")),
+      pageSize: Number(searchParams.get("pageSize")),
+      schoolId: searchParams.get("schoolId"),
+    };
     let lastVisible = 0;
     if (query?.pageIndex > 0) {
       const lastVisibleSnapshot = await firestore()
