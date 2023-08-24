@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { customInitApp } from "@/firebase/admin";
 import { auth, firestore } from "firebase-admin";
 import { cookies } from "next/headers";
-import { getUSer } from "@/utils/functions";
+import { getUSer } from "@/utils/functionsServer";
 
 // Init the Firebase SDK every time the server is called
 customInitApp();

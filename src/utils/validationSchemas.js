@@ -1,5 +1,6 @@
 import * as Yup from "yup";
 const REGEX_PHONE = /^(\+\d{1,3}[- ]?)?\d{10}$/;
+const REGEX_PASSWORD = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 import { auth } from "@/firebase/client";
 import { fetchSignInMethodsForEmail } from "firebase/auth";
 
@@ -190,7 +191,15 @@ const validateAuxiliar = Yup.object().shape({
     .required("Correo requerido")
     .test("email-exists", "Correo ya existe", emailExists),
   adminNumber: Yup.string().nullable().required("Número de empleado requerido"),
-  // avatar: Yup.string().nullable().required('Avatar requerido'),
+  avatar: Yup.string().nullable().required("Avatar requerido"),
+  password: Yup.string()
+    .nullable()
+    .matches(REGEX_PASSWORD, "Contraseña inválida")
+    .required("Contraseña requerida"),
+  confirmPassword: Yup.string()
+    .nullable()
+    .oneOf([Yup.ref("password"), null], "Las contraseñas no coinciden")
+    .required("Confirmar contraseña requerida"),
 });
 
 const validateDriver = Yup.object().shape({

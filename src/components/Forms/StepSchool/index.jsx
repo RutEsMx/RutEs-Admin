@@ -1,8 +1,9 @@
+import FileInput from "@/components/FileInput";
 import InputField from "@/components/InputField";
 import { useFormikContext } from "formik";
 
 const StepSchool = () => {
-  const { values, handleChange, errors } = useFormikContext();
+  const { values, handleChange, errors, setFieldValue } = useFormikContext();
 
   return (
     <div>
@@ -47,10 +48,17 @@ const StepSchool = () => {
             />
           </div>
         </div>
-        <div className="">
-          {/* Logo */}
+        <div>
           <div className="flex flex-col">
-            <label htmlFor="logo">Logo Escuela</label>
+            <FileInput
+              label="Logo"
+              name="logo"
+              value={values.logo}
+              onChange={(event) => {
+                setFieldValue("logo", event.currentTarget.files[0]);
+              }}
+              error={errors.logo}
+            />
           </div>
         </div>
       </div>

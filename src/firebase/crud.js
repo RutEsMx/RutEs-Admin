@@ -10,6 +10,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { db } from "@/firebase/client";
+import { downloadURL } from "@/utils/functionsClient";
 
 const createDocument = async (collectionName, data) => {
   try {
@@ -73,7 +74,12 @@ const getDocumentByField = async (collectionName, field, value) => {
     return;
   }
   if (collectionName === "profile") {
-    return querySnapshot.docs[0]?.data();
+    const data = querySnapshot.docs[0]?.data();
+    if (typeof data?.avatar === "string") {
+      const avatar = await downloadURL(data?.avatar);
+      data.avatar = avatar;
+    }
+    return data;
   }
 
   const documents = querySnapshot.docs.map((doc) => ({

@@ -26,6 +26,8 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
     roles: ["auxiliar"],
     isEdit,
     avatar: data?.avatar || "",
+    password: null,
+    confirmPassword: null,
   };
 
   const handleNext = async (values) => {

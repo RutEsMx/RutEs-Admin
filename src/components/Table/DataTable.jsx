@@ -78,16 +78,14 @@ const DataTable = ({ type, list = [] }) => {
         }
         setData(data);
       });
-    if (type === "users" && pageIndex !== 0)
-      fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
-        (data) => {
-          if (data?.error && data?.redirect) {
-            removeCookies();
-            return router.push(data?.redirect);
-          }
-          setData(data);
-        },
-      );
+    if (type === "users")
+      fetchDataUsers({ pageIndex, pageSize }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     if (type === "schools" && pageIndex !== 0) {
       fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) => {
         if (data?.error && data?.redirect) {
@@ -168,13 +166,15 @@ const DataTable = ({ type, list = [] }) => {
         />
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <div className="flex items-center">
-          <ButtonAction onClick={handleDelete} color="bg-light-gray">
-            Eliminar
-          </ButtonAction>
-          {/* <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
-          <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
-        </div>
+        {type === "parents" && (
+          <div className="flex items-center">
+            <ButtonAction onClick={handleDelete} color="bg-light-gray">
+              Eliminar
+            </ButtonAction>
+            {/* <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
+              <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
+          </div>
+        )}
         <div className="col-start-2">
           <div className="flex items-center justify-end gap-2">
             <ButtonAction

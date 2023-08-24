@@ -1,3 +1,4 @@
+import FileInput from "@/components/FileInput";
 import InputField from "@/components/InputField";
 import SelectField from "@/components/SelectField";
 import { useAuthContext } from "@/context/AuthContext";
@@ -8,7 +9,7 @@ import {
 import { useFormikContext } from "formik";
 
 const StepUsers = ({ isEdit }) => {
-  const { values, handleChange, errors } = useFormikContext();
+  const { values, handleChange, errors, setFieldValue } = useFormikContext();
   const { profile } = useAuthContext();
   const isAdminRutes = profile?.roles?.includes("admin-rutes");
 
@@ -73,10 +74,17 @@ const StepUsers = ({ isEdit }) => {
             />
           </div>
         </div>
-        <div className="">
-          {/* Avatar */}
+        <div>
           <div className="flex flex-col">
-            <label htmlFor="avatar">Avatar</label>
+            <FileInput
+              label="Avatar"
+              name="avatar"
+              value={values.avatar}
+              onChange={(event) => {
+                setFieldValue("avatar", event.currentTarget.files[0]);
+              }}
+              error={errors.avatar}
+            />
           </div>
         </div>
       </div>

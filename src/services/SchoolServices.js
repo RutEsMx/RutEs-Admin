@@ -5,14 +5,29 @@ import {
   updateDocument,
 } from "@/firebase/crud";
 import { signOut } from "@/firebase/auth";
+import { downloadURL } from "@/utils/functionsClient";
 
 const createSchoolByForm = async (data) => {
-  const dataCopy = { ...data };
-  const { email } = dataCopy;
+  const { logo, ...restData } = data;
 
-  if (validateEmail(email)) {
+  const logoFile = logo instanceof File;
+  let logoFilename = null;
+
+  if (validateEmail(data?.email)) {
     try {
-      const response = await createDocument("schools", dataCopy);
+      if (logoFile) {
+        const dataFile = new FormData();
+        dataFile.set("avatar", logo);
+        dataFile.set("type", "schools");
+        const responseLogo = await fetch(`/api/images`, {
+          method: "POST",
+          body: dataFile,
+        });
+        const logoData = await responseLogo.json();
+        logoFilename = logoData?.result;
+        restData.logo = logoFilename;
+      }
+      const response = await createDocument("schools", restData);
       if (response?.error) return { error: response.error };
       return { success: true, message: "Escuela creada correctamente" };
     } catch (error) {
@@ -24,18 +39,33 @@ const createSchoolByForm = async (data) => {
 };
 
 const updateSchoolByForm = async (data) => {
-  const dataCopy = { ...data };
-  const { email } = dataCopy;
+  const { logo, ...restData } = data;
 
-  if (validateEmail(email)) {
+  const logoFile = logo instanceof File;
+  let logoFilename = logoFile ? null : logo;
+
+  if (validateEmail(data?.email)) {
     try {
-      const response = await updateDocument("schools", dataCopy.id, dataCopy);
+      if (logoFile) {
+        const dataFile = new FormData();
+        dataFile.set("avatar", logo);
+        dataFile.set("type", "schools");
+
+        const responseLogo = await fetch(`/api/images`, {
+          method: "POST",
+          body: dataFile,
+        });
+        const logoData = await responseLogo.json();
+        logoFilename = logoData?.result;
+      }
+      restData.logo = logoFilename;
+      const response = await updateDocument("schools", restData.id, restData);
 
       if (response?.error) return { error: response.error };
       return {
         success: true,
         message: "Escuela actualizada correctamente",
-        result: dataCopy,
+        result: restData,
       };
     } catch (error) {
       return { error };
@@ -49,6 +79,10 @@ const getSchooldById = async (id) => {
   try {
     const response = await getDocumentById("schools", id);
     if (response?.error) return { error: response.error };
+    if (typeof response?.logo === "string") {
+      const logoResponse = await downloadURL(response?.logo);
+      response.logo = logoResponse;
+    }
     return { success: true, data: response };
   } catch (error) {
     signOut();
