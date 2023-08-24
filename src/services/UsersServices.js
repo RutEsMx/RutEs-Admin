@@ -83,12 +83,17 @@ const updateUsersByForm = async (data) => {
   }
 };
 
-const getUsers = async ({ pageIndex, pageSize, schoolId }) => {
+const getUsers = async ({ pageIndex, pageSize }) => {
   try {
     const response = await fetch(
-      `/api/users?pageIndex=${pageIndex}&pageSize=${pageSize}&schoolId=${schoolId}`,
+      `/api/users?pageIndex=${pageIndex}&pageSize=${pageSize}`,
     );
-    return { success: true, data: response };
+    if (response?.redirected) {
+      return { error: true, redirect: response.url };
+    }
+    const data = await response.json();
+
+    return data;
   } catch (error) {
     return { error };
   }

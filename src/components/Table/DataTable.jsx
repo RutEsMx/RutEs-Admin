@@ -78,16 +78,14 @@ const DataTable = ({ type, list = [] }) => {
         }
         setData(data);
       });
-    if (type === "users" && pageIndex !== 0)
-      fetchDataUsers({ schoolId: profile?.schoolId, pageIndex, pageSize }).then(
-        (data) => {
-          if (data?.error && data?.redirect) {
-            removeCookies();
-            return router.push(data?.redirect);
-          }
-          setData(data);
-        },
-      );
+    if (type === "users")
+      fetchDataUsers({ pageIndex, pageSize }).then((data) => {
+        if (data?.error && data?.redirect) {
+          removeCookies();
+          return router.push(data?.redirect);
+        }
+        setData(data);
+      });
     if (type === "schools" && pageIndex !== 0) {
       fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) => {
         if (data?.error && data?.redirect) {
