@@ -1,4 +1,4 @@
-import { validateEmail } from "@/utils";
+import { validateEmail } from "@/utils/functionsClient";
 import {
   createDocument,
   getDocumentById,
