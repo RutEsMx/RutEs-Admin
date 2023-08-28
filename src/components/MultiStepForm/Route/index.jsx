@@ -13,10 +13,13 @@ import {
   updateRoutesByForm,
 } from "@/services/RoutesServices";
 import MapStops from "@/components/MapStops";
+import { useSystemStore } from "@/store/useSystemStore";
 
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
+  const { alert } = useSystemStore();
+
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("DATOS");
@@ -82,9 +85,9 @@ const FormRoute = ({ data, isEdit = false }) => {
             </div>
             <div className="my-4">
               <Alert
-                isOpen={!!message || !!error}
-                message={message || error}
-                type={message ? "success" : "error"}
+                isOpen={!!message || !!error || alert?.show}
+                message={message || error || alert?.message}
+                type={message ? "success" : "error" || alert?.type}
               />
             </div>
             <div className="grid grid-cols-5 gap-4">
