@@ -10,6 +10,7 @@ const getAllAuxiliars = async ({ all = false }) => {
       return { error: true, redirect: response.url };
     }
     const data = await response.json();
+    if (data?.error) return { error: data.error };
     setAllAuxiliars(data);
     return data;
   } catch (error) {

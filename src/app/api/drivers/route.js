@@ -20,6 +20,7 @@ export async function GET(request) {
       const getAllDrivers = await firestore()
         .collection("drivers")
         .where("schoolId", "==", profile.schoolId)
+        .where("route", "==", null)
         .orderBy("name")
         .get();
       if (getAllDrivers.empty) {
@@ -32,6 +33,7 @@ export async function GET(request) {
           doc.data().secondLastName
         }`,
       }));
+      console.log("🚀 ~ file: route.js:41 ~ data ~ data:", data);
       return NextResponse.json(data);
     } catch (error) {
       return NextResponse.json({ error });

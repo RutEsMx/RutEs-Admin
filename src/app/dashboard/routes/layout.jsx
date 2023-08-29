@@ -31,7 +31,7 @@ export default function Layout({ children }) {
         }
       } catch (error) {
         removeCookies();
-        return router.push("/login");
+        return router.push("/signin");
       }
     };
     getData();

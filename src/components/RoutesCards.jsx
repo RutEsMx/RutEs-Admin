@@ -4,11 +4,11 @@ import RouteCard from "@/components/RouteCard";
 import { useRoutesStore } from "@/store/useRoutesStore";
 
 const RoutesCards = () => {
-  const { routes, addRoute } = useRoutesStore();
+  const { routes, setRoutes } = useRoutesStore();
 
   useEffect(() => {
     const data = generateRoutes();
-    addRoute(data);
+    setRoutes(data);
   }, []);
 
   return (

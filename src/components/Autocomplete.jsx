@@ -12,20 +12,19 @@ const Autocomplete = ({
   value,
   disabled,
 }) => {
-
   const [search, setSearch] = useState("");
   const [showOptions, setShowOptions] = useState(false);
   const ref = useRef(null);
 
   const handleSelect = (option) => {
-    if (disabled) return
+    if (disabled) return;
     onSelect(option.id);
     setSearch(option.name);
     setShowOptions(false);
   };
 
   const handleDropdown = (e) => {
-    if (disabled) return
+    if (disabled) return;
     e.preventDefault();
     setShowOptions(!showOptions);
   };
@@ -35,8 +34,8 @@ const Autocomplete = ({
       setSearch("");
     } else {
       const option = options.find((option) => {
-        return option.id === value
-      })
+        return option.id === value;
+      });
       setSearch(option?.name);
     }
   }, [value, options]);
@@ -64,7 +63,7 @@ const Autocomplete = ({
   }, [ref, setShowOptions, disabled]);
 
   const filteredOptions = options.filter((option) =>
-    option.name.toLowerCase().includes(search.toLowerCase()),
+    option.name.toLowerCase().includes(search?.toLowerCase()),
   );
 
   return (

@@ -28,6 +28,7 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
     avatar: data?.avatar || "",
     password: null,
     confirmPassword: null,
+    route: data?.route || null,
   };
 
   const handleNext = async (values) => {

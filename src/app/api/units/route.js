@@ -23,7 +23,7 @@ export async function GET(request) {
         .collection("units")
         .where("schoolId", "==", profile.schoolId)
         .where("passengers", ">=", passengersNumber)
-        .where("route", "==", "")
+        .where("route", "==", null)
         .orderBy("passengers")
         .get();
 
