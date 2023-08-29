@@ -1,16 +1,44 @@
 import Autocomplete from "@/components/Autocomplete";
 import InputField from "@/components/InputField";
+import { getAllUnits } from "@/services/UnitsServices";
 import { useAuxiliarsStore } from "@/store/useAuxiliarsStore";
 import { useDriversStore } from "@/store/useDriversStore";
-import { useUnitsStore } from "@/store/useUnitsStore";
 import { useFormikContext } from "formik";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 
 const StepRoute = () => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
-  const { allUnits } = useUnitsStore();
+  // const { allUnits } = useUnitsStore();
+  const [units, setUnits] = useState([]);
   const { allAuxiliars } = useAuxiliarsStore();
   const { allDrivers } = useDriversStore();
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    const { signal } = abortController;
+    const getUnitsCapacity = async () => {
+      try {
+        const unitsResponse = await getAllUnits(
+          { all: true, passengers: values.capacity },
+          { signal },
+        );
+        if (unitsResponse?.error) return setUnits([]);
+        setUnits(unitsResponse);
+      } catch (error) {
+        if (error.name === "AbortError") {
+          console.log("Fetch aborted");
+        } else {
+          console.error(error);
+        }
+      }
+    };
+    if (values.capacity > 0) {
+      getUnitsCapacity();
+    }
+    return () => {
+      abortController?.abort();
+    };
+  }, [values.capacity]);
 
   return (
     <div className="mb-4 ">
@@ -34,7 +62,7 @@ const StepRoute = () => {
         className="w-20"
       />
       <Autocomplete
-        options={allUnits}
+        options={units}
         placeholder="Selecciona una unidad"
         label="Unidad"
         onSelect={(value) => setFieldValue("unit", value)}

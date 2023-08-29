@@ -17,12 +17,16 @@ export async function GET(request) {
   }
 
   if (searchParams.get("all")) {
+    const passengersNumber = Number(searchParams.get("passengers"));
     try {
       const getAllUnits = await firestore()
         .collection("units")
         .where("schoolId", "==", profile.schoolId)
-        .orderBy("model")
+        .where("passengers", ">=", passengersNumber)
+        .where("route", "==", "")
+        .orderBy("passengers")
         .get();
+
       if (getAllUnits.empty) {
         return NextResponse.json({ error: "No se encontraron unidades" });
       }
@@ -33,6 +37,7 @@ export async function GET(request) {
       }));
       return NextResponse.json(data);
     } catch (error) {
+      console.log("🚀 ~ file: route.js:47 ~ GET ~ error:", error);
       return NextResponse.json({ error });
     }
   }
