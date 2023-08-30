@@ -33,7 +33,6 @@ export async function GET(request) {
           doc.data().secondLastName
         }`,
       }));
-      console.log("🚀 ~ file: route.js:41 ~ data ~ data:", data);
       return NextResponse.json(data);
     } catch (error) {
       return NextResponse.json({ error });

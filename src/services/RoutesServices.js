@@ -19,13 +19,28 @@ const createStopsIntoStudents = async (student) => {
 
 const createRoutesByForm = async (data) => {
   const dataCopy = { ...data };
-  if (!dataCopy?.stops)
+  console.log("🚀 ~ file: RoutesServices.js:22 ~ createRoutesByForm ~ dataCopy:", dataCopy)
+  if (!dataCopy?.students?.length)
     return { error: { message: "No se puede crear una ruta sin paradas" } };
   try {
-    dataCopy?.students.map(async (student) => {
-      await createStopsIntoStudents(student);
-      return { success: true, message: "Ruta creada correctamente" };
-    });
+    // dataCopy?.students.map(async (student) => {
+    //   await createStopsIntoStudents(student);
+    //   return { success: true, message: "Ruta creada correctamente" };
+    // });
+    // update "drivers" collection with route = id of route created
+    // update "auxiliars" collection with route = id of route created
+    // update "units" collection with route = id of route created
+    // create trips.
+    // ** update "students" collection with route = id of route created
+    const dataRoute = {
+      name: dataCopy.name,
+      capacity: dataCopy.capacity,
+      schoolId: dataCopy.schoolId,
+    }
+
+    const responseRoute = await createDocument("routes", dataRoute);
+    
+    
   } catch (error) {
     return { error };
   }
