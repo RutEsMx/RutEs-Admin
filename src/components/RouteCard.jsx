@@ -18,10 +18,7 @@ const RouteCard = ({ route }) => {
 
   return (
     <div className="grid grid-rows-3 grid-flow-col max-w-sm overflow-hidden shadow-l border-2 rounded-lg border-yellow p-3 max-h-56">
-      <Link
-        // href={`/routes/${route.id}`}
-        href={"#"}
-      >
+      <Link href={`/routes/${route.id}`}>
         <div className="flex flex-col justify-center items-center cursor-pointer">
           <h2 className="text-xl font-bold">{name}</h2>
           <span className={`${statusColor}`}>{statusName}</span>

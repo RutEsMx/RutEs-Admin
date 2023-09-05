@@ -17,7 +17,7 @@ const FormUnits = ({ data, isEdit = false }) => {
     plate: data?.plate || "",
     adminNumber: data?.adminNumber || "",
     passengers: data?.passengers || "",
-    route: data?.route || "",
+    route: data?.route || null,
     lastStatus: data?.lastStatus || "",
   };
 

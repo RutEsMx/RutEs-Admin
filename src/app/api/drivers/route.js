@@ -20,6 +20,7 @@ export async function GET(request) {
       const getAllDrivers = await firestore()
         .collection("drivers")
         .where("schoolId", "==", profile.schoolId)
+        .where("route", "==", null)
         .orderBy("name")
         .get();
       if (getAllDrivers.empty) {
