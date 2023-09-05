@@ -7,7 +7,6 @@ import { useState } from "react";
 
 const Routes = () => {
   const [markers] = useState([]);
-
   // useEffect(() => {
   //   const data = routes.map(route => {
   //     return {

@@ -41,8 +41,10 @@ export async function GET(request) {
         .collection("profile")
         .where("schoolId", "==", profile.schoolId)
         .where("roles", "array-contains-any", ["auxiliar"])
+        .where("route", "==", null)
         .orderBy("name")
         .get();
+
       if (getAllAuxiliars.empty) {
         return NextResponse.json({ error: "No se encontraron auxiliares" });
       }

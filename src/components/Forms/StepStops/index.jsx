@@ -29,29 +29,44 @@ const StepStops = () => {
   const handleAddStudent = (e) => {
     e.preventDefault();
     if (!selectedStudent)
-      return setAlert({ title: "Selecciona un alumno", type: "error" });
-   
-    if (values.students.find((s) => s.id === selectedStudent.id) && !isEditStudent)
-      return setAlert({ title: "El alumno ya fue agregado", type: "error" });
+      return setAlert({
+        message: "Selecciona un alumno",
+        type: "error",
+        show: true,
+      });
 
+    if (
+      values.students.find((s) => s.id === selectedStudent.id) &&
+      !isEditStudent
+    ) {
+      return setAlert({
+        message: "El alumno ya fue agregado",
+        type: "error",
+        show: true,
+      });
+    }
     const stops = [];
     if (selectedDay.includes(ALL_DAY)) {
-        Object.keys(DAYS).forEach((day) => {
-          stops.push({
-            day,
-            coords: {
-              toHome: values?.temporalToHome,
-              toSchool: bothTravels ? values?.temporalToHome : values?.temporalToSchool,
-            },
-          });
+      Object.keys(DAYS).forEach((day) => {
+        stops.push({
+          day,
+          coords: {
+            toHome: values?.temporalToHome,
+            toSchool: bothTravels
+              ? values?.temporalToHome
+              : values?.temporalToSchool,
+          },
         });
+      });
     } else {
       selectedDay.forEach((day) => {
         stops.push({
           day,
           coords: {
             toHome: values?.temporalToHome,
-            toSchool: bothTravels ? values?.temporalToHome : values?.temporalToSchool,
+            toSchool: bothTravels
+              ? values?.temporalToHome
+              : values?.temporalToSchool,
           },
         });
       });
@@ -64,10 +79,14 @@ const StepStops = () => {
       secondLastName: selectedStudent?.secondLastName,
       stops,
     };
+    setAlert({ message: "", type: "", show: false });
     setFieldValue("temporalToHome", null);
     setFieldValue("temporalToSchool", null);
-    if(isEditStudent) {
-      setFieldValue("students", values.students.map((s) => s.id === studentObj.id ? studentObj : s));
+    if (isEditStudent) {
+      setFieldValue(
+        "students",
+        values.students.map((s) => (s.id === studentObj.id ? studentObj : s)),
+      );
     } else {
       setFieldValue("students", [...values.students, studentObj]);
     }
@@ -83,9 +102,8 @@ const StepStops = () => {
     setSelectedDay("all");
     setBothTravels(true);
     setIsEditStudent(false);
-
   };
-  
+
   const handleEditStudent = (e, student) => {
     e.preventDefault();
     setSelectedStudent(student);
@@ -93,14 +111,16 @@ const StepStops = () => {
     setFieldValue("temporalToSchool", student.stops[0].coords.toSchool);
     setIsEditStudent(true);
     // setSelectedDay(student.stops.map((stop) => stop.day));
-  }
-  
+  };
+
   const handleRemoveStudent = (e, student) => {
     e.preventDefault();
-    setFieldValue("students", values.students.filter((s) => s.id !== student?.id));
+    setFieldValue(
+      "students",
+      values.students.filter((s) => s.id !== student?.id),
+    );
     setIsEditStudent(false);
-  }
-    
+  };
 
   const travelName = bothTravels ? "Ambos viajes" : "Viaje a casa";
 
@@ -155,7 +175,7 @@ const StepStops = () => {
             <div className="flex flex-row items-center">
               <PlacesAutocomplete
                 label={travelName}
-                setPlace={value => setFieldValue("temporalToHome", value)}
+                setPlace={(value) => setFieldValue("temporalToHome", value)}
                 place={values?.temporalToHome}
               />
             </div>
@@ -163,7 +183,7 @@ const StepStops = () => {
               <div className="flex flex-row items-center">
                 <PlacesAutocomplete
                   label={"A la escuela"}
-                  setPlace={value => setFieldValue("temporalToSchool", value)}
+                  setPlace={(value) => setFieldValue("temporalToSchool", value)}
                   place={values?.temporalToSchool}
                 />
               </div>
@@ -188,26 +208,26 @@ const StepStops = () => {
       <div className="mx-2 row-span-1 my-6">
         <div className="w-full bg-gray-hover px-2 mb-4">Paradas</div>
         {values.students.map((student) => (
-          <div key={student.id} className="grid grid-cols-3 gap-2">
+          <div key={student.id} className="grid grid-cols-3 gap-2 my-2">
             <div className="col-span-2">
               <div className="flex flex-row items-center">
                 <MapPinIcon className="h-4 w-4 text-yellow" />
                 <div className="flex ps-2">
-                  <span className="text-sm font-semibold">{`${student?.name} ${student?.lastName} ${student?.secondLastName}`}</span>
+                  <span className="text-sm font-semibold">{student?.name}</span>
                 </div>
               </div>
             </div>
             <div className="col-span-1">
               <div className="flex justify-end pe-4 gap-2">
                 <ButtonAction
-                  onClick={e => handleRemoveStudent(e, student)}
+                  onClick={(e) => handleRemoveStudent(e, student)}
                   disabled={false}
                   color="bg-light-gray"
                 >
                   <TrashIcon className="h-4 w-4 text-black" />
                 </ButtonAction>
                 <ButtonAction
-                  onClick={e => handleEditStudent(e, student)}
+                  onClick={(e) => handleEditStudent(e, student)}
                   disabled={false}
                 >
                   <PencilIcon className="h-4 w-4 text-black" />

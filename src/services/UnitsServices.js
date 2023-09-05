@@ -51,10 +51,10 @@ const getUnits = async ({ pageIndex, pageSize }) => {
   }
 };
 
-const getAllUnits = async ({ all = false }) => {
+const getAllUnits = async ({ all = false, passengers }) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units?all=${all}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/units?all=${all}&passengers=${passengers}`,
     );
     if (response?.redirected) {
       return { error: true, redirect: response.url };

@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { removeCookies } from "@/services/CookiesServices";
 import { getAllAuxiliars } from "@/services/AuxiliarsServices";
-import { getAllUnits } from "@/services/UnitsServices";
 import { getAllDrivers } from "@/services/DriverServices";
 import { getAllStudents } from "@/services/StudentsServices";
 import { setAlert } from "@/store/useSystemStore";
@@ -14,25 +13,25 @@ export default function Layout({ children }) {
   useEffect(() => {
     const getData = async () => {
       try {
-        const [units, drivers, auxiliars, students] = await Promise.all([
-          getAllUnits({ all: true }),
+        const [drivers, auxiliars, students] = await Promise.all([
           getAllDrivers({ all: true }),
           getAllAuxiliars({ all: true }),
           getAllStudents({ all: true }),
         ]);
-        if (auxiliars?.error || units?.error || drivers?.error || students?.error) {
+        if (auxiliars?.error || drivers?.error || students?.error) {
           removeCookies();
           setAlert({
             type: "error",
-            message: auxiliars?.message || units?.message || drivers?.message || students?.message
-          })
+            message:
+              auxiliars?.message || drivers?.message || students?.message,
+          });
           return router.push(
-            auxiliars?.redirect || units?.redirect || drivers?.redirect || students?.redirect
-          ); 
+            auxiliars?.redirect || drivers?.redirect || students?.redirect,
+          );
         }
       } catch (error) {
         removeCookies();
-        return router.push("/login");
+        return router.push("/signin");
       }
     };
     getData();

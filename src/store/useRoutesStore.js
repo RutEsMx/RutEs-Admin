@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 export const useRoutesStore = create((set) => ({
   routes: [],
+  setRoutes: (routes) => set({ routes }),
   addRoute: (route) => set((state) => ({ routes: [...state.routes, route] })),
   removeRoute: (routeId) =>
     set((state) => ({
@@ -18,5 +19,6 @@ export const useRoutesStore = create((set) => ({
 const addRoute = useRoutesStore.getState().addRoute;
 const updateRoute = useRoutesStore.getState().updateRoute;
 const removeRoute = useRoutesStore.getState().removeRoute;
+const setRoutes = useRoutesStore.getState().setRoutes;
 
-export { addRoute, updateRoute, removeRoute };
+export { addRoute, updateRoute, removeRoute, setRoutes };

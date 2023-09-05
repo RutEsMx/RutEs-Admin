@@ -1,4 +1,4 @@
-import { generatePassword, validateEmail } from "@/utils";
+import { generatePassword, validateEmail } from "@/utils/functionsClient";
 import { signInAuth } from "@/firebase/auth";
 import { getCookies } from "./CookiesServices";
 

@@ -81,6 +81,7 @@ const getAllDrivers = async ({ all = false }) => {
       return { error: true, redirect: response.url };
     }
     const data = await response.json();
+    if (data?.error) return { error: data.error };
     setAllDrivers(data);
     return data;
   } catch (error) {

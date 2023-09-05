@@ -26,6 +26,7 @@ const FormDriver = ({ data, isEdit = false }) => {
     adminNumber: data?.adminNumber || "",
     license: data?.license || "",
     avatar: data?.avatar || "",
+    route: data?.route || null,
   };
 
   const handleNext = async (values) => {
