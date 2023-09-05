@@ -11,7 +11,6 @@ import { useFormikContext } from "formik";
 import { memo, useCallback, useEffect } from "react";
 
 const getAllData = async (id = null) => {
-  console.log("🚀 ~ file: index.jsx:14 ~ getAllData ~ id:", id);
   try {
     return Promise.all([
       getAllDrivers({ all: true, route: id }),
@@ -84,7 +83,7 @@ const StepRoute = () => {
         label="Unidad"
         onSelect={(value) => setFieldValue("unit", value)}
         error={errors.unit}
-        value={values.unit}
+        value={values?.unit}
         name="unit"
       />
       <Autocomplete
@@ -93,7 +92,7 @@ const StepRoute = () => {
         label="Auxiliar"
         onSelect={(value) => setFieldValue("auxiliar", value)}
         error={errors.auxiliar}
-        value={values.auxiliar}
+        value={values?.auxiliar}
         name="auxiliar"
       />
       <Autocomplete
@@ -102,7 +101,7 @@ const StepRoute = () => {
         label="Conductor"
         onSelect={(value) => setFieldValue("driver", value)}
         error={errors.driver}
-        value={values.driver}
+        value={values?.driver}
         name="driver"
       />
     </div>

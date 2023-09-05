@@ -1,21 +1,18 @@
 import { NextResponse } from "next/server";
-import { cookies } from 'next/headers'
+import { cookies } from "next/headers";
 
 export async function POST(request) {
-  const cookieStore = cookies()
-  const sessionid = cookieStore.get('sessionid')
-  if (sessionid) return NextResponse.json({ error: 'Already logged in'})
+  const cookieStore = cookies();
   const res = await request.json();
   cookieStore.set({
-    name: 'sessionid',
+    name: "sessionid",
     value: res.jwt,
-  })
-  return NextResponse.json({ message: 'Logged in'})
+  });
+  return NextResponse.json({ message: "Logged in" });
 }
 
 export async function DELETE() {
-  const cookieStore = cookies()
-  cookieStore.delete('sessionid')
-  return NextResponse.json({ message: 'Logged out'})
+  const cookieStore = cookies();
+  cookieStore.delete("sessionid");
+  return NextResponse.json({ message: "Logged out" });
 }
-  

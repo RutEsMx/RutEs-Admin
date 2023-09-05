@@ -1,38 +1,17 @@
-"use client";
+/* eslint-disable @next/next/no-img-element */
 import ButtonLink from "@/components/ButtonLink";
-import Maps from "@/components/Maps";
+import MainMap from "./components/MainMap";
 import RoutesCards from "@/components/RoutesCards";
-import Image from "next/image";
-import { useState } from "react";
 
 const Routes = () => {
-  const [markers] = useState([]);
-  // useEffect(() => {
-  //   const data = routes.map(route => {
-  //     return {
-  //       id: route.id,
-  //       lat: route.tracking.lat,
-  //       lng: route.tracking.lng,
-  //       name: route.name
-  //     }
-  //   })
-  //   setMarkers(data)
-  // }, [routes])
-
   return (
     <div className="container mx-auto px-4 pb-12 h-full pt-10">
       <div className="grid grid-cols-2 gap-4 p-2">
         <div>
-          <Image
-            src="/rutes_logo.png"
-            alt="Rutes"
-            width={150}
-            height={70}
-            priority
-          />
+          <img src="/rutes_logo.png" alt="Rutes" className="w-36 h-full" />
         </div>
         <div className="flex justify-end items-center gap-4">
-          <span>Filtrar rutas</span>
+          {/* <span>Filtrar rutas</span> */}
           <ButtonLink
             href="/dashboard/routes/create"
             className="bg-yellow hover:bg-yellow-dark"
@@ -43,7 +22,7 @@ const Routes = () => {
       </div>
       <div className="grid grid-rows-2 gap-4">
         <div className="row-span-1">
-          <Maps markers={markers} />
+          <MainMap />
         </div>
         <div className="row-span-1">
           <div className="grid grid-cols-3 gap-4">

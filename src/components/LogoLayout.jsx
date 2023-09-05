@@ -1,8 +1,8 @@
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
 
 const LogoLayout = () => (
   <div>
-    <Image src="/rutes_logo.png" alt="Rutes" width={150} height={70} priority />
+    <img src="/rutes_logo.png" alt="Rutes" className="w-36 h-full" />
   </div>
 );
 

@@ -1,10 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ButtonStep from "@/components/Button";
 import InputField from "@/components/InputField";
 import { Formik, Form } from "formik";
-import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "@/services/AuthServices";
 import { validationLogin } from "@/utils/validationSchemas";
@@ -38,13 +38,7 @@ export default function Page() {
         <div className="col-span-1 bg-gray-100">
           <div className="flex flex-col justify-center items-center h-full">
             <div className="flex flex-col justify-center items-center">
-              <Image
-                src="/rutes_logo.png"
-                width={550}
-                height={550}
-                priority
-                alt="Rutes Logo"
-              />
+              <img src="/rutes_logo.png" alt="Rutes" className="w-36 h-full" />
             </div>
           </div>
         </div>

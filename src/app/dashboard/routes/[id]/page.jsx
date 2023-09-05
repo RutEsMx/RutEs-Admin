@@ -29,7 +29,7 @@ const Page = ({ params }) => {
   }, [routes, params.id]);
 
   return (
-    <div className="container mx-auto px-4 pb-12 h-full pt-10">
+    <div className="container mx-auto px-4 pb-12 h-screen pt-10">
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
           <h1 className="font-bold text-3xl">Datos de ruta</h1>

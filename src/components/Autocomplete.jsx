@@ -36,7 +36,7 @@ const Autocomplete = ({
       const option = options.find((option) => {
         return option.id === value;
       });
-      setSearch(option?.name);
+      setSearch(option?.name || "");
     }
   }, [value, options]);
 
@@ -62,7 +62,7 @@ const Autocomplete = ({
     };
   }, [ref, setShowOptions, disabled]);
 
-  const filteredOptions = options.filter((option) =>
+  const filteredOptions = options?.filter((option) =>
     option.name.toLowerCase().includes(search?.toLowerCase()),
   );
 
