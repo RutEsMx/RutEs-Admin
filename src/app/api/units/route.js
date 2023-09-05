@@ -19,16 +19,29 @@ export async function GET(request) {
   if (searchParams.get("all")) {
     const passengersNumber = Number(searchParams.get("passengers"));
     try {
-      const getAllUnits = await firestore()
-        .collection("units")
-        .where("schoolId", "==", profile.schoolId)
-        .where("passengers", ">=", passengersNumber)
-        .where("route", "==", null)
-        .orderBy("passengers")
-        .get();
+      let getAllUnits;
+      if (searchParams.get("route") !== "null") {
+        getAllUnits = await firestore()
+          .collection("units")
+          .where("schoolId", "==", profile.schoolId)
+          .where("route", "==", searchParams.get("route"))
+          .orderBy("passengers")
+          .get();
+      } else {
+        getAllUnits = await firestore()
+          .collection("units")
+          .where("schoolId", "==", profile.schoolId)
+          .where("passengers", ">=", passengersNumber)
+          .where("route", "==", null)
+          .orderBy("passengers")
+          .get();
+      }
 
       if (getAllUnits.empty) {
-        return NextResponse.json({ error: "No se encontraron unidades" });
+        return NextResponse.json(
+          { error: "No se encontraron unidades" },
+          { status: 404 },
+        );
       }
       const data = getAllUnits.docs.map((doc) => ({
         ...doc.data(),
@@ -37,7 +50,6 @@ export async function GET(request) {
       }));
       return NextResponse.json(data);
     } catch (error) {
-      console.log("🚀 ~ file: route.js:47 ~ GET ~ error:", error);
       return NextResponse.json({ error });
     }
   }

@@ -16,9 +16,6 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} font-poppins`}>
         <AuthContextProvider>{children}</AuthContextProvider>
       </body>
-      <Script
-        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_API_KEY}&libraries=places`}
-      />
     </html>
   );
 }

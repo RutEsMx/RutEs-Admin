@@ -37,16 +37,30 @@ export async function GET(request) {
 
   if (searchParams.get("all")) {
     try {
-      const getAllAuxiliars = await firestore()
-        .collection("profile")
-        .where("schoolId", "==", profile.schoolId)
-        .where("roles", "array-contains-any", ["auxiliar"])
-        .where("route", "==", null)
-        .orderBy("name")
-        .get();
+      let getAllAuxiliars;
+      if (searchParams.get("route") !== "null") {
+        getAllAuxiliars = await firestore()
+          .collection("profile")
+          .where("schoolId", "==", profile.schoolId)
+          .where("roles", "array-contains-any", ["auxiliar"])
+          .where("route", "==", searchParams.get("route"))
+          .orderBy("name")
+          .get();
+      } else {
+        getAllAuxiliars = await firestore()
+          .collection("profile")
+          .where("schoolId", "==", profile.schoolId)
+          .where("roles", "array-contains-any", ["auxiliar"])
+          .where("route", "==", null)
+          .orderBy("name")
+          .get();
+      }
 
       if (getAllAuxiliars.empty) {
-        return NextResponse.json({ error: "No se encontraron auxiliares" });
+        return NextResponse.json(
+          { error: "No se encontraron auxiliares" },
+          { status: 404 },
+        );
       }
       const data = getAllAuxiliars.docs.map((doc) => ({
         ...doc.data(),
