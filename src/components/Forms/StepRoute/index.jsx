@@ -1,44 +1,61 @@
+"use client";
 import Autocomplete from "@/components/Autocomplete";
 import InputField from "@/components/InputField";
+import { getAllAuxiliars } from "@/services/AuxiliarsServices";
+import { getAllDrivers } from "@/services/DriverServices";
 import { getAllUnits } from "@/services/UnitsServices";
 import { useAuxiliarsStore } from "@/store/useAuxiliarsStore";
 import { useDriversStore } from "@/store/useDriversStore";
+import { useUnitsStore } from "@/store/useUnitsStore";
 import { useFormikContext } from "formik";
-import { memo, useEffect, useState } from "react";
+import { memo, useCallback, useEffect } from "react";
+
+const getAllData = async (id = null) => {
+  console.log("🚀 ~ file: index.jsx:14 ~ getAllData ~ id:", id);
+  try {
+    return Promise.all([
+      getAllDrivers({ all: true, route: id }),
+      getAllUnits({ all: true, route: id }),
+      getAllAuxiliars({ all: true, route: id }),
+    ]);
+  } catch (error) {
+    return { error: error.message };
+  }
+};
 
 const StepRoute = () => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
-  // const { allUnits } = useUnitsStore();
-  const [units, setUnits] = useState([]);
+  const { allUnits } = useUnitsStore();
   const { allAuxiliars } = useAuxiliarsStore();
   const { allDrivers } = useDriversStore();
 
-  useEffect(() => {
-    const abortController = new AbortController();
-    const { signal } = abortController;
-    const getUnitsCapacity = async () => {
-      try {
-        const unitsResponse = await getAllUnits(
-          { all: true, passengers: values.capacity },
-          { signal },
-        );
-        if (unitsResponse?.error) return setUnits([]);
-        setUnits(unitsResponse);
-      } catch (error) {
-        if (error.name === "AbortError") {
-          console.log("Fetch aborted");
-        } else {
-          console.error(error);
-        }
+  const getUnitsCapacity = useCallback(async (e) => {
+    setFieldValue("capacity", e.target.value);
+    try {
+      setFieldValue("unit", null);
+      await getAllUnits({ all: true, passengers: e.target.value });
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("Fetch aborted");
+      } else {
+        console.error(error);
       }
-    };
-    if (values.capacity > 0) {
-      getUnitsCapacity();
     }
-    return () => {
-      abortController?.abort();
+  }, []);
+
+  useEffect(() => {
+    if (values.routeId === null) return;
+    const allData = async () => {
+      getAllData(values.routeId);
     };
-  }, [values.capacity]);
+    allData();
+  }, []);
+
+  // useEffect(() => {
+  //   if (values.capacity > 0) {
+  //     getUnitsCapacity();
+  //   }
+  // }, [values.capacity]);
 
   return (
     <div className="mb-4 ">
@@ -55,14 +72,14 @@ const StepRoute = () => {
         type="number"
         name="capacity"
         value={values.capacity}
-        onChange={handleChange}
+        onChange={(value) => getUnitsCapacity(value)}
         error={errors.capacity}
         min={1}
         max={100}
         className="w-20"
       />
       <Autocomplete
-        options={units}
+        options={allUnits}
         placeholder="Selecciona una unidad"
         label="Unidad"
         onSelect={(value) => setFieldValue("unit", value)}

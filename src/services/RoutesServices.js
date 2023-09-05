@@ -106,29 +106,21 @@ const createRoutesByForm = async (data) => {
 };
 
 const updateRoutesByForm = async (data) => {
-  const dataCopy = { ...data };
-  try {
-    const response = await updateDocument("routes", dataCopy.id, dataCopy);
-    if (response?.error) return { error: response.error };
-    return {
-      success: true,
-      message: "Ruta actualizada correctamente",
-      result: dataCopy,
-    };
-  } catch (error) {
-    return { error };
-  }
+  console.log(
+    "🚀 ~ file: RoutesServices.js:110 ~ updateRoutesByForm ~ data:",
+    data,
+  );
+  // try {
+  //   const response = await updateDocument("routes", dataCopy.id, dataCopy);
+  //   if (response?.error) return { error: response.error };
+  //   return {
+  //     success: true,
+  //     message: "Ruta actualizada correctamente",
+  //     result: dataCopy,
+  //   };
+  // } catch (error) {
+  //   return { error };
+  // }
 };
 
-const getRoutes = async () => {
-  try {
-    const response = await fetch(`/api/routes`);
-    if (!response.ok) return { error: response.statusText };
-    const responseData = await response.json();
-    return { success: true, data: responseData?.data };
-  } catch (error) {
-    return { error };
-  }
-};
-
-export { createRoutesByForm, getRoutes, updateRoutesByForm };
+export { createRoutesByForm, updateRoutesByForm };

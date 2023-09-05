@@ -17,14 +17,27 @@ export async function GET(request) {
 
   if (searchParams.get("all")) {
     try {
-      const getAllDrivers = await firestore()
-        .collection("drivers")
-        .where("schoolId", "==", profile.schoolId)
-        .where("route", "==", null)
-        .orderBy("name")
-        .get();
+      let getAllDrivers;
+      if (searchParams.get("route") !== "null") {
+        getAllDrivers = await firestore()
+          .collection("drivers")
+          .where("schoolId", "==", profile.schoolId)
+          .where("route", "==", searchParams.get("route"))
+          .orderBy("name")
+          .get();
+      } else {
+        getAllDrivers = await firestore()
+          .collection("drivers")
+          .where("schoolId", "==", profile.schoolId)
+          .where("route", "==", null)
+          .orderBy("name")
+          .get();
+      }
       if (getAllDrivers.empty) {
-        return NextResponse.json({ error: "No se encontraron conductores" });
+        return NextResponse.json(
+          { error: "No se encontraron conductores" },
+          { status: 404 },
+        );
       }
       const data = getAllDrivers.docs.map((doc) => ({
         ...doc.data(),
