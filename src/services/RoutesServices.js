@@ -1,10 +1,52 @@
 import { createDocument, updateDocument } from "@/firebase/crud";
+import { doc } from "firebase/firestore";
+import { db } from "@/firebase/client";
+
+const createTravels = async (students) => {
+  const travelsObject = {};
+
+  students?.map((student) => {
+    const refStudent = doc(db, "students", student.id);
+    student?.stops?.map((stop) => {
+      if (stop?.day) {
+        if (!travelsObject[stop.day]) {
+          if (stop?.coords?.toSchool) {
+            travelsObject[stop.day] = {
+              ...travelsObject[stop.day],
+              toSchool: {
+                students: [refStudent],
+              },
+            };
+          }
+          if (stop?.coords?.toHome) {
+            travelsObject[stop.day] = {
+              ...travelsObject[stop.day],
+              toHome: {
+                students: [refStudent],
+              },
+            };
+          }
+        } else {
+          if (stop?.coords?.toSchool) {
+            travelsObject[stop.day]["toSchool"]?.students.push(refStudent);
+          }
+          if (stop?.coords?.toHome) {
+            travelsObject[stop.day]["toHome"]?.students.push(refStudent);
+          }
+        }
+      }
+    });
+  });
+  const response = await createDocument("travels", travelsObject);
+  return response;
+};
 
 const createStopsIntoStudents = async (student) => {
   const arrayStops = [];
   try {
     return student?.stops.map(async (stop) => {
       const stopRef = await createDocument("stops", stop);
+
       arrayStops.push(stopRef);
       const studentRef = await updateDocument("students", student.id, {
         stops: arrayStops,
@@ -18,45 +60,49 @@ const createStopsIntoStudents = async (student) => {
 };
 
 const createRoutesByForm = async (data) => {
-  const dataCopy = { ...data };
-  console.log("🚀 ~ file: RoutesServices.js:22 ~ createRoutesByForm ~ dataCopy:", dataCopy)
-  if (!dataCopy?.students?.length)
+  if (!data?.students?.length)
     return { error: { message: "No se puede crear una ruta sin paradas" } };
   try {
-    // dataCopy?.students.map(async (student) => {
-    //   await createStopsIntoStudents(student);
-    //   return { success: true, message: "Ruta creada correctamente" };
-    // });
-    // update "drivers" collection with route = id of route created
-    // update "auxiliars" collection with route = id of route created
-    // update "units" collection with route = id of route created
-    // create trips.
-    // ** update "students" collection with route = id of route created
+    const responseTravels = await createTravels(data?.students);
+    data?.students.map(async (student) => {
+      await createStopsIntoStudents(student);
+    });
+
     const dataRoute = {
-      name: dataCopy.name,
-      capacity: dataCopy.capacity,
-      schoolId: dataCopy.schoolId,
-    }
+      name: data.name,
+      capacity: data.capacity,
+      schoolId: data.schoolId,
+      id: responseTravels.id,
+    };
 
     const responseRoute = await createDocument("routes", dataRoute);
-    
-    
+    const responseUpdateAuxiliar = await updateDocument(
+      "profile",
+      data.auxiliar,
+      { route: responseRoute.id },
+    );
+    const responseUpdateDriver = await updateDocument("drivers", data.driver, {
+      route: responseRoute.id,
+    });
+    const responseUpdateUnit = await updateDocument("units", data.unit, {
+      route: responseRoute.id,
+    });
+
+    return Promise.all([
+      responseRoute,
+      responseUpdateAuxiliar,
+      responseUpdateDriver,
+      responseUpdateUnit,
+    ])
+      .then(() => {
+        return { success: true, message: "Ruta creada correctamente" };
+      })
+      .catch((error) => {
+        return { error };
+      });
   } catch (error) {
     return { error };
   }
-  // try {
-  //   const driverRef = doc(db, "drivers", dataCopy.driver);
-  //   const auxiliarRef = doc(db, "profile", dataCopy.auxiliar);
-  //   const unitRef = doc(db, "units", dataCopy.unit);
-  //   dataCopy.driver = driverRef;
-  //   dataCopy.auxiliar = auxiliarRef;
-  //   dataCopy.unit = unitRef;
-  //   const response = await createDocument("routes", dataCopy);
-  //   if (response?.error) return { error: response.error };
-  //   return { success: true, message: "Ruta creada correctamente" };
-  // } catch (error) {
-  //   return { error };
-  // }
 };
 
 const updateRoutesByForm = async (data) => {
@@ -74,12 +120,12 @@ const updateRoutesByForm = async (data) => {
   }
 };
 
-const getRoutes = async ({ pageIndex, pageSize, schoolId }) => {
+const getRoutes = async () => {
   try {
-    const response = await fetch(
-      `/api/users?pageIndex=${pageIndex}&pageSize=${pageSize}&schoolId=${schoolId}`,
-    );
-    return { success: true, data: response };
+    const response = await fetch(`/api/routes`);
+    if (!response.ok) return { error: response.statusText };
+    const responseData = await response.json();
+    return { success: true, data: responseData?.data };
   } catch (error) {
     return { error };
   }

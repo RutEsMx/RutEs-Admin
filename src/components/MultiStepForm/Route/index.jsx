@@ -47,7 +47,8 @@ const FormRoute = ({ data, isEdit = false }) => {
         setError(error?.message);
       }
       if (success) {
-        return setMessage(message);
+        setMessage(message);
+        return navigation.replace("/dashboard/routes");
       }
       return setMessage(message);
     } catch (error) {

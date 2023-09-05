@@ -14,11 +14,12 @@ import { downloadURL } from "@/utils/functionsClient";
 
 const createDocument = async (collectionName, data) => {
   try {
-    if (collectionName === "profile") {
+    if (collectionName === "profile" || collectionName === "routes") {
       const setDocRef = doc(db, collectionName, data?.id);
       await setDoc(setDocRef, { ...data });
       return setDocRef;
     }
+
     const docRef = await addDoc(collection(db, collectionName), { ...data });
     return docRef;
   } catch (error) {

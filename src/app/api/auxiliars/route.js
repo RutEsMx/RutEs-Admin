@@ -57,8 +57,6 @@ export async function GET(request) {
       }));
       return NextResponse.json(data);
     } catch (error) {
-      console.log("🚀 ~ file: route.js:110 ~ GET ~ error:", error);
-
       return NextResponse.json({ error });
     }
   }
