@@ -5,6 +5,9 @@ const getRoute = async (id) => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/routes/${id}/`,
+      {
+        cache: "no-store",
+      },
     );
     if (!response.ok) return { error: true };
     const data = await response.json();

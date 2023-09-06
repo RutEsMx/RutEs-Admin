@@ -12,16 +12,16 @@ const useMarkersMap = (params) => {
       student?.stops?.forEach((stop) => {
         if (stop.day === day) {
           newMarkers.push({
-            lat: stop.coords.toSchool?.lat,
-            lng: stop.coords.toSchool?.lng,
+            lat: stop.coords?.toSchool?.lat,
+            lng: stop.coords?.toSchool?.lng,
             studentId: student.id,
             name: student.name,
             draggable: false,
             color: COLORS_HEX.rutes,
           });
           newMarkers.push({
-            lat: stop.coords.toHome?.lat,
-            lng: stop.coords.toHome?.lng,
+            lat: stop.coords?.toHome?.lat,
+            lng: stop.coords?.toHome?.lng,
             studentId: student.id,
             name: student.name,
             draggable: false,
