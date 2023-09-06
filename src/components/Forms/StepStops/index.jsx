@@ -10,7 +10,7 @@ import {
   XMarkIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
-import ButtonAction from "@/components/Table/elements/ButtonAction";
+import ButtonAction from "@/components/ButtonAction";
 import { useState } from "react";
 import { setAlert } from "@/store/useSystemStore";
 import { DAYS, DAYS_OPTIONS } from "@/utils/options";

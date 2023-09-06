@@ -1,5 +1,18 @@
-import { createDocument, updateDocument } from "@/firebase/crud";
-import { doc } from "firebase/firestore";
+import {
+  createDocument,
+  deleteDocument,
+  updateDocument,
+} from "@/firebase/crud";
+import {
+  doc,
+  query,
+  collection,
+  where,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  runTransaction,
+} from "firebase/firestore";
 import { db } from "@/firebase/client";
 
 const createTravels = async (students) => {
@@ -45,6 +58,7 @@ const createStopsIntoStudents = async (student) => {
   const arrayStops = [];
   try {
     return student?.stops.map(async (stop) => {
+      stop.route = student.route;
       const stopRef = await createDocument("stops", stop);
 
       arrayStops.push(stopRef);
@@ -73,6 +87,7 @@ const createRoutesByForm = async (data) => {
       capacity: data.capacity,
       schoolId: data.schoolId,
       id: responseTravels.id,
+      isDeleted: false,
     };
 
     const responseRoute = await createDocument("routes", dataRoute);
@@ -123,4 +138,58 @@ const updateRoutesByForm = async (data) => {
   // }
 };
 
-export { createRoutesByForm, updateRoutesByForm };
+const removeRoutes = async (data) => {
+  const { id } = data;
+  try {
+    const qAuxiliar = query(
+      collection(db, "profile"),
+      where("route", "==", id),
+    );
+    const qDriver = query(collection(db, "drivers"), where("route", "==", id));
+    const qUnit = query(collection(db, "units"), where("route", "==", id));
+    const qStops = query(collection(db, "stops"), where("route", "==", id));
+
+    const getAuxiliar = (await getDocs(qAuxiliar)).docs[0]?.ref;
+    const getDriver = (await getDocs(qDriver)).docs[0]?.ref;
+    const getUnit = (await getDocs(qUnit)).docs[0]?.ref;
+    const getStops = (await getDocs(qStops)).docs.map((el) => el.ref);
+
+    getStops.map(async (el) => {
+      const stopId = el.id;
+      await runTransaction(async (transaction) => {
+        const stopRef = doc(db, "stops", stopId);
+        transaction.delete(stopRef);
+        const studentsQuery = db
+          .collection("students")
+          .where("stops", "array-contains", stopRef);
+        const studentsSnapshot = await transaction.get(studentsQuery);
+
+        studentsSnapshot.forEach((studentDoc) => {
+          const studentData = studentDoc.data();
+          const newStops = (studentData.stops || []).filter(
+            (stop) => stop.id !== stopId,
+          );
+          transaction.update(studentDoc.ref, { stops: newStops });
+        });
+      });
+    });
+
+    await Promise.all([
+      getAuxiliar && updateDoc(getAuxiliar, { route: null }),
+      getDriver && updateDoc(getDriver, { route: null }),
+      getUnit && updateDoc(getUnit, { route: null }),
+      getStops.length > 0 &&
+        getStops.map((el) => {
+          return deleteDoc(el);
+        }),
+      deleteDocument("travels", id),
+      deleteDocument("routes", id),
+    ]);
+
+    return { success: true, message: "Ruta eliminada correctamente" };
+  } catch (error) {
+    return { error };
+  }
+};
+
+export { createRoutesByForm, updateRoutesByForm, removeRoutes };

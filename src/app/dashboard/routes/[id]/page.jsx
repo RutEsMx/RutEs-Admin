@@ -1,16 +1,20 @@
 "use client";
 import { useEffect, useState } from "react";
 import { COLORS, STATUS_TRAVEL } from "@/utils/options";
+import ButtonAction from "@/components/ButtonAction";
 import ButtonLink from "@/components/ButtonLink";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
+import { removeRoutes } from "@/services/RoutesServices";
+import { useRouter } from "next/navigation";
 
 const Page = ({ params }) => {
   const { routes } = useRoutesStore();
   const [route, setRoute] = useState({});
   const [color, setColor] = useState("");
   const [statusName, setStatusName] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const q = query(collection(db, "routes"), where("id", "==", params.id));
@@ -28,13 +32,22 @@ const Page = ({ params }) => {
     };
   }, [routes, params.id]);
 
+  const handleDelete = async () => {
+    const response = await removeRoutes(route);
+    if (!response?.success) return;
+    return router.replace("/dashboard/routes");
+  };
+
   return (
     <div className="container mx-auto px-4 pb-12 h-screen pt-10">
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
           <h1 className="font-bold text-3xl">Datos de ruta</h1>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <ButtonAction color="bg-warning" onClick={handleDelete}>
+            Eliminar
+          </ButtonAction>
           <ButtonLink
             color="bg-light-gray"
             href={`/dashboard/routes/edit/${params.id}`}

@@ -1,5 +1,4 @@
 import { customInitApp } from "@/firebase/admin";
-import { el } from "@faker-js/faker";
 import { firestore } from "firebase-admin";
 import { NextResponse } from "next/server";
 // Init the Firebase SDK every time the server is called
