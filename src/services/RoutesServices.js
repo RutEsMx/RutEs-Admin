@@ -11,7 +11,6 @@ import {
   getDocs,
   updateDoc,
   deleteDoc,
-  runTransaction,
 } from "firebase/firestore";
 import { db } from "@/firebase/client";
 
@@ -54,19 +53,13 @@ const createTravels = async (students) => {
   return response;
 };
 
-const createStopsIntoStudents = async (student, routeId) => {
-  const arrayStops = [];
+const createStops = async (student, routeId) => {
   try {
     return student?.stops.map(async (stop) => {
       stop.route = routeId;
+      stop.student = student.id;
       const stopRef = await createDocument("stops", stop);
-
-      arrayStops.push(stopRef);
-      const studentRef = await updateDocument("students", student.id, {
-        stops: arrayStops,
-      });
-
-      return studentRef;
+      return stopRef;
     });
   } catch (error) {
     return { error };
@@ -79,7 +72,7 @@ const createRoutesByForm = async (data) => {
   try {
     const responseTravels = await createTravels(data?.students);
     data?.students.map(async (student) => {
-      await createStopsIntoStudents(student, responseTravels.id);
+      await createStops(student, responseTravels.id);
     });
 
     const dataRoute = {
