@@ -56,7 +56,7 @@ export async function GET(request, { params }) {
           if (!studentIds.has(student.id)) {
             studentIds.add(student.id);
 
-            let stopsFormat = []; // initialize here, where it is needed
+            let stopsFormat = [];
             for (const stop of student.stops) {
               const stopElement = (await stop.get()).data();
               stopsFormat.push(stopElement);

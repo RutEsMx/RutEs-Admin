@@ -54,11 +54,11 @@ const createTravels = async (students) => {
   return response;
 };
 
-const createStopsIntoStudents = async (student) => {
+const createStopsIntoStudents = async (student, routeId) => {
   const arrayStops = [];
   try {
     return student?.stops.map(async (stop) => {
-      stop.route = student.route;
+      stop.route = routeId;
       const stopRef = await createDocument("stops", stop);
 
       arrayStops.push(stopRef);
@@ -79,7 +79,7 @@ const createRoutesByForm = async (data) => {
   try {
     const responseTravels = await createTravels(data?.students);
     data?.students.map(async (student) => {
-      await createStopsIntoStudents(student);
+      await createStopsIntoStudents(student, responseTravels.id);
     });
 
     const dataRoute = {
@@ -138,8 +138,7 @@ const updateRoutesByForm = async (data) => {
   // }
 };
 
-const removeRoutes = async (data) => {
-  const { id } = data;
+const removeRoutes = async (id) => {
   try {
     const qAuxiliar = query(
       collection(db, "profile"),
@@ -154,33 +153,13 @@ const removeRoutes = async (data) => {
     const getUnit = (await getDocs(qUnit)).docs[0]?.ref;
     const getStops = (await getDocs(qStops)).docs.map((el) => el.ref);
 
-    getStops.map(async (el) => {
-      const stopId = el.id;
-      await runTransaction(async (transaction) => {
-        const stopRef = doc(db, "stops", stopId);
-        transaction.delete(stopRef);
-        const studentsQuery = db
-          .collection("students")
-          .where("stops", "array-contains", stopRef);
-        const studentsSnapshot = await transaction.get(studentsQuery);
-
-        studentsSnapshot.forEach((studentDoc) => {
-          const studentData = studentDoc.data();
-          const newStops = (studentData.stops || []).filter(
-            (stop) => stop.id !== stopId,
-          );
-          transaction.update(studentDoc.ref, { stops: newStops });
-        });
-      });
-    });
-
     await Promise.all([
       getAuxiliar && updateDoc(getAuxiliar, { route: null }),
       getDriver && updateDoc(getDriver, { route: null }),
       getUnit && updateDoc(getUnit, { route: null }),
       getStops.length > 0 &&
-        getStops.map((el) => {
-          return deleteDoc(el);
+        getStops.map(async (el) => {
+          await deleteDoc(el);
         }),
       deleteDocument("travels", id),
       deleteDocument("routes", id),
