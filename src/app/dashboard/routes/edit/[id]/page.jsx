@@ -5,6 +5,9 @@ const getRoute = async (id) => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/routes/${id}/`,
+      {
+        cache: "no-store",
+      },
     );
     if (!response.ok) return { error: true };
     const data = await response.json();
@@ -24,7 +27,7 @@ const Page = async ({ params }) => {
       <div className="grid grid-cols-1 gap-4 p-2">
         {route?.error ? (
           <div className="flex flex-col justify-center items-center h-full mt-4">
-            <p className="h-full mx-auto text-2xl">Auxiliar no encontrado</p>
+            <p className="h-full mx-auto text-2xl">Ruta no encontrada</p>
             <div className="bg-yellow rounded px-4 py-1 mt-6">
               <Link href="/dashboard/routes">
                 <p className="h-full mx-auto text-2xl">Regresar</p>

@@ -11,6 +11,7 @@ export default function ButtonLink({
   const colorClasses = {
     "bg-yellow": "bg-yellow hover:bg-yellow-hover",
     "bg-light-gray": "bg-light-gray hover:bg-gray",
+    "bg-warning": "bg-red hover:bg-rose-700 text-white ",
   };
 
   function Icon(props) {

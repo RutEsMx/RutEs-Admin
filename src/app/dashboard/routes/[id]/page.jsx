@@ -34,7 +34,13 @@ const Page = ({ params }) => {
         <div className="col-span-2">
           <h1 className="font-bold text-3xl">Datos de ruta</h1>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <ButtonLink
+            color="bg-warning"
+            href={`/dashboard/routes/${params.id}/confirm`}
+          >
+            Eliminar
+          </ButtonLink>
           <ButtonLink
             color="bg-light-gray"
             href={`/dashboard/routes/edit/${params.id}`}

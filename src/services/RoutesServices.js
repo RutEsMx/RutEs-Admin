@@ -1,5 +1,17 @@
-import { createDocument, updateDocument } from "@/firebase/crud";
-import { doc } from "firebase/firestore";
+import {
+  createDocument,
+  deleteDocument,
+  updateDocument,
+} from "@/firebase/crud";
+import {
+  doc,
+  query,
+  collection,
+  where,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
 import { db } from "@/firebase/client";
 
 const createTravels = async (students) => {
@@ -41,18 +53,13 @@ const createTravels = async (students) => {
   return response;
 };
 
-const createStopsIntoStudents = async (student) => {
-  const arrayStops = [];
+const createStops = async (student, routeId) => {
   try {
     return student?.stops.map(async (stop) => {
+      stop.route = routeId;
+      stop.student = student.id;
       const stopRef = await createDocument("stops", stop);
-
-      arrayStops.push(stopRef);
-      const studentRef = await updateDocument("students", student.id, {
-        stops: arrayStops,
-      });
-
-      return studentRef;
+      return stopRef;
     });
   } catch (error) {
     return { error };
@@ -65,7 +72,7 @@ const createRoutesByForm = async (data) => {
   try {
     const responseTravels = await createTravels(data?.students);
     data?.students.map(async (student) => {
-      await createStopsIntoStudents(student);
+      await createStops(student, responseTravels.id);
     });
 
     const dataRoute = {
@@ -73,6 +80,7 @@ const createRoutesByForm = async (data) => {
       capacity: data.capacity,
       schoolId: data.schoolId,
       id: responseTravels.id,
+      isDeleted: false,
     };
 
     const responseRoute = await createDocument("routes", dataRoute);
@@ -123,4 +131,37 @@ const updateRoutesByForm = async (data) => {
   // }
 };
 
-export { createRoutesByForm, updateRoutesByForm };
+const removeRoutes = async (id) => {
+  try {
+    const qAuxiliar = query(
+      collection(db, "profile"),
+      where("route", "==", id),
+    );
+    const qDriver = query(collection(db, "drivers"), where("route", "==", id));
+    const qUnit = query(collection(db, "units"), where("route", "==", id));
+    const qStops = query(collection(db, "stops"), where("route", "==", id));
+
+    const getAuxiliar = (await getDocs(qAuxiliar)).docs[0]?.ref;
+    const getDriver = (await getDocs(qDriver)).docs[0]?.ref;
+    const getUnit = (await getDocs(qUnit)).docs[0]?.ref;
+    const getStops = (await getDocs(qStops)).docs.map((el) => el.ref);
+
+    await Promise.all([
+      getAuxiliar && updateDoc(getAuxiliar, { route: null }),
+      getDriver && updateDoc(getDriver, { route: null }),
+      getUnit && updateDoc(getUnit, { route: null }),
+      getStops.length > 0 &&
+        getStops.map(async (el) => {
+          await deleteDoc(el);
+        }),
+      deleteDocument("travels", id),
+      deleteDocument("routes", id),
+    ]);
+
+    return { success: true, message: "Ruta eliminada correctamente" };
+  } catch (error) {
+    return { error };
+  }
+};
+
+export { createRoutesByForm, updateRoutesByForm, removeRoutes };

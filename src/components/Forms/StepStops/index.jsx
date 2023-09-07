@@ -10,20 +10,25 @@ import {
   XMarkIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
-import ButtonAction from "@/components/Table/elements/ButtonAction";
+import ButtonAction from "@/components/ButtonAction";
 import { useState } from "react";
 import { setAlert } from "@/store/useSystemStore";
 import { DAYS, DAYS_OPTIONS } from "@/utils/options";
 import SelectField from "@/components/SelectField";
 
 const ALL_DAY = "all";
+const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
-const StepStops = () => {
+const StepStops = ({ isEdit }) => {
   const { values, setFieldValue } = useFormikContext();
+  console.log("🚀 ~ file: index.jsx:24 ~ StepStops ~ values:", values);
   const { allStudents } = useStudentsStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedDay, setSelectedDay] = useState(["all"]);
+  const [selectedDayEdit, setSelectedDayEdit] = useState(
+    () => SELECT_DAY[new Date().getDay()].value,
+  );
   const [isEditStudent, setIsEditStudent] = useState(false);
 
   const handleAddStudent = (e) => {
@@ -122,92 +127,132 @@ const StepStops = () => {
     setIsEditStudent(false);
   };
 
+  const handleSelect = (e) => {
+    console.log(
+      "🚀 ~ file: index.jsx:260 ~ handleSelect ~ handleSelect:",
+      e.target.name,
+    );
+    const { name, checked } = e.target;
+
+    setSelectedDay((prevState) => {
+      const selected = [...prevState];
+      if (name === ALL_DAY) return [ALL_DAY];
+
+      console.log(
+        "🚀 ~ file: index.jsx:134 ~ setSelectedDay ~ !selected.includes(name) && checked:",
+        !selected.includes(name) && checked,
+      );
+      if (!selected.includes(name) && checked) {
+        selected.push(name);
+        if (name !== ALL_DAY && checked && selected.includes(ALL_DAY)) {
+          selected.splice(selected.indexOf(ALL_DAY), 1);
+        }
+      } else {
+        selected.splice(selected.indexOf(name), 1);
+      }
+
+      return selected;
+    });
+  };
+
   const travelName = bothTravels ? "Ambos viajes" : "Viaje a casa";
 
   return (
-    <div className="mb-4 grid grid-rows-2">
-      <div className="row-span-1">
-        <div className="grid grid-cols-4 gap-2">
-          <div className="col-span-3">
-            <div className="mx-2">
-              <SelectField
-                labelTitle="Día"
-                name="day"
-                options={DAYS_OPTIONS}
-                onChange={(e) => {
-                  setSelectedDay(() => {
-                    const selected = [];
-                    Object.values(e.target.selectedOptions).map((option) => {
-                      selected.push(option.value);
-                    });
-                    if (selected.includes(ALL_DAY)) return [ALL_DAY];
-                    return selected;
-                  });
+    <div className={`mb-4 grid ${isEdit ? "grid-rows-1" : "grid-rows-2"}`}>
+      {!isEdit && (
+        <div className="row-span-1">
+          <div className="grid grid-cols-4 gap-2">
+            <div className="col-span-3">
+              <div className="mx-2">
+                <div className="form-control grid grid-cols-2 place-content-center">
+                  {DAYS_OPTIONS.map((day) => (
+                    <div key={day.label} className="grid">
+                      <label className="cursor-pointer label">
+                        <span className="label-text text-xs">{day.label}</span>
+                        <input
+                          type="checkbox"
+                          name={day.value}
+                          checked={selectedDay.includes(day.value)}
+                          className="checkbox checkbox-xs"
+                          onChange={handleSelect}
+                        />
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="form-control m-2">
+                <label className="label cursor-pointer">
+                  <span className="label-text">Ambos viajes</span>
+                  <input
+                    type="checkbox"
+                    checked={bothTravels}
+                    className="checkbox"
+                    onChange={(e) => setBothTravels(e.target.checked)}
+                  />
+                </label>
+              </div>
+              <Autocomplete
+                options={allStudents}
+                placeholder="Selecciona un alumno"
+                onSelect={(value) => {
+                  const element = allStudents.find(
+                    (student) => student.id === value,
+                  );
+                  setSelectedStudent(element);
                 }}
-                value={selectedDay}
-                multiple
+                name="student"
+                value={selectedStudent?.id || null}
+                disabled={isEditStudent}
               />
-            </div>
-            <div className="form-control m-2">
-              <label className="label cursor-pointer">
-                <span className="label-text">Ambos viajes</span>
-                <input
-                  type="checkbox"
-                  checked={bothTravels}
-                  className="checkbox"
-                  onChange={(e) => setBothTravels(e.target.checked)}
-                />
-              </label>
-            </div>
-            <Autocomplete
-              options={allStudents}
-              placeholder="Selecciona un alumno"
-              onSelect={(value) => {
-                const element = allStudents.find(
-                  (student) => student.id === value,
-                );
-                setSelectedStudent(element);
-              }}
-              name="student"
-              value={selectedStudent?.id || null}
-              disabled={isEditStudent}
-            />
-            <div className="flex flex-row items-center">
-              <PlacesAutocomplete
-                label={travelName}
-                setPlace={(value) => setFieldValue("temporalToHome", value)}
-                place={values?.temporalToHome}
-              />
-            </div>
-            {!bothTravels && (
               <div className="flex flex-row items-center">
                 <PlacesAutocomplete
-                  label={"A la escuela"}
-                  setPlace={(value) => setFieldValue("temporalToSchool", value)}
-                  place={values?.temporalToSchool}
+                  label={travelName}
+                  setPlace={(value) => setFieldValue("temporalToHome", value)}
+                  place={values?.temporalToHome}
                 />
               </div>
-            )}
-          </div>
-          <div className="col-span-1 mb-2">
-            <div className="flex flex-row items-end h-full gap-2">
-              <ButtonAction
-                onClick={handleClearStudent}
-                disabled={false}
-                color="bg-light-gray"
-              >
-                <XMarkIcon className="h-5 w-5 text-black" />
-              </ButtonAction>
-              <ButtonAction onClick={handleAddStudent} disabled={false}>
-                <CheckIcon className="h-5 w-5 text-black" />
-              </ButtonAction>
+              {!bothTravels && (
+                <div className="flex flex-row items-center">
+                  <PlacesAutocomplete
+                    label={"A la escuela"}
+                    setPlace={(value) =>
+                      setFieldValue("temporalToSchool", value)
+                    }
+                    place={values?.temporalToSchool}
+                  />
+                </div>
+              )}
+            </div>
+            <div className="col-span-1 mb-2">
+              <div className="flex flex-row items-end h-full gap-2">
+                <ButtonAction
+                  onClick={handleClearStudent}
+                  disabled={false}
+                  color="bg-light-gray"
+                >
+                  <XMarkIcon className="h-5 w-5 text-black" />
+                </ButtonAction>
+                <ButtonAction onClick={handleAddStudent} disabled={false}>
+                  <CheckIcon className="h-5 w-5 text-black" />
+                </ButtonAction>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       <div className="mx-2 row-span-1 my-6">
         <div className="w-full bg-gray-hover px-2 mb-4">Paradas</div>
-        {values.students.map((student) => (
+        {isEdit && (
+          <SelectField
+            label="Día"
+            name="day"
+            options={SELECT_DAY}
+            value={selectedDayEdit}
+            onChange={(value) => setSelectedDayEdit(value)}
+          />
+        )}
+        {values.students?.map((student) => (
           <div key={student.id} className="grid grid-cols-3 gap-2 my-2">
             <div className="col-span-2">
               <div className="flex flex-row items-center">
