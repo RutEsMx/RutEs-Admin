@@ -48,7 +48,7 @@ export async function GET(request) {
     const data = response.docs.map((doc) => {
       const studentsArray = [];
       if (doc.data()?.students?.length > 0) {
-        doc.data().students.forEach(async (student) => {
+        doc.data().students?.forEach(async (student) => {
           const snapshot = await student.get();
           studentsArray.push(snapshot.data());
         });

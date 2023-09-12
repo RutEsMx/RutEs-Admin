@@ -1,4 +1,7 @@
+import { DAYS_OPTIONS } from "@/utils/options";
 import { create } from "zustand";
+
+const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 export const useRoutesStore = create((set) => ({
   routes: [],
@@ -14,11 +17,14 @@ export const useRoutesStore = create((set) => ({
         route.id === routeId ? { ...route, ...route } : route,
       ),
     })),
+  selectedDayEdit: SELECT_DAY[new Date().getDay()].value,
+  setSelectedDayEdit: (day) => set({ selectedDayEdit: day }),
 }));
 
 const addRoute = useRoutesStore.getState().addRoute;
 const updateRoute = useRoutesStore.getState().updateRoute;
 const removeRoute = useRoutesStore.getState().removeRoute;
 const setRoutes = useRoutesStore.getState().setRoutes;
+const selectedDayEdit = useRoutesStore.getState().selectedDayEdit;
 
-export { addRoute, updateRoute, removeRoute, setRoutes };
+export { addRoute, updateRoute, removeRoute, setRoutes, selectedDayEdit };

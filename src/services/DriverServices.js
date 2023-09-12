@@ -71,17 +71,20 @@ const getDriver = async ({ pageIndex, pageSize, schoolId }) => {
   }
 };
 
-const getAllDrivers = async ({ all = false }) => {
+const getAllDrivers = async ({ all = false, route = null }) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/drivers?all=${all}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/drivers?all=${all}&route=${route}`,
     );
 
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
+    if (!response.ok) {
+      if (response.status === 404) setAllDrivers([]);
+      return { error: true, message: response.statusText };
+    }
     const data = await response.json();
-    if (data?.error) return { error: data.error };
     setAllDrivers(data);
     return data;
   } catch (error) {

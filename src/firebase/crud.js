@@ -90,10 +90,21 @@ const getDocumentByField = async (collectionName, field, value) => {
   return documents;
 };
 
+const deleteDocument = async (collectionName, id) => {
+  try {
+    const docRef = doc(db, collectionName, id);
+    await updateDoc(docRef, { isDeleted: true });
+    return docRef;
+  } catch (error) {
+    return { error };
+  }
+};
+
 export {
   createDocument,
   updateDocument,
   getDocuments,
   getDocumentById,
   getDocumentByField,
+  deleteDocument,
 };

@@ -1,3 +1,4 @@
+"use client";
 import { useMemo } from "react";
 import { useLoadScript, GoogleMap, MarkerF } from "@react-google-maps/api";
 // import map_pin.svg from public
@@ -11,7 +12,6 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
         : { lat: 19.432902439607627, lng: -99.13365305513578 },
     [markers],
   );
-
   const mapOptions = useMemo(
     () => ({
       disableDefaultUI: true,
@@ -27,7 +27,7 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
     [options],
   );
 
-  const { isLoaded } = useLoadScript({
+  const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.GOOGLE_API_KEY,
     libraries: libraries,
   });
@@ -55,36 +55,35 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
     );
   };
 
+  if (loadError) return "Error loading maps";
+  if (!isLoaded) return "Loading maps";
+
   return (
     <div className="bg-gray h-full ">
-      {!isLoaded ? (
-        <p>Loading...</p>
-      ) : (
-        <GoogleMap
-          options={mapOptions}
-          zoom={14}
-          center={mapCenter}
-          mapContainerStyle={{ width: "100%", height: "500px" }}
-          {...props}
-        >
-          <>
-            {markers.map((marker) => {
-              return (
-                <CustomMarker
-                  key={marker.studentId}
-                  position={{ lat: marker.lat, lng: marker.lng }}
-                  draggable={marker.draggable}
-                  onDragEnd={(e) =>
-                    setMarker(marker.studentId, e.latLng.toJSON())
-                  }
-                  color={marker.color}
-                  label={marker.name}
-                />
-              );
-            })}
-          </>
-        </GoogleMap>
-      )}
+      <GoogleMap
+        options={mapOptions}
+        zoom={14}
+        center={mapCenter}
+        mapContainerStyle={{ width: "100%", height: "500px" }}
+        {...props}
+      >
+        <>
+          {markers.map((marker) => {
+            return (
+              <CustomMarker
+                key={marker.studentId}
+                position={{ lat: marker.lat, lng: marker.lng }}
+                draggable={marker.draggable}
+                onDragEnd={(e) =>
+                  setMarker(marker.studentId, e.latLng.toJSON())
+                }
+                color={marker.color}
+                label={marker.name}
+              />
+            );
+          })}
+        </>
+      </GoogleMap>
     </div>
   );
 };

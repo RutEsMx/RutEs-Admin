@@ -1,3 +1,4 @@
+"use client";
 import { useEffect } from "react";
 import RouteCard from "@/components/RouteCard";
 import { useRoutesStore } from "@/store/useRoutesStore";
@@ -15,6 +16,7 @@ const RoutesCards = () => {
     const q = query(
       collection(db, "routes"),
       where("schoolId", "==", school?.id),
+      where("isDeleted", "==", false),
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const routes = [];

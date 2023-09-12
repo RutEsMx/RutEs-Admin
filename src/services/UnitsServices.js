@@ -51,13 +51,17 @@ const getUnits = async ({ pageIndex, pageSize }) => {
   }
 };
 
-const getAllUnits = async ({ all = false, passengers }) => {
+const getAllUnits = async ({ all = false, passengers, route = null }) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units?all=${all}&passengers=${passengers}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/units?all=${all}&passengers=${passengers}&route=${route}`,
     );
     if (response?.redirected) {
       return { error: true, redirect: response.url };
+    }
+    if (!response.ok) {
+      if (response.status === 404) setAllUnits([]);
+      return { error: true, message: response.statusText };
     }
     const data = await response.json();
     setAllUnits(data);

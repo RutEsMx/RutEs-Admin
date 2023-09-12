@@ -31,6 +31,7 @@ const FormRoute = ({ data, isEdit = false }) => {
     auxiliar: data?.auxiliar || null,
     driver: data?.driver || null,
     students: data?.students || [],
+    routeId: data?.id || null,
   };
 
   const handleNext = async (values) => {
@@ -48,7 +49,9 @@ const FormRoute = ({ data, isEdit = false }) => {
       }
       if (success) {
         setMessage(message);
-        return navigation.replace("/dashboard/routes");
+        setTimeout(() => {
+          return navigation.back();
+        }, 2000);
       }
       return setMessage(message);
     } catch (error) {
@@ -81,7 +84,7 @@ const FormRoute = ({ data, isEdit = false }) => {
                 disabled={isSubmitting}
                 type="button"
               >
-                {isEdit ? "Editar" : "Guardar"}
+                {isEdit ? "Guardar cambios" : "Guardar"}
               </Button>
             </div>
             <div className="my-4">
@@ -112,7 +115,11 @@ const FormRoute = ({ data, isEdit = false }) => {
                   </a>
                 </div>
                 <div className="divider mx-0 my-2 before:h-2 after:h-2"></div>
-                {activeTab === "DATOS" ? <StepRoute /> : <StepStops />}
+                {activeTab === "DATOS" ? (
+                  <StepRoute />
+                ) : (
+                  <StepStops isEdit={isEdit} />
+                )}
               </div>
               <div className="col-span-3 border-2 border-gray rounded-lg p-4">
                 <MapStops />

@@ -76,11 +76,11 @@ const DAYS = {
 
 const DAYS_OPTIONS = [
   { value: "all", label: "Todos los días" },
-  // { value: "monday", label: "Lunes" },
-  // { value: "tuesday", label: "Martes" },
-  // { value: "wednesday", label: "Miércoles" },
-  // { value: "thursday", label: "Jueves" },
-  // { value: "friday", label: "Viernes" },
+  { value: "monday", label: "Lunes" },
+  { value: "tuesday", label: "Martes" },
+  { value: "wednesday", label: "Miércoles" },
+  { value: "thursday", label: "Jueves" },
+  { value: "friday", label: "Viernes" },
 ];
 
 export {

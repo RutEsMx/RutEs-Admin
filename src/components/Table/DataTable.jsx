@@ -8,7 +8,7 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { rankItem } from "@tanstack/match-sorter-utils";
-import ButtonAction from "@/components/Table/elements/ButtonAction";
+import ButtonAction from "@/components/ButtonAction";
 import {
   fetchDataParents,
   fetchDataSchools,

@@ -10,22 +10,35 @@ import {
   XMarkIcon,
   TrashIcon,
 } from "@heroicons/react/24/solid";
-import ButtonAction from "@/components/Table/elements/ButtonAction";
+import ButtonAction from "@/components/ButtonAction";
 import { useState } from "react";
 import { setAlert } from "@/store/useSystemStore";
 import { DAYS, DAYS_OPTIONS } from "@/utils/options";
 import SelectField from "@/components/SelectField";
+import { useRoutesStore } from "@/store/useRoutesStore";
 
 const ALL_DAY = "all";
+const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
-const StepStops = () => {
+const StepStops = ({ isEdit }) => {
   const { values, setFieldValue } = useFormikContext();
+  const { selectedDayEdit, setSelectedDayEdit } = useRoutesStore();
   const { allStudents } = useStudentsStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedDay, setSelectedDay] = useState(["all"]);
   const [isEditStudent, setIsEditStudent] = useState(false);
 
+  const students = values?.students?.filter((student) => {
+    const stop = student.stops.find((stop) =>
+      isEdit
+        ? stop.day === selectedDayEdit &&
+          stop.route === values.routeId &&
+          !stop.isDelete
+        : stop,
+    );
+    return stop;
+  });
   const handleAddStudent = (e) => {
     e.preventDefault();
     if (!selectedStudent)
@@ -35,10 +48,7 @@ const StepStops = () => {
         show: true,
       });
 
-    if (
-      values.students.find((s) => s.id === selectedStudent.id) &&
-      !isEditStudent
-    ) {
+    if (students.find((s) => s.id === selectedStudent.id) && !isEditStudent) {
       return setAlert({
         message: "El alumno ya fue agregado",
         type: "error",
@@ -56,6 +66,8 @@ const StepStops = () => {
               ? values?.temporalToHome
               : values?.temporalToSchool,
           },
+          isDelete: false,
+          route: values.routeId,
         });
       });
     } else {
@@ -68,6 +80,8 @@ const StepStops = () => {
               ? values?.temporalToHome
               : values?.temporalToSchool,
           },
+          isDelete: false,
+          route: values.routeId,
         });
       });
     }
@@ -106,6 +120,7 @@ const StepStops = () => {
 
   const handleEditStudent = (e, student) => {
     e.preventDefault();
+    if (isEdit) return;
     setSelectedStudent(student);
     setFieldValue("temporalToHome", student.stops[0].coords.toHome);
     setFieldValue("temporalToSchool", student.stops[0].coords.toSchool);
@@ -115,6 +130,22 @@ const StepStops = () => {
 
   const handleRemoveStudent = (e, student) => {
     e.preventDefault();
+    if (isEdit) {
+      const stops = student.stops.map((stop) => {
+        if (stop.day === selectedDayEdit) {
+          return {
+            ...stop,
+            isDelete: true,
+          };
+        }
+        return stop;
+      });
+      setFieldValue(
+        "students",
+        values.students.map((s) => (s.id === student.id ? { ...s, stops } : s)),
+      );
+      return;
+    }
     setFieldValue(
       "students",
       values.students.filter((s) => s.id !== student?.id),
@@ -122,31 +153,50 @@ const StepStops = () => {
     setIsEditStudent(false);
   };
 
+  const handleSelect = (e) => {
+    const { name, checked } = e.target;
+
+    setSelectedDay((prevState) => {
+      const selected = [...prevState];
+      if (name === ALL_DAY) return [ALL_DAY];
+
+      if (!selected.includes(name) && checked) {
+        selected.push(name);
+        if (name !== ALL_DAY && checked && selected.includes(ALL_DAY)) {
+          selected.splice(selected.indexOf(ALL_DAY), 1);
+        }
+      } else {
+        selected.splice(selected.indexOf(name), 1);
+      }
+
+      return selected;
+    });
+  };
+
   const travelName = bothTravels ? "Ambos viajes" : "Viaje a casa";
 
   return (
-    <div className="mb-4 grid grid-rows-2">
+    <div className={`mb-4 grid ${isEdit ? "grid-rows-1" : "grid-rows-2"}`}>
       <div className="row-span-1">
         <div className="grid grid-cols-4 gap-2">
           <div className="col-span-3">
             <div className="mx-2">
-              <SelectField
-                labelTitle="Día"
-                name="day"
-                options={DAYS_OPTIONS}
-                onChange={(e) => {
-                  setSelectedDay(() => {
-                    const selected = [];
-                    Object.values(e.target.selectedOptions).map((option) => {
-                      selected.push(option.value);
-                    });
-                    if (selected.includes(ALL_DAY)) return [ALL_DAY];
-                    return selected;
-                  });
-                }}
-                value={selectedDay}
-                multiple
-              />
+              <div className="form-control grid grid-cols-2 place-content-center">
+                {DAYS_OPTIONS.map((day) => (
+                  <div key={day.label} className="grid">
+                    <label className="cursor-pointer label">
+                      <span className="label-text text-xs">{day.label}</span>
+                      <input
+                        type="checkbox"
+                        name={day.value}
+                        checked={selectedDay.includes(day.value)}
+                        className="checkbox checkbox-xs"
+                        onChange={handleSelect}
+                      />
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="form-control m-2">
               <label className="label cursor-pointer">
@@ -207,7 +257,16 @@ const StepStops = () => {
       </div>
       <div className="mx-2 row-span-1 my-6">
         <div className="w-full bg-gray-hover px-2 mb-4">Paradas</div>
-        {values.students.map((student) => (
+        {isEdit && (
+          <SelectField
+            label="Día"
+            name="day"
+            options={SELECT_DAY}
+            value={selectedDayEdit}
+            onChange={(e) => setSelectedDayEdit(e.target.value)}
+          />
+        )}
+        {students?.map((student) => (
           <div key={student.id} className="grid grid-cols-3 gap-2 my-2">
             <div className="col-span-2">
               <div className="flex flex-row items-center">

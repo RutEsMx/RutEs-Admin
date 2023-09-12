@@ -2,15 +2,18 @@ import { useFormikContext } from "formik";
 import Maps from "./Maps";
 import useMarkersMap from "@/hooks/useMarkersMap";
 import { geocodeByLatLng } from "react-google-places-autocomplete";
+import { useRoutesStore } from "@/store/useRoutesStore";
 
 const MapStops = () => {
   const { values, setFieldValue } = useFormikContext();
+  const { selectedDayEdit } = useRoutesStore();
+
   const { markers } = useMarkersMap({
     students: values?.students,
     temporalToHome: values?.temporalToHome,
     temporalToSchool: values?.temporalToSchool,
+    selectedDayEdit,
   });
-  // const day = 'monday'
 
   const setMarkerValue = async (studentId, coords) => {
     const responseGeocode = await geocodeByLatLng(coords);
