@@ -15,19 +15,18 @@ import { useState } from "react";
 import { setAlert } from "@/store/useSystemStore";
 import { DAYS, DAYS_OPTIONS } from "@/utils/options";
 import SelectField from "@/components/SelectField";
+import { useRoutesStore } from "@/store/useRoutesStore";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const StepStops = ({ isEdit }) => {
   const { values, setFieldValue } = useFormikContext();
+  const { selectedDayEdit, setSelectedDayEdit } = useRoutesStore();
   const { allStudents } = useStudentsStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedDay, setSelectedDay] = useState(["all"]);
-  const [selectedDayEdit, setSelectedDayEdit] = useState(
-    () => SELECT_DAY[new Date().getDay()].value,
-  );
   const [isEditStudent, setIsEditStudent] = useState(false);
 
   const students = values?.students?.filter((student) => {
@@ -49,10 +48,7 @@ const StepStops = ({ isEdit }) => {
         show: true,
       });
 
-    if (
-      values.students.find((s) => s.id === selectedStudent.id) &&
-      !isEditStudent
-    ) {
+    if (students.find((s) => s.id === selectedStudent.id) && !isEditStudent) {
       return setAlert({
         message: "El alumno ya fue agregado",
         type: "error",

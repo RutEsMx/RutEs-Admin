@@ -101,12 +101,24 @@ const createStops = async (student, routeId) => {
   }
 };
 
-const deleteStops = async (student) => {
+const updateDeleteStops = async (student) => {
   try {
     return student?.stops.map(async (stop) => {
       if (stop?.isDelete) {
         const qStop = doc(db, "stops", stop.id);
         return deleteDoc(qStop);
+      } else {
+        if (stop.id) {
+          const qStop = doc(db, "stops", stop.id);
+          return updateDoc(qStop, {
+            coords: {
+              toSchool: stop.coords.toSchool,
+              toHome: stop.coords.toHome,
+            },
+          });
+        }
+        stop.student = student.id;
+        return createDocument("stops", stop);
       }
     });
   } catch (error) {
@@ -181,7 +193,7 @@ const updateRoutesByForm = async (data) => {
     const responseRoute = await updateDocument("routes", routeId, restData);
     const responseUpdateTravels = await updateTravels(routeId, students);
     const responseStops = Promise.all(
-      students.map((student) => deleteStops(student, routeId)),
+      students.map((student) => updateDeleteStops(student, routeId)),
     );
     const updateAuxiliar = updateEntity(
       "profile",

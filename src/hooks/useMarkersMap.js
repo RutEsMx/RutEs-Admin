@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { COLORS_HEX } from "@/utils/options";
 
 const useMarkersMap = (params) => {
-  const { students, temporalToHome, temporalToSchool } = params;
+  const { students, temporalToHome, temporalToSchool, selectedDayEdit } =
+    params;
   const [markers, setMarkers] = useState([]);
-  const day = "monday";
+  const day = selectedDayEdit;
 
   const setMarkersFromStudents = (students) => {
     const newMarkers = [];
@@ -53,7 +54,7 @@ const useMarkersMap = (params) => {
     if (temporalToHome) setTemporalCoords(temporalToHome, "temporalToHome");
     if (temporalToSchool)
       setTemporalCoords(temporalToSchool, "temporalToSchool");
-  }, [students, temporalToHome, temporalToSchool]);
+  }, [students, temporalToHome, temporalToSchool, day]);
 
   return { markers, setMarkersFromStudents };
 };
