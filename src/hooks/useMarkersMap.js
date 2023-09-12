@@ -9,7 +9,7 @@ const useMarkersMap = (params) => {
   const setMarkersFromStudents = (students) => {
     const newMarkers = [];
     students?.forEach((student) => {
-      student?.stops.length > 0 &&
+      student?.stops?.length > 0 &&
         student?.stops?.forEach((stop) => {
           if (stop?.day === day) {
             newMarkers.push({

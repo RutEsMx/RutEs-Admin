@@ -9,9 +9,12 @@ export async function GET(request, { params }) {
   const response = await firestore().collection("routes").doc(id).get();
   const routeData = response.data();
 
-  const responseTravels = await firestore().collection("travels").doc(id).get();
-
-  const [responseAuxiliar, responseUnits, responseDriver] = await Promise.all([
+  const [
+    responseAuxiliar,
+    responseUnits,
+    responseDriver,
+    responseStopsStudents,
+  ] = await Promise.all([
     firestore()
       .collection("profile")
       .where("route", "==", id)
@@ -19,57 +22,41 @@ export async function GET(request, { params }) {
       .get(),
     firestore().collection("units").where("route", "==", id).get(),
     firestore().collection("drivers").where("route", "==", id).get(),
+    firestore().collection("stops").where("route", "==", id).get(),
   ]);
+
   const auxiliars = responseAuxiliar.docs.map((doc) => doc.id);
   const units = responseUnits.docs.map((doc) => doc.id);
   const drivers = responseDriver.docs.map((doc) => doc.id);
 
   const students = [];
-  const studentIds = new Set(); // to efficiently check for existing students
+  //
+  if (responseStopsStudents.docs.length > 0) {
+    const stops = responseStopsStudents.docs.map((doc) => {
+      const data = doc.data();
+      data.id = doc.id;
+      return data;
+    });
 
-  const travelData = responseTravels.data();
-
-  if (travelData) {
-    for (const day of Object.keys(travelData)) {
-      const toHome = travelData[day].toHome;
-
-      // If toSchool will be used in future
-      // const toSchool = travelData[day].toSchool;
-
-      for (const key of Object.keys(toHome)) {
-        const studentsArray = toHome[key];
-
-        const studentsPromises = studentsArray.map(async (studentElement) => {
-          const studentData = (await studentElement.get()).data();
-          return {
-            id: studentElement.id,
-            name: studentData.name,
-            lastName: studentData.lastName,
-            secondName: studentData.secondLastName,
-            stops: studentData.stops,
-          };
+    const responseStudents = stops.map(async (stop) => {
+      const getStudent = await firestore()
+        .collection("students")
+        .doc(stop.student)
+        .get();
+      const studentData = getStudent.data();
+      studentData.id = getStudent.id;
+      const student = students.find((student) => student.id === stop.student);
+      if (student) {
+        student.stops.push(stop);
+      } else {
+        students.push({
+          ...studentData,
+          stops: [stop],
         });
-
-        const resolvedStudents = await Promise.all(studentsPromises);
-
-        for (const student of resolvedStudents) {
-          if (!studentIds.has(student.id)) {
-            studentIds.add(student.id);
-
-            let stopsFormat = [];
-            for (const stop of student.stops) {
-              const stopElement = (await stop.get()).data();
-              stopsFormat.push(stopElement);
-            }
-
-            student.stops = stopsFormat;
-            students.push(student);
-          }
-        }
       }
-    }
+    });
+    await Promise.all(responseStudents);
   }
-
   const data = {
     ...routeData,
     id: response.id,

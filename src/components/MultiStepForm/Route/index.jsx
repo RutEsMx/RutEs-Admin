@@ -49,7 +49,9 @@ const FormRoute = ({ data, isEdit = false }) => {
       }
       if (success) {
         setMessage(message);
-        return navigation.replace("/dashboard/routes");
+        setTimeout(() => {
+          return navigation.back();
+        }, 2000);
       }
       return setMessage(message);
     } catch (error) {
@@ -82,7 +84,7 @@ const FormRoute = ({ data, isEdit = false }) => {
                 disabled={isSubmitting}
                 type="button"
               >
-                {isEdit ? "Editar" : "Guardar"}
+                {isEdit ? "Guardar cambios" : "Guardar"}
               </Button>
             </div>
             <div className="my-4">
