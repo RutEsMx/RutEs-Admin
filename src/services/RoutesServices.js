@@ -126,6 +126,7 @@ const updateDeleteStops = async (student) => {
   }
 };
 
+// Create a new route
 const createRoutesByForm = async (data) => {
   if (!data?.students?.length)
     return { error: { message: "No se puede crear una ruta sin paradas" } };
@@ -141,6 +142,9 @@ const createRoutesByForm = async (data) => {
       schoolId: data.schoolId,
       id: responseTravels.id,
       isDeleted: false,
+      auxiliar: data.auxiliar,
+      driver: data.driver,
+      unit: data.unit,
     };
 
     const responseRoute = await createDocument("routes", dataRoute);

@@ -69,6 +69,7 @@ const StepAuxiliar = ({ isEdit }) => {
               value={values.password}
               onChange={handleChange}
               error={errors.password}
+              autoComplete="off"
             />
             <InputField
               label="Confirmar contraseña"
@@ -77,6 +78,7 @@ const StepAuxiliar = ({ isEdit }) => {
               value={values.confirmPassword}
               onChange={handleChange}
               error={errors.confirmPassword}
+              autoComplete="off"
             />
           </div>
         </div>
@@ -91,6 +93,7 @@ const StepAuxiliar = ({ isEdit }) => {
               }}
               error={errors.avatar}
             />
+            {errors && <span className="text-red">{errors.avatar}</span>}
           </div>
         </div>
       </div>

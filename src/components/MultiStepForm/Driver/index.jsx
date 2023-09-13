@@ -72,7 +72,7 @@ const FormDriver = ({ data, isEdit = false }) => {
               disabled={isSubmitting}
               type="button"
             >
-              {isEdit ? "Editar" : "Enviar"}
+              {isEdit ? "Guardar" : "Enviar"}
             </Button>
           </div>
           <div className="mt-4">
