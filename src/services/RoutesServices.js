@@ -141,6 +141,9 @@ const createRoutesByForm = async (data) => {
       schoolId: data.schoolId,
       id: responseTravels.id,
       isDeleted: false,
+      auxiliar: data.auxiliar,
+      driver: data.driver,
+      unit: data.unit,
     };
 
     const responseRoute = await createDocument("routes", dataRoute);

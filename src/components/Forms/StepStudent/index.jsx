@@ -4,7 +4,7 @@ import SelectField from "@/components/SelectField";
 import { OPTIONS_BLOOD_TYPES, OPTIONS_TYPE_SERVICES } from "@/utils/options";
 import { useFormikContext } from "formik";
 
-const StepStudent = () => {
+const StepStudent = ({ isEdit = false }) => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
 
   return (
@@ -87,56 +87,58 @@ const StepStudent = () => {
               error={errors.serviceType}
             />
           </div>
-          <div className="grid grid-rows-1 p-4">
-            <div className="grid grid-cols-3">
-              <div className="flex justify-around">
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    name="includeFather"
-                    onChange={handleChange}
-                    id="includeFather"
-                    checked={values?.includeFather}
-                  />
-                  <label htmlFor="includeFather" className="p-2">
-                    Incluir papá
-                  </label>
+          {!isEdit && (
+            <div className="grid grid-rows-1 p-4">
+              <div className="grid grid-cols-3">
+                <div className="flex justify-around">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="includeFather"
+                      onChange={handleChange}
+                      id="includeFather"
+                      checked={values?.includeFather}
+                    />
+                    <label htmlFor="includeFather" className="p-2">
+                      Incluir papá
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="includeMother"
+                      onChange={handleChange}
+                      id="includeMother"
+                      checked={values?.includeMother}
+                    />
+                    <label htmlFor="includeMother" className="p-2">
+                      Incluir mamá
+                    </label>
+                  </div>
                 </div>
                 <div className="flex items-center">
                   <input
-                    type="checkbox"
-                    name="includeMother"
+                    type="number"
+                    name="countTutors"
+                    id="countTutors"
+                    value={values?.countTutors}
                     onChange={handleChange}
-                    id="includeMother"
-                    checked={values?.includeMother}
+                    className="border border-black rounded-md p-1 w-12"
+                    max={10}
+                    min={0}
                   />
-                  <label htmlFor="includeMother" className="p-2">
-                    Incluir mamá
+                  <label htmlFor="countTutors" className="p-2">
+                    Cantidad de Tutores?
                   </label>
                 </div>
               </div>
-              <div className="flex items-center">
-                <input
-                  type="number"
-                  name="countTutors"
-                  id="countTutors"
-                  value={values?.countTutors}
-                  onChange={handleChange}
-                  className="border border-black rounded-md p-1 w-12"
-                  max={10}
-                  min={0}
-                />
-                <label htmlFor="countTutors" className="p-2">
-                  Cantidad de Tutores?
-                </label>
+              <div>
+                <span className="text-red ">
+                  {errors?.includeFather || errors?.includeMother}
+                </span>
               </div>
             </div>
-            <div>
-              <span className="text-red ">
-                {errors?.includeFather || errors?.includeMother}
-              </span>
-            </div>
-          </div>
+          )}
         </div>
         <div>
           <div className="flex flex-col">
@@ -149,6 +151,7 @@ const StepStudent = () => {
               }}
               error={errors.avatar}
             />
+            {errors && <span className="text-red">{errors.avatar}</span>}
           </div>
         </div>
       </div>

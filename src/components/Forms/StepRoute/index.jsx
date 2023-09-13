@@ -10,12 +10,13 @@ import { useUnitsStore } from "@/store/useUnitsStore";
 import { useFormikContext } from "formik";
 import { memo, useCallback, useEffect } from "react";
 
-const getAllData = async (id = null) => {
+const getAllData = async (id = null, values) => {
+  const { auxiliar, driver, unit } = values;
   try {
     return Promise.all([
-      getAllDrivers({ all: true, route: id }),
-      getAllUnits({ all: true, route: id }),
-      getAllAuxiliars({ all: true, route: id }),
+      driver && getAllDrivers({ all: true, route: id }),
+      unit && getAllUnits({ all: true, route: id }),
+      auxiliar && getAllAuxiliars({ all: true, route: id }),
     ]);
   } catch (error) {
     return { error: error.message };
@@ -42,19 +43,39 @@ const StepRoute = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (values.routeId === null) return;
-    const allData = async () => {
-      getAllData(values.routeId);
-    };
-    allData();
+  const allData = useCallback(async (id) => {
+    try {
+      await getAllData(id, values);
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("Fetch aborted");
+      } else {
+        console.error(error);
+      }
+    }
   }, []);
 
-  // useEffect(() => {
-  //   if (values.capacity > 0) {
-  //     getUnitsCapacity();
-  //   }
-  // }, [values.capacity]);
+  useEffect(() => {
+    if (values.routeId === null) return;
+    allData(values.routeId);
+  }, [allData, values.routeId]);
+
+  const handleOnChane = (type, value) => {
+    if (value === "") {
+      if (type === "unit") {
+        setFieldValue("unit", null);
+        getAllUnits({ all: true, passengers: values.capacity });
+      }
+      if (type === "auxiliar") {
+        setFieldValue("auxiliar", null);
+        getAllAuxiliars({ all: true });
+      }
+      if (type === "driver") {
+        setFieldValue("driver", null);
+        getAllDrivers({ all: true });
+      }
+    }
+  };
 
   return (
     <div className="mb-4 ">
@@ -82,6 +103,7 @@ const StepRoute = () => {
         placeholder="Selecciona una unidad"
         label="Unidad"
         onSelect={(value) => setFieldValue("unit", value)}
+        onChange={(value) => handleOnChane("unit", value)}
         error={errors.unit}
         value={values?.unit}
         name="unit"
@@ -91,6 +113,7 @@ const StepRoute = () => {
         placeholder="Selecciona un auxiliar"
         label="Auxiliar"
         onSelect={(value) => setFieldValue("auxiliar", value)}
+        onChange={(value) => handleOnChane("auxiliar", value)}
         error={errors.auxiliar}
         value={values?.auxiliar}
         name="auxiliar"
@@ -100,6 +123,7 @@ const StepRoute = () => {
         placeholder="Selecciona un conductor"
         label="Conductor"
         onSelect={(value) => setFieldValue("driver", value)}
+        onChange={(value) => handleOnChane("driver", value)}
         error={errors.driver}
         value={values?.driver}
         name="driver"

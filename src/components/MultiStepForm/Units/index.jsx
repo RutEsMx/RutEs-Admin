@@ -59,7 +59,7 @@ const FormUnits = ({ data, isEdit = false }) => {
               disabled={isSubmitting}
               type="button"
             >
-              {isEdit ? "Editar" : "Agregar"}
+              {isEdit ? "Guardar" : "Agregar"}
             </Button>
           </div>
           <StepUnits />

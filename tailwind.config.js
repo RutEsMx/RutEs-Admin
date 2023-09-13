@@ -51,6 +51,7 @@ module.exports = {
         red: RED,
         nandor: NANDOR,
         yellow: YELLOW,
+        "danger-text": DANGER_TEXT,
         "yellow-hover": YELLOW_HOVER,
         "border-yellow": BORDER_YELLOW,
         "yellow-pressed": YELLOW_PRESSED,
@@ -59,7 +60,6 @@ module.exports = {
         "warning-background": WARNING_BACKGROUND,
         warning: WARNING_TEXT,
         "danger-background": DANGER_BACKGROUND,
-        danger: DANGER_TEXT,
         blue: BLUE,
       },
     },
@@ -68,5 +68,4 @@ module.exports = {
   daisyui: {
     themes: ["light"],
   },
-  
 };

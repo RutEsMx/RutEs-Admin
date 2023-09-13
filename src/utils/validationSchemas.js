@@ -39,7 +39,21 @@ const validateStudent = Yup.object().shape({
       return value || includeFather;
     }),
   // schoolId: Yup.string().nullable().required('Escuela requerida'),
-  // avatar: Yup.string().nullable().required('Avatar requerido'),
+  avatar: Yup.string().nullable().required("Avatar requerido"),
+});
+
+const validateStudentEdit = Yup.object().shape({
+  name: Yup.string().nullable().required("Nombre requerido"),
+  lastName: Yup.string().nullable().required("Apellido Paterno requerido"),
+  secondLastName: Yup.string().nullable(),
+  birthDate: Yup.date().nullable(),
+  bloodType: Yup.string().nullable(),
+  allergies: Yup.string().nullable(),
+  grade: Yup.string().nullable(),
+  group: Yup.string().nullable(),
+  enrollment: Yup.string().nullable().required("Matricula requerida"),
+  serviceType: Yup.string().nullable().required("Tipo de Servicio requerido"),
+  avatar: Yup.string().nullable().required("Avatar requerido"),
 });
 
 const validateFather = Yup.object().shape({
@@ -108,7 +122,7 @@ const validateTutors = (step) =>
         .email("Correo inválido")
         .required("Correo requerido")
         .test("email-exists", "Correo ya existe", emailExists),
-      // avatar: Yup.string().nullable().required('Avatar requerido'),
+      avatar: Yup.string().nullable().required("Avatar requerido"),
       // schoolId: Yup.string().nullable().required('Escuela requerida'),
     }),
   });
@@ -130,7 +144,7 @@ const validateUsers = Yup.object().shape({
     .email("Correo inválido")
     .required("Correo requerido")
     .test("email-exists", "Correo ya existe", emailExists),
-  // avatar: Yup.string().nullable().required('Avatar requerido'),
+  avatar: Yup.string().nullable().required("Avatar requerido"),
   // schoolId: Yup.string().nullable().required('Escuela requerida'),
 });
 
@@ -235,4 +249,5 @@ export {
   validateAuxiliar,
   validateDriver,
   validateRoute,
+  validateStudentEdit,
 };

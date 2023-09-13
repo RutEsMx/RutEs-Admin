@@ -6,10 +6,16 @@ import {
   getDocuments,
   updateDocument,
 } from "@/firebase/crud";
-import { setAllStudents } from "@/store/useStudentsStore";
+import {
+  setAllStudents,
+  setStudent,
+  updateStudent,
+} from "@/store/useStudentsStore";
 
 const getStudentById = async (id) => {
   const studentData = await getDocumentById("students", id);
+  studentData.id = id;
+  setStudent(studentData);
   return studentData;
 };
 
@@ -191,4 +197,19 @@ const getAllStudents = async ({ all = false }) => {
   }
 };
 
-export { createParentsByForm, getStudentById, getStudents, getAllStudents };
+const updateStudentByForm = async (data) => {
+  const response = await updateDocument("students", data?.id, data);
+  if (response?.error) {
+    return { error: response.error };
+  }
+  updateStudent(response);
+  return { success: true, message: "Estudiante actualizado correctamente" };
+};
+
+export {
+  createParentsByForm,
+  getStudentById,
+  getStudents,
+  getAllStudents,
+  updateStudentByForm,
+};
