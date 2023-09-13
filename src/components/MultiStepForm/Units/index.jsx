@@ -62,7 +62,7 @@ const FormUnits = ({ data, isEdit = false }) => {
               {isEdit ? "Guardar" : "Agregar"}
             </Button>
           </div>
-          <StepUnits />
+          <StepUnits isEdit={isEdit} />
         </Form>
       )}
     </Formik>

@@ -84,7 +84,7 @@ const FormRoute = ({ data, isEdit = false }) => {
                 disabled={isSubmitting}
                 type="button"
               >
-                {isEdit ? "Guardar cambios" : "Guardar"}
+                {isEdit ? "Guardar" : "Crear"}
               </Button>
             </div>
             <div className="my-4">

@@ -76,8 +76,8 @@ const validateFather = Yup.object().shape({
       .email("Correo inválido")
       .required("Correo requerido")
       .test("email-exists", "Correo ya existe", emailExists),
+    avatar: Yup.string().nullable().required("Avatar requerido"),
     // schoolId: Yup.string().nullable().required('Escuela requerida'),
-    // avatar: Yup.string().nullable().required('Avatar requerido'),
   }),
 });
 
@@ -101,7 +101,7 @@ const validateMother = Yup.object().shape({
       .email("Correo inválido")
       .required("Correo requerido")
       .test("email-exists", "Correo ya existe", emailExists),
-    // avatar: Yup.string().nullable().required('Avatar requerido'),
+    avatar: Yup.string().nullable().required("Avatar requerido"),
     // schoolId: Yup.string().nullable().required('Escuela requerida'),
   }),
 });
@@ -209,11 +209,20 @@ const validateAuxiliar = Yup.object().shape({
   password: Yup.string()
     .nullable()
     .matches(REGEX_PASSWORD, "Contraseña inválida")
-    .required("Contraseña requerida"),
+    .test("noPass", "Contraseña requerida", function (value) {
+      const { isEdit } = this.parent;
+      console.log("🚀 ~ file: validationSchemas.js:214 ~ isEdit:", isEdit);
+      return isEdit ? true : !!value;
+    }),
+  // .required("Contraseña requerida"),
   confirmPassword: Yup.string()
     .nullable()
     .oneOf([Yup.ref("password"), null], "Las contraseñas no coinciden")
-    .required("Confirmar contraseña requerida"),
+    .test("noPass", "Contraseña requerida", function (value) {
+      const { isEdit } = this.parent;
+      return isEdit ? true : !!value;
+    }),
+  // .required("Confirmar contraseña requerida"),
 });
 
 const validateDriver = Yup.object().shape({
@@ -226,7 +235,7 @@ const validateDriver = Yup.object().shape({
     .required("Teléfono requerido"),
   adminNumber: Yup.string().nullable().required("Número de empleado requerido"),
   license: Yup.string().nullable().required("Licencia requerida"),
-  // avatar: Yup.string().nullable().required('Avatar requerido'),
+  avatar: Yup.string().nullable().required("Avatar requerido"),
 });
 
 const validateRoute = Yup.object().shape({
