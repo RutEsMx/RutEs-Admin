@@ -3,20 +3,21 @@ import { useEffect, useState } from "react";
 import { getStudentById } from "@/services/StudentsServices";
 import { OPTIONS_TYPE_SERVICES } from "@/utils/options";
 import Image from "next/image";
-// import ButtonLink from "@/components/ButtonLink";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { setAlert } from "@/store/useSystemStore";
+import ButtonLink from "@/components/ButtonLink";
+import { useStudentsStore } from "@/store/useStudentsStore";
 
 const storage = getStorage();
 
 const Page = ({ params }) => {
-  const [student, setStudent] = useState({});
+  const { student } = useStudentsStore();
   const [imageUrl, setImageUrl] = useState("");
 
   useEffect(() => {
     const getStudent = async () => {
       const student = await getStudentById(params.id);
-      setStudent(student);
+
       if (student?.avatar) {
         const fileRef = ref(storage, student?.avatar);
         getDownloadURL(fileRef)
@@ -40,18 +41,21 @@ const Page = ({ params }) => {
   )?.label;
 
   return (
-    <div className="container mx-auto px-4 pb-12 h-full pt-10">
+    <div className="container mx-auto px-4 pb-12 h-screen  pt-10">
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
           <h1 className="font-bold text-3xl">Datos del alumno</h1>
         </div>
-        <div className="flex justify-end">
-          {/* <ButtonLink
+        <div className="flex justify-end gap-2">
+          <ButtonLink color="bg-yellow" href={"/dashboard/students"}>
+            Atras
+          </ButtonLink>
+          <ButtonLink
             color="bg-light-gray"
             href={`/dashboard/students/edit/${params.id}`}
           >
             Editar
-          </ButtonLink> */}
+          </ButtonLink>
         </div>
       </div>
       <div className="border border-black px-4 py-2 mt-4">

@@ -1,8 +1,8 @@
 import Autocomplete from "@/components/Autocomplete";
-import PlacesAutocomplete from "@/components/PlacesAutocomplete";
 import { useStudentsStore } from "@/store/useStudentsStore";
 import { useFormikContext } from "formik";
 import { memo } from "react";
+import { useRouter } from "next/navigation";
 import {
   MapPinIcon,
   CheckIcon,
@@ -16,16 +16,18 @@ import { setAlert } from "@/store/useSystemStore";
 import { DAYS, DAYS_OPTIONS } from "@/utils/options";
 import SelectField from "@/components/SelectField";
 import { useRoutesStore } from "@/store/useRoutesStore";
+import { validateServiceType } from "@/utils/functionsClient";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const StepStops = ({ isEdit }) => {
   const { values, setFieldValue } = useFormikContext();
+  const navigation = useRouter();
   const { selectedDayEdit, setSelectedDayEdit } = useRoutesStore();
   const { allStudents } = useStudentsStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [bothTravels, setBothTravels] = useState(true);
+  const [bothTravels, setBothTravels] = useState(false);
   const [selectedDay, setSelectedDay] = useState(["all"]);
   const [isEditStudent, setIsEditStudent] = useState(false);
 
@@ -61,10 +63,10 @@ const StepStops = ({ isEdit }) => {
         stops.push({
           day,
           coords: {
-            toHome: values?.temporalToHome,
+            toHome: values?.temporalToHome || null,
             toSchool: bothTravels
-              ? values?.temporalToHome
-              : values?.temporalToSchool,
+              ? values?.temporalToHome || null
+              : values?.temporalToSchool || null,
           },
           isDelete: false,
           route: values.routeId,
@@ -75,10 +77,10 @@ const StepStops = ({ isEdit }) => {
         stops.push({
           day,
           coords: {
-            toHome: values?.temporalToHome,
+            toHome: values?.temporalToHome || null,
             toSchool: bothTravels
-              ? values?.temporalToHome
-              : values?.temporalToSchool,
+              ? values?.temporalToHome || null
+              : values?.temporalToSchool || null,
           },
           isDelete: false,
           route: values.routeId,
@@ -120,12 +122,12 @@ const StepStops = ({ isEdit }) => {
 
   const handleEditStudent = (e, student) => {
     e.preventDefault();
-    if (isEdit) return;
+    if (isEdit)
+      return navigation.push(`/dashboard/students/edit/${student.id}`);
     setSelectedStudent(student);
     setFieldValue("temporalToHome", student.stops[0].coords.toHome);
     setFieldValue("temporalToSchool", student.stops[0].coords.toSchool);
     setIsEditStudent(true);
-    // setSelectedDay(student.stops.map((stop) => stop.day));
   };
 
   const handleRemoveStudent = (e, student) => {
@@ -173,7 +175,11 @@ const StepStops = ({ isEdit }) => {
     });
   };
 
-  const travelName = bothTravels ? "Ambos viajes" : "Viaje a casa";
+  const handleSelectedStudent = (value) => {
+    const element = allStudents.find((student) => student.id === value);
+
+    setSelectedStudent(element);
+  };
 
   return (
     <div className={`mb-4 grid ${isEdit ? "grid-rows-1" : "grid-rows-2"}`}>
@@ -198,46 +204,21 @@ const StepStops = ({ isEdit }) => {
                 ))}
               </div>
             </div>
-            <div className="form-control m-2">
-              <label className="label cursor-pointer">
-                <span className="label-text">Ambos viajes</span>
-                <input
-                  type="checkbox"
-                  checked={bothTravels}
-                  className="checkbox"
-                  onChange={(e) => setBothTravels(e.target.checked)}
-                />
-              </label>
-            </div>
             <Autocomplete
               options={allStudents}
               placeholder="Selecciona un alumno"
-              onSelect={(value) => {
-                const element = allStudents.find(
-                  (student) => student.id === value,
-                );
-                setSelectedStudent(element);
-              }}
+              onSelect={handleSelectedStudent}
               name="student"
               value={selectedStudent?.id || null}
               disabled={isEditStudent}
             />
-            <div className="flex flex-row items-center">
-              <PlacesAutocomplete
-                label={travelName}
-                setPlace={(value) => setFieldValue("temporalToHome", value)}
-                place={values?.temporalToHome}
-              />
-            </div>
-            {!bothTravels && (
-              <div className="flex flex-row items-center">
-                <PlacesAutocomplete
-                  label={"A la escuela"}
-                  setPlace={(value) => setFieldValue("temporalToSchool", value)}
-                  place={values?.temporalToSchool}
-                />
-              </div>
-            )}
+            {validateServiceType({
+              serviceType: selectedStudent?.serviceType,
+              setBothTravels,
+              setFieldValue,
+              values,
+              bothTravels,
+            })}
           </div>
           <div className="col-span-1 mb-2">
             <div className="flex flex-row items-end h-full gap-2">

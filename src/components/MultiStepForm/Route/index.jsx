@@ -17,7 +17,7 @@ import { useSystemStore } from "@/store/useSystemStore";
 
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
-  const { profile } = useAuthContext();
+  const { profile } = useAuthContext() || {};
   const { alert } = useSystemStore();
 
   const [message, setMessage] = useState("");
@@ -84,7 +84,7 @@ const FormRoute = ({ data, isEdit = false }) => {
                 disabled={isSubmitting}
                 type="button"
               >
-                {isEdit ? "Guardar cambios" : "Guardar"}
+                {isEdit ? "Guardar" : "Crear"}
               </Button>
             </div>
             <div className="my-4">
@@ -125,7 +125,6 @@ const FormRoute = ({ data, isEdit = false }) => {
                 <MapStops />
               </div>
             </div>
-            {/* <StepRoute isEdit={isEdit} /> */}
           </Form>
         )}
       </Formik>

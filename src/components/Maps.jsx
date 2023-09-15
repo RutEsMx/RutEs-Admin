@@ -72,7 +72,7 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
             return (
               <CustomMarker
                 key={marker.studentId}
-                position={{ lat: marker.lat, lng: marker.lng }}
+                position={{ lat: marker?.lat, lng: marker?.lng }}
                 draggable={marker.draggable}
                 onDragEnd={(e) =>
                   setMarker(marker.studentId, e.latLng.toJSON())

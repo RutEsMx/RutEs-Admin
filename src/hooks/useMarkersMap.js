@@ -13,22 +13,26 @@ const useMarkersMap = (params) => {
       student?.stops?.length > 0 &&
         student?.stops?.forEach((stop) => {
           if (stop?.day === day) {
-            newMarkers.push({
-              lat: stop.coords?.toSchool?.lat,
-              lng: stop.coords?.toSchool?.lng,
-              studentId: student.id,
-              name: student.name,
-              draggable: false,
-              color: COLORS_HEX.rutes,
-            });
-            newMarkers.push({
-              lat: stop.coords?.toHome?.lat,
-              lng: stop.coords?.toHome?.lng,
-              studentId: student.id,
-              name: student.name,
-              draggable: false,
-              color: COLORS_HEX.rutes,
-            });
+            if (stop.coords?.toSchool?.lat && stop.coords?.toSchool?.lng) {
+              newMarkers.push({
+                lat: stop.coords?.toSchool?.lat,
+                lng: stop.coords?.toSchool?.lng,
+                studentId: student.id,
+                name: student.name,
+                draggable: false,
+                color: COLORS_HEX.rutes,
+              });
+            }
+            if (stop.coords?.toHome?.lat && stop.coords?.toHome?.lng) {
+              newMarkers.push({
+                lat: stop.coords?.toHome?.lat,
+                lng: stop.coords?.toHome?.lng,
+                studentId: student.id,
+                name: student.name,
+                draggable: false,
+                color: COLORS_HEX.rutes,
+              });
+            }
           }
         });
     });

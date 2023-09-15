@@ -6,10 +6,16 @@ import {
   getDocuments,
   updateDocument,
 } from "@/firebase/crud";
-import { setAllStudents } from "@/store/useStudentsStore";
+import {
+  setAllStudents,
+  setStudent,
+  updateStudent,
+} from "@/store/useStudentsStore";
 
 const getStudentById = async (id) => {
   const studentData = await getDocumentById("students", id);
+  studentData.id = id;
+  setStudent(studentData);
   return studentData;
 };
 
@@ -191,4 +197,36 @@ const getAllStudents = async ({ all = false }) => {
   }
 };
 
-export { createParentsByForm, getStudentById, getStudents, getAllStudents };
+const updateStudentByForm = async (data) => {
+  const { avatar } = data;
+  let avatarFilename = avatar;
+
+  if (avatar instanceof File) {
+    const dataFile = new FormData();
+    dataFile.set("avatar", avatar);
+    const responseAvatar = await fetch(`/api/images`, {
+      method: "POST",
+      body: dataFile,
+    });
+
+    const { result: resultAvatar } = await responseAvatar.json();
+    if (resultAvatar) avatarFilename = resultAvatar;
+  }
+
+  data.avatar = avatarFilename;
+
+  const response = await updateDocument("students", data?.id, data);
+  if (response?.error) {
+    return { error: response.error };
+  }
+  updateStudent(response);
+  return { success: true, message: "Estudiante actualizado correctamente" };
+};
+
+export {
+  createParentsByForm,
+  getStudentById,
+  getStudents,
+  getAllStudents,
+  updateStudentByForm,
+};
