@@ -211,7 +211,6 @@ const validateAuxiliar = Yup.object().shape({
     .matches(REGEX_PASSWORD, "Contraseña inválida")
     .test("noPass", "Contraseña requerida", function (value) {
       const { isEdit } = this.parent;
-      console.log("🚀 ~ file: validationSchemas.js:214 ~ isEdit:", isEdit);
       return isEdit ? true : !!value;
     }),
   // .required("Contraseña requerida"),

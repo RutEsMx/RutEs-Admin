@@ -9,28 +9,12 @@ export async function GET(request, { params }) {
   const response = await firestore().collection("routes").doc(id).get();
   const routeData = response.data();
 
-  const [
-    responseAuxiliar,
-    responseUnits,
-    responseDriver,
-    responseStopsStudents,
-  ] = await Promise.all([
-    firestore()
-      .collection("profile")
-      .where("route", "==", id)
-      .where("roles", "array-contains-any", ["auxiliar"])
-      .get(),
-    firestore().collection("units").where("route", "==", id).get(),
-    firestore().collection("drivers").where("route", "==", id).get(),
+  const [responseStopsStudents] = await Promise.all([
     firestore().collection("stops").where("route", "==", id).get(),
   ]);
 
-  const auxiliars = responseAuxiliar.docs.map((doc) => doc.id);
-  const units = responseUnits.docs.map((doc) => doc.id);
-  const drivers = responseDriver.docs.map((doc) => doc.id);
-
   const students = [];
-  //
+
   if (responseStopsStudents.docs.length > 0) {
     const stops = responseStopsStudents.docs.map((doc) => {
       const data = doc.data();
@@ -60,9 +44,6 @@ export async function GET(request, { params }) {
   const data = {
     ...routeData,
     id: response.id,
-    auxiliar: auxiliars[0] || null,
-    unit: units[0] || null,
-    driver: drivers[0] || null,
     students: students,
   };
   return NextResponse.json(data);

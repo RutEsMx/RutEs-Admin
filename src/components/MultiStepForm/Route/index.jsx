@@ -125,7 +125,6 @@ const FormRoute = ({ data, isEdit = false }) => {
                 <MapStops />
               </div>
             </div>
-            {/* <StepRoute isEdit={isEdit} /> */}
           </Form>
         )}
       </Formik>
