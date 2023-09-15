@@ -198,6 +198,23 @@ const getAllStudents = async ({ all = false }) => {
 };
 
 const updateStudentByForm = async (data) => {
+  const { avatar } = data;
+  let avatarFilename = avatar;
+
+  if (avatar instanceof File) {
+    const dataFile = new FormData();
+    dataFile.set("avatar", avatar);
+    const responseAvatar = await fetch(`/api/images`, {
+      method: "POST",
+      body: dataFile,
+    });
+
+    const { result: resultAvatar } = await responseAvatar.json();
+    if (resultAvatar) avatarFilename = resultAvatar;
+  }
+
+  data.avatar = avatarFilename;
+
   const response = await updateDocument("students", data?.id, data);
   if (response?.error) {
     return { error: response.error };

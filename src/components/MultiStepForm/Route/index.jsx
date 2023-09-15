@@ -17,7 +17,7 @@ import { useSystemStore } from "@/store/useSystemStore";
 
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
-  const { profile } = useAuthContext();
+  const { profile } = useAuthContext() || {};
   const { alert } = useSystemStore();
 
   const [message, setMessage] = useState("");

@@ -24,7 +24,7 @@ const Layout = ({ children }) => {
   }, [pathname]);
 
   return (
-    <div className="container mx-auto px-4 py-10 h-full">
+    <div className="container mx-auto px-4 py-10 h-screen">
       <div className="grid grid-cols-2 gap-4 p-2">
         <div>
           <h1 className="font-bold">Administrador</h1>
