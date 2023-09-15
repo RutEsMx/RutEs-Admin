@@ -31,14 +31,14 @@ const FormSchool = ({ data, isEdit = false }) => {
   };
 
   const handleNext = async (values) => {
-    values.id = data?.id;
+    if (isEdit) values.id = data.id;
     const { success, message, error, result } = isEdit
       ? await updateSchoolByForm(values)
       : await createSchoolByForm(values);
     if (error) return setError(error?.message);
 
     if (success) {
-      const { logo, ...rest } = result;
+      const { logo, ...rest } = result || {};
       if (typeof logo === "string") {
         const responseLogo = await downloadURL(logo);
         rest.logo = responseLogo;

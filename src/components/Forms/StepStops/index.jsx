@@ -60,20 +60,12 @@ const StepStops = ({ isEdit }) => {
     const stops = [];
     if (selectedDay.includes(ALL_DAY)) {
       Object.keys(DAYS).forEach((day) => {
-        console.log(
-          "🚀 ~ file: index.jsx:69 ~ Object.keys ~ values?.temporalToHome:",
-          values?.temporalToHome,
-        );
-        console.log(
-          "🚀 ~ file: index.jsx:69 ~ Object.keys ~ values?.temporalToHome:",
-          values?.temporalToSchool,
-        );
         stops.push({
           day,
           coords: {
-            toHome: values?.temporalToHome,
+            toHome: values?.temporalToHome || null,
             toSchool: bothTravels
-              ? values?.temporalToHome
+              ? values?.temporalToHome || null
               : values?.temporalToSchool || null,
           },
           isDelete: false,
@@ -85,9 +77,9 @@ const StepStops = ({ isEdit }) => {
         stops.push({
           day,
           coords: {
-            toHome: values?.temporalToHome,
+            toHome: values?.temporalToHome || null,
             toSchool: bothTravels
-              ? values?.temporalToHome
+              ? values?.temporalToHome || null
               : values?.temporalToSchool || null,
           },
           isDelete: false,
@@ -103,10 +95,6 @@ const StepStops = ({ isEdit }) => {
       secondLastName: selectedStudent?.secondLastName,
       stops,
     };
-    console.log(
-      "🚀 ~ file: index.jsx:100 ~ handleAddStudent ~ studentObj:",
-      studentObj,
-    );
     setAlert({ message: "", type: "", show: false });
     setFieldValue("temporalToHome", null);
     setFieldValue("temporalToSchool", null);

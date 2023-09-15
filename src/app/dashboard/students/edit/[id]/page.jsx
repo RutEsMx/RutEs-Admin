@@ -8,7 +8,6 @@ import { useEffect } from "react";
 const Page = ({ params }) => {
   const { id } = params;
   const { student, setStudent } = useStudentsStore();
-  console.log("🚀 ~ file: page.jsx:11 ~ Page ~ student:", student);
 
   useEffect(() => {
     (!student || student.id !== id) && getStudentById(id);

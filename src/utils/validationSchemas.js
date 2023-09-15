@@ -53,7 +53,7 @@ const validateStudentEdit = Yup.object().shape({
   group: Yup.string().nullable(),
   enrollment: Yup.string().nullable().required("Matricula requerida"),
   serviceType: Yup.string().nullable().required("Tipo de Servicio requerido"),
-  avatar: Yup.string().nullable().required("Avatar requerido"),
+  // avatar: Yup.string().nullable().required("Avatar requerido"),
 });
 
 const validateFather = Yup.object().shape({
@@ -144,7 +144,7 @@ const validateUsers = Yup.object().shape({
     .email("Correo inválido")
     .required("Correo requerido")
     .test("email-exists", "Correo ya existe", emailExists),
-  avatar: Yup.string().nullable().required("Avatar requerido"),
+  avatar: Yup.string().nullable(),
   // schoolId: Yup.string().nullable().required('Escuela requerida'),
 });
 
@@ -211,7 +211,6 @@ const validateAuxiliar = Yup.object().shape({
     .matches(REGEX_PASSWORD, "Contraseña inválida")
     .test("noPass", "Contraseña requerida", function (value) {
       const { isEdit } = this.parent;
-      console.log("🚀 ~ file: validationSchemas.js:214 ~ isEdit:", isEdit);
       return isEdit ? true : !!value;
     }),
   // .required("Contraseña requerida"),
