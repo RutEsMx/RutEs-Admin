@@ -1,10 +1,7 @@
-"use client";
 import FormRoute from "@/components/MultiStepForm/Route";
 
 const Page = () => {
-  return (
-    <FormRoute />
-  );
+  return <FormRoute />;
 };
 
 export default Page;
