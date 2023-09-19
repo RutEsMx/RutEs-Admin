@@ -187,7 +187,7 @@ const updateEntity = async (entityType, id, routeId, oldId = null) => {
 };
 
 const updateRoutesByForm = async (data) => {
-  const { routeId, auxiliar, driver, unit, students, ...restData } = data;
+  const { routeId, students, ...restData } = data;
   if (!data?.students?.length)
     return { error: { message: "No se puede crear una ruta sin paradas" } };
 
@@ -201,17 +201,22 @@ const updateRoutesByForm = async (data) => {
     );
     const updateAuxiliar = updateEntity(
       "profile",
-      auxiliar,
+      restData?.auxiliar,
       routeId,
       oldRoute?.auxiliar,
     );
     const updateDriver = updateEntity(
       "drivers",
-      driver,
+      restData?.driver,
       routeId,
       oldRoute?.driver,
     );
-    const updateUnit = updateEntity("units", unit, routeId, oldRoute?.unit);
+    const updateUnit = updateEntity(
+      "units",
+      restData?.unit,
+      routeId,
+      oldRoute?.unit,
+    );
     await Promise.all([
       responseRoute,
       responseUpdateTravels,
