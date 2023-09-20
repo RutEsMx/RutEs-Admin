@@ -14,7 +14,7 @@ const PlacesAutocomplete = ({ label, place, setPlace }) => {
   }, [place]);
 
   return (
-    <div className="w-full mx-2 mb-2">
+    <div className="ml-2 mb-2 pt-2">
       {label && <label className="text-sm text-gray">{label}</label>}
       <GooglePlacesAutocomplete
         autocompletionRequest={{

@@ -1,5 +1,3 @@
-import Autocomplete from "@/components/Autocomplete";
-import { useStudentsStore } from "@/store/useStudentsStore";
 import { useFormikContext } from "formik";
 import { memo } from "react";
 import { useRouter } from "next/navigation";
@@ -17,6 +15,7 @@ import { DAYS, DAYS_OPTIONS } from "@/utils/options";
 import SelectField from "@/components/SelectField";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { validateServiceType } from "@/utils/functionsClient";
+import SelectAutocomplete from "@/components/SelectAutocomplete";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
@@ -25,7 +24,6 @@ const StepStops = ({ isEdit }) => {
   const { values, setFieldValue } = useFormikContext();
   const navigation = useRouter();
   const { selectedDayEdit, setSelectedDayEdit } = useRoutesStore();
-  const { allStudents } = useStudentsStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(false);
   const [selectedDay, setSelectedDay] = useState(["all"]);
@@ -51,11 +49,14 @@ const StepStops = ({ isEdit }) => {
       });
 
     if (students.find((s) => s.id === selectedStudent.id) && !isEditStudent) {
-      return setAlert({
-        message: "El alumno ya fue agregado",
-        type: "error",
-        show: true,
-      });
+      const stops = students.find((s) => s.id === selectedStudent.id).stops;
+      if (stops.find((stop) => selectedDay.includes(stop.day))) {
+        return setAlert({
+          message: "El alumno ya fue agregado",
+          type: "error",
+          show: true,
+        });
+      }
     }
     const stops = [];
     if (selectedDay.includes(ALL_DAY)) {
@@ -176,62 +177,69 @@ const StepStops = ({ isEdit }) => {
   };
 
   const handleSelectedStudent = (value) => {
-    const element = allStudents.find((student) => student.id === value);
-
-    setSelectedStudent(element);
+    if (!value) {
+      return setSelectedStudent(null);
+    }
+    setSelectedStudent(value);
   };
+
+  // const clearSelectedStudent = () => {
 
   return (
     <div className={`mb-4 grid ${isEdit ? "grid-rows-1" : "grid-rows-2"}`}>
       <div className="row-span-1">
-        <div className="grid grid-cols-4 gap-2">
-          <div className="col-span-3">
-            <div className="mx-2">
-              <div className="form-control grid grid-cols-2 place-content-center">
-                {DAYS_OPTIONS.map((day) => (
-                  <div key={day.label} className="grid">
-                    <label className="cursor-pointer label">
-                      <span className="label-text text-xs">{day.label}</span>
-                      <input
-                        type="checkbox"
-                        name={day.value}
-                        checked={selectedDay.includes(day.value)}
-                        className="checkbox checkbox-xs"
-                        onChange={handleSelect}
-                      />
-                    </label>
-                  </div>
-                ))}
-              </div>
+        <div className="grid grid-flow-row gap-2">
+          <div className="mx-2 grid grid-cols-2">
+            <div className="form-control grid grid-cols-2 place-content-center">
+              {DAYS_OPTIONS.map((day) => (
+                <div key={day.label} className="grid place-content-start">
+                  <label className="cursor-pointer label gap-1">
+                    <input
+                      type="checkbox"
+                      name={day.value}
+                      checked={selectedDay.includes(day.value)}
+                      className="checkbox checkbox-xs"
+                      onChange={handleSelect}
+                    />
+                    <span className="label-text text-xs text-start">
+                      {day.label}
+                    </span>
+                  </label>
+                </div>
+              ))}
             </div>
-            <Autocomplete
-              options={allStudents}
-              placeholder="Selecciona un alumno"
-              onSelect={handleSelectedStudent}
-              name="student"
-              value={selectedStudent?.id || null}
-              disabled={isEditStudent}
-            />
-            {validateServiceType({
-              serviceType: selectedStudent?.serviceType,
-              setBothTravels,
-              setFieldValue,
-              values,
-              bothTravels,
-            })}
           </div>
-          <div className="col-span-1 mb-2">
-            <div className="flex flex-row items-end h-full gap-2">
-              <ButtonAction
-                onClick={handleClearStudent}
-                disabled={false}
-                color="bg-light-gray"
-              >
-                <XMarkIcon className="h-5 w-5 text-black" />
-              </ButtonAction>
-              <ButtonAction onClick={handleAddStudent} disabled={false}>
-                <CheckIcon className="h-5 w-5 text-black" />
-              </ButtonAction>
+          <div className="grid grid-cols-3">
+            <div className="col-span-2">
+              <SelectAutocomplete
+                placeholder="Buscar un alumno"
+                onSelect={handleSelectedStudent}
+                name="student"
+                value={selectedStudent?.id || null}
+                disabled={isEditStudent}
+                days={selectedDay}
+              />
+              {validateServiceType({
+                serviceType: selectedStudent?.serviceType,
+                setBothTravels,
+                setFieldValue,
+                values,
+                bothTravels,
+              })}
+            </div>
+            <div className="col-span-1 grid place-items-center place-content-center">
+              <div className="flex flex-row items-end h-full gap-2">
+                <ButtonAction
+                  onClick={handleClearStudent}
+                  disabled={false}
+                  color="bg-light-gray"
+                >
+                  <XMarkIcon className="h-5 w-5 text-black" />
+                </ButtonAction>
+                <ButtonAction onClick={handleAddStudent} disabled={false}>
+                  <CheckIcon className="h-5 w-5 text-black" />
+                </ButtonAction>
+              </div>
             </div>
           </div>
         </div>

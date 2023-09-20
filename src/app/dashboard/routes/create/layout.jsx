@@ -2,7 +2,6 @@
 import LogoLayout from "@/components/LogoLayout";
 import { getAllAuxiliars } from "@/services/AuxiliarsServices";
 import { getAllDrivers } from "@/services/DriverServices";
-import { getAllStudents } from "@/services/StudentsServices";
 import { useEffect } from "react";
 
 const getAllData = async () => {
@@ -10,7 +9,6 @@ const getAllData = async () => {
     await Promise.all([
       getAllDrivers({ all: true }),
       getAllAuxiliars({ all: true }),
-      getAllStudents({ all: true }),
     ]);
   } catch (error) {
     return { error: error.message };

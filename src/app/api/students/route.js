@@ -85,3 +85,17 @@ export async function GET(request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT() {
+  const students = await firestore().collection("students").get();
+  students.docs.forEach(async (doc) => {
+    const data = doc.data();
+    const fullName = [
+      data.name?.toLowerCase(),
+      data.lastName.toLowerCase(),
+      data.secondLastName.toLowerCase(),
+    ];
+    await firestore().collection("students").doc(doc.id).update({ fullName });
+  });
+  return NextResponse.json({ message: "ok" });
+}

@@ -112,7 +112,11 @@ const createParentsByForm = async (data, schoolId) => {
     const tutor = `tutors_${i}`;
     delete studentData[tutor];
   }
-
+  studentData.fullName = [
+    studentData?.name,
+    studentData?.lastName,
+    studentData?.secondLastName,
+  ];
   const studentProfile = await createDocument("students", studentData);
   if (studentProfile?.error) {
     throw new Error(`Estudiante: ${studentProfile.error?.code}`);
@@ -214,7 +218,11 @@ const updateStudentByForm = async (data) => {
   }
 
   data.avatar = avatarFilename;
-
+  console.log(
+    "🚀 ~ file: StudentsServices.js:221 ~ updateStudentByForm ~ data:",
+    data,
+  );
+  data.fullName = [data?.name, data?.lastName, data?.secondLastName];
   const response = await updateDocument("students", data?.id, data);
   if (response?.error) {
     return { error: response.error };
