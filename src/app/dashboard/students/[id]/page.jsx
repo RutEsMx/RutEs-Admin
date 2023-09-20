@@ -7,7 +7,7 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { setAlert } from "@/store/useSystemStore";
 import ButtonLink from "@/components/ButtonLink";
 import { useStudentsStore } from "@/store/useStudentsStore";
-
+import { DAYS } from "@/utils/options";
 const storage = getStorage();
 
 const Page = ({ params }) => {
@@ -96,6 +96,10 @@ const Page = ({ params }) => {
                 <span className="font-bold">Matricula:</span>
                 <span className="">{student?.enrollment}</span>
               </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Alergias:</span>
+                <span className="">{student?.allergies}</span>
+              </div>
             </div>
           </div>
           <div>
@@ -106,6 +110,39 @@ const Page = ({ params }) => {
               height={200}
               priority
             />
+          </div>
+        </div>
+        <div className="my-3">
+          <div className="flex flex-col justify-around">
+            <div className="flex flex-row gap-2 mb-4">
+              <span className="font-bold text-2xl">Rutas:</span>
+            </div>
+            {student?.routes?.map((route) => (
+              <div className="flex flex-row gap-2" key={route?.id}>
+                <span className="font-bold">Nombre:</span>
+                <span className="">{route?.name}</span>
+              </div>
+            ))}
+            <div className="grid grid-flow-col gap-4  mt-4">
+              {student?.stops?.map((stop) => (
+                <div className="flex flex-col gap-2 row-span-1" key={stop?.id}>
+                  <span className="font-bold">Día:</span>
+                  <span className="">{DAYS[stop?.day]}</span>
+                  {stop?.coords && (
+                    <>
+                      <span className="font-bold">A casa: </span>
+                      <span className="font-light">
+                        {stop?.coords?.toHome?.label}
+                      </span>
+                      <span className="font-bold">A la escuela: </span>
+                      <span className="font-light">
+                        {stop?.coords?.toSchool?.label}
+                      </span>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

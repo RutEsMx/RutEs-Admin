@@ -78,7 +78,7 @@ const Autocomplete = ({
       <div className="flex ">
         <input
           type="text"
-          className="w-full h-8 px-3 text-base placeholder-gray-600 placeholder:text-xs border rounded-l-sm border-gray focus:shadow-outline"
+          className="w-full h-8 px-3 text-sm placeholder-gray-600 placeholder:text-xs border rounded-l-sm border-gray focus:shadow-outline "
           placeholder={placeholder}
           value={search}
           onChange={handleSearch}
@@ -94,11 +94,11 @@ const Autocomplete = ({
       </div>
       {error && <span className="text-red">{error}</span>}
       {showOptions && (
-        <div className="absolute z-10 w-full overflow-auto bg-white rounded-sm shadow top-auto">
+        <div className="absolute z-10 w-full overflow-auto bg-white rounded-sm shadow top-auto text-sm">
           {filteredOptions.map((option) => (
             <div
               key={option.id}
-              className="px-3 py-2 cursor-pointer hover:bg-gray"
+              className="px-3 py-2 cursor-pointer hover:bg-gray "
               onClick={() => handleSelect(option)}
             >
               <span className="font-bold">Nombre:</span> {option.name}{" "}

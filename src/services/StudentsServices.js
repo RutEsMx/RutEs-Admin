@@ -11,10 +11,36 @@ import {
   setStudent,
   updateStudent,
 } from "@/store/useStudentsStore";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/firebase/client";
+import { DAYS } from "@/utils/options";
 
 const getStudentById = async (id) => {
   const studentData = await getDocumentById("students", id);
   studentData.id = id;
+
+  const stops = query(collection(db, "stops"), where("student", "==", id));
+
+  const stopsSnapshot = await getDocs(stops);
+  if (!stopsSnapshot.empty) {
+    const daysOfWeek = Object.keys(DAYS);
+    const stops = [];
+    const routesArray = new Set();
+    stopsSnapshot.forEach((doc) => {
+      const stop = doc.data();
+      stops.push({ ...stop, id: doc.id });
+      routesArray.add(stop.route);
+    });
+    const routesPromises = Array.from(routesArray).map((route) =>
+      getDocumentById("routes", route),
+    );
+    const routes = await Promise.all(routesPromises);
+    studentData.routes = routes;
+    studentData.stops = stops.sort((a, b) => {
+      return daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day);
+    });
+  }
+
   setStudent(studentData);
   return studentData;
 };
