@@ -16,7 +16,9 @@ export async function GET(request) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
   const value = searchParams.get("value").split(" ");
+  console.log("🚀 ~ file: route.js:19 ~ GET ~ value:", value);
   const days = searchParams.get("days").split(",");
+  console.log("🚀 ~ file: route.js:21 ~ GET ~ days:", days);
 
   try {
     const studentsSnapshot = await firestore()
@@ -37,9 +39,9 @@ export async function GET(request) {
       const stops = stopsSnapshot.docs.map((stopDoc) => stopDoc.data());
       // Verificar si el estudiante tiene un "Stop" en los días especificados
       const hasStopOnSpecifiedDays =
-        days.includes("all") || stops.some((stop) => days.includes(stop.day));
+        (days.includes("all") && stops.length) ||
+        stops.some((stop) => days.includes(stop.day));
 
-      // Si el estudiante no tiene un "Stop" en los días especificados, añadirlo al array de estudiantes filtrados
       if (!hasStopOnSpecifiedDays) {
         filteredStudents.push({
           id: doc.id,
