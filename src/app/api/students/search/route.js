@@ -16,9 +16,7 @@ export async function GET(request) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
   const value = searchParams.get("value").split(" ");
-  console.log("🚀 ~ file: route.js:19 ~ GET ~ value:", value);
   const days = searchParams.get("days").split(",");
-  console.log("🚀 ~ file: route.js:21 ~ GET ~ days:", days);
 
   try {
     const studentsSnapshot = await firestore()
