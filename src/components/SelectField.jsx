@@ -2,14 +2,14 @@ import { Field } from "formik";
 
 const SelectField = ({ name, labelTitle, options, error, ...props }) => {
   return (
-    <div className="flex flex-col">
-      <label htmlFor={name} className="mb-1">
+    <div className="flex flex-col m-2">
+      <label htmlFor={name} className="mb-1 text-xs">
         {labelTitle}
       </label>
       <Field
         name={name}
         component="select"
-        className="border border-opacity-50 border-black rounded-sm p-1"
+        className="border border-gray rounded-sm p-1 h-full text-sm"
         {...props}
       >
         {options.map(({ value, label }) => (
