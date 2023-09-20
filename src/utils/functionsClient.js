@@ -46,7 +46,7 @@ const validateServiceType = ({
             setPlace={(value) => setFieldValue("temporalToHome", value)}
             place={values?.temporalToHome}
           />
-          <p className="text-red mx-2 text-sm">Medio servicio*</p>
+          <p className="text-red ml-2 text-sm">Medio servicio*</p>
         </div>
       );
       break;
@@ -58,7 +58,7 @@ const validateServiceType = ({
             setPlace={(value) => setFieldValue("temporalToSchool", value)}
             place={values?.temporalToSchool}
           />
-          <p className="text-red mx-2 text-sm">Medio servicio*</p>
+          <p className="text-red ml-2 text-sm">Medio servicio*</p>
         </div>
       );
       break;
