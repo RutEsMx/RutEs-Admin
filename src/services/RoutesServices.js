@@ -23,22 +23,24 @@ const createTravels = async (students) => {
     student?.stops?.map((stop) => {
       if (stop?.day) {
         if (!travelsObject[stop.day]) {
-          if (stop?.coords?.toSchool) {
+          console.log("🚀 ~ file: RoutesServices.js:27 ~ student?.stops?.map ~ stop?.coords?.toSchool:", stop?.coords?.toSchool)
+          console.log("🚀 ~ file: RoutesServices.js:27 ~ student?.stops?.map ~ stop?.coords?.toHome:", stop?.coords?.toHome)
+          // if (stop?.coords?.toSchool) {
             travelsObject[stop.day] = {
               ...travelsObject[stop.day],
               toSchool: {
                 students: [refStudent],
               },
             };
-          }
-          if (stop?.coords?.toHome) {
+          // }
+          // if (stop?.coords?.toHome) {
             travelsObject[stop.day] = {
               ...travelsObject[stop.day],
               toHome: {
                 students: [refStudent],
               },
             };
-          }
+          // }
         } else {
           if (stop?.coords?.toSchool) {
             travelsObject[stop.day]["toSchool"]?.students.push(refStudent);
@@ -132,9 +134,9 @@ const createRoutesByForm = async (data) => {
     return { error: { message: "No se puede crear una ruta sin paradas" } };
   try {
     const responseTravels = await createTravels(data?.students);
-    data?.students.map(async (student) => {
-      await createStops(student, responseTravels.id);
-    });
+    // data?.students.map(async (student) => {
+    //   await createStops(student, responseTravels.id);
+    // });
 
     const dataRoute = {
       name: data.name,
@@ -188,47 +190,48 @@ const updateEntity = async (entityType, id, routeId, oldId = null) => {
 
 const updateRoutesByForm = async (data) => {
   const { routeId, students, ...restData } = data;
+  console.log("🚀 ~ file: RoutesServices.js:193 ~ updateRoutesByForm ~ students:", students)
   if (!data?.students?.length)
     return { error: { message: "No se puede crear una ruta sin paradas" } };
 
-  try {
-    const getOldRoute = await getDoc(doc(db, "routes", routeId));
-    const oldRoute = getOldRoute.data();
-    const responseRoute = await updateDocument("routes", routeId, restData);
-    const responseUpdateTravels = await updateTravels(routeId, students);
-    const responseStops = Promise.all(
-      students.map((student) => updateDeleteStops(student, routeId)),
-    );
-    const updateAuxiliar = updateEntity(
-      "profile",
-      restData?.auxiliar,
-      routeId,
-      oldRoute?.auxiliar,
-    );
-    const updateDriver = updateEntity(
-      "drivers",
-      restData?.driver,
-      routeId,
-      oldRoute?.driver,
-    );
-    const updateUnit = updateEntity(
-      "units",
-      restData?.unit,
-      routeId,
-      oldRoute?.unit,
-    );
-    await Promise.all([
-      responseRoute,
-      responseUpdateTravels,
-      responseStops,
-      updateAuxiliar,
-      updateDriver,
-      updateUnit,
-    ]);
+  // try {
+  //   const getOldRoute = await getDoc(doc(db, "routes", routeId));
+  //   const oldRoute = getOldRoute.data();
+  //   const responseRoute = await updateDocument("routes", routeId, restData);
+  //   const responseUpdateTravels = await updateTravels(routeId, students);
+  //   const responseStops = Promise.all(
+  //     students.map((student) => updateDeleteStops(student, routeId)),
+  //   );
+  //   const updateAuxiliar = updateEntity(
+  //     "profile",
+  //     restData?.auxiliar,
+  //     routeId,
+  //     oldRoute?.auxiliar,
+  //   );
+  //   const updateDriver = updateEntity(
+  //     "drivers",
+  //     restData?.driver,
+  //     routeId,
+  //     oldRoute?.driver,
+  //   );
+  //   const updateUnit = updateEntity(
+  //     "units",
+  //     restData?.unit,
+  //     routeId,
+  //     oldRoute?.unit,
+  //   );
+  //   await Promise.all([
+  //     responseRoute,
+  //     responseUpdateTravels,
+  //     responseStops,
+  //     updateAuxiliar,
+  //     updateDriver,
+  //     updateUnit,
+  //   ]);
     return { success: true, message: "Ruta actualizada correctamente" };
-  } catch (error) {
-    return { error };
-  }
+  // } catch (error) {
+  //   return { error };
+  // }
 };
 
 const removeRoutes = async (id) => {

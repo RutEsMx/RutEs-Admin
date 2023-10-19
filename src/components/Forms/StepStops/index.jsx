@@ -22,6 +22,7 @@ const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const StepStops = ({ isEdit }) => {
   const { values, setFieldValue } = useFormikContext();
+  console.log("🚀 ~ file: index.jsx:25 ~ values:", values?.students)
   const navigation = useRouter();
   const { selectedDayEdit, setSelectedDayEdit } = useRoutesStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -123,8 +124,7 @@ const StepStops = ({ isEdit }) => {
 
   const handleEditStudent = (e, student) => {
     e.preventDefault();
-    if (isEdit)
-      return navigation.push(`/dashboard/students/edit/${student.id}`);
+
     setSelectedStudent(student);
     setFieldValue("temporalToHome", student.stops[0].coords.toHome);
     setFieldValue("temporalToSchool", student.stops[0].coords.toSchool);
@@ -215,7 +215,7 @@ const StepStops = ({ isEdit }) => {
                 placeholder="Buscar un alumno"
                 onSelect={handleSelectedStudent}
                 name="student"
-                value={selectedStudent?.id || null}
+                value={selectedStudent || null}
                 disabled={isEditStudent}
                 days={selectedDay}
               />

@@ -14,16 +14,17 @@ import {
 } from "@/services/RoutesServices";
 import MapStops from "@/components/MapStops";
 import { useSystemStore } from "@/store/useSystemStore";
+import StepStopsEdit from "@/components/Forms/StepStopsEdit";
 
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext() || {};
   const { alert } = useSystemStore();
-
+  
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("DATOS");
-
+  
   const initialValues = {
     name: data?.name || "",
     capacity: data?.capacity || "",
@@ -43,16 +44,15 @@ const FormRoute = ({ data, isEdit = false }) => {
       const { success, message, error } = isEdit
         ? await updateRoutesByForm(values)
         : await createRoutesByForm(values);
-
       if (error) {
         setError(error?.message);
       }
-      if (success) {
-        setMessage(message);
-        setTimeout(() => {
-          return navigation.back();
-        }, 2000);
-      }
+      // if (success) {
+      //   setMessage(message);
+      //   setTimeout(() => {
+      //     return navigation.back();
+      //   }, 2000);
+      // }
       return setMessage(message);
     } catch (error) {
       setError(error.message);
@@ -68,7 +68,7 @@ const FormRoute = ({ data, isEdit = false }) => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleNext}
-        validationSchema={validateRoute}
+        // validationSchema={validateRoute}
         validateOnBlur={false}
         validateOnChange={false}
         validateOnMount={false}
@@ -118,11 +118,11 @@ const FormRoute = ({ data, isEdit = false }) => {
                 {activeTab === "DATOS" ? (
                   <StepRoute />
                 ) : (
-                  <StepStops isEdit={isEdit} />
+                    isEdit ? <StepStopsEdit /> : <StepStops />
                 )}
               </div>
               <div className="col-span-3 border-2 border-gray rounded-lg p-4">
-                <MapStops />
+                {/* <MapStops /> */}
               </div>
             </div>
           </Form>
