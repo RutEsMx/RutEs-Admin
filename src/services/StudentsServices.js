@@ -11,7 +11,7 @@ import {
   setStudent,
   updateStudent,
 } from "@/store/useStudentsStore";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import { DAYS } from "@/utils/options";
 
@@ -46,7 +46,8 @@ const getStudentById = async (id) => {
 };
 
 const createParentProfile = async (parent, schoolId, roles) => {
-  const { email, avatar } = parent;
+  if(parent.emailExist) return updateParentProfile(parent, schoolId, roles)
+  const { email, avatar} = parent;
   let avatarFilename = avatar;
 
   if (validateEmail(email)) {
@@ -93,6 +94,40 @@ const createParentProfile = async (parent, schoolId, roles) => {
   }
 };
 
+const updateParentProfile = async (parent) => {
+  const { avatar } = parent;
+  let avatarFilename = avatar;
+
+  try {
+    if (avatar instanceof File) {
+      const dataFile = new FormData();
+      dataFile.set("avatar", avatar);
+      const responseAvatar = await fetch(`/api/images`, {
+        method: "POST",
+        body: dataFile,
+      });
+
+      const { result: resultAvatar } = await responseAvatar.json();
+      if (resultAvatar) avatarFilename = resultAvatar;
+    }
+
+    const profileData = {
+      ...parent,
+      avatar: avatarFilename,
+    };
+
+    await updateDocument(
+      "profile",
+      profileData.id,
+      profileData,
+    );
+    const userRef = doc(db, "profile", profileData.id);
+    return userRef
+  } catch (error) {
+    return { error };
+  }
+}
+
 const createParentsByForm = async (data, schoolId) => {
   const {
     countTutors,
@@ -112,11 +147,11 @@ const createParentsByForm = async (data, schoolId) => {
   ]);
 
   if (fatherProfile?.error) {
-    throw new Error(`Papá: ${fatherProfile.error?.message}`);
+    throw new Error(`Papá ${fatherProfile.error?.message}`);
   }
 
   if (motherProfile?.error) {
-    throw new Error(`Mamá: ${motherProfile.error?.message}`);
+    throw new Error(`Mamá ${motherProfile.error?.message}`);
   }
 
   studentData.schoolId = schoolId;
@@ -150,7 +185,7 @@ const createParentsByForm = async (data, schoolId) => {
 
   const tutors = Array.from({ length: countTutors }, (_, i) => {
     const tutor = `tutors_${i}`;
-    const tutorData = { ...data[tutor], schoolId, students: [studentProfile] };
+    const tutorData = { ...data[tutor], schoolId, students: [...data[tutor].students, studentProfile] };
     delete studentData[tutor];
     return createParentProfile(tutorData, schoolId, ["tutor"]);
   });
@@ -160,7 +195,7 @@ const createParentsByForm = async (data, schoolId) => {
 
   if (fatherProfile?.id) {
     responseProfile = await updateDocument("profile", fatherProfile.id, {
-      students: [studentProfile],
+      students: [...father.students, studentProfile],
     });
     if (responseProfile?.error) {
       throw new Error(`Papá: ${responseProfile.error?.code}`);
@@ -169,7 +204,7 @@ const createParentsByForm = async (data, schoolId) => {
   }
   if (motherProfile?.id) {
     responseProfile = await updateDocument("profile", motherProfile.id, {
-      students: [studentProfile],
+      students: [...mother.students, studentProfile],
     });
     if (responseProfile?.error) {
       throw new Error(`Mamá: ${responseProfile.error?.code}`);
@@ -178,13 +213,13 @@ const createParentsByForm = async (data, schoolId) => {
   }
 
   const tutorProfiles = await Promise.all(tutors);
-
+  
   if (tutorProfiles.some((profile) => profile?.error)) {
     throw new Error(
       `Tutor: ${tutorProfiles.find((profile) => profile?.error)?.code}`,
-    );
-  }
-
+      );
+    }
+    
   const responseUpdateStudent = await updateDocument(
     "students",
     studentProfile.id,
@@ -244,10 +279,7 @@ const updateStudentByForm = async (data) => {
   }
 
   data.avatar = avatarFilename;
-  console.log(
-    "🚀 ~ file: StudentsServices.js:221 ~ updateStudentByForm ~ data:",
-    data,
-  );
+
   data.fullName = [data?.name, data?.lastName, data?.secondLastName];
   const response = await updateDocument("students", data?.id, data);
   if (response?.error) {

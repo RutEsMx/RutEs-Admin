@@ -169,9 +169,9 @@ const DataTable = ({ type, list = [] }) => {
         <div className="col-span-1">
           {type === "parents" && (
             <div className="flex items-center">
-              <ButtonAction onClick={handleDelete} color="bg-light-gray">
+              {/* <ButtonAction onClick={handleDelete} color="bg-light-gray">
                 Eliminar
-              </ButtonAction>
+              </ButtonAction> */}
               {/* <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
                 <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
             </div>

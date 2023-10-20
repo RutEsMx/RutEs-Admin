@@ -22,7 +22,6 @@ const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const StepStops = ({ isEdit }) => {
   const { values, setFieldValue } = useFormikContext();
-  console.log("🚀 ~ file: index.jsx:25 ~ values:", values?.students)
   const navigation = useRouter();
   const { selectedDayEdit, setSelectedDayEdit } = useRoutesStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
