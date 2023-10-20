@@ -36,7 +36,6 @@ const validateServiceType = ({
 }) => {
   let element = null;
   const travelName = bothTravels ? "Ambos viajes" : "A la casa";
-  console.log(values?.temporalToHome);
   switch (serviceType) {
     case "halfAfternoon":
       element = (

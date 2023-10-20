@@ -10,10 +10,8 @@ const SelectAutocomplete = ({
   disabled,
   days,
 }) => {
-  console.log("🚀 ~ file: SelectAutocomplete.jsx:13 ~ valueControl:", valueControl)
   const handleSelect = (option) => {
     if (disabled) return;
-    console.log("🚀 ~ file: SelectAutocomplete.jsx:16 ~ handleSelect ~ option:", option)
     onSelect(option);
   };
   
