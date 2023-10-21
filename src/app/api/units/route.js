@@ -16,68 +16,50 @@ export async function GET(request) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  if (searchParams.get("all")) {
-    const passengersNumber = Number(searchParams.get("passengers"));
-    try {
-      let getAllUnits;
-      if (searchParams.get("route") !== "null") {
-        getAllUnits = await firestore()
-          .collection("units")
-          .where("schoolId", "==", profile.schoolId)
-          .where("route", "==", searchParams.get("route"))
-          .orderBy("passengers")
-          .get();
-      } else {
-        getAllUnits = await firestore()
-          .collection("units")
-          .where("schoolId", "==", profile.schoolId)
-          .where("passengers", ">=", passengersNumber)
-          .where("route", "==", null)
-          .orderBy("passengers")
-          .get();
-      }
+  // if (searchParams.get("all")) {
+  //   const passengersNumber = Number(searchParams.get("passengers"));
+  //   try {
+  //     let getAllUnits;
+  //     if (searchParams.get("route") !== "null") {
+  //       getAllUnits = await firestore()
+  //         .collection("units")
+  //         .where("schoolId", "==", profile.schoolId)
+  //         .where("route", "==", searchParams.get("route"))
+  //         .orderBy("passengers")
+  //         .get();
+  //     } else {
+  //       getAllUnits = await firestore()
+  //         .collection("units")
+  //         .where("schoolId", "==", profile.schoolId)
+  //         .where("passengers", ">=", passengersNumber)
+  //         .where("route", "==", null)
+  //         .orderBy("passengers")
+  //         .get();
+  //     }
 
-      if (getAllUnits.empty) {
-        return NextResponse.json(
-          { error: "No se encontraron unidades" },
-          { status: 404 },
-        );
-      }
-      const data = getAllUnits.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-        name: doc.data().plate,
-      }));
-      return NextResponse.json(data);
-    } catch (error) {
-      return NextResponse.json({ error });
-    }
-  }
+  //     if (getAllUnits.empty) {
+  //       return NextResponse.json(
+  //         { error: "No se encontraron unidades" },
+  //         { status: 404 },
+  //       );
+  //     }
+  //     const data = getAllUnits.docs.map((doc) => ({
+  //       ...doc.data(),
+  //       id: doc.id,
+  //       name: doc.data().plate,
+  //     }));
+  //     return NextResponse.json(data);
+  //   } catch (error) {
+  //     return NextResponse.json({ error });
+  //   }
+  // }
 
   try {
-    const query = {
-      pageIndex: Number(searchParams.get("pageIndex")),
-      pageSize: Number(searchParams.get("pageSize")),
-      schoolId: profile?.schoolId,
-    };
 
-    let lastVisible = 0;
-    if (query?.pageIndex > 0) {
-      const lastVisibleSnapshot = await firestore()
-        .collection("units")
-        .where("schoolId", "==", query.schoolId)
-        .orderBy("model")
-        .limit(query?.pageIndex * query?.pageSize)
-        .get();
-      lastVisible =
-        lastVisibleSnapshot.docs[lastVisibleSnapshot.docs.length - 1];
-    }
     const response = await firestore()
       .collection("units")
-      .where("schoolId", "==", query.schoolId)
+      .where("schoolId", "==", profile.schoolId)
       .orderBy("model")
-      .startAfter(lastVisible)
-      .limit(query.pageSize)
       .get();
 
     const data = response.docs.map((doc) => {
@@ -85,18 +67,8 @@ export async function GET(request) {
       const data = doc.data();
       return { id, ...data };
     });
-    // get pageCount from firestore
-    const responseCount = await firestore()
-      .collection("units")
-      .where("schoolId", "==", query.schoolId)
-      .get();
 
-    const dataTable = {
-      rows: data,
-      pageCount: Math.ceil(responseCount.size / query.pageSize),
-    };
-
-    return NextResponse.json(dataTable);
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

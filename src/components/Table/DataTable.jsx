@@ -6,23 +6,16 @@ import {
   getPaginationRowModel,
   useReactTable,
   getFilteredRowModel,
+  getFacetedRowModel,
 } from "@tanstack/react-table";
 import { rankItem } from "@tanstack/match-sorter-utils";
 import ButtonAction from "@/components/ButtonAction";
-import {
-  fetchDataParents,
-  fetchDataSchools,
-  fetchDataStudents,
-  fetchDataUnits,
-  fetchDataUsers,
-} from "@/services/TableServices";
 import FilterInput from "@/components/Table/elements/FilterInputTable";
 import ColumnSelected from "./columns";
-import { useAuthContext } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { removeCookies } from "@/services/CookiesServices";
 import { deleteParents } from "@/services/ParentsSevices";
 import { setAlert } from "@/store/useSystemStore";
+import { getDrivers } from "@/services/DriverServices";
+import { getUnits } from "@/services/UnitsServices";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -35,93 +28,31 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 };
 
 const DataTable = ({ type, list = [] }) => {
-  const { profile } = useAuthContext();
-  const router = useRouter();
   const columns = useMemo(() => ColumnSelected(type), []);
-  const [data, setData] = useState(list);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [{ pageIndex, pageSize }, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-  const pagination = useMemo(
-    () => ({
-      pageIndex,
-      pageSize,
-    }),
-    [pageIndex, pageSize],
-  );
-  const [rowSelection, setRowSelection] = useState([]);
-
+  
   useEffect(() => {
-    if (type === "parents")
-      fetchDataParents({
-        schoolId: profile?.schoolId,
-        pageIndex,
-        pageSize,
-      }).then((data) => {
-        if (data?.error && data?.redirect) {
-          removeCookies();
-          return router.push(data?.redirect);
-        }
-        setData(data);
-      });
-    if (type === "students" && pageIndex !== 0)
-      fetchDataStudents({
-        schoolId: profile?.schoolId,
-        pageIndex,
-        pageSize,
-      }).then((data) => {
-        if (data?.error && data?.redirect) {
-          removeCookies();
-          return router.push(data?.redirect);
-        }
-        setData(data);
-      });
-    if (type === "users")
-      fetchDataUsers({ pageIndex, pageSize }).then((data) => {
-        if (data?.error && data?.redirect) {
-          removeCookies();
-          return router.push(data?.redirect);
-        }
-        setData(data);
-      });
-    if (type === "schools" && pageIndex !== 0) {
-      fetchDataSchools({ pageIndex, pageSize: 1 }).then((data) => {
-        if (data?.error && data?.redirect) {
-          removeCookies();
-          return router.push(data?.redirect);
-        }
-        setData(data);
-      });
+    const getData = async () => {
+      if (type === "units") {
+        getUnits()
+      }
+      if (type === "drivers") {
+        getDrivers()
+      }
     }
-    if (type === "units") {
-      fetchDataUnits({ pageIndex, pageSize }).then((data) => {
-        if (data?.error && data?.redirect) {
-          removeCookies();
-          return router.push(data?.redirect);
-        }
-        setData(data);
-      });
-    }
-  }, [pageIndex, pageSize, profile]);
+    getData()
+  }, []);
 
   const table = useReactTable({
-    data: data?.rows ?? [],
+    data: list?.rows ?? [],
     columns,
-    pageCount: data?.pageCount ?? -1,
     state: {
-      rowSelection,
-      pagination,
       globalFilter,
     },
-    onRowSelectionChange: setRowSelection,
-    enableRowSelection: true,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    onPaginationChange: setPagination,
-    manualPagination: true,
+    getFacetedRowModel: getFacetedRowModel(),    
     getRowId: (row) => row.id,
     onGlobalFilterChange: setGlobalFilter,
     filterFns: {
@@ -129,32 +60,33 @@ const DataTable = ({ type, list = [] }) => {
     },
     globalFilterFn: fuzzyFilter,
   });
+  
 
-  const handleDelete = async () => {
-    if (type === "parents") {
-      return deleteParents(rowSelection)
-        .then((data) => {
-          if (data?.error && data?.redirect) {
-            removeCookies();
-            return router.push(data?.redirect);
-          }
-          setAlert({
-            type: "success",
-            message: "Padres eliminados correctamente",
-          });
-          fetchDataParents({
-            schoolId: profile?.schoolId,
-            pageIndex,
-            pageSize,
-          }).then((data) => {
-            setData(data);
-          });
-        })
-        .catch((error) => {
-          setAlert({ type: "error", message: error?.message });
-        });
-    }
-  };
+  // const handleDelete = async () => {
+  //   if (type === "parents") {
+  //     return deleteParents(rowSelection)
+  //       .then((data) => {
+  //         if (data?.error && data?.redirect) {
+  //           removeCookies();
+  //           return router.push(data?.redirect);
+  //         }
+  //         setAlert({
+  //           type: "success",
+  //           message: "Padres eliminados correctamente",
+  //         });
+  //         fetchDataParents({
+  //           schoolId: profile?.schoolId,
+  //           pageIndex,
+  //           pageSize,
+  //         }).then((data) => {
+  //           setData(data);
+  //         });
+  //       })
+  //       .catch((error) => {
+  //         setAlert({ type: "error", message: error?.message });
+  //       });
+  //   }
+  // };
 
   return (
     <>

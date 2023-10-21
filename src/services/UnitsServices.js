@@ -5,6 +5,7 @@ import {
   setUnits,
   updateUnits,
 } from "@/store/useUnitsStore";
+import { setStructureDatatable } from "./TableServices";
 
 const createUnitsByForm = async (data) => {
   const dataCopy = { ...data };
@@ -35,17 +36,18 @@ const updateUnitsByForm = async (data) => {
   }
 };
 
-const getUnits = async ({ pageIndex, pageSize }) => {
+const getUnits = async () => {
+  console.log("🚀 ~ file: DriverServices.js:90 ~ getUnits ~ getUnits:")
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units?pageIndex=${pageIndex}&pageSize=${pageSize}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/units`,
     );
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
     const data = await response.json();
-    setUnits(data);
-    return data;
+    const dataTable = setStructureDatatable(data);
+    return setUnits(dataTable);
   } catch (error) {
     return { error: error?.message };
   }
@@ -85,5 +87,7 @@ const getUnit = async (id) => {
     return { error };
   }
 };
+
+
 
 export { createUnitsByForm, getUnits, updateUnitsByForm, getUnit, getAllUnits };

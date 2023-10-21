@@ -17,7 +17,7 @@ export const useRoutesStore = create((set) => ({
         route.id === routeId ? { ...route, ...route } : route,
       ),
     })),
-  selectedDayEdit: SELECT_DAY[new Date().getDay()].value,
+  selectedDayEdit: SELECT_DAY[new Date().getDay()]?.value || "monday",
   setSelectedDayEdit: (day) => set({ selectedDayEdit: day }),
 }));
 

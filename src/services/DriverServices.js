@@ -1,5 +1,6 @@
 import { createDocument, updateDocument } from "@/firebase/crud";
-import { setAllDrivers } from "@/store/useDriversStore";
+import { setAllDrivers, setDrivers } from "@/store/useDriversStore";
+import { setStructureDatatable } from "./TableServices";
 
 const createDriverByForm = async (data) => {
   const dataCopy = { ...data };
@@ -71,6 +72,22 @@ const getDriver = async ({ pageIndex, pageSize, schoolId }) => {
   }
 };
 
+const getDrivers = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/drivers`,
+    );
+    if (response?.redirected) {
+      return { error: true, redirect: response.url };
+    }
+    const data = await response.json();
+    const dataTable = setStructureDatatable(data);
+    return setDrivers(dataTable);
+  } catch (error) {
+    return { error: error?.message };
+  }
+};
+
 const getAllDrivers = async ({ all = false, route = null }) => {
   try {
     const response = await fetch(
@@ -92,4 +109,4 @@ const getAllDrivers = async ({ all = false, route = null }) => {
   }
 };
 
-export { createDriverByForm, updateDriverByForm, getDriver, getAllDrivers };
+export { createDriverByForm, updateDriverByForm, getDriver, getDrivers, getAllDrivers };
