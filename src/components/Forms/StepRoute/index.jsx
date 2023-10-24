@@ -1,8 +1,6 @@
 "use client";
 import Autocomplete from "@/components/Autocomplete";
 import InputField from "@/components/InputField";
-import { getAllAuxiliars } from "@/services/AuxiliarsServices";
-import { getAllDrivers } from "@/services/DriverServices";
 import { getAllUnits } from "@/services/UnitsServices";
 import { useAuxiliarsStore } from "@/store/useAuxiliarsStore";
 import { useDriversStore } from "@/store/useDriversStore";
@@ -10,71 +8,58 @@ import { useUnitsStore } from "@/store/useUnitsStore";
 import { useFormikContext } from "formik";
 import { memo, useCallback, useEffect } from "react";
 
-const getAllData = async (id = null, values) => {
-  const { auxiliar, driver, unit } = values;
-  try {
-    return Promise.all([
-      driver && getAllDrivers({ all: true, route: id }),
-      unit && getAllUnits({ all: true, route: id }),
-      auxiliar && getAllAuxiliars({ all: true, route: id }),
-    ]);
-  } catch (error) {
-    return { error: error.message };
-  }
-};
-
 const StepRoute = () => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
   const { allUnits } = useUnitsStore();
-  const { allAuxiliars } = useAuxiliarsStore();
-  const { allDrivers } = useDriversStore();
+  const { auxiliarsRoutes } = useAuxiliarsStore();
+  const { driversRoutes } = useDriversStore();
 
   const getUnitsCapacity = useCallback(async (e) => {
-    setFieldValue("capacity", e.target.value);
-    try {
-      setFieldValue("unit", null);
-      await getAllUnits({ all: true, passengers: e.target.value });
-    } catch (error) {
-      if (error.name === "AbortError") {
-        console.log("Fetch aborted");
-      } else {
-        console.error(error);
-      }
-    }
+    // setFieldValue("capacity", e.target.value);
+    // try {
+    //   setFieldValue("unit", null);
+    //   await getAllUnits({ all: true, passengers: e.target.value });
+    // } catch (error) {
+    //   if (error.name === "AbortError") {
+    //     console.log("Fetch aborted");
+    //   } else {
+    //     console.error(error);
+    //   }
+    // }
   }, []);
 
-  const allData = useCallback(async (id) => {
-    try {
-      await getAllData(id, values);
-    } catch (error) {
-      if (error.name === "AbortError") {
-        console.log("Fetch aborted");
-      } else {
-        console.error(error);
-      }
-    }
-  }, []);
+  // const allData = useCallback(async (id) => {
+  //   try {
+  //     await getAllData(id, values);
+  //   } catch (error) {
+  //     if (error.name === "AbortError") {
+  //       console.log("Fetch aborted");
+  //     } else {
+  //       console.error(error);
+  //     }
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    if (values.routeId === null) return;
-    allData(values.routeId);
-  }, [allData, values.routeId]);
+  // useEffect(() => {
+  //   if (values.routeId === null) return;
+  //   allData(values.routeId);
+  // }, [allData, values.routeId]);
 
   const handleOnChane = (type, value) => {
-    if (value === "") {
-      if (type === "unit") {
-        setFieldValue("unit", null);
-        getAllUnits({ all: true, passengers: values.capacity });
-      }
-      if (type === "auxiliar") {
-        setFieldValue("auxiliar", null);
-        getAllAuxiliars({ all: true });
-      }
-      if (type === "driver") {
-        setFieldValue("driver", null);
-        getAllDrivers({ all: true });
-      }
-    }
+    // if (value === "") {
+    //   if (type === "unit") {
+    //     setFieldValue("unit", null);
+    //     getAllUnits({ all: true, passengers: values.capacity });
+    //   }
+    //   if (type === "auxiliar") {
+    //     setFieldValue("auxiliar", null);
+    //     getAllAuxiliars({ all: true });
+    //   }
+    //   if (type === "driver") {
+    //     setFieldValue("driver", null);
+    //     getAllDrivers({ all: true });
+    //   }
+    // }
   };
 
   return (
@@ -109,7 +94,7 @@ const StepRoute = () => {
         name="unit"
       />
       <Autocomplete
-        options={allAuxiliars}
+        options={auxiliarsRoutes}
         placeholder="Selecciona un auxiliar"
         label="Auxiliar"
         onSelect={(value) => setFieldValue("auxiliar", value)}
@@ -119,7 +104,7 @@ const StepRoute = () => {
         name="auxiliar"
       />
       <Autocomplete
-        options={allDrivers}
+        options={driversRoutes}
         placeholder="Selecciona un conductor"
         label="Conductor"
         onSelect={(value) => setFieldValue("driver", value)}

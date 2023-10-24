@@ -3,7 +3,7 @@ import LogoLayout from "@/components/LogoLayout";
 import DataTable from "@/components/Table/DataTable";
 import { useParentsStore } from "@/store/useParentsStore";
 
-const Parents = async () => {
+const Parents = () => {
   const { parents } = useParentsStore();
   
   return (

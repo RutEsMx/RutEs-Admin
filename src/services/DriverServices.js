@@ -1,5 +1,5 @@
 import { createDocument, updateDocument } from "@/firebase/crud";
-import { setAllDrivers, setDrivers } from "@/store/useDriversStore";
+import { setDrivers, setDriversRoutes } from "@/store/useDriversStore";
 import { setStructureDatatable } from "./TableServices";
 
 const createDriverByForm = async (data) => {
@@ -62,6 +62,7 @@ const updateDriverByForm = async (data) => {
 };
 
 const getDriver = async ({ pageIndex, pageSize, schoolId }) => {
+  
   try {
     const response = await fetch(
       `/api/drivers?pageIndex=${pageIndex}&pageSize=${pageSize}&schoolId=${schoolId}`,
@@ -73,6 +74,7 @@ const getDriver = async ({ pageIndex, pageSize, schoolId }) => {
 };
 
 const getDrivers = async () => {
+
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/drivers`,
@@ -87,26 +89,24 @@ const getDrivers = async () => {
     return { error: error?.message };
   }
 };
+const getDriversRoutes = async () => {
 
-const getAllDrivers = async ({ all = false, route = null }) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/drivers?all=${all}&route=${route}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/drivers`,
     );
-
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
-    if (!response.ok) {
-      if (response.status === 404) setAllDrivers([]);
-      return { error: true, message: response.statusText };
-    }
     const data = await response.json();
-    setAllDrivers(data);
-    return data;
+    const dataFilter = data.filter((driver) => driver.route === null);
+   
+    return setDriversRoutes(dataFilter);
   } catch (error) {
-    return { error: error.message };
+    return { error: error?.message };
   }
 };
 
-export { createDriverByForm, updateDriverByForm, getDriver, getDrivers, getAllDrivers };
+
+
+export { createDriverByForm, updateDriverByForm, getDriver, getDrivers, getDriversRoutes };

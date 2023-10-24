@@ -58,7 +58,6 @@ const NavBar = () => {
               src={logoSrc}
               alt="l-sc"
               className="md:ml-5 lg:ml-10"
-              priority
               width={40}
               height={40}
             />
@@ -74,7 +73,6 @@ const NavBar = () => {
                 src={avatarSrc}
                 alt="avatar"
                 className="m-2 rounded-full ring-2 ring-white"
-                priority
                 width={32}
                 height={32}
               />

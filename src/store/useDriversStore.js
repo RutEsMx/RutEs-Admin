@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export const useDriversStore = create((set) => ({
   drivers: [],
-  allDrivers: [],
+  driversRoutes: [],
   setDrivers: (drivers) => set({ drivers }),
   addDrivers: (driver) =>
     set((state) => ({
@@ -29,7 +29,7 @@ export const useDriversStore = create((set) => ({
     })),
   getDriver: (driverId) =>
     set((state) => state.drivers.rows.find((driver) => driver.id === driverId)),
-  setAllDrivers: (allDrivers) => set({ allDrivers }),
+  setDriversRoutes: (driversRoutes) => set({ driversRoutes }),
 }));
 
 const setDrivers = useDriversStore.getState().setDrivers;
@@ -37,7 +37,7 @@ const getDriver = useDriversStore.getState().getDriver;
 const addDrivers = useDriversStore.getState().addDrivers;
 const updateDrivers = useDriversStore.getState().updateDrivers;
 const removeDrivers = useDriversStore.getState().removeDrivers;
-const setAllDrivers = useDriversStore.getState().setAllDrivers;
+const setDriversRoutes = useDriversStore.getState().setDriversRoutes;
 
 export {
   setDrivers,
@@ -45,5 +45,5 @@ export {
   addDrivers,
   updateDrivers,
   removeDrivers,
-  setAllDrivers,
+  setDriversRoutes,
 };

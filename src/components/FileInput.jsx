@@ -54,7 +54,6 @@ const FileInput = ({ label, onChange, value, ...props }) => {
               alt={label}
               width={200}
               height={200}
-              priority
             />
             {fileName && <div className="file-name">{fileName}</div>}
           </div>

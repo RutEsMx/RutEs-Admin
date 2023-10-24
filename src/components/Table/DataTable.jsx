@@ -16,6 +16,8 @@ import { deleteParents, getParents } from "@/services/ParentsSevices";
 import { setAlert } from "@/store/useSystemStore";
 import { getDrivers } from "@/services/DriverServices";
 import { getUnits } from "@/services/UnitsServices";
+import { getStudents } from "@/services/StudentsServices";
+import { getAuxiliars } from "@/services/AuxiliarsServices";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -43,10 +45,10 @@ const DataTable = ({ type, list = [] }) => {
         getParents()
       }
       if(type === "students"){
-        console.log("get students")
+        getStudents()
       }
       if(type === "auxiliars"){
-        console.log("get auxiliars")
+        getAuxiliars()
       }
       if(type === "schools"){
         console.log("get schools")

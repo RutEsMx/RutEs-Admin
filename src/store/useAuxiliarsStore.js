@@ -2,8 +2,9 @@ import { create } from "zustand";
 
 export const useAuxiliarsStore = create((set) => ({
   auxiliars: [],
-  allAuxiliars: [],
+  auxiliarsRoutes: [],
   setAuxiliars: (auxiliars) => set({ auxiliars }),
+  setAuxiliarsRoutes: (auxiliarsRoutes) => set({ auxiliarsRoutes }),
   addAuxiliars: (auxiliar) =>
     set((state) => ({
       auxiliars: {
@@ -33,21 +34,20 @@ export const useAuxiliarsStore = create((set) => ({
     set((state) =>
       state.auxiliars.rows.find((auxiliar) => auxiliar.id === auxiliarId),
     ),
-  setAllAuxiliars: (allAuxiliars) => set({ allAuxiliars }),
 }));
 
 const setAuxiliars = useAuxiliarsStore.getState().setAuxiliars;
+const setAuxiliarsRoutes = useAuxiliarsStore.getState().setAuxiliarsRoutes;
 const getAuxiliar = useAuxiliarsStore.getState().getAuxiliar;
 const addAuxiliars = useAuxiliarsStore.getState().addAuxiliars;
 const updateAuxiliars = useAuxiliarsStore.getState().updateAuxiliars;
 const removeAuxiliars = useAuxiliarsStore.getState().removeAuxiliars;
-const setAllAuxiliars = useAuxiliarsStore.getState().setAllAuxiliars;
 
 export {
   setAuxiliars,
+  setAuxiliarsRoutes,
   getAuxiliar,
   addAuxiliars,
   updateAuxiliars,
   removeAuxiliars,
-  setAllAuxiliars,
 };

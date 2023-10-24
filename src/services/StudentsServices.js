@@ -3,17 +3,18 @@ import { validateEmail } from "@/utils/functionsClient";
 import {
   createDocument,
   getDocumentById,
-  getDocuments,
   updateDocument,
 } from "@/firebase/crud";
 import {
   setAllStudents,
   setStudent,
+  setStudents,
   updateStudent,
 } from "@/store/useStudentsStore";
 import { collection, doc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import { DAYS } from "@/utils/options";
+import { setStructureDatatable } from "./TableServices";
 
 const getStudentById = async (id) => {
   const studentData = await getDocumentById("students", id);
@@ -236,9 +237,20 @@ const createParentsByForm = async (data, schoolId) => {
   return { success: true, message: "Estudiante creado correctamente" };
 };
 
-const getStudents = async (school) => {
-  const students = await getDocuments("students", school);
-  return students;
+const getStudents = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/students`,
+    );
+    if (response?.redirected) {
+      return { error: true, redirect: response.url };
+    }
+    const data = await response.json();
+    const dataTable = setStructureDatatable(data);
+    return setStudents(dataTable);
+  } catch (error) {
+    return { error: error?.message };
+  }
 };
 
 const getAllStudents = async ({ all = false }) => {

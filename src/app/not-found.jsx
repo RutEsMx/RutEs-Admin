@@ -12,7 +12,6 @@ export default function NotFound() {
               alt="error"
               width={150}
               height={150}
-              priority
             />
           </div>
         </div>
