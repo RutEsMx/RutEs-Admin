@@ -37,7 +37,6 @@ const updateUnitsByForm = async (data) => {
 };
 
 const getUnits = async () => {
-  console.log("🚀 ~ file: DriverServices.js:90 ~ getUnits ~ getUnits:")
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/units`,

@@ -12,7 +12,7 @@ import { rankItem } from "@tanstack/match-sorter-utils";
 import ButtonAction from "@/components/ButtonAction";
 import FilterInput from "@/components/Table/elements/FilterInputTable";
 import ColumnSelected from "./columns";
-import { deleteParents } from "@/services/ParentsSevices";
+import { deleteParents, getParents } from "@/services/ParentsSevices";
 import { setAlert } from "@/store/useSystemStore";
 import { getDrivers } from "@/services/DriverServices";
 import { getUnits } from "@/services/UnitsServices";
@@ -38,6 +38,21 @@ const DataTable = ({ type, list = [] }) => {
       }
       if (type === "drivers") {
         getDrivers()
+      }
+      if(type === "parents"){
+        getParents()
+      }
+      if(type === "students"){
+        console.log("get students")
+      }
+      if(type === "auxiliars"){
+        console.log("get auxiliars")
+      }
+      if(type === "schools"){
+        console.log("get schools")
+      }
+      if(type === "users"){
+        console.log("get users")
       }
     }
     getData()
