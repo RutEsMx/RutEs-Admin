@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   MapPinIcon,
@@ -16,29 +16,35 @@ import SelectField from "@/components/SelectField";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { validateServiceType } from "@/utils/functionsClient";
 import SelectAutocomplete from "@/components/SelectAutocomplete";
+import { useStudentsStore } from "@/store/useStudentsStore";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const StepStops = ({ isEdit }) => {
   const { values, setFieldValue } = useFormikContext();
+  const { studentsRoutes } = useStudentsStore();
   const navigation = useRouter();
-  const { selectedDayEdit, setSelectedDayEdit } = useRoutesStore();
+  const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } = useRoutesStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(false);
   const [selectedDay, setSelectedDay] = useState(["all"]);
   const [isEditStudent, setIsEditStudent] = useState(false);
-
-  const students = values?.students?.filter((student) => {
-    const stop = student.stops.find((stop) =>
-      isEdit
-        ? stop.day === selectedDayEdit &&
-          stop.route === values.routeId &&
-          !stop.isDelete
-        : stop,
-    );
-    return stop;
-  });
+  const [studentsData, setStudentsData] = useState([]);
+  
+  useEffect(() => {
+    setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
+  }, [selectedDayEdit, typeTravel, values?.students]);
+  // const students = values?.students?.filter((student) => {
+  //   const stop = student.stops.find((stop) =>
+  //     isEdit
+  //       ? stop.day === selectedDayEdit &&
+  //         stop.route === values.routeId &&
+  //         !stop.isDelete
+  //       : stop,
+  //   );
+  //   return stop;
+  // });
   const handleAddStudent = (e) => {
     e.preventDefault();
     if (!selectedStudent)
@@ -47,66 +53,145 @@ const StepStops = ({ isEdit }) => {
         type: "error",
         show: true,
       });
-
-    if (students.find((s) => s.id === selectedStudent.id) && !isEditStudent) {
-      const stops = students.find((s) => s.id === selectedStudent.id).stops;
-      if (stops.find((stop) => selectedDay.includes(stop.day))) {
-        return setAlert({
-          message: "El alumno ya fue agregado",
-          type: "error",
-          show: true,
-        });
-      }
-    }
+      
+    const students = values?.students || {};
     const stops = [];
-    if (selectedDay.includes(ALL_DAY)) {
-      Object.keys(DAYS).forEach((day) => {
-        stops.push({
-          day,
-          coords: {
-            toHome: values?.temporalToHome || null,
-            toSchool: bothTravels
-              ? values?.temporalToHome || null
-              : values?.temporalToSchool || null,
-          },
-          isDelete: false,
-          route: values.routeId,
-        });
-      });
-    } else {
-      selectedDay.forEach((day) => {
-        stops.push({
-          day,
-          coords: {
-            toHome: values?.temporalToHome || null,
-            toSchool: bothTravels
-              ? values?.temporalToHome || null
-              : values?.temporalToSchool || null,
-          },
-          isDelete: false,
-          route: values.routeId,
-        });
-      });
-    }
-
     const studentObj = {
-      id: selectedStudent?.id,
       name: selectedStudent?.name,
       lastName: selectedStudent?.lastName,
       secondLastName: selectedStudent?.secondLastName,
       stops,
     };
+    if (selectedDay.includes(ALL_DAY)) {
+      Object.keys(DAYS).forEach((day) => {
+        // si bothTravels hay que agregar a ambos viajes
+        // si no hay que agregar solo al viaje seleccionado
+        
+        if (!students[day]) {
+          students[day] = {
+            toHome: [],
+            toSchool: [],
+          };
+        }
+        
+        if (bothTravels) {
+          students[day] = {
+            ...students[day],
+            toHome: [...students[day].toHome, studentObj],
+            toSchool: [...students[day].toSchool, studentObj],
+          };
+        } else {
+          students[day] = {
+            ...students[day],
+            toHome: values?.temporalToHome ? [...students[day].toHome, studentObj] : students[day].toHome,
+            toSchool: values?.temporalToSchool ? [...students[day].toSchool, studentObj] : students[day].toSchool,
+          };
+        }
+
+
+        //   stops.push({
+        //     day,
+        //     coords: {
+        //       toHome: values?.temporalToHome || null,
+        //       toSchool: bothTravels
+        //         ? values?.temporalToHome || null
+        //         : values?.temporalToSchool || null,
+        //     },
+        //     isDelete: false,
+        //     route: values.routeId,
+        //   });
+      });
+    } else {
+      selectedDay.forEach((day) => {
+        if (!students[day]) {
+          students[day] = {
+            toHome: [],
+            toSchool: [],
+          };
+        }
+        if (bothTravels) {
+          students[day] = {
+            ...students[day],
+            toHome: [...students[day].toHome, studentObj],
+            toSchool: [...students[day].toSchool, studentObj],
+          };
+        } else {
+          students[day] = {
+            ...students[day],
+            toHome: values?.temporalToHome ? [...students[day].toHome, studentObj] : students[day].toHome,
+            toSchool: values?.temporalToSchool ? [...students[day].toSchool, studentObj] : students[day].toSchool,
+          };
+        }
+        
+        //   stops.push({
+      //     day,
+      //     coords: {
+        //       toHome: values?.temporalToHome || null,
+        //       toSchool: bothTravels
+        //         ? values?.temporalToHome || null
+        //         : values?.temporalToSchool || null,
+        //     },
+        //     isDelete: false,
+        //     route: values.routeId,
+        //   });
+      });
+    }
+    // if (students.find((s) => s.id === selectedStudent.id) && !isEditStudent) {
+    //   const stops = students.find((s) => s.id === selectedStudent.id).stops;
+    //   if (stops.find((stop) => selectedDay.includes(stop.day))) {
+    //     return setAlert({
+    //       message: "El alumno ya fue agregado",
+    //       type: "error",
+    //       show: true,
+    //     });
+    //   }
+    // }
+    // const stops = [];
+    // if (selectedDay.includes(ALL_DAY)) {
+    //   Object.keys(DAYS).forEach((day) => {
+    //     stops.push({
+    //       day,
+    //       coords: {
+    //         toHome: values?.temporalToHome || null,
+    //         toSchool: bothTravels
+    //           ? values?.temporalToHome || null
+    //           : values?.temporalToSchool || null,
+    //       },
+    //       isDelete: false,
+    //       route: values.routeId,
+    //     });
+    //   });
+    // } else {
+    //   selectedDay.forEach((day) => {
+    //     stops.push({
+    //       day,
+    //       coords: {
+    //         toHome: values?.temporalToHome || null,
+    //         toSchool: bothTravels
+    //           ? values?.temporalToHome || null
+    //           : values?.temporalToSchool || null,
+    //       },
+    //       isDelete: false,
+    //       route: values.routeId,
+    //     });
+    //   });
+    // }
+
+    setFieldValue("students", students);
+
+    if (selectedStudent.serviceType === "halfMorning" && typeTravel === "toSchool") {
+      setStudentsData([...studentsData, studentObj]);
+    } else if (selectedStudent.serviceType === "halfAfternoon" && typeTravel === "toHome") {
+      setStudentsData([...studentsData, studentObj]);
+    } else if (bothTravels ) {
+      setStudentsData([...studentsData, studentObj]);
+    } else {
+      setStudentsData([...studentsData]);
+    }
     setAlert({ message: "", type: "", show: false });
     setFieldValue("temporalToHome", null);
     setFieldValue("temporalToSchool", null);
-    if (isEditStudent) {
-      setFieldValue(
-        "students",
-        values.students.map((s) => (s.id === studentObj.id ? studentObj : s)),
-      );
-    } else {
-      setFieldValue("students", [...values.students, studentObj]);
-    }
+    setSelectedDay("all");
     setSelectedStudent(null);
     setIsEditStudent(false);
   };
@@ -131,28 +216,28 @@ const StepStops = ({ isEdit }) => {
   };
 
   const handleRemoveStudent = (e, student) => {
-    e.preventDefault();
-    if (isEdit) {
-      const stops = student.stops.map((stop) => {
-        if (stop.day === selectedDayEdit) {
-          return {
-            ...stop,
-            isDelete: true,
-          };
-        }
-        return stop;
-      });
-      setFieldValue(
-        "students",
-        values.students.map((s) => (s.id === student.id ? { ...s, stops } : s)),
-      );
-      return;
-    }
-    setFieldValue(
-      "students",
-      values.students.filter((s) => s.id !== student?.id),
-    );
-    setIsEditStudent(false);
+    // e.preventDefault();
+    // if (isEdit) {
+    //   const stops = student.stops.map((stop) => {
+    //     if (stop.day === selectedDayEdit) {
+    //       return {
+    //         ...stop,
+    //         isDelete: true,
+    //       };
+    //     }
+    //     return stop;
+    //   });
+    //   setFieldValue(
+    //     "students",
+    //     values.students.map((s) => (s.id === student.id ? { ...s, stops } : s)),
+    //   );
+    //   return;
+    // }
+    // setFieldValue(
+    //   "students",
+    //   values.students.filter((s) => s.id !== student?.id),
+    // );
+    // setIsEditStudent(false);
   };
 
   const handleSelect = (e) => {
@@ -176,6 +261,7 @@ const StepStops = ({ isEdit }) => {
   };
 
   const handleSelectedStudent = (value) => {
+    console.log("🚀 ~ file: index.jsx:181 ~ handleSelectedStudent ~ value:", value)
     if (!value) {
       return setSelectedStudent(null);
     }
@@ -183,7 +269,6 @@ const StepStops = ({ isEdit }) => {
   };
 
   // const clearSelectedStudent = () => {
-
   return (
     <div className={`mb-4 grid ${isEdit ? "grid-rows-1" : "grid-rows-2"}`}>
       <div className="row-span-1">
@@ -217,6 +302,7 @@ const StepStops = ({ isEdit }) => {
                 value={selectedStudent || null}
                 disabled={isEditStudent}
                 days={selectedDay}
+                options={studentsRoutes}
               />
               {validateServiceType({
                 serviceType: selectedStudent?.serviceType,
@@ -245,7 +331,6 @@ const StepStops = ({ isEdit }) => {
       </div>
       <div className="mx-2 row-span-1 my-6">
         <div className="w-full bg-gray-hover px-2 mb-4">Paradas</div>
-        {isEdit && (
           <SelectField
             label="Día"
             name="day"
@@ -253,14 +338,23 @@ const StepStops = ({ isEdit }) => {
             value={selectedDayEdit}
             onChange={(e) => setSelectedDayEdit(e.target.value)}
           />
-        )}
-        {students?.map((student) => (
-          <div key={student.id} className="grid grid-cols-3 gap-2 my-2">
+          <SelectField
+            label="Tipo de viaje"
+            name="typeTravel"
+            options={[
+              { label: "Escuela - Casa", value: "toHome" },
+              { label: "Casa - Escuela", value: "toSchool" },
+            ]}
+            value={typeTravel}
+            onChange={(e) => setTypeTravel(e.target.value)}
+          />
+        {studentsData?.map((student, index) => (
+          <div key={index} className="grid grid-cols-3 gap-2 my-2">
             <div className="col-span-2">
               <div className="flex flex-row items-center">
                 <MapPinIcon className="h-4 w-4 text-yellow" />
                 <div className="flex ps-2">
-                  <span className="text-sm font-semibold">{student?.name}</span>
+                  <span className="text-sm font-semibold">{`${student?.name || ''} ${student?.lastName || ''} ${student?.secondLastName || ''}`}</span>
                 </div>
               </div>
             </div>

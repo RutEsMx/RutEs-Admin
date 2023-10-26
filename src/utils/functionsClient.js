@@ -40,11 +40,11 @@ const validateServiceType = ({
     case "halfAfternoon":
       element = (
         <div className="flex flex-col ">
-          {/* <PlacesAutocomplete
+          <PlacesAutocomplete
             label={"A la casa"}
             setPlace={(value) => setFieldValue("temporalToHome", value)}
             place={values?.temporalToHome}
-          /> */}
+          />
           <p className="text-red ml-2 text-sm">Medio servicio*</p>
         </div>
       );
@@ -52,11 +52,11 @@ const validateServiceType = ({
     case "halfMorning":
       element = (
         <div className="flex flex-col ">
-          {/* <PlacesAutocomplete
+          <PlacesAutocomplete
             label={"A la escuela"}
             setPlace={(value) => setFieldValue("temporalToSchool", value)}
             place={values?.temporalToSchool}
-          /> */}
+          />
           <p className="text-red ml-2 text-sm">Medio servicio*</p>
         </div>
       );
@@ -76,19 +76,19 @@ const validateServiceType = ({
             </label>
           </div>
           <div className="flex flex-row items-center">
-            {/* <PlacesAutocomplete
+            <PlacesAutocomplete
               label={travelName}
               setPlace={(value) => setFieldValue("temporalToHome", value)}
               place={values?.temporalToHome}
-            /> */}
+            />
           </div>
           {!bothTravels && (
             <div className="flex flex-row items-center">
-              {/* <PlacesAutocomplete
+              <PlacesAutocomplete
                 label={"A la escuela"}
                 setPlace={(value) => setFieldValue("temporalToSchool", value)}
                 place={values?.temporalToSchool}
-              /> */}
+              />
             </div>
           )}
         </>

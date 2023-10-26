@@ -9,6 +9,7 @@ const SelectAutocomplete = ({
   value: valueControl,
   disabled,
   days,
+  options,
 }) => {
   const handleSelect = (option) => {
     if (disabled) return;
@@ -17,22 +18,17 @@ const SelectAutocomplete = ({
   
   const handleSearch = async (value) => {
     const options = await filteredOptions(value);
-    const formatOptions = options.map((option) => ({
-      value: option.id,
-      label: `${option?.name} ${option?.lastName} ${option?.secondLastName}-${option?.grade}${option?.group}`,
-      ...option,
-    }));
-    return formatOptions;
+    return options;
+    
   };
   
   const filteredOptions = (value) => {
+    // filtrar por dias days
     if (value.length < 3) return [];
-    return fetch("/api/students/search?value=" + value + "&days=" + days)
-    .then((response) => response.json())
-    .then((data) => {
-      return data;
-    })
-    .catch((error) => console.log(error));
+    return options.filter((option) => {
+      const { label } = option;
+      return label.toLowerCase().includes(value.toLowerCase());
+    });
   };
   
   return (
@@ -47,7 +43,7 @@ const SelectAutocomplete = ({
           loadOptions={handleSearch}
           className="w-full h-8 text-sm  placeholder-gray-600 placeholder:text-xs  rounded-l-sm  focus:shadow-outline"
           placeholder={placeholder}
-          // defaultValue={value}
+          defaultOptions={options}
           onChange={handleSelect}
           isClearable
           isDisabled={disabled}

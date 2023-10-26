@@ -2,13 +2,17 @@
 import LogoLayout from "@/components/LogoLayout";
 import { getAuxiliarsRoutes } from "@/services/AuxiliarsServices";
 import { getDriversRoutes } from "@/services/DriverServices";
+import { getUnitsRoutes } from "@/services/UnitsServices";
+import { getStudentsForRoutes } from "@/services/StudentsServices";
 import { useEffect } from "react";
 
 const getAllData = async () => {
   try {
     await Promise.all([
       getDriversRoutes(),
-      getAuxiliarsRoutes()
+      getAuxiliarsRoutes(),
+      getUnitsRoutes(),
+      getStudentsForRoutes(),
     ]);
   } catch (error) {
     return { error: error.message };

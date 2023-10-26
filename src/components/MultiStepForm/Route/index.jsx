@@ -20,7 +20,6 @@ const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext() || {};
   const { alert } = useSystemStore();
-  
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("DATOS");
@@ -122,7 +121,7 @@ const FormRoute = ({ data, isEdit = false }) => {
                 )}
               </div>
               <div className="col-span-3 border-2 border-gray rounded-lg p-4">
-                {/* <MapStops /> */}
+                <MapStops />
               </div>
             </div>
           </Form>

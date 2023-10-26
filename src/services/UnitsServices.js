@@ -1,8 +1,8 @@
 import { createDocument, updateDocument } from "@/firebase/crud";
 import {
   addUnits,
-  setAllUnits,
   setUnits,
+  setUnitsRoutes,
   updateUnits,
 } from "@/store/useUnitsStore";
 import { setStructureDatatable } from "./TableServices";
@@ -52,20 +52,17 @@ const getUnits = async () => {
   }
 };
 
-const getAllUnits = async ({ all = false, passengers, route = null }) => {
+const getUnitsRoutes = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units?all=${all}&passengers=${passengers}&route=${route}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/units`,
     );
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
-    if (!response.ok) {
-      if (response.status === 404) setAllUnits([]);
-      return { error: true, message: response.statusText };
-    }
+    
     const data = await response.json();
-    setAllUnits(data);
+    setUnitsRoutes(data);
     return data;
   } catch (error) {
     return { error: error.message };
@@ -89,4 +86,4 @@ const getUnit = async (id) => {
 
 
 
-export { createUnitsByForm, getUnits, updateUnitsByForm, getUnit, getAllUnits };
+export { createUnitsByForm, getUnits, updateUnitsByForm, getUnit, getUnitsRoutes };

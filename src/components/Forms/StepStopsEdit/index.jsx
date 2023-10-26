@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   MapPinIcon,
@@ -16,7 +16,6 @@ import SelectField from "@/components/SelectField";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { validateServiceType } from "@/utils/functionsClient";
 import SelectAutocomplete from "@/components/SelectAutocomplete";
-import { useEffect } from "react";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
@@ -24,8 +23,7 @@ const SELECT_DAY = DAYS_OPTIONS.slice(1);
 const StepStopsEdit = () => {
   const { values, setFieldValue } = useFormikContext();
   const navigation = useRouter();
-  const { selectedDayEdit, setSelectedDayEdit } = useRoutesStore();
-  const [typeTravel, setTypeTravel] = useState("toHome");
+  const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } = useRoutesStore();
   const [studentsData, setStudentsData] = useState(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
   useEffect(() => {
@@ -144,7 +142,7 @@ const StepStopsEdit = () => {
       name: selectedStudent?.name,
       lastName: selectedStudent?.lastName,
       secondLastName: selectedStudent?.secondLastName,
-      // stops,
+      stops,
     };
     if (selectedDay.includes(ALL_DAY)) {
       
