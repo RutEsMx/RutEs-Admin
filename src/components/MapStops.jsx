@@ -6,13 +6,14 @@ import { useRoutesStore } from "@/store/useRoutesStore";
 
 const MapStops = () => {
   const { values, setFieldValue } = useFormikContext();
-  const { selectedDayEdit } = useRoutesStore();
+  const { selectedDayEdit, typeTravel } = useRoutesStore();
 
   const { markers } = useMarkersMap({
     students: values?.students,
     temporalToHome: values?.temporalToHome,
     temporalToSchool: values?.temporalToSchool,
     selectedDayEdit,
+    typeTravel,
   });
 
   const setMarkerValue = async (studentId, coords) => {

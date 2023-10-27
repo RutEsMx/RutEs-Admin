@@ -108,7 +108,6 @@ const Page = ({ params }) => {
               alt="avatar"
               width={200}
               height={200}
-              priority
             />
           </div>
         </div>

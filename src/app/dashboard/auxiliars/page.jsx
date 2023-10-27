@@ -2,26 +2,10 @@
 import LogoLayout from "@/components/LogoLayout";
 import ButtonLink from "@/components/ButtonLink";
 import DataTable from "@/components/Table/DataTable";
-import { useAuthContext } from "@/context/AuthContext";
-
-const getInitialDataAux = async (schoolId) => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/auxiliars?pageIndex=0&pageSize=10&schoolId=${schoolId}`,
-      { cache: "no-store" },
-    );
-    if (!response.ok) return { error: response.statusText };
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return { error };
-  }
-};
-
-const Auxilars = async () => {
-  const { profile } = useAuthContext();
-
-  const auxiliars = await getInitialDataAux(profile?.schoolId);
+import { useAuxiliarsStore } from "@/store/useAuxiliarsStore";
+  
+const Auxilars = () => {
+  const { auxiliars } = useAuxiliarsStore();
 
   return (
     <div className="container mx-auto px-4 pb-12 h-screen pt-10">

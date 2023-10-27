@@ -1,24 +1,36 @@
-import { setAllAuxiliars } from "@/store/useAuxiliarsStore";
+import { setAuxiliars, setAuxiliarsRoutes } from "@/store/useAuxiliarsStore";
+import { setStructureDatatable } from "./TableServices";
 
-const getAllAuxiliars = async ({ all = false, route = null }) => {
+const getAuxiliars = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/auxiliars?all=${all}&route=${route}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/auxiliars`,
     );
 
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
-    if (!response.ok) {
-      if (response.status === 404) setAllAuxiliars([]);
-      return { error: true, message: response.statusText };
-    }
     const data = await response.json();
-    if (data?.error) return { error: data.error };
-    setAllAuxiliars(data);
-    return data;
+    const dataTable = setStructureDatatable(data);
+    return setAuxiliars(dataTable);
   } catch (error) {
     return { error: error.message };
   }
 };
-export { getAllAuxiliars };
+const getAuxiliarsRoutes = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/auxiliars`,
+    );
+
+    if (response?.redirected) {
+      return { error: true, redirect: response.url };
+    }
+    const data = await response.json();
+    const dataFilter = data.filter((auxiliar) => auxiliar.route === null);
+    return setAuxiliarsRoutes(dataFilter);
+  } catch (error) {
+    return { error: error.message };
+  }
+};
+export { getAuxiliars, getAuxiliarsRoutes };

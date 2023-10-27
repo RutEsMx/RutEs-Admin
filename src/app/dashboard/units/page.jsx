@@ -2,8 +2,11 @@
 import ButtonLink from "@/components/ButtonLink";
 import LogoLayout from "@/components/LogoLayout";
 import DataTable from "@/components/Table/DataTable";
+import { useUnitsStore } from "@/store/useUnitsStore";
 
 const Units = () => {
+  const {units} = useUnitsStore();
+  
   return (
     <div className="container mx-auto px-4 pb-12 h-screen pt-10">
       <div className="grid grid-cols-2 gap-4 p-2">
@@ -15,7 +18,7 @@ const Units = () => {
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">
-        <DataTable type={"units"} />
+        <DataTable type={"units"} list={units}/>
       </div>
     </div>
   );

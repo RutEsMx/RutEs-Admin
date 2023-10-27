@@ -36,7 +36,6 @@ const validateServiceType = ({
 }) => {
   let element = null;
   const travelName = bothTravels ? "Ambos viajes" : "A la casa";
-
   switch (serviceType) {
     case "halfAfternoon":
       element = (

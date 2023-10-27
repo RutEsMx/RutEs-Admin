@@ -49,6 +49,7 @@ const MultiStepFormStudent = () => {
       phone: "",
       email: "",
       avatar: "",
+      emailExist: false,
     },
     mother: {
       name: "",
@@ -57,6 +58,7 @@ const MultiStepFormStudent = () => {
       phone: "",
       email: "",
       avatar: "",
+      emailExist: false,
     },
     countTutors: 0,
     // tutors: [],
@@ -93,7 +95,8 @@ const MultiStepFormStudent = () => {
     if (step + 1 < newSteps.length) {
       setIsLoading(false);
       setStep(step + 1);
-    } else {
+    } 
+    else {
       createParentsByForm(values, profile?.schoolId)
         .then((response) => {
           if (response?.success) {
@@ -102,7 +105,10 @@ const MultiStepFormStudent = () => {
               message: "Se ha creado el estudiante correctamente",
               show: true,
             });
-            return navigation.replace("/dashboard/students");
+            navigation.replace("/dashboard/students");
+            return setAlert({
+              isOpen: false,
+            });
           }
         })
         .catch((error) =>

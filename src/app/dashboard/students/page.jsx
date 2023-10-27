@@ -1,27 +1,11 @@
 "use client";
 import LogoLayout from "@/components/LogoLayout";
 import DataTable from "@/components/Table/DataTable";
-import { useAuthContext } from "@/context/AuthContext";
 import ButtonLink from "@/components/ButtonLink";
+import { useStudentsStore } from "@/store/useStudentsStore";
 
-const getInitialDataStudents = async (schoolId) => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/students?pageIndex=0&pageSize=10&schoolId=${schoolId}`,
-      { cache: "no-store" },
-    );
-    if (!response.ok) return { error: response.statusText };
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return { error };
-  }
-};
-
-const Students = async () => {
-  const { profile } = useAuthContext();
-
-  const students = await getInitialDataStudents(profile?.schoolId);
+const Students = () => {
+  const { students } = useStudentsStore();
 
   return (
     <div className="container mx-auto px-4 pb-12 h-screen pt-10">

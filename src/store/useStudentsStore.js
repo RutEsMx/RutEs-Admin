@@ -3,7 +3,7 @@ import { create } from "zustand";
 export const useStudentsStore = create((set) => ({
   students: [],
   student: null,
-  allStudents: [],
+  studentsRoutes: [],
   setStudents: (students) => set({ students }),
   setStudent: (student) => set({ student }),
   updateStudent: (student) =>
@@ -40,7 +40,7 @@ export const useStudentsStore = create((set) => ({
     set((state) =>
       state.students.rows.find((student) => student.id === studentId),
     ),
-  setAllStudents: (allStudents) => set({ allStudents }),
+  getStudentsRoutes: (studentsRoutes) => set({ studentsRoutes }),
 }));
 
 const setStudents = useStudentsStore.getState().setStudents;
@@ -48,9 +48,9 @@ const getStudent = useStudentsStore.getState().getStudent;
 const addStudents = useStudentsStore.getState().addStudents;
 const updateStudents = useStudentsStore.getState().updateStudents;
 const removeStudents = useStudentsStore.getState().removeStudents;
-const setAllStudents = useStudentsStore.getState().setAllStudents;
 const setStudent = useStudentsStore.getState().setStudent;
 const updateStudent = useStudentsStore.getState().updateStudent;
+const getStudentsRoutes = useStudentsStore.getState().getStudentsRoutes;
 
 export {
   setStudents,
@@ -58,7 +58,7 @@ export {
   addStudents,
   updateStudents,
   removeStudents,
-  setAllStudents,
   setStudent,
   updateStudent,
+  getStudentsRoutes,
 };
