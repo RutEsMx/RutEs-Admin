@@ -2,26 +2,10 @@
 import ButtonLink from "@/components/ButtonLink";
 import LogoLayout from "@/components/LogoLayout";
 import DataTable from "@/components/Table/DataTable";
-import { useAuthContext } from "@/context/AuthContext";
+import { useDriversStore } from "@/store/useDriversStore";
 
-const getInitialDataDrivers = async (schoolId) => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/drivers?pageIndex=0&pageSize=10&schoolId=${schoolId}`,
-      { cache: "no-store" },
-    );
-    if (!response.ok) return { error: response.statusText };
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return { error };
-  }
-};
-
-const Drivers = async () => {
-  const { profile } = useAuthContext();
-
-  const drivers = await getInitialDataDrivers(profile?.schoolId);
+const Drivers = () => {
+  const { drivers } = useDriversStore();
 
   return (
     <div className="container mx-auto px-4 pb-12 h-screen pt-10">

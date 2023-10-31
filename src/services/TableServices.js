@@ -1,8 +1,6 @@
 import { getStudents } from "./StudentsServices";
 import { getUsers } from "./UsersServices";
 import { getSchools } from "./SchoolServices";
-import { getUnits } from "./UnitsServices";
-import { setUnits } from "@/store/useUnitsStore";
 import { getParents } from "./ParentsSevices";
 
 export async function fetchDataParents(options) {
@@ -35,9 +33,9 @@ export async function fetchDataSchools(options) {
   return data.json();
 }
 
-export async function fetchDataUnits(options) {
-  const data = await getUnits({ ...options });
-  if (data?.error) return data;
-  setUnits(data);
-  return data;
-}
+export const setStructureDatatable = (data) => {
+  const dataTable = {
+    rows: data,
+  };
+  return dataTable;
+};

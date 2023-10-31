@@ -18,87 +18,88 @@ import { db } from "@/firebase/client";
 const createTravels = async (students) => {
   const travelsObject = {};
 
-  students?.map((student) => {
-    const refStudent = doc(db, "students", student.id);
-    student?.stops?.map((stop) => {
-      if (stop?.day) {
-        if (!travelsObject[stop.day]) {
-          if (stop?.coords?.toSchool) {
-            travelsObject[stop.day] = {
-              ...travelsObject[stop.day],
-              toSchool: {
-                students: [refStudent],
-              },
-            };
-          }
-          if (stop?.coords?.toHome) {
-            travelsObject[stop.day] = {
-              ...travelsObject[stop.day],
-              toHome: {
-                students: [refStudent],
-              },
-            };
-          }
-        } else {
-          if (stop?.coords?.toSchool) {
-            travelsObject[stop.day]["toSchool"]?.students.push(refStudent);
-          }
-          if (stop?.coords?.toHome) {
-            travelsObject[stop.day]["toHome"]?.students.push(refStudent);
-          }
-        }
-      }
+  Object.keys(students).map((key) => {
+    // Inicializar si no existe
+    if (!travelsObject[key]) {
+      travelsObject[key] = {
+        toHome: { students: [] },
+        toSchool: { students: [] },
+      };
+    }
+    
+    const toHomeStudents = students[key].toHome.map((student) => {
+      return doc(db, "students", student.id);
     });
-  });
-  const response = await createDocument("travels", travelsObject);
-  return response;
+    travelsObject[key].toHome.students = [
+      ...travelsObject[key].toHome.students,
+      ...toHomeStudents,
+    ];
+
+    const toSchoolStudents = students[key].toSchool.map((student) => {
+      return doc(db, "students", student.id);
+    });
+    travelsObject[key].toSchool.students = [
+      ...travelsObject[key].toSchool.students,
+      ...toSchoolStudents,
+    ];
+  })
+  return createDocument("travels", travelsObject);
 };
 const updateTravels = async (id, students) => {
-  students?.map((student) => {
-    const refStudent = doc(db, "students", student.id);
-    student?.stops?.map(async (stop) => {
-      if (stop?.isDelete) {
-        const qTravel = doc(db, "travels", id);
-        const getTravel = await getDoc(qTravel);
-        const travelData = getTravel.data();
-        const travelToRemove = {
-          toHome: {},
-          toSchool: {},
-        };
-        if (stop?.coords?.toSchool) {
-          const filterArrayToSchool = travelData[stop.day]["toSchool"][
-            "students"
-          ].filter((el) => el === refStudent);
-          travelToRemove["toSchool"]["students"] = filterArrayToSchool;
-        }
-        if (stop?.coords?.toHome) {
-          const filterArrayToHome = travelData[stop.day]["toHome"][
-            "students"
-          ].filter((el) => el === refStudent);
-          travelToRemove["toHome"]["students"] = filterArrayToHome;
-        }
-        await updateDocument("travels", id, {
-          [stop.day]: {
-            ...travelToRemove,
-          },
-        });
-        return;
-      }
+  Object.keys(students).map((key) => {
+    let arrayToHome = []
+    let arrayToSchool = []
+    const refTravel = doc(db, "travels", id);
+    students[key].toHome.map((student) => {
+      const refStudent = doc(db, "students", student.id);
+      arrayToHome.push(refStudent)
+      
+      
+    })
+    students[key].toSchool.map((student) => {
+      const refStudent = doc(db, "students", student.id);
+      arrayToSchool.push(refStudent)
+    })
+
+    updateDoc(refTravel, {
+      [key]: {
+        toHome: {
+          students: arrayToHome,
+        },
+        toSchool: {
+          students: arrayToSchool,
+        },
+      },
     });
-  });
+  })
 };
 
-const createStops = async (student, routeId) => {
-  try {
-    return student?.stops.map(async (stop) => {
-      stop.route = routeId;
-      stop.student = student.id;
-      const stopRef = await createDocument("stops", stop);
-      return stopRef;
+const createStops = async (students, routeId) => {
+
+  Object.keys(students).map((key) => {
+    students[key].toHome.map((element) => {
+      delete element.value;
+      if (element?.stop?.coords?.toHome === undefined) return;
+      const stopObject = {
+        coords: element?.stop?.coords?.toHome,
+        day: key,
+        student: element.id,
+        route: routeId,
+      };
+      createDocument("stops", stopObject);
     });
-  } catch (error) {
-    return { error };
-  }
+    students[key].toSchool.map((element) => {
+      if (element?.stop?.coords?.toSchool === undefined) return;
+      delete element.value;
+      const stopObject = {
+        coords: element?.stop?.coords?.toSchool,
+        day: key,
+        student: element.id,
+        route: routeId,
+      };
+      createDocument("stops", stopObject);
+    });
+  });
 };
 
 const updateDeleteStops = async (student) => {
@@ -128,13 +129,11 @@ const updateDeleteStops = async (student) => {
 
 // Create a new route
 const createRoutesByForm = async (data) => {
-  if (!data?.students?.length)
-    return { error: { message: "No se puede crear una ruta sin paradas" } };
+  return { success: true, message: "Ruta creada correctamente" };
+  const { students } = data;
   try {
-    const responseTravels = await createTravels(data?.students);
-    data?.students.map(async (student) => {
-      await createStops(student, responseTravels.id);
-    });
+    const responseTravels = await createTravels(students);
+    await createStops(data?.students, responseTravels.id);
 
     const dataRoute = {
       name: data.name,
@@ -188,39 +187,37 @@ const updateEntity = async (entityType, id, routeId, oldId = null) => {
 
 const updateRoutesByForm = async (data) => {
   const { routeId, students, ...restData } = data;
-  if (!data?.students?.length)
-    return { error: { message: "No se puede crear una ruta sin paradas" } };
-
   try {
     const getOldRoute = await getDoc(doc(db, "routes", routeId));
-    const oldRoute = getOldRoute.data();
+    const oldRouteData = getOldRoute.data();
     const responseRoute = await updateDocument("routes", routeId, restData);
     const responseUpdateTravels = await updateTravels(routeId, students);
-    const responseStops = Promise.all(
-      students.map((student) => updateDeleteStops(student, routeId)),
-    );
+    // TODO: update stops
+    // const responseStops = Promise.all(
+    //   students.map((student) => updateDeleteStops(student, routeId)),
+    // );
     const updateAuxiliar = updateEntity(
       "profile",
       restData?.auxiliar,
       routeId,
-      oldRoute?.auxiliar,
+      oldRouteData?.auxiliar,
     );
     const updateDriver = updateEntity(
       "drivers",
       restData?.driver,
       routeId,
-      oldRoute?.driver,
+      oldRouteData?.driver,
     );
     const updateUnit = updateEntity(
       "units",
       restData?.unit,
       routeId,
-      oldRoute?.unit,
+      oldRouteData?.unit,
     );
     await Promise.all([
       responseRoute,
       responseUpdateTravels,
-      responseStops,
+      // responseStops,
       updateAuxiliar,
       updateDriver,
       updateUnit,

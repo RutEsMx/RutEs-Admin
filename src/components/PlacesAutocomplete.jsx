@@ -1,17 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 import GooglePlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-google-places-autocomplete";
 
-const PlacesAutocomplete = ({ label, place, setPlace }) => {
+const PlacesAutocomplete = ({ label, setPlace, place }) => {
   const [value, setValue] = useState(place);
-
+  
   useEffect(() => {
     if (!place) {
       setValue(null);
+      return;
+    } else {
+      setValue(place);
     }
   }, [place]);
+  
+  const handleChange = async (newValue) => {
+    if (newValue && newValue.label) {
+      setValue(newValue);
+      try {
+        const results = await geocodeByAddress(newValue.label);
+        const { lat, lng } = await getLatLng(results[0]);
+        setPlace({
+          label: newValue.label,
+          lat,
+          lng,
+        });
+      } catch (error) {
+        console.error("Error al obtener la geolocalización:", error);
+      }
+    } else {
+      setValue(null);
+      setPlace(null);
+    }
+  };
 
   return (
     <div className="ml-2 mb-2 pt-2">
@@ -29,18 +53,7 @@ const PlacesAutocomplete = ({ label, place, setPlace }) => {
         }}
         selectProps={{
           value,
-          onChange: (value) => {
-            setValue(value);
-            geocodeByAddress(value?.label)
-              .then((results) => getLatLng(results[0]))
-              .then(({ lat, lng }) => {
-                setPlace({
-                  label: value.label,
-                  lat,
-                  lng,
-                });
-              });
-          },
+          onChange: handleChange,
           placeholder: "Buscar dirección...",
           noOptionsMessage: () => "No hay resultados",
           loadingMessage: () => "Cargando...",
@@ -64,6 +77,7 @@ const PlacesAutocomplete = ({ label, place, setPlace }) => {
           },
           unstyled: true,
         }}
+        
       />
     </div>
   );

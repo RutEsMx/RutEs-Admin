@@ -5,6 +5,7 @@ const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 export const useRoutesStore = create((set) => ({
   routes: [],
+  typeTravel: "toHome",
   setRoutes: (routes) => set({ routes }),
   addRoute: (route) => set((state) => ({ routes: [...state.routes, route] })),
   removeRoute: (routeId) =>
@@ -17,8 +18,9 @@ export const useRoutesStore = create((set) => ({
         route.id === routeId ? { ...route, ...route } : route,
       ),
     })),
-  selectedDayEdit: SELECT_DAY[new Date().getDay()].value,
+  selectedDayEdit: SELECT_DAY[new Date().getDay()]?.value || "monday",
   setSelectedDayEdit: (day) => set({ selectedDayEdit: day }),
+  setTypeTravel: (type) => set({ typeTravel: type }),
 }));
 
 const addRoute = useRoutesStore.getState().addRoute;

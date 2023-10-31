@@ -1,10 +1,11 @@
 import { createDocument, updateDocument } from "@/firebase/crud";
 import {
   addUnits,
-  setAllUnits,
   setUnits,
+  setUnitsRoutes,
   updateUnits,
 } from "@/store/useUnitsStore";
+import { setStructureDatatable } from "./TableServices";
 
 const createUnitsByForm = async (data) => {
   const dataCopy = { ...data };
@@ -35,36 +36,33 @@ const updateUnitsByForm = async (data) => {
   }
 };
 
-const getUnits = async ({ pageIndex, pageSize }) => {
+const getUnits = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units?pageIndex=${pageIndex}&pageSize=${pageSize}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/units`,
     );
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
     const data = await response.json();
-    setUnits(data);
-    return data;
+    const dataTable = setStructureDatatable(data);
+    return setUnits(dataTable);
   } catch (error) {
     return { error: error?.message };
   }
 };
 
-const getAllUnits = async ({ all = false, passengers, route = null }) => {
+const getUnitsRoutes = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units?all=${all}&passengers=${passengers}&route=${route}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/units`,
     );
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
-    if (!response.ok) {
-      if (response.status === 404) setAllUnits([]);
-      return { error: true, message: response.statusText };
-    }
+    
     const data = await response.json();
-    setAllUnits(data);
+    setUnitsRoutes(data);
     return data;
   } catch (error) {
     return { error: error.message };
@@ -86,4 +84,6 @@ const getUnit = async (id) => {
   }
 };
 
-export { createUnitsByForm, getUnits, updateUnitsByForm, getUnit, getAllUnits };
+
+
+export { createUnitsByForm, getUnits, updateUnitsByForm, getUnit, getUnitsRoutes };

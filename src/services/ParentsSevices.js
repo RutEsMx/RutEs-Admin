@@ -1,13 +1,17 @@
-const getParents = async ({ pageIndex, pageSize, schoolId }) => {
+import { setParents } from "@/store/useParentsStore";
+import { setStructureDatatable } from "./TableServices";
+
+const getParents = async () => {
   try {
     const response = await fetch(
-      `/api/parents?pageIndex=${pageIndex}&pageSize=${pageSize}&schoolId=${schoolId}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/parents`,
     );
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
     const data = await response.json();
-    return data;
+    const dataTable = setStructureDatatable(data);
+    return setParents(dataTable);
   } catch (error) {
     return { error: error?.message };
   }

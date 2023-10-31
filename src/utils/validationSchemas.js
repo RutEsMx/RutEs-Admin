@@ -5,7 +5,7 @@ import { auth } from "@/firebase/client";
 import { fetchSignInMethodsForEmail } from "firebase/auth";
 
 const emailExists = async (email, obj) => {
-  if (obj.parent.isEdit) return true;
+  if (obj.parent.isEdit || obj.parent.emailExist) return true;
   try {
     const exist = await fetchSignInMethodsForEmail(auth, email);
     if (exist.length > 0) return false;

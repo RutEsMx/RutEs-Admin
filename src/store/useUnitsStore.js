@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export const useUnitsStore = create((set) => ({
   units: [],
-  allUnits: [],
+  unistRoutes: [],
   setUnits: (units) => set({ units }),
   addUnits: (unit) =>
     set((state) => ({
@@ -29,7 +29,9 @@ export const useUnitsStore = create((set) => ({
     })),
   getUnit: (unitId) =>
     set((state) => state.units.rows.find((unit) => unit.id === unitId)),
-  setAllUnits: (allUnits) => set({ allUnits }),
+  setUnitsRoutes: (unitsRoutes) => set({
+    unitsRoutes
+  }),
 }));
 
 const setUnits = useUnitsStore.getState().setUnits;
@@ -37,6 +39,6 @@ const getUnit = useUnitsStore.getState().getUnit;
 const addUnits = useUnitsStore.getState().addUnits;
 const updateUnits = useUnitsStore.getState().updateUnits;
 const removeUnits = useUnitsStore.getState().removeUnits;
-const setAllUnits = useUnitsStore.getState().setAllUnits;
+const setUnitsRoutes = useUnitsStore.getState().setUnitsRoutes;
 
-export { setUnits, getUnit, addUnits, updateUnits, removeUnits, setAllUnits };
+export { setUnits, getUnit, addUnits, updateUnits, removeUnits, setUnitsRoutes };

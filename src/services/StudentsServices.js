@@ -3,17 +3,18 @@ import { validateEmail } from "@/utils/functionsClient";
 import {
   createDocument,
   getDocumentById,
-  getDocuments,
   updateDocument,
 } from "@/firebase/crud";
 import {
-  setAllStudents,
+  getStudentsRoutes,
   setStudent,
+  setStudents,
   updateStudent,
 } from "@/store/useStudentsStore";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import { DAYS } from "@/utils/options";
+import { setStructureDatatable } from "./TableServices";
 
 const getStudentById = async (id) => {
   const studentData = await getDocumentById("students", id);
@@ -46,7 +47,8 @@ const getStudentById = async (id) => {
 };
 
 const createParentProfile = async (parent, schoolId, roles) => {
-  const { email, avatar } = parent;
+  if(parent.emailExist) return updateParentProfile(parent, schoolId, roles)
+  const { email, avatar} = parent;
   let avatarFilename = avatar;
 
   if (validateEmail(email)) {
@@ -93,6 +95,40 @@ const createParentProfile = async (parent, schoolId, roles) => {
   }
 };
 
+const updateParentProfile = async (parent) => {
+  const { avatar } = parent;
+  let avatarFilename = avatar;
+
+  try {
+    if (avatar instanceof File) {
+      const dataFile = new FormData();
+      dataFile.set("avatar", avatar);
+      const responseAvatar = await fetch(`/api/images`, {
+        method: "POST",
+        body: dataFile,
+      });
+
+      const { result: resultAvatar } = await responseAvatar.json();
+      if (resultAvatar) avatarFilename = resultAvatar;
+    }
+
+    const profileData = {
+      ...parent,
+      avatar: avatarFilename,
+    };
+
+    await updateDocument(
+      "profile",
+      profileData.id,
+      profileData,
+    );
+    const userRef = doc(db, "profile", profileData.id);
+    return userRef
+  } catch (error) {
+    return { error };
+  }
+}
+
 const createParentsByForm = async (data, schoolId) => {
   const {
     countTutors,
@@ -112,11 +148,11 @@ const createParentsByForm = async (data, schoolId) => {
   ]);
 
   if (fatherProfile?.error) {
-    throw new Error(`Papá: ${fatherProfile.error?.message}`);
+    throw new Error(`Papá ${fatherProfile.error?.message}`);
   }
 
   if (motherProfile?.error) {
-    throw new Error(`Mamá: ${motherProfile.error?.message}`);
+    throw new Error(`Mamá ${motherProfile.error?.message}`);
   }
 
   studentData.schoolId = schoolId;
@@ -150,7 +186,7 @@ const createParentsByForm = async (data, schoolId) => {
 
   const tutors = Array.from({ length: countTutors }, (_, i) => {
     const tutor = `tutors_${i}`;
-    const tutorData = { ...data[tutor], schoolId, students: [studentProfile] };
+    const tutorData = { ...data[tutor], schoolId, students: [...data[tutor].students, studentProfile] };
     delete studentData[tutor];
     return createParentProfile(tutorData, schoolId, ["tutor"]);
   });
@@ -160,7 +196,7 @@ const createParentsByForm = async (data, schoolId) => {
 
   if (fatherProfile?.id) {
     responseProfile = await updateDocument("profile", fatherProfile.id, {
-      students: [studentProfile],
+      students: [...father.students, studentProfile],
     });
     if (responseProfile?.error) {
       throw new Error(`Papá: ${responseProfile.error?.code}`);
@@ -169,7 +205,7 @@ const createParentsByForm = async (data, schoolId) => {
   }
   if (motherProfile?.id) {
     responseProfile = await updateDocument("profile", motherProfile.id, {
-      students: [studentProfile],
+      students: [...mother.students, studentProfile],
     });
     if (responseProfile?.error) {
       throw new Error(`Mamá: ${responseProfile.error?.code}`);
@@ -178,13 +214,13 @@ const createParentsByForm = async (data, schoolId) => {
   }
 
   const tutorProfiles = await Promise.all(tutors);
-
+  
   if (tutorProfiles.some((profile) => profile?.error)) {
     throw new Error(
       `Tutor: ${tutorProfiles.find((profile) => profile?.error)?.code}`,
-    );
-  }
-
+      );
+    }
+    
   const responseUpdateStudent = await updateDocument(
     "students",
     studentProfile.id,
@@ -201,31 +237,35 @@ const createParentsByForm = async (data, schoolId) => {
   return { success: true, message: "Estudiante creado correctamente" };
 };
 
-const getStudents = async (school) => {
-  const students = await getDocuments("students", school);
-  return students;
-};
-
-const getAllStudents = async ({ all = false }) => {
+const getStudents = async () => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/students?all=${all}`,
+      `${process.env.NEXT_PUBLIC_URL_API}api/students`,
     );
-
     if (response?.redirected) {
-      return {
-        error: true,
-        redirect: response.url,
-        message: "Redireccionando",
-      };
+      return { error: true, redirect: response.url };
     }
     const data = await response.json();
-    setAllStudents(data);
-    return data;
+    const dataTable = setStructureDatatable(data);
+    return setStudents(dataTable);
   } catch (error) {
-    return { error: error.message };
+    return { error: error?.message };
   }
 };
+
+const getStudentsForRoutes = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/students`,
+    );
+    
+    const data = await response.json();
+    const studentsOptions = createStudentsOptions(data);
+    getStudentsRoutes(studentsOptions);
+  } catch (error) {
+    return { error: error?.message };
+  }
+}
 
 const updateStudentByForm = async (data) => {
   const { avatar } = data;
@@ -244,10 +284,7 @@ const updateStudentByForm = async (data) => {
   }
 
   data.avatar = avatarFilename;
-  console.log(
-    "🚀 ~ file: StudentsServices.js:221 ~ updateStudentByForm ~ data:",
-    data,
-  );
+
   data.fullName = [data?.name, data?.lastName, data?.secondLastName];
   const response = await updateDocument("students", data?.id, data);
   if (response?.error) {
@@ -257,10 +294,34 @@ const updateStudentByForm = async (data) => {
   return { success: true, message: "Estudiante actualizado correctamente" };
 };
 
+const createStudentsOptions = (students) => {
+  // value, label
+  // get stops by student from firestore
+  return students.map((student) => {
+    // const stops = student?.stops?.map(async(stop) => {
+    //   // get stop reference from firestore
+    //   const docSnap = await getDoc(stop)
+    //   if (docSnap.exists()) 
+    //     return docSnap.data()
+    //   return null
+    // })
+
+    return {
+      value: student.id,
+      label: `${student?.name || ''} ${student?.lastName || ''} ${student?.secondLastName || ''}`,
+      serviceType: student?.serviceType,
+      name: student?.name || '',
+      lastName: student?.lastName || '',
+      secondLastName: student?.secondLastName || '',
+      id: student.id,
+    };
+  });
+}
+
 export {
   createParentsByForm,
   getStudentById,
   getStudents,
-  getAllStudents,
+  getStudentsForRoutes,
   updateStudentByForm,
 };

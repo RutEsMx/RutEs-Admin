@@ -31,8 +31,8 @@ const validateServiceType = ({
   serviceType,
   setFieldValue,
   setBothTravels,
-  values,
   bothTravels,
+  values,
 }) => {
   let element = null;
   const travelName = bothTravels ? "Ambos viajes" : "A la casa";
@@ -76,7 +76,7 @@ const validateServiceType = ({
               />
             </label>
           </div>
-          <div className="flex flex-row items-center">
+          <div className="">
             <PlacesAutocomplete
               label={travelName}
               setPlace={(value) => setFieldValue("temporalToHome", value)}
@@ -84,7 +84,7 @@ const validateServiceType = ({
             />
           </div>
           {!bothTravels && (
-            <div className="flex flex-row items-center">
+            <div className="">
               <PlacesAutocomplete
                 label={"A la escuela"}
                 setPlace={(value) => setFieldValue("temporalToSchool", value)}
