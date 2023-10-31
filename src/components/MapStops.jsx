@@ -18,7 +18,6 @@ const MapStops = () => {
 
   const setMarkerValue = async (studentId, coords) => {
     const responseGeocode = await geocodeByLatLng(coords);
-
     if (studentId === "temporalToHome") {
       setFieldValue("temporalToHome", {
         label: responseGeocode[0]?.formatted_address,
@@ -37,7 +36,10 @@ const MapStops = () => {
 
   return (
     <div className="bg-gray lg:h-[500px] sm:h-[250px]">
-      <Maps markers={markers} setMarker={setMarkerValue} />
+      <Maps
+        markers={markers}
+        setMarker={setMarkerValue}
+      />
     </div>
   );
 };
