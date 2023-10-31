@@ -1,9 +1,10 @@
 "use client";
-import { useMemo } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useLoadScript, GoogleMap, MarkerF } from "@react-google-maps/api";
 // import map_pin.svg from public
 
 const Maps = ({ markers, setMarker, options, ...props }) => {
+  const [markersMap, setMarkersMap] = useState([]);
   const libraries = useMemo(() => ["places"], []);
   const mapCenter = useMemo(
     () =>
@@ -31,6 +32,12 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
     googleMapsApiKey: process.env.GOOGLE_API_KEY,
     libraries: libraries,
   });
+  
+  useEffect(() => {
+    // Aquí puedes manejar cambios en `markers`
+    // Por ejemplo, podrías eliminar todos los marcadores antiguos y añadir los nuevos
+    setMarkersMap(markers);
+  }, [markers]);
 
   const CustomMarker = ({ color, label, ...props }) => {
     const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-6 h-6" >
@@ -68,10 +75,10 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
         {...props}
       >
         <>
-          {markers.map((marker) => {
+          {markersMap.map((marker, index) => {
             return (
               <CustomMarker
-                key={marker.studentId}
+                key={marker.studentId + index}
                 position={{ lat: marker?.lat, lng: marker?.lng }}
                 draggable={marker.draggable}
                 onDragEnd={(e) =>

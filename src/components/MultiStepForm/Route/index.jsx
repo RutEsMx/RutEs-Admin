@@ -67,7 +67,7 @@ const FormRoute = ({ data, isEdit = false }) => {
       <Formik
         initialValues={initialValues}
         onSubmit={handleNext}
-        // validationSchema={validateRoute}
+        validationSchema={validateRoute}
         validateOnBlur={false}
         validateOnChange={false}
         validateOnMount={false}

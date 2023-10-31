@@ -298,22 +298,22 @@ const createStudentsOptions = (students) => {
   // value, label
   // get stops by student from firestore
   return students.map((student) => {
-    const stops = student?.stops?.map(async(stop) => {
-      // get stop reference from firestore
-      const docSnap = await getDoc(stop)
-      if (docSnap.exists()) 
-        return docSnap.data()
-      return null
-    })
+    // const stops = student?.stops?.map(async(stop) => {
+    //   // get stop reference from firestore
+    //   const docSnap = await getDoc(stop)
+    //   if (docSnap.exists()) 
+    //     return docSnap.data()
+    //   return null
+    // })
 
     return {
       value: student.id,
       label: `${student?.name || ''} ${student?.lastName || ''} ${student?.secondLastName || ''}`,
-      stops: stops || {},
       serviceType: student?.serviceType,
       name: student?.name || '',
       lastName: student?.lastName || '',
       secondLastName: student?.secondLastName || '',
+      id: student.id,
     };
   });
 }
