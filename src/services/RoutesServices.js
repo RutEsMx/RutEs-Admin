@@ -26,7 +26,7 @@ const createTravels = async (students) => {
         toSchool: { students: [] },
       };
     }
-    
+
     const toHomeStudents = students[key].toHome.map((student) => {
       return doc(db, "students", student.id);
     });
@@ -42,24 +42,22 @@ const createTravels = async (students) => {
       ...travelsObject[key].toSchool.students,
       ...toSchoolStudents,
     ];
-  })
+  });
   return createDocument("travels", travelsObject);
 };
 const updateTravels = async (id, students) => {
   Object.keys(students).map((key) => {
-    let arrayToHome = []
-    let arrayToSchool = []
+    let arrayToHome = [];
+    let arrayToSchool = [];
     const refTravel = doc(db, "travels", id);
     students[key].toHome.map((student) => {
       const refStudent = doc(db, "students", student.id);
-      arrayToHome.push(refStudent)
-      
-      
-    })
+      arrayToHome.push(refStudent);
+    });
     students[key].toSchool.map((student) => {
       const refStudent = doc(db, "students", student.id);
-      arrayToSchool.push(refStudent)
-    })
+      arrayToSchool.push(refStudent);
+    });
 
     updateDoc(refTravel, {
       [key]: {
@@ -71,11 +69,10 @@ const updateTravels = async (id, students) => {
         },
       },
     });
-  })
+  });
 };
 
 const createStops = async (students, routeId) => {
-
   Object.keys(students).map((key) => {
     students[key].toHome.map((element) => {
       delete element.value;
@@ -129,7 +126,6 @@ const updateDeleteStops = async (student) => {
 
 // Create a new route
 const createRoutesByForm = async (data) => {
-  return { success: true, message: "Ruta creada correctamente" };
   const { students } = data;
   try {
     const responseTravels = await createTravels(students);

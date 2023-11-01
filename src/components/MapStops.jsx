@@ -22,6 +22,7 @@ const MapStops = () => {
       setFieldValue("temporalToHome", {
         label: responseGeocode[0]?.formatted_address,
         ...coords,
+        ...responseGeocode[0],
       });
       return;
     }
@@ -29,6 +30,7 @@ const MapStops = () => {
       setFieldValue("temporalToSchool", {
         label: responseGeocode[0]?.formatted_address,
         ...coords,
+        ...responseGeocode[0],
       });
       return;
     }
@@ -36,10 +38,7 @@ const MapStops = () => {
 
   return (
     <div className="bg-gray lg:h-[500px] sm:h-[250px]">
-      <Maps
-        markers={markers}
-        setMarker={setMarkerValue}
-      />
+      <Maps markers={markers} setMarker={setMarkerValue} />
     </div>
   );
 };
