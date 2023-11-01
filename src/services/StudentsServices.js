@@ -260,7 +260,7 @@ const getStudentsForRoutes = async () => {
     );
 
     const data = await response.json();
-    const studentsOptions = createStudentsOptions(data);
+    const studentsOptions = await createStudentsOptions(data);
     getStudentsRoutes(studentsOptions);
   } catch (error) {
     return { error: error?.message };
@@ -294,30 +294,32 @@ const updateStudentByForm = async (data) => {
   return { success: true, message: "Estudiante actualizado correctamente" };
 };
 
-const createStudentsOptions = (students) => {
-  // value, label
-  // get stops by student from firestore
-  return students.map((student) => {
-    // const stops = student?.stops?.map(async(stop) => {
-    //   // get stop reference from firestore
-    //   const docSnap = await getDoc(stop)
-    //   if (docSnap.exists())
-    //     return docSnap.data()
-    //   return null
-    // })
+const createStudentsOptions = async (students) => {
+  const studentsPromise = students.map(async (student) => {
+    const stops = query(
+      collection(db, "stops"),
+      where("student", "==", student?.id),
+    );
 
-    return {
+    const stopsSnapshot = await getDocs(stops);
+    if (!stopsSnapshot.empty) {
+      const stopsData = await stopsSnapshot.docs.map((doc) => {
+        const stop = doc.data();
+        return { ...stop, id: doc.id };
+      });
+      student.stops = stopsData;
+    }
+
+    const { name, lastName, secondLastName } = student;
+
+    const obj = {
       value: student.id,
-      label: `${student?.name || ""} ${student?.lastName || ""} ${
-        student?.secondLastName || ""
-      }`,
-      serviceType: student?.serviceType,
-      name: student?.name || "",
-      lastName: student?.lastName || "",
-      secondLastName: student?.secondLastName || "",
-      id: student.id,
+      label: `${name || ""} ${lastName || ""} ${secondLastName || ""}`,
+      ...student,
     };
+    return obj;
   });
+  return Promise.all(studentsPromise);
 };
 
 export {

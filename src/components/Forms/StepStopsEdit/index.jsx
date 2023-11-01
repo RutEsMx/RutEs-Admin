@@ -16,6 +16,7 @@ import SelectField from "@/components/SelectField";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { validateServiceType } from "@/utils/functionsClient";
 import SelectAutocomplete from "@/components/SelectAutocomplete";
+import { useStudentsStore } from "@/store/useStudentsStore";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
@@ -23,20 +24,40 @@ const SELECT_DAY = DAYS_OPTIONS.slice(1);
 const StepStopsEdit = () => {
   const { values, setFieldValue } = useFormikContext();
   const navigation = useRouter();
+  const { studentsRoutes, getStudentsRoutes } = useStudentsStore();
   const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } =
     useRoutesStore();
   const [studentsData, setStudentsData] = useState(
     values?.students?.[selectedDayEdit]?.[typeTravel] || [],
   );
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
-  useEffect(() => {
-    setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
-  }, [selectedDayEdit, typeTravel, values]);
 
   const [selectedDay, setSelectedDay] = useState(["all"]);
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isEditStudent, setIsEditStudent] = useState(false);
+
+  useEffect(() => {
+    setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
+  }, [selectedDayEdit, typeTravel, values]);
+
+  useEffect(() => {
+    if (selectedDay.includes(ALL_DAY)) {
+      Object.keys(DAYS).forEach((day) => {
+        const filterStudents = studentsRoutes.filter((student) => {
+          if (!student.stops) return true;
+          return !student.stops.some((stop) => stop.day === day);
+        });
+        getStudentsRoutes(filterStudents);
+      });
+    } else {
+      const filterStudents = studentsRoutes.filter((student) => {
+        if (!student.stops) return true;
+        return !student.stops.some((stop) => selectedDay.includes(stop.day));
+      });
+      getStudentsRoutes(filterStudents);
+    }
+  }, [selectedDay]);
 
   const validateStudentExist = (student) => {
     const students = values?.students || {};
@@ -428,6 +449,7 @@ const StepStopsEdit = () => {
                 value={selectedStudent || null}
                 disabled={isEditStudent}
                 days={selectedDay}
+                options={studentsRoutes}
               />
               {validateServiceType({
                 serviceType: selectedStudent?.serviceType,

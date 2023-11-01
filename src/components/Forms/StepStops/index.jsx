@@ -22,12 +22,12 @@ const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const StepStops = () => {
   const { values, setFieldValue } = useFormikContext();
-  const { studentsRoutes } = useStudentsStore();
+  const { studentsRoutes, getStudentsRoutes } = useStudentsStore();
   const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } =
     useRoutesStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(false);
-  const [selectedDay, setSelectedDay] = useState(["all"]);
+  const [selectedDay, setSelectedDay] = useState([]);
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [studentsData, setStudentsData] = useState([]);
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
@@ -35,6 +35,24 @@ const StepStops = () => {
   useEffect(() => {
     setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
   }, [selectedDayEdit, typeTravel, values]);
+
+  useEffect(() => {
+    if (selectedDay.includes(ALL_DAY)) {
+      Object.keys(DAYS).forEach((day) => {
+        const filterStudents = studentsRoutes.filter((student) => {
+          if (!student.stops) return true;
+          return !student.stops.some((stop) => stop.day === day);
+        });
+        getStudentsRoutes(filterStudents);
+      });
+    } else {
+      const filterStudents = studentsRoutes.filter((student) => {
+        if (!student.stops) return true;
+        return !student.stops.some((stop) => selectedDay.includes(stop.day));
+      });
+      getStudentsRoutes(filterStudents);
+    }
+  }, [selectedDay]);
 
   useEffect(() => {
     setFieldValue("temporalToHome", null);
