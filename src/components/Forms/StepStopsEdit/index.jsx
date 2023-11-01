@@ -16,6 +16,7 @@ import SelectField from "@/components/SelectField";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { validateServiceType } from "@/utils/functionsClient";
 import SelectAutocomplete from "@/components/SelectAutocomplete";
+import { useStudentsStore } from "@/store/useStudentsStore";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
@@ -23,21 +24,67 @@ const SELECT_DAY = DAYS_OPTIONS.slice(1);
 const StepStopsEdit = () => {
   const { values, setFieldValue } = useFormikContext();
   const navigation = useRouter();
-  const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } = useRoutesStore();
-  const [studentsData, setStudentsData] = useState(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
+  const { studentsRoutes, getStudentsRoutes } = useStudentsStore();
+  const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } =
+    useRoutesStore();
+  const [studentsData, setStudentsData] = useState(
+    values?.students?.[selectedDayEdit]?.[typeTravel] || [],
+  );
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
-  useEffect(() => {
-    setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
-  }, [selectedDayEdit, typeTravel, values]);
-  
+
   const [selectedDay, setSelectedDay] = useState(["all"]);
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isEditStudent, setIsEditStudent] = useState(false);
-  
+
+  useEffect(() => {
+    setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
+  }, [selectedDayEdit, typeTravel, values]);
+
+  useEffect(() => {
+    if (selectedDay.includes(ALL_DAY)) {
+      Object.keys(DAYS).forEach((day) => {
+        const filterStudents = studentsRoutes.filter((student) => {
+          if (!student.stops) return true;
+          return !student.stops.some((stop) => stop.day === day);
+        });
+        getStudentsRoutes(filterStudents);
+      });
+    } else {
+      const filterStudents = studentsRoutes.filter((student) => {
+        if (!student.stops) return true;
+        return !student.stops.some((stop) => selectedDay.includes(stop.day));
+      });
+      getStudentsRoutes(filterStudents);
+    }
+  }, [selectedDay]);
+
+  const validateStudentExist = (student) => {
+    const students = values?.students || {};
+    let found = false;
+
+    const checkStudent = (day) => {
+      if (students[day]?.[typeTravel]?.some((s) => s.id === student.id)) {
+        found = true;
+        return true;
+      }
+      return false;
+    };
+
+    if (selectedDay.includes(ALL_DAY)) {
+      Object.keys(DAYS).some(checkStudent);
+    } else {
+      selectedDay.some(checkStudent);
+    }
+
+    return found;
+  };
+
   const handleRemoveStudent = (e, student) => {
     e.preventDefault();
-    const newStudents = values?.students?.[selectedDayEdit]?.[typeTravel]?.filter((s) => s.id !== student.id);
+    const newStudents = values?.students?.[selectedDayEdit]?.[
+      typeTravel
+    ]?.filter((s) => s.id !== student.id);
     setFieldValue("students", {
       ...values?.students,
       [selectedDayEdit]: {
@@ -49,12 +96,14 @@ const StepStopsEdit = () => {
     const modal = document.getElementById("my_modal_1");
     modal.close();
   };
-  
+
   const handleRemoveStudentAll = (e) => {
     e.preventDefault();
     const students = values?.students || {};
     const newStudents = Object.keys(students).reduce((acc, day) => {
-      const newStudents = students[day][typeTravel].filter((s) => s.id !== selectedStudentToRemove.id);
+      const newStudents = students[day][typeTravel].filter(
+        (s) => s.id !== selectedStudentToRemove.id,
+      );
       acc[day] = {
         ...students[day],
         [typeTravel]: newStudents,
@@ -65,19 +114,19 @@ const StepStopsEdit = () => {
     setStudentsData(newStudents[selectedDayEdit][typeTravel]);
     const modal = document.getElementById("my_modal_1");
     modal.close();
-  }
-  
+  };
+
   const openDeleteModal = (e, student) => {
     e.preventDefault();
     setSelectedStudentToRemove(student);
     const modal = document.getElementById("my_modal_1");
     modal.showModal();
-  }
-  
+  };
+
   const handleEditStudent = (e, student) => {
     e.preventDefault();
     return navigation.push(`/dashboard/students/edit/${student.id}`);
-  }
+  };
 
   const handleSelect = (e) => {
     const { name, checked } = e.target;
@@ -115,7 +164,7 @@ const StepStopsEdit = () => {
     setBothTravels(false);
     setIsEditStudent(false);
   };
-  
+
   const handleAddStudent = (e) => {
     e.preventDefault();
 
@@ -126,8 +175,23 @@ const StepStopsEdit = () => {
         show: true,
       });
 
+    // Validar si ya existe el alumno en el dia seleccionado
+    const validate = validateStudentExist(selectedStudent);
+    if (validate && !isEditStudent) {
+      setAlert({
+        message: "El alumno ya existe en uno de los días seleccionados",
+        type: "error",
+        show: true,
+      });
+      return;
+    }
+
     if (selectedStudent?.serviceType === "complete") {
-      if (!bothTravels && !values?.temporalToHome && !values?.temporalToSchool) {
+      if (
+        !bothTravels &&
+        !values?.temporalToHome &&
+        !values?.temporalToSchool
+      ) {
         return setAlert({
           message: "Selecciona una dirección",
           type: "error",
@@ -141,14 +205,20 @@ const StepStopsEdit = () => {
         });
       }
     }
-    if (selectedStudent?.serviceType === "halfMorning" && !values?.temporalToSchool) {
+    if (
+      selectedStudent?.serviceType === "halfMorning" &&
+      !values?.temporalToSchool
+    ) {
       return setAlert({
         message: "Selecciona una dirección",
         type: "error",
         show: true,
       });
     }
-    if (selectedStudent?.serviceType === "halfAfternoon" && !values?.temporalToHome) {
+    if (
+      selectedStudent?.serviceType === "halfAfternoon" &&
+      !values?.temporalToHome
+    ) {
       return setAlert({
         message: "Selecciona una dirección",
         type: "error",
@@ -158,7 +228,7 @@ const StepStopsEdit = () => {
     const students = values?.students || {};
     const studentObj = {
       ...selectedStudent,
-      stop: ''
+      stop: "",
     };
 
     if (selectedDay.includes(ALL_DAY)) {
@@ -170,15 +240,17 @@ const StepStopsEdit = () => {
           };
         }
         if (bothTravels) {
-          studentObj['stop'] = {
+          studentObj["stop"] = {
             coords: {
               toHome: values?.temporalToHome || null,
               toSchool: values?.temporalToHome || null,
             },
             isDelete: false,
-          }
+          };
           if (isEditStudent) {
-            const studentIndex = values?.students?.[day]?.[typeTravel]?.findIndex((s) => s.id === selectedStudent.id);
+            const studentIndex = values?.students?.[day]?.[
+              typeTravel
+            ]?.findIndex((s) => s.id === selectedStudent.id);
             if (studentIndex !== -1) {
               // update the student object with the new data
               const updatedStudent = {
@@ -197,32 +269,34 @@ const StepStopsEdit = () => {
           }
         } else {
           if (selectedStudent?.serviceType === "halfMorning") {
-            studentObj['stop'] = {
+            studentObj["stop"] = {
               coords: {
                 toHome: null,
                 toSchool: values?.temporalToSchool || null,
               },
               isDelete: false,
-            }
+            };
           } else if (selectedStudent?.serviceType === "halfAfternoon") {
-            studentObj['stop'] = {
+            studentObj["stop"] = {
               coords: {
                 toHome: values?.temporalToHome || null,
                 toSchool: null,
               },
               isDelete: false,
-            }
+            };
           } else {
-            studentObj['stop'] = {
+            studentObj["stop"] = {
               coords: {
                 toHome: values?.temporalToHome || null,
                 toSchool: values?.temporalToSchool || null,
               },
               isDelete: false,
-            }
+            };
           }
           if (isEditStudent) {
-            const studentIndex = values?.students?.[day]?.[typeTravel]?.findIndex((s) => s.id === selectedStudent.id);
+            const studentIndex = values?.students?.[day]?.[
+              typeTravel
+            ]?.findIndex((s) => s.id === selectedStudent.id);
             if (studentIndex !== -1) {
               // update the student object with the new data
               const updatedStudent = {
@@ -235,8 +309,12 @@ const StepStopsEdit = () => {
           } else {
             students[day] = {
               ...students[day],
-              toHome: values?.temporalToHome ? [...students[day].toHome, studentObj] : students[day].toHome,
-              toSchool: values?.temporalToSchool ? [...students[day].toSchool, studentObj] : students[day].toSchool,
+              toHome: values?.temporalToHome
+                ? [...students[day].toHome, studentObj]
+                : students[day].toHome,
+              toSchool: values?.temporalToSchool
+                ? [...students[day].toSchool, studentObj]
+                : students[day].toSchool,
             };
           }
         }
@@ -251,8 +329,9 @@ const StepStopsEdit = () => {
         }
         if (bothTravels) {
           if (isEditStudent) {
-            const studentIndex = values?.students?.[day]?.[typeTravel]?.findIndex((s) => s.id === selectedStudent.id);
-            console.log("🚀 ~ file: index.jsx:184 ~ selectedDay.forEach ~ studentIndex:", studentIndex)
+            const studentIndex = values?.students?.[day]?.[
+              typeTravel
+            ]?.findIndex((s) => s.id === selectedStudent.id);
 
             if (studentIndex !== -1) {
               // update the student object with the new data
@@ -264,57 +343,62 @@ const StepStopsEdit = () => {
               students[day][typeTravel][studentIndex] = updatedStudent;
             }
           } else {
-            studentObj['stop'] = {
+            studentObj["stop"] = {
               coords: {
                 toHome: values?.temporalToHome || null,
                 toSchool: values?.temporalToHome || null,
               },
               isDelete: false,
-            }
+            };
           }
         } else {
           if (selectedStudent?.serviceType === "halfMorning") {
-            studentObj['stop'] = {
+            studentObj["stop"] = {
               coords: {
                 toHome: null,
                 toSchool: values?.temporalToSchool || null,
               },
               isDelete: false,
-            }
+            };
           } else if (selectedStudent?.serviceType === "halfAfternoon") {
-            studentObj['stop'] = {
+            studentObj["stop"] = {
               coords: {
                 toHome: values?.temporalToHome || null,
                 toSchool: null,
               },
               isDelete: false,
-            }
+            };
           } else {
-            studentObj['stop'] = {
+            studentObj["stop"] = {
               coords: {
                 toHome: values?.temporalToHome || null,
                 toSchool: values?.temporalToSchool || null,
               },
               isDelete: false,
-            }
+            };
           }
           if (isEditStudent) {
-            const studentIndex = values?.students?.[day]?.[typeTravel]?.findIndex((s) => s.id === selectedStudent.id);
+            const studentIndex = values?.students?.[day]?.[
+              typeTravel
+            ]?.findIndex((s) => s.id === selectedStudent.id);
             if (studentIndex !== -1) {
               // update the student object with the new data
               const updatedStudent = {
                 ...values.students[day][typeTravel][studentIndex],
                 ...studentObj,
               };
-              console.log("🚀 ~ file: index.jsx:213 ~ selectedDay.forEach ~ updatedStudent:", updatedStudent)
               // update the students array with the updated student object
               students[day][typeTravel][studentIndex] = updatedStudent;
             }
           } else {
             students[day] = {
               ...students[day],
-              toHome: values?.temporalToHome ? [...students[day].toHome, studentObj] : students[day].toHome,
-              toSchool: values?.temporalToSchool ? [...students[day].toSchool, studentObj] : students[day].toSchool,
+              toHome: values?.temporalToHome
+                ? [...students[day].toHome, studentObj]
+                : students[day].toHome,
+              toSchool: values?.temporalToSchool
+                ? [...students[day].toSchool, studentObj]
+                : students[day].toSchool,
             };
           }
         }
@@ -328,13 +412,9 @@ const StepStopsEdit = () => {
     setSelectedStudent(null);
     setIsEditStudent(false);
     setBothTravels(false);
-    console.log("🚀 ~ file: index.jsx:263 ~ handleAddStudent ~ students:", students)
 
     setFieldValue("students", students);
-
   };
-
-  
 
   return (
     <div className="mb-4 grid grid-rows-1">
@@ -369,6 +449,7 @@ const StepStopsEdit = () => {
                 value={selectedStudent || null}
                 disabled={isEditStudent}
                 days={selectedDay}
+                options={studentsRoutes}
               />
               {validateServiceType({
                 serviceType: selectedStudent?.serviceType,
@@ -396,23 +477,23 @@ const StepStopsEdit = () => {
       </div>
       <div className="mx-2 row-span-1 my-6">
         <div className="w-full bg-gray-hover px-2 mb-4">Paradas</div>
-          <SelectField
-            label="Día"
-            name="day"
-            options={SELECT_DAY}
-            value={selectedDayEdit}
-            onChange={(e) => setSelectedDayEdit(e.target.value)}
-          />
-          <SelectField
-            label="Tipo de viaje"
-            name="typeTravel"
-            options={[
-              { label: "Escuela - Casa", value: "toHome" },
-              { label: "Casa - Escuela", value: "toSchool" },
-            ]}
-            value={typeTravel}
-            onChange={(e) => setTypeTravel(e.target.value)}
-          />
+        <SelectField
+          label="Día"
+          name="day"
+          options={SELECT_DAY}
+          value={selectedDayEdit}
+          onChange={(e) => setSelectedDayEdit(e.target.value)}
+        />
+        <SelectField
+          label="Tipo de viaje"
+          name="typeTravel"
+          options={[
+            { label: "Escuela - Casa", value: "toHome" },
+            { label: "Casa - Escuela", value: "toSchool" },
+          ]}
+          value={typeTravel}
+          onChange={(e) => setTypeTravel(e.target.value)}
+        />
 
         {studentsData?.map((student) => (
           <div key={student.id} className="grid grid-cols-3 gap-2 my-2">
@@ -420,7 +501,11 @@ const StepStopsEdit = () => {
               <div className="flex flex-row items-center">
                 <MapPinIcon className="h-4 w-4 text-yellow" />
                 <div className="flex ps-2">
-                  <span className="text-sm font-semibold">{`${student?.name || ''} ${student?.lastName || ''} ${student?.secondLastName || ''}`}</span>
+                  <span className="text-sm font-semibold">{`${
+                    student?.name || ""
+                  } ${student?.lastName || ""} ${
+                    student?.secondLastName || ""
+                  }`}</span>
                 </div>
               </div>
             </div>
@@ -442,16 +527,28 @@ const StepStopsEdit = () => {
               </div>
             </div>
           </div>
-        ))} 
+        ))}
       </div>
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg"></h3>
           <p className="py-4">Deseas eliminar todos los dias?</p>
           <div className="modal-action">
-            <ButtonAction color="bg-warning" onClick={() => document.getElementById("my_modal_1").close()}>Cancelar</ButtonAction>
-            <ButtonAction color="bg-light-gray" onClick={handleRemoveStudentAll}>Todos</ButtonAction>
-            <ButtonAction onClick={handleRemoveStudent}>{`Solo ${DAYS[selectedDayEdit]}`}</ButtonAction>
+            <ButtonAction
+              color="bg-warning"
+              onClick={() => document.getElementById("my_modal_1").close()}
+            >
+              Cancelar
+            </ButtonAction>
+            <ButtonAction
+              color="bg-light-gray"
+              onClick={handleRemoveStudentAll}
+            >
+              Todos
+            </ButtonAction>
+            <ButtonAction
+              onClick={handleRemoveStudent}
+            >{`Solo ${DAYS[selectedDayEdit]}`}</ButtonAction>
           </div>
         </div>
       </dialog>

@@ -23,7 +23,7 @@ const FormRoute = ({ data, isEdit = false }) => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("DATOS");
-  
+
   const initialValues = {
     name: data?.name || "",
     capacity: data?.capacity || "",
@@ -46,12 +46,12 @@ const FormRoute = ({ data, isEdit = false }) => {
       if (error) {
         setError(error?.message);
       }
-      // if (success) {
-      //   setMessage(message);
-      //   setTimeout(() => {
-      //     return navigation.back();
-      //   }, 2000);
-      // }
+      if (success) {
+        setMessage(message);
+        setTimeout(() => {
+          return navigation.back();
+        }, 2000);
+      }
       return setMessage(message);
     } catch (error) {
       setError(error.message);
@@ -116,8 +116,10 @@ const FormRoute = ({ data, isEdit = false }) => {
                 <div className="divider mx-0 my-2 before:h-2 after:h-2"></div>
                 {activeTab === "DATOS" ? (
                   <StepRoute />
+                ) : isEdit ? (
+                  <StepStopsEdit />
                 ) : (
-                    isEdit ? <StepStopsEdit /> : <StepStops />
+                  <StepStops />
                 )}
               </div>
               <div className="col-span-3 border-2 border-gray rounded-lg p-4">

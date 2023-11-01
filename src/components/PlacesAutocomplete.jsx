@@ -7,26 +7,33 @@ import GooglePlacesAutocomplete, {
 
 const PlacesAutocomplete = ({ label, setPlace, place }) => {
   const [value, setValue] = useState(place);
-  
+
   useEffect(() => {
-    if (!place) {
-      setValue(null);
-      return;
-    } else {
-      setValue(place);
-    }
+    const getPlaceId = async () => {
+      if (!place) {
+        setValue(null);
+        return;
+      } else {
+        if (place.place_id) {
+          setValue(place);
+        }
+      }
+    };
+    getPlaceId();
   }, [place]);
-  
+
   const handleChange = async (newValue) => {
     if (newValue && newValue.label) {
       setValue(newValue);
       try {
         const results = await geocodeByAddress(newValue.label);
         const { lat, lng } = await getLatLng(results[0]);
+        delete results[0].geometry;
         setPlace({
-          label: newValue.label,
           lat,
           lng,
+          label: results[0]?.formatted_address,
+          ...results[0],
         });
       } catch (error) {
         console.error("Error al obtener la geolocalización:", error);
@@ -77,7 +84,6 @@ const PlacesAutocomplete = ({ label, setPlace, place }) => {
           },
           unstyled: true,
         }}
-        
       />
     </div>
   );
