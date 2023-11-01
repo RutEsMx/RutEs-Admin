@@ -12,7 +12,9 @@ import { rankItem } from "@tanstack/match-sorter-utils";
 import ButtonAction from "@/components/ButtonAction";
 import FilterInput from "@/components/Table/elements/FilterInputTable";
 import ColumnSelected from "./columns";
+// eslint-disable-next-line no-unused-vars
 import { deleteParents, getParents } from "@/services/ParentsSevices";
+// eslint-disable-next-line no-unused-vars
 import { setAlert } from "@/store/useSystemStore";
 import { getDrivers } from "@/services/DriverServices";
 import { getUnits } from "@/services/UnitsServices";
@@ -32,32 +34,32 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const DataTable = ({ type, list = [] }) => {
   const columns = useMemo(() => ColumnSelected(type), []);
   const [globalFilter, setGlobalFilter] = useState("");
-  
+
   useEffect(() => {
     const getData = async () => {
       if (type === "units") {
-        getUnits()
+        getUnits();
       }
       if (type === "drivers") {
-        getDrivers()
+        getDrivers();
       }
-      if(type === "parents"){
-        getParents()
+      if (type === "parents") {
+        getParents();
       }
-      if(type === "students"){
-        getStudents()
+      if (type === "students") {
+        getStudents();
       }
-      if(type === "auxiliars"){
-        getAuxiliars()
+      if (type === "auxiliars") {
+        getAuxiliars();
       }
-      if(type === "schools"){
-        console.log("get schools")
+      if (type === "schools") {
+        console.log("get schools");
       }
-      if(type === "users"){
-        console.log("get users")
+      if (type === "users") {
+        console.log("get users");
       }
-    }
-    getData()
+    };
+    getData();
   }, []);
 
   const table = useReactTable({
@@ -69,7 +71,7 @@ const DataTable = ({ type, list = [] }) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),    
+    getFacetedRowModel: getFacetedRowModel(),
     getRowId: (row) => row.id,
     onGlobalFilterChange: setGlobalFilter,
     filterFns: {
@@ -77,7 +79,6 @@ const DataTable = ({ type, list = [] }) => {
     },
     globalFilterFn: fuzzyFilter,
   });
-  
 
   // const handleDelete = async () => {
   //   if (type === "parents") {

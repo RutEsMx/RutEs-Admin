@@ -189,9 +189,8 @@ const updateRoutesByForm = async (data) => {
     const responseRoute = await updateDocument("routes", routeId, restData);
     const responseUpdateTravels = await updateTravels(routeId, students);
     // TODO: update stops
-    // const responseStops = Promise.all(
-    //   students.map((student) => updateDeleteStops(student, routeId)),
-    // );
+    // const responseStops =
+    Promise.all(students.map((student) => updateDeleteStops(student, routeId)));
     const updateAuxiliar = updateEntity(
       "profile",
       restData?.auxiliar,

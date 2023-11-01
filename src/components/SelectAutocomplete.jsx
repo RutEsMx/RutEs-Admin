@@ -8,20 +8,18 @@ const SelectAutocomplete = ({
   error,
   value: valueControl,
   disabled,
-  days,
   options,
 }) => {
   const handleSelect = (option) => {
     if (disabled) return;
     onSelect(option);
   };
-  
+
   const handleSearch = async (value) => {
     const options = await filteredOptions(value);
     return options;
-    
   };
-  
+
   const filteredOptions = (value) => {
     // filtrar por dias days
     if (value.length < 3) return [];
@@ -30,7 +28,7 @@ const SelectAutocomplete = ({
       return label.toLowerCase().includes(value.toLowerCase());
     });
   };
-  
+
   return (
     <div className="relative ml-2 text-xs">
       {label && (
