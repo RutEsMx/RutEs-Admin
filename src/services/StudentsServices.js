@@ -11,7 +11,7 @@ import {
   setStudents,
   updateStudent,
 } from "@/store/useStudentsStore";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import { DAYS } from "@/utils/options";
 import { setStructureDatatable } from "./TableServices";
@@ -47,8 +47,8 @@ const getStudentById = async (id) => {
 };
 
 const createParentProfile = async (parent, schoolId, roles) => {
-  if(parent.emailExist) return updateParentProfile(parent, schoolId, roles)
-  const { email, avatar} = parent;
+  if (parent.emailExist) return updateParentProfile(parent, schoolId, roles);
+  const { email, avatar } = parent;
   let avatarFilename = avatar;
 
   if (validateEmail(email)) {
@@ -117,17 +117,13 @@ const updateParentProfile = async (parent) => {
       avatar: avatarFilename,
     };
 
-    await updateDocument(
-      "profile",
-      profileData.id,
-      profileData,
-    );
+    await updateDocument("profile", profileData.id, profileData);
     const userRef = doc(db, "profile", profileData.id);
-    return userRef
+    return userRef;
   } catch (error) {
     return { error };
   }
-}
+};
 
 const createParentsByForm = async (data, schoolId) => {
   const {
@@ -186,7 +182,11 @@ const createParentsByForm = async (data, schoolId) => {
 
   const tutors = Array.from({ length: countTutors }, (_, i) => {
     const tutor = `tutors_${i}`;
-    const tutorData = { ...data[tutor], schoolId, students: [...data[tutor].students, studentProfile] };
+    const tutorData = {
+      ...data[tutor],
+      schoolId,
+      students: [...data[tutor].students, studentProfile],
+    };
     delete studentData[tutor];
     return createParentProfile(tutorData, schoolId, ["tutor"]);
   });
@@ -214,13 +214,13 @@ const createParentsByForm = async (data, schoolId) => {
   }
 
   const tutorProfiles = await Promise.all(tutors);
-  
+
   if (tutorProfiles.some((profile) => profile?.error)) {
     throw new Error(
       `Tutor: ${tutorProfiles.find((profile) => profile?.error)?.code}`,
-      );
-    }
-    
+    );
+  }
+
   const responseUpdateStudent = await updateDocument(
     "students",
     studentProfile.id,
@@ -258,14 +258,14 @@ const getStudentsForRoutes = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/students`,
     );
-    
+
     const data = await response.json();
-    const studentsOptions = createStudentsOptions(data);
+    const studentsOptions = await createStudentsOptions(data);
     getStudentsRoutes(studentsOptions);
   } catch (error) {
     return { error: error?.message };
   }
-}
+};
 
 const updateStudentByForm = async (data) => {
   const { avatar } = data;
@@ -294,29 +294,33 @@ const updateStudentByForm = async (data) => {
   return { success: true, message: "Estudiante actualizado correctamente" };
 };
 
-const createStudentsOptions = (students) => {
-  // value, label
-  // get stops by student from firestore
-  return students.map((student) => {
-    // const stops = student?.stops?.map(async(stop) => {
-    //   // get stop reference from firestore
-    //   const docSnap = await getDoc(stop)
-    //   if (docSnap.exists()) 
-    //     return docSnap.data()
-    //   return null
-    // })
+const createStudentsOptions = async (students) => {
+  const studentsPromise = students.map(async (student) => {
+    const stops = query(
+      collection(db, "stops"),
+      where("student", "==", student?.id),
+    );
 
-    return {
+    const stopsSnapshot = await getDocs(stops);
+    if (!stopsSnapshot.empty) {
+      const stopsData = await stopsSnapshot.docs.map((doc) => {
+        const stop = doc.data();
+        return { ...stop, id: doc.id };
+      });
+      student.stops = stopsData;
+    }
+
+    const { name, lastName, secondLastName } = student;
+
+    const obj = {
       value: student.id,
-      label: `${student?.name || ''} ${student?.lastName || ''} ${student?.secondLastName || ''}`,
-      serviceType: student?.serviceType,
-      name: student?.name || '',
-      lastName: student?.lastName || '',
-      secondLastName: student?.secondLastName || '',
-      id: student.id,
+      label: `${name || ""} ${lastName || ""} ${secondLastName || ""}`,
+      ...student,
     };
+    return obj;
   });
-}
+  return Promise.all(studentsPromise);
+};
 
 export {
   createParentsByForm,
