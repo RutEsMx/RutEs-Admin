@@ -28,6 +28,7 @@ const PlacesAutocomplete = ({ label, setPlace, place }) => {
       try {
         const results = await geocodeByAddress(newValue.label);
         const { lat, lng } = await getLatLng(results[0]);
+        delete results[0].geometry;
         setPlace({
           lat,
           lng,

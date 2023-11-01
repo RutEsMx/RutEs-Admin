@@ -75,13 +75,14 @@ const updateTravels = async (id, students) => {
 const createStops = async (students, routeId) => {
   Object.keys(students).map((key) => {
     students[key].toHome.map((element) => {
-      delete element.value;
       if (element?.stop?.coords?.toHome === undefined) return;
+      delete element.value;
       const stopObject = {
         coords: element?.stop?.coords?.toHome,
         day: key,
         student: element.id,
         route: routeId,
+        type: "toHome",
       };
       createDocument("stops", stopObject);
     });
@@ -93,6 +94,7 @@ const createStops = async (students, routeId) => {
         day: key,
         student: element.id,
         route: routeId,
+        type: "toSchool",
       };
       createDocument("stops", stopObject);
     });
@@ -129,8 +131,7 @@ const createRoutesByForm = async (data) => {
   const { students } = data;
   try {
     const responseTravels = await createTravels(students);
-    await createStops(data?.students, responseTravels.id);
-
+    await createStops(students, responseTravels.id);
     const dataRoute = {
       name: data.name,
       capacity: data.capacity,

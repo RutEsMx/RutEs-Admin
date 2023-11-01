@@ -18,6 +18,8 @@ const MapStops = () => {
 
   const setMarkerValue = async (studentId, coords) => {
     const responseGeocode = await geocodeByLatLng(coords);
+    delete responseGeocode[0].geometry;
+
     if (studentId === "temporalToHome") {
       setFieldValue("temporalToHome", {
         label: responseGeocode[0]?.formatted_address,
