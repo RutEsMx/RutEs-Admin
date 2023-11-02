@@ -101,30 +101,63 @@ const createStops = async (students, routeId) => {
   });
 };
 
-const updateDeleteStops = async (student) => {
+const deleteStops = async (studentsToRemove) => {
+  
   try {
-    return student?.stops.map(async (stop) => {
-      if (stop?.isDelete) {
-        const qStop = doc(db, "stops", stop.id);
-        return deleteDoc(qStop);
-      } else {
-        if (stop.id) {
-          const qStop = doc(db, "stops", stop.id);
-          return updateDoc(qStop, {
-            coords: {
-              toSchool: stop.coords.toSchool,
-              toHome: stop.coords.toHome,
-            },
-          });
-        }
-        stop.student = student.id;
-        return createDocument("stops", stop);
-      }
+    Object.keys(studentsToRemove).map((key) => {
+      studentsToRemove[key]?.toHome && studentsToRemove[key].toHome.map( (element) => {
+        if (element?.stop?.id === undefined) return;
+        const qStop = doc(db, "stops", element?.stop?.id);
+        deleteDoc(qStop);
+      });
+      studentsToRemove[key].toSchool && studentsToRemove[key]?.toSchool.map( (element) => {
+        if(element?.stop?.id === undefined) return;
+        const qStop = doc(db, "stops", element?.stop?.id);
+        deleteDoc(qStop);
+      });
     });
   } catch (error) {
     return { error };
   }
 };
+
+const updateStops = async (students, routeId) => {
+  try {
+    Object.keys(students).map((key) => {
+      students[key]?.toHome && students[key].toHome.map((element) => {
+        if (element?.stop.id) {
+          const qStop = doc(db, "stops", element?.stop.id);
+          return updateDoc(qStop, {
+            coords: element?.stop.coords.toHome,
+          });
+        }
+        element['stop']['student'] = element.id;
+        element['stop']['route'] = routeId;
+        element['stop']['type'] = 'toHome';
+        element['stop']['day'] = key;
+        element['stop']['coords'] = element?.stop.coords.toHome;
+        return createDocument("stops", element?.stop);
+      })
+      students[key].toSchool && students[key]?.toSchool.map((element) => {
+        if (element?.stop.id) {
+          const qStop = doc(db, "stops", element?.stop.id);
+          return updateDoc(qStop, {
+            coords: element?.stop.coords.toSchool,
+          });
+        }
+        element['stop']['student'] = element.id;
+        element['stop']['route'] = routeId;
+        element['stop']['type'] = 'toSchool';
+        element['stop']['day'] = key;
+        element['stop']['coords'] = element?.stop.coords.toHome;
+        return createDocument("stops", element?.stop);
+      });
+    });
+  } catch (error) {
+    return { error };
+  }
+}
+  
 
 // Create a new route
 const createRoutesByForm = async (data) => {
@@ -183,15 +216,16 @@ const updateEntity = async (entityType, id, routeId, oldId = null) => {
 };
 
 const updateRoutesByForm = async (data) => {
-  const { routeId, students, ...restData } = data;
+  const { routeId, students, studentsToRemove, ...restData } = data;
+  console.log("🚀 ~ file: RoutesServices.js:188 ~ updateRoutesByForm ~ data:", data)
   try {
     const getOldRoute = await getDoc(doc(db, "routes", routeId));
     const oldRouteData = getOldRoute.data();
     const responseRoute = await updateDocument("routes", routeId, restData);
     const responseUpdateTravels = await updateTravels(routeId, students);
-    // TODO: update stops
-    // const responseStops =
-    Promise.all(students.map((student) => updateDeleteStops(student, routeId)));
+    const responseDeleteStops = await deleteStops(studentsToRemove);
+    const responseUpdateStops = await updateStops(students, routeId);
+   
     const updateAuxiliar = updateEntity(
       "profile",
       restData?.auxiliar,
@@ -213,10 +247,11 @@ const updateRoutesByForm = async (data) => {
     await Promise.all([
       responseRoute,
       responseUpdateTravels,
-      // responseStops,
+      responseDeleteStops,
       updateAuxiliar,
       updateDriver,
       updateUnit,
+      responseUpdateStops,
     ]);
     return { success: true, message: "Ruta actualizada correctamente" };
   } catch (error) {

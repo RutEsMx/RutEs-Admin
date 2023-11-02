@@ -26,47 +26,13 @@ export async function GET(request, { params }) {
     }
     const toHomeStudents = Object.values(travel.toHome).flat();
     const toSchoolStudents = Object.values(travel.toSchool).flat();
-    dayObject[key]['toHome'] = await fetchStudentData(toHomeStudents);
-    dayObject[key]['toSchool'] = await fetchStudentData(toSchoolStudents);
+    dayObject[key]['toHome'] = await fetchStudentData(toHomeStudents, 'toHome', key);
+    dayObject[key]['toSchool'] = await fetchStudentData(toSchoolStudents, 'toSchool', key);
     
     return dayObject;
   }))
 
   const daysObject = Object.assign({}, ...daysArray);
-  
-  // const students = [];
-
-  // if (responseStopsStudents.docs.length > 0) {
-  //   const stops = responseStopsStudents.docs.map((doc) => {
-  //     const data = doc.data();
-  //     data.id = doc.id;
-  //     return data;
-  //   });
-
-  //   const responseStudents = stops.map(async (stop) => {
-  //     const getStudent = await firestore()
-  //       .collection("students")
-  //       .doc(stop.student)
-  //       .get();
-  //     const studentData = getStudent.data();
-  //     studentData.id = getStudent.id;
-  //     const student = students.find((student) => student.id === stop.student);
-  //     if (student) {
-  //       student.stops.push(stop);
-  //     } else {
-  //       students.push({
-  //         ...studentData,
-  //         stops: [stop],
-  //       });
-  //     }
-  //   });
-  //   await Promise.all(responseStudents);
-  // }
-  // const data = {
-  //   ...routeData,
-  //   id: response.id,
-  //   students: students,
-  // };
   const data = {
     ...routeData,
     id: response.id,
@@ -75,10 +41,24 @@ export async function GET(request, { params }) {
   return NextResponse.json(data);
 }
 
-async function fetchStudentData(students) {
+async function fetchStudentData(students, type, day) {
   const studentDataList = await Promise.all(students.map(async (student) => {
     const studentSnapshot = await student.get();
-    return studentSnapshot.data();
+    const stopsRef = await firestore().collection("stops").where("student", "==", studentSnapshot.id).where("type", "==", type).where("day", "==", day).get();
+    let stop = {}
+    stopsRef.docs.forEach(doc => {
+      const data = doc.data();
+      stop = {
+        ...data,
+        coords : {
+          [type]: data.coords
+        },
+        id: doc.id
+      }
+    })
+    const studentData = studentSnapshot.data();
+    studentData['stop'] = stop;
+    return studentData;
   }));
   return studentDataList;
 }

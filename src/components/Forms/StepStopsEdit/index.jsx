@@ -31,16 +31,16 @@ const StepStopsEdit = () => {
     values?.students?.[selectedDayEdit]?.[typeTravel] || [],
   );
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
-
+  
   const [selectedDay, setSelectedDay] = useState(["all"]);
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isEditStudent, setIsEditStudent] = useState(false);
-
+  
   useEffect(() => {
     setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
   }, [selectedDayEdit, typeTravel, values]);
-
+  
   useEffect(() => {
     if (selectedDay.includes(ALL_DAY)) {
       Object.keys(DAYS).forEach((day) => {
@@ -93,6 +93,18 @@ const StepStopsEdit = () => {
       },
     });
     setStudentsData(newStudents);
+    let updatedStudentsToRemove = { ...values.studentsToRemove };
+
+    if (!updatedStudentsToRemove[selectedDayEdit]) {
+      updatedStudentsToRemove[selectedDayEdit] = { [typeTravel]: [] };
+    }
+
+    updatedStudentsToRemove[selectedDayEdit][typeTravel] = [
+      ...(updatedStudentsToRemove[selectedDayEdit][typeTravel] || []),
+      student,
+    ];
+
+    setFieldValue("studentsToRemove", updatedStudentsToRemove)
     const modal = document.getElementById("my_modal_1");
     modal.close();
   };
@@ -100,7 +112,16 @@ const StepStopsEdit = () => {
   const handleRemoveStudentAll = (e) => {
     e.preventDefault();
     const students = values?.students || {};
+    let updatedStudentsToRemove = { ...values.studentsToRemove };
     const newStudents = Object.keys(students).reduce((acc, day) => {
+      if (!updatedStudentsToRemove[day]) {
+        updatedStudentsToRemove[day] = { [typeTravel]: [] };
+      }
+      updatedStudentsToRemove[day][typeTravel] = [
+        ...(updatedStudentsToRemove[day][typeTravel] || []),
+        selectedStudentToRemove,
+      ];
+      setFieldValue("studentsToRemove", updatedStudentsToRemove)
       const newStudents = students[day][typeTravel].filter(
         (s) => s.id !== selectedStudentToRemove.id,
       );
@@ -112,6 +133,7 @@ const StepStopsEdit = () => {
     }, {});
     setFieldValue(`students`, newStudents);
     setStudentsData(newStudents[selectedDayEdit][typeTravel]);
+    
     const modal = document.getElementById("my_modal_1");
     modal.close();
   };
@@ -119,13 +141,14 @@ const StepStopsEdit = () => {
   const openDeleteModal = (e, student) => {
     e.preventDefault();
     setSelectedStudentToRemove(student);
+    
     const modal = document.getElementById("my_modal_1");
     modal.showModal();
   };
 
   const handleEditStudent = (e, student) => {
     e.preventDefault();
-    return navigation.push(`/dashboard/students/edit/${student.id}`);
+    // return navigation.push(`/dashboard/students/edit/${student.id}`);
   };
 
   const handleSelect = (e) => {

@@ -62,7 +62,13 @@ const getUnitsRoutes = async () => {
     }
     
     const data = await response.json();
-    setUnitsRoutes(data);
+    const formatData = data.map((unit) => {
+      return {
+        ...unit,
+        name: unit.plate,
+      };
+    });
+    setUnitsRoutes(formatData);
     return data;
   } catch (error) {
     return { error: error.message };

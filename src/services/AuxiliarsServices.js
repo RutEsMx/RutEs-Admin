@@ -17,7 +17,7 @@ const getAuxiliars = async () => {
     return { error: error.message };
   }
 };
-const getAuxiliarsRoutes = async () => {
+const getAuxiliarsRoutes = async (isEdit = false) => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/auxiliars`,
@@ -28,7 +28,12 @@ const getAuxiliarsRoutes = async () => {
     }
     const data = await response.json();
     const dataFilter = data.filter((auxiliar) => auxiliar.route === null);
-    return setAuxiliarsRoutes(dataFilter);
+    
+    if (isEdit) {
+      return setAuxiliarsRoutes(data);
+    } else {
+      return setAuxiliarsRoutes(dataFilter);
+    }
   } catch (error) {
     return { error: error.message };
   }

@@ -5,6 +5,7 @@ const useMarkersMap = (params) => {
   const { students, temporalToHome, temporalToSchool, selectedDayEdit, typeTravel } = params;
   const [markers, setMarkers] = useState([]);
   const day = selectedDayEdit;
+  console.log("🚀 ~ file: useMarkersMap.js:10 ~ setMarkersFromStudents ~ students:", students)
 
   const setMarkersFromStudents = (students) => {
     const newMarkers = [];

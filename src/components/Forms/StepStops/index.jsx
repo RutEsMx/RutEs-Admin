@@ -82,7 +82,6 @@ const StepStops = () => {
 
   const handleAddStudent = (e) => {
     e.preventDefault();
-
     if (!selectedStudent)
       return setAlert({
         message: "Selecciona un alumno",

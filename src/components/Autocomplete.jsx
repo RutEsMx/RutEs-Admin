@@ -19,7 +19,7 @@ const Autocomplete = ({
 
   const handleSelect = (option) => {
     if (disabled) return;
-    onSelect(option.id);
+    onSelect(option);
     setSearch(option.name);
     setShowOptions(false);
   };
@@ -44,7 +44,6 @@ const Autocomplete = ({
   const handleSearch = (e) => {
     e.preventDefault();
     setSearch(e.target.value);
-    onChange && onChange(e.target.value);
     setShowOptions(true);
   };
 
