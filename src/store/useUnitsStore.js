@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export const useUnitsStore = create((set) => ({
   units: [],
-  unistRoutes: [],
+  unitsRoutes: [],
   setUnits: (units) => set({ units }),
   addUnits: (unit) =>
     set((state) => ({
