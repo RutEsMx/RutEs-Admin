@@ -9,8 +9,8 @@ import { useEffect } from "react";
 const getAllData = async () => {
   try {
     await Promise.all([
-      getDriversRoutes(),
-      getAuxiliarsRoutes(),
+      getDriversRoutes(true),
+      getAuxiliarsRoutes(true),
       getUnitsRoutes(),
       getStudentsForRoutes(),
     ]);

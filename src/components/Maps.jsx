@@ -21,7 +21,7 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
       draggable: true,
       zoomControl: true,
       minZoom: 13,
-      maxZoom: 18,
+      maxZoom: 20,
       streetViewControl: false,
       ...options,
     }),
@@ -32,7 +32,7 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
     googleMapsApiKey: process.env.GOOGLE_API_KEY,
     libraries: libraries,
   });
-  
+
   useEffect(() => {
     // Aquí puedes manejar cambios en `markers`
     // Por ejemplo, podrías eliminar todos los marcadores antiguos y añadir los nuevos
@@ -70,7 +70,7 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
       <GoogleMap
         options={mapOptions}
         zoom={14}
-        center={mapCenter}
+        center={markersMap[0] ? markersMap[0] : mapCenter}
         mapContainerStyle={{ width: "100%", height: "500px" }}
         {...props}
       >

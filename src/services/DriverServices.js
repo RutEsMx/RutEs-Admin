@@ -89,7 +89,7 @@ const getDrivers = async () => {
     return { error: error?.message };
   }
 };
-const getDriversRoutes = async () => {
+const getDriversRoutes = async (isEdit = false) => {
 
   try {
     const response = await fetch(
@@ -100,8 +100,12 @@ const getDriversRoutes = async () => {
     }
     const data = await response.json();
     const dataFilter = data.filter((driver) => driver.route === null);
-   
-    return setDriversRoutes(dataFilter);
+    if (isEdit) {
+      return setDriversRoutes(data);
+    } else {
+      return setDriversRoutes(dataFilter);
+    }
+    
   } catch (error) {
     return { error: error?.message };
   }
