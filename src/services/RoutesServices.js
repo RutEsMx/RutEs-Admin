@@ -20,6 +20,7 @@ const createTravels = async (students) => {
 
   Object.keys(students).map((key) => {
     // Inicializar si no existe
+
     if (!travelsObject[key]) {
       travelsObject[key] = {
         toHome: { students: [] },
@@ -27,17 +28,19 @@ const createTravels = async (students) => {
       };
     }
 
-    const toHomeStudents = students[key].toHome.map((student) => {
-      return doc(db, "students", student.id);
-    });
+    const toHomeStudents =
+      students[key]?.toHome?.map((student) => {
+        return doc(db, "students", student.id);
+      }) || [];
     travelsObject[key].toHome.students = [
       ...travelsObject[key].toHome.students,
       ...toHomeStudents,
     ];
 
-    const toSchoolStudents = students[key].toSchool.map((student) => {
-      return doc(db, "students", student.id);
-    });
+    const toSchoolStudents =
+      students[key]?.toSchool?.map((student) => {
+        return doc(db, "students", student.id);
+      }) || [];
     travelsObject[key].toSchool.students = [
       ...travelsObject[key].toSchool.students,
       ...toSchoolStudents,
@@ -50,11 +53,11 @@ const updateTravels = async (id, students) => {
     let arrayToHome = [];
     let arrayToSchool = [];
     const refTravel = doc(db, "travels", id);
-    students[key].toHome.map((student) => {
+    students[key]?.toHome?.map((student) => {
       const refStudent = doc(db, "students", student.id);
       arrayToHome.push(refStudent);
     });
-    students[key].toSchool.map((student) => {
+    students[key]?.toSchool?.map((student) => {
       const refStudent = doc(db, "students", student.id);
       arrayToSchool.push(refStudent);
     });
@@ -74,11 +77,12 @@ const updateTravels = async (id, students) => {
 
 const createStops = async (students, routeId) => {
   Object.keys(students).map((key) => {
-    students[key].toHome.map((element) => {
-      if (element?.stop?.coords?.toHome === undefined) return;
+    students[key]?.toHome?.map((element) => {
+      if (element?.stop?.coords === undefined || element?.stop?.coords === null)
+        return;
       delete element.value;
       const stopObject = {
-        coords: element?.stop?.coords?.toHome,
+        coords: element?.stop?.coords,
         day: key,
         student: element.id,
         route: routeId,
@@ -86,11 +90,12 @@ const createStops = async (students, routeId) => {
       };
       createDocument("stops", stopObject);
     });
-    students[key].toSchool.map((element) => {
-      if (element?.stop?.coords?.toSchool === undefined) return;
+    students[key]?.toSchool?.map((element) => {
+      if (element?.stop?.coords === undefined || element?.stop?.coords === null)
+        return;
       delete element.value;
       const stopObject = {
-        coords: element?.stop?.coords?.toSchool,
+        coords: element?.stop?.coords,
         day: key,
         student: element.id,
         route: routeId,
@@ -102,19 +107,22 @@ const createStops = async (students, routeId) => {
 };
 
 const deleteStops = async (studentsToRemove) => {
-  
+  if (studentsToRemove === undefined) return;
+
   try {
     Object.keys(studentsToRemove).map((key) => {
-      studentsToRemove[key]?.toHome && studentsToRemove[key].toHome.map( (element) => {
-        if (element?.stop?.id === undefined) return;
-        const qStop = doc(db, "stops", element?.stop?.id);
-        deleteDoc(qStop);
-      });
-      studentsToRemove[key].toSchool && studentsToRemove[key]?.toSchool.map( (element) => {
-        if(element?.stop?.id === undefined) return;
-        const qStop = doc(db, "stops", element?.stop?.id);
-        deleteDoc(qStop);
-      });
+      studentsToRemove[key]?.toHome &&
+        studentsToRemove[key].toHome.map((element) => {
+          if (element?.stop?.id === undefined) return;
+          const qStop = doc(db, "stops", element?.stop?.id);
+          deleteDoc(qStop);
+        });
+      studentsToRemove[key].toSchool &&
+        studentsToRemove[key]?.toSchool.map((element) => {
+          if (element?.stop?.id === undefined) return;
+          const qStop = doc(db, "stops", element?.stop?.id);
+          deleteDoc(qStop);
+        });
     });
   } catch (error) {
     return { error };
@@ -123,41 +131,43 @@ const deleteStops = async (studentsToRemove) => {
 
 const updateStops = async (students, routeId) => {
   try {
-    Object.keys(students).map((key) => {
-      students[key]?.toHome && students[key].toHome.map((element) => {
-        if (element?.stop.id) {
-          const qStop = doc(db, "stops", element?.stop.id);
-          return updateDoc(qStop, {
-            coords: element?.stop.coords.toHome,
-          });
+    const updatePromises = [];
+
+    for (const key of Object.keys(students)) {
+      const processStudentStops = async (type) => {
+        for (const element of students[key][type]) {
+          if (element?.stop?.id) {
+            const qStop = doc(db, "stops", element?.stop.id);
+            updatePromises.push(
+              updateDoc(qStop, {
+                coords: element?.stop?.coords,
+              }),
+            );
+          } else if (element?.stop?.coords) {
+            const stopData = {
+              student: element.id,
+              route: routeId,
+              type: type,
+              day: key,
+              coords: element?.stop?.coords,
+            };
+            updatePromises.push(createDocument("stops", stopData));
+          }
         }
-        element['stop']['student'] = element.id;
-        element['stop']['route'] = routeId;
-        element['stop']['type'] = 'toHome';
-        element['stop']['day'] = key;
-        element['stop']['coords'] = element?.stop.coords.toHome;
-        return createDocument("stops", element?.stop);
-      })
-      students[key].toSchool && students[key]?.toSchool.map((element) => {
-        if (element?.stop.id) {
-          const qStop = doc(db, "stops", element?.stop.id);
-          return updateDoc(qStop, {
-            coords: element?.stop.coords.toSchool,
-          });
-        }
-        element['stop']['student'] = element.id;
-        element['stop']['route'] = routeId;
-        element['stop']['type'] = 'toSchool';
-        element['stop']['day'] = key;
-        element['stop']['coords'] = element?.stop.coords.toHome;
-        return createDocument("stops", element?.stop);
-      });
-    });
+      };
+
+      if (students[key]?.toHome) {
+        await processStudentStops("toHome");
+      }
+      if (students[key]?.toSchool) {
+        await processStudentStops("toSchool");
+      }
+    }
+    await Promise.all(updatePromises);
   } catch (error) {
     return { error };
   }
-}
-  
+};
 
 // Create a new route
 const createRoutesByForm = async (data) => {
@@ -217,7 +227,6 @@ const updateEntity = async (entityType, id, routeId, oldId = null) => {
 
 const updateRoutesByForm = async (data) => {
   const { routeId, students, studentsToRemove, ...restData } = data;
-  console.log("🚀 ~ file: RoutesServices.js:188 ~ updateRoutesByForm ~ data:", data)
   try {
     const getOldRoute = await getDoc(doc(db, "routes", routeId));
     const oldRouteData = getOldRoute.data();
@@ -225,7 +234,7 @@ const updateRoutesByForm = async (data) => {
     const responseUpdateTravels = await updateTravels(routeId, students);
     const responseDeleteStops = await deleteStops(studentsToRemove);
     const responseUpdateStops = await updateStops(students, routeId);
-   
+
     const updateAuxiliar = updateEntity(
       "profile",
       restData?.auxiliar,
@@ -244,6 +253,7 @@ const updateRoutesByForm = async (data) => {
       routeId,
       oldRouteData?.unit,
     );
+
     await Promise.all([
       responseRoute,
       responseUpdateTravels,

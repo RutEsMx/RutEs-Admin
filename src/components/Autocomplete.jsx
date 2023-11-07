@@ -11,7 +11,6 @@ const Autocomplete = ({
   error,
   value,
   disabled,
-  onChange = null,
 }) => {
   const [search, setSearch] = useState("");
   const [showOptions, setShowOptions] = useState(false);
