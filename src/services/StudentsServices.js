@@ -38,7 +38,7 @@ const getStudentById = async (id) => {
     const routes = await Promise.all(routesPromises);
     studentData.routes = routes;
     studentData.stops = stops.sort((a, b) => {
-      return daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day);
+      return daysOfWeek?.indexOf(a.day) - daysOfWeek?.indexOf(b.day);
     });
   }
 

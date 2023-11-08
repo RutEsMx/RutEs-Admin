@@ -158,10 +158,15 @@ const StepStopsEdit = () => {
     e.preventDefault();
     student["value"] = student.id;
     setSelectedStudent(student);
-    if (typeTravel === "toHome") {
+    if (student?.serviceType === "halfMorning") {
       setFieldValue("temporalToSchool", student?.stop?.coords || null);
-    } else {
+    } else if (student?.serviceType === "halfAfternoon") {
       setFieldValue("temporalToHome", student?.stop?.coords || null);
+    } else {
+      if (typeTravel === "toHome")
+        setFieldValue("temporalToHome", student?.stop?.coords || null);
+      if (typeTravel === "toSchool")
+        setFieldValue("temporalToSchool", student?.stop?.coords || null);
     }
     setIsEditStudent(true);
   };
@@ -176,10 +181,10 @@ const StepStopsEdit = () => {
       if (!selected.includes(name) && checked) {
         selected.push(name);
         if (name !== ALL_DAY && checked && selected.includes(ALL_DAY)) {
-          selected.splice(selected.indexOf(ALL_DAY), 1);
+          selected.splice(selected?.indexOf(ALL_DAY), 1);
         }
       } else {
-        selected.splice(selected.indexOf(name), 1);
+        selected.splice(selected?.indexOf(name), 1);
       }
 
       return selected;
