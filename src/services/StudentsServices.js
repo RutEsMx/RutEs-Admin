@@ -13,7 +13,7 @@ import {
 } from "@/store/useStudentsStore";
 import { collection, doc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
-import { DAYS } from "@/utils/options";
+import { CURRENT_DAY, DAYS } from "@/utils/options";
 import { setStructureDatatable } from "./TableServices";
 
 const getStudentById = async (id) => {
@@ -246,7 +246,8 @@ const getStudents = async () => {
       return { error: true, redirect: response.url };
     }
     const data = await response.json();
-    const dataTable = setStructureDatatable(data);
+    const studentsOptions = await createStudentsTable(data);
+    const dataTable = setStructureDatatable(studentsOptions);
     return setStudents(dataTable);
   } catch (error) {
     return { error: error?.message };
@@ -318,6 +319,28 @@ const createStudentsOptions = async (students) => {
       ...student,
     };
     return obj;
+  });
+  return Promise.all(studentsPromise);
+};
+const createStudentsTable = async (students) => {
+  const studentsPromise = students.map(async (student) => {
+    const stops = query(
+      collection(db, "stops"),
+      where("student", "==", student?.id),
+    );
+
+    const stopsSnapshot = await getDocs(stops);
+    if (!stopsSnapshot.empty) {
+      const stopsData = await stopsSnapshot.docs.map((doc) => {
+        const stop = doc.data();
+        if (stop.day === CURRENT_DAY) {
+          return { ...stop, id: doc.id };
+        }
+      });
+      // remove undefined values into stopsData
+      student.stops = stopsData.filter((stop) => stop);
+    }
+    return student;
   });
   return Promise.all(studentsPromise);
 };
