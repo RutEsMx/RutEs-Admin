@@ -83,6 +83,9 @@ const DAYS_OPTIONS = [
   { value: "friday", label: "Viernes" },
 ];
 
+const CURRENT_DAY =
+  DAYS_OPTIONS.slice(1)[new Date().getDay()].value || "monday";
+
 export {
   OPTIONS_TYPE_SERVICES,
   OPTIONS_BLOOD_TYPES,
@@ -94,4 +97,5 @@ export {
   DAYS,
   DAYS_OPTIONS,
   COLORS_HEX,
+  CURRENT_DAY,
 };

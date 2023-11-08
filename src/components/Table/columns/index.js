@@ -1,6 +1,7 @@
 import { createColumnHelper } from "@tanstack/table-core";
 import HeaderTable from "@/components/Table/elements/HeaderTable";
 import CellTable from "@/components/Table/elements/CellTable";
+import CellTableRoute from "@/components/Table/elements/CellTableRoute";
 import CheckboxTable from "@/components/Table/elements/CheckboxTable";
 import { STATUS_TRAVEL } from "@/utils/options";
 import {
@@ -100,11 +101,20 @@ const studentsColumns = [
       );
     },
   },
-  columnHelper.accessor("dayRoute", {
+  columnHelper.accessor("stops", {
     cell: (info) => {
       return (
-        <div className="flex flex-row items-center justify-center">
-          <CellTable>{info.getValue()?.route?.nameRoute}</CellTable>
+        <div className="flex flex-col items-start justify-start">
+          {info.getValue()?.map((stop) => {
+            const type =
+              stop?.type === "toSchool" ? "A la escuela:" : "A casa:";
+            return (
+              <div key={stop?.id} className="text-xs flex flex-row">
+                <CellTable className="font-semibold ">{type}</CellTable>
+                <CellTableRoute>{stop?.route}</CellTableRoute>
+              </div>
+            );
+          })}
         </div>
       );
     },
