@@ -61,7 +61,6 @@ const updateTravels = async (id, students) => {
       const refStudent = doc(db, "students", student.id);
       arrayToSchool.push(refStudent);
     });
-
     updateDoc(refTravel, {
       [key]: {
         toHome: {
@@ -136,6 +135,10 @@ const updateStops = async (students, routeId) => {
     for (const key of Object.keys(students)) {
       const processStudentStops = async (type) => {
         for (const element of students[key][type]) {
+          console.log(
+            "🚀 ~ file: RoutesServices.js:139 ~ processStudentStops ~ element:",
+            element,
+          );
           if (element?.stop?.id) {
             const qStop = doc(db, "stops", element?.stop.id);
             updatePromises.push(
@@ -144,6 +147,10 @@ const updateStops = async (students, routeId) => {
               }),
             );
           } else if (element?.stop?.coords) {
+            console.log(
+              "🚀 ~ file: RoutesServices.js:148 ~ processStudentStops ~ element:",
+              element,
+            );
             const stopData = {
               student: element.id,
               route: routeId,
@@ -265,6 +272,10 @@ const updateRoutesByForm = async (data) => {
     ]);
     return { success: true, message: "Ruta actualizada correctamente" };
   } catch (error) {
+    console.log(
+      "🚀 ~ file: RoutesServices.js:270 ~ updateRoutesByForm ~ error:",
+      error,
+    );
     return { error };
   }
 };

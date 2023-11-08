@@ -35,7 +35,7 @@ const useMarkersMap = (params) => {
     setMarkers((prevMarkers) => {
       const newMarkers = [];
       const temporalMarker = prevMarkers.find((marker) =>
-        marker.studentId.includes("temporal"),
+        marker?.studentId?.includes("temporal"),
       );
 
       newMarkers.push({
