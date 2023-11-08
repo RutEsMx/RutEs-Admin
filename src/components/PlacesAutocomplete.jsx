@@ -14,7 +14,7 @@ const PlacesAutocomplete = ({ label, setPlace, place }) => {
         setValue(null);
         return;
       } else {
-        if (place.place_id) {
+        if (place?.place_id) {
           setValue(place);
         }
       }
@@ -59,7 +59,8 @@ const PlacesAutocomplete = ({ label, setPlace, place }) => {
           region: "mx",
         }}
         selectProps={{
-          value,
+          // value,
+          defaultInputValue: value?.label,
           onChange: handleChange,
           placeholder: "Buscar dirección...",
           noOptionsMessage: () => "No hay resultados",

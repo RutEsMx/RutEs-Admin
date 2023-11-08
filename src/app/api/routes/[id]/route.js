@@ -71,6 +71,7 @@ async function fetchStudentData(students, type, day) {
         };
       });
       const studentData = studentSnapshot.data();
+      studentData["id"] = studentSnapshot.id;
       studentData["stop"] = stop;
       return studentData;
     }),
