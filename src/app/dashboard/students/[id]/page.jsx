@@ -7,7 +7,6 @@ import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import { setAlert } from "@/store/useSystemStore";
 import ButtonLink from "@/components/ButtonLink";
 import { useStudentsStore } from "@/store/useStudentsStore";
-import { DAYS } from "@/utils/options";
 const storage = getStorage();
 
 const Page = ({ params }) => {
@@ -103,17 +102,12 @@ const Page = ({ params }) => {
             </div>
           </div>
           <div>
-            <Image
-              src={imageUrl}
-              alt="avatar"
-              width={200}
-              height={200}
-            />
+            <Image src={imageUrl} alt="avatar" width={200} height={200} />
           </div>
         </div>
         <div className="my-3">
           <div className="flex flex-col justify-around">
-            <div className="flex flex-row gap-2 mb-4">
+            {/* <div className="flex flex-row gap-2 mb-4">
               <span className="font-bold text-2xl">Rutas:</span>
             </div>
             {student?.routes?.map((route) => (
@@ -121,8 +115,8 @@ const Page = ({ params }) => {
                 <span className="font-bold">Nombre:</span>
                 <span className="">{route?.name}</span>
               </div>
-            ))}
-            <div className="grid grid-flow-col gap-4  mt-4">
+            ))} */}
+            {/* <div className="grid grid-flow-col gap-4  mt-4">
               {student?.stops?.map((stop) => (
                 <div className="flex flex-col gap-2 row-span-1" key={stop?.id}>
                   <span className="font-bold">Día:</span>
@@ -141,7 +135,7 @@ const Page = ({ params }) => {
                   )}
                 </div>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
