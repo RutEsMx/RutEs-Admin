@@ -47,7 +47,7 @@ const getStudentById = async (id) => {
 };
 
 const createParentProfile = async (parent, schoolId, roles) => {
-  if (parent.emailExist) return updateParentProfile(parent, schoolId, roles);
+  if (parent.emailExist) return updateParentProfile(parent);
   const { email, avatar } = parent;
   let avatarFilename = avatar;
 
@@ -95,7 +95,7 @@ const createParentProfile = async (parent, schoolId, roles) => {
   }
 };
 
-const updateParentProfile = async (parent) => {
+export const updateParentProfile = async (parent) => {
   const { avatar } = parent;
   let avatarFilename = avatar;
 
@@ -196,7 +196,7 @@ const createParentsByForm = async (data, schoolId) => {
 
   if (fatherProfile?.id) {
     responseProfile = await updateDocument("profile", fatherProfile.id, {
-      students: [...father.students, studentProfile],
+      students: [...(father.students || []), studentProfile],
     });
     if (responseProfile?.error) {
       throw new Error(`Papá: ${responseProfile.error?.code}`);
@@ -205,7 +205,7 @@ const createParentsByForm = async (data, schoolId) => {
   }
   if (motherProfile?.id) {
     responseProfile = await updateDocument("profile", motherProfile.id, {
-      students: [...mother.students, studentProfile],
+      students: [...(mother.students || []), studentProfile],
     });
     if (responseProfile?.error) {
       throw new Error(`Mamá: ${responseProfile.error?.code}`);
