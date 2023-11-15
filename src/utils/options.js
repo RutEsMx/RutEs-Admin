@@ -11,9 +11,9 @@ const OPTIONS_TYPE_SERVICES = [
   { value: "complete", label: "Completo" },
   { value: "halfMorning", label: "Media Ruta Mañana" }, // Viaje a la escuela
   { value: "halfAfternoon", label: "Media Ruta Tarde" }, // Viaje a la casa
-  { value: "scholarship", label: "Beca" },
-  { value: "secondChild", label: "Segundo Hijo" },
-  { value: "thirdChild", label: "Tercer Hijo o más" },
+  // { value: "scholarship", label: "Beca" },
+  // { value: "secondChild", label: "Segundo Hijo" },
+  // { value: "thirdChild", label: "Tercer Hijo o más" },
 ];
 
 const OPTIONS_BLOOD_TYPES = [
