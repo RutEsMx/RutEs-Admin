@@ -42,6 +42,7 @@ const MultiStepFormStudent = () => {
     avatar: "",
     includeFather: false,
     includeMother: false,
+    status: "active",
     father: {
       name: "",
       lastName: "",
@@ -95,8 +96,7 @@ const MultiStepFormStudent = () => {
     if (step + 1 < newSteps.length) {
       setIsLoading(false);
       setStep(step + 1);
-    } 
-    else {
+    } else {
       createParentsByForm(values, profile?.schoolId)
         .then((response) => {
           if (response?.success) {

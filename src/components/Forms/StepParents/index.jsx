@@ -20,24 +20,27 @@ const StepParents = ({ validation }) => {
     setType(validation?._nodes[0]);
     setTitle(validation?._nodes[0] === "father" ? "Padre" : "Madre");
   }, [validation]);
-  
-  const findEmailFirestore = async(e) => {
-    const email = e.target.value
-    setFieldValue(`${type}.email`, email)
-    if (email.length > 3){
+
+  const findEmailFirestore = async (e) => {
+    const email = e.target.value;
+    setFieldValue(`${type}.email`, email);
+    if (email.length > 3) {
       try {
-        const qProfile = query(collection(db, "profile"), where("email", "==", email))
-        const response = await getDocs(qProfile)
+        const qProfile = query(
+          collection(db, "profile"),
+          where("email", "==", email),
+        );
+        const response = await getDocs(qProfile);
         if (response.empty) {
-          setEmailExist(false)
-          setFieldValue(`${type}.emailExist`, false)
-          return 
-        } 
-        if (response.docs.length > 0){
-          setEmailExist(true)
-          const data = response.docs[0].data()
-          setEmailData(data)
-          return
+          setEmailExist(false);
+          setFieldValue(`${type}.emailExist`, false);
+          return;
+        }
+        if (response.docs.length > 0) {
+          setEmailExist(true);
+          const data = response.docs[0].data();
+          setEmailData(data);
+          return;
         }
       } catch (error) {
         setAlert({
@@ -46,25 +49,24 @@ const StepParents = ({ validation }) => {
         });
       }
     }
-  }
-  
-  const addEmailData = async(e) => {
-    e.preventDefault()
-    setFieldValue(`${type}.name`, emailData.name)
-    setFieldValue(`${type}.lastName`, emailData.lastName)
-    setFieldValue(`${type}.secondLastName`, emailData.secondLastName)
-    setFieldValue(`${type}.phone`, emailData.phone)
-    setFieldValue(`${type}.phoneEmergency`, emailData.phoneEmergency)
-    setFieldValue(`${type}.phoneFamily`, emailData.phoneFamily)
-    setFieldValue(`${type}.id`, emailData.id)
-    setFieldValue(`${type}.students`, emailData.students)
+  };
+
+  const addEmailData = async (e) => {
+    e.preventDefault();
+    setFieldValue(`${type}.name`, emailData.name);
+    setFieldValue(`${type}.lastName`, emailData.lastName);
+    setFieldValue(`${type}.secondLastName`, emailData.secondLastName);
+    setFieldValue(`${type}.phone`, emailData.phone);
+    setFieldValue(`${type}.phoneEmergency`, emailData.phoneEmergency);
+    setFieldValue(`${type}.phoneFamily`, emailData.phoneFamily);
+    setFieldValue(`${type}.id`, emailData.id);
+    setFieldValue(`${type}.students`, emailData.students);
     if (emailData?.avatar) {
       const url = await downloadURL(emailData.avatar);
       setFieldValue(`${type}.avatar`, url);
     }
-    setFieldValue(`${type}.emailExist`, true)
-  }
-    
+    setFieldValue(`${type}.emailExist`, true);
+  };
 
   return (
     <div className="border border-black px-4 py-2 mt-4">
@@ -73,30 +75,28 @@ const StepParents = ({ validation }) => {
         <div className="col-span-2">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="col-span-1">
-            <InputField
-              label="Correo Electrónico"
-              type="email"
-              name={`${type}.email`}
-              value={values[type].email}
-              onChange={findEmailFirestore}
-              placeholder="Dato requerido para iniciar sesión"
-              error={errors[type]?.email}
-            />
+              <InputField
+                label="Correo Electrónico"
+                type="email"
+                name={`${type}.email`}
+                value={values[type].email}
+                onChange={findEmailFirestore}
+                placeholder="Dato requerido para iniciar sesión"
+                error={errors[type]?.email}
+              />
             </div>
             <div className="col-span-1 flex flex-col ms-2">
-              {
-                emailExist && (
-                  <>
-                    <p className="text-xs text-gray-500">El correo electrónico ya existe en la base de datos</p>
-                    <span>¿Quiere asignar este padre al alumno?</span>
-                    <ButtonAction
-                      onClick={addEmailData}
-                    >
-                      <PlusIcon className="h-5 w-5 text-black" />
-                    </ButtonAction>  
-                  </>
-                )
-              }
+              {emailExist && (
+                <>
+                  <p className="text-xs text-gray-500">
+                    El correo electrónico ya existe en la base de datos
+                  </p>
+                  <span>¿Quiere asignar este padre al alumno?</span>
+                  <ButtonAction onClick={addEmailData}>
+                    <PlusIcon className="h-5 w-5 text-black" />
+                  </ButtonAction>
+                </>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -153,6 +153,7 @@ const StepParents = ({ validation }) => {
         <div>
           <div className="flex flex-col">
             <FileInput
+              key={values[type].avatar}
               label="Avatar"
               name={`${type}.avatar`}
               value={values[type].avatar}
