@@ -16,7 +16,7 @@ const useMarkersMap = (params) => {
     const newMarkers = [];
     if (!students) return;
     if (!students[day]) return;
-    students[day][typeTravel].forEach((element) => {
+    students[day][typeTravel]?.forEach((element) => {
       element?.stop?.coords?.lat &&
         element.stop?.coords?.lng &&
         newMarkers.push({

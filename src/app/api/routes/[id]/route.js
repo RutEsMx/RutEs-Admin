@@ -23,10 +23,18 @@ export async function GET(request, { params }) {
         [key]: {
           toHome: [],
           toSchool: [],
+          workshop: [],
         },
       };
-      const toHomeStudents = Object.values(travel.toHome).flat();
-      const toSchoolStudents = Object.values(travel.toSchool).flat();
+      const toHomeStudents = travel.toHome
+        ? Object.values(travel.toHome).flat()
+        : [];
+      const toSchoolStudents = travel.toSchool
+        ? Object.values(travel.toSchool).flat()
+        : [];
+      const workshopStudents = travel.workshop
+        ? Object.values(travel.workshop).flat()
+        : [];
       dayObject[key]["toHome"] = await fetchStudentData(
         toHomeStudents,
         "toHome",
@@ -35,6 +43,11 @@ export async function GET(request, { params }) {
       dayObject[key]["toSchool"] = await fetchStudentData(
         toSchoolStudents,
         "toSchool",
+        key,
+      );
+      dayObject[key]["workshop"] = await fetchStudentData(
+        workshopStudents,
+        "workshop",
         key,
       );
 
@@ -52,8 +65,15 @@ export async function GET(request, { params }) {
 }
 
 async function fetchStudentData(students, type, day) {
+  if (!students) {
+    return {};
+  }
   const studentDataList = await Promise.all(
     students.map(async (student) => {
+      if (!student || !student.get) {
+        return null;
+      }
+
       const studentSnapshot = await student.get();
       const stopsRef = await firestore()
         .collection("stops")
@@ -62,6 +82,7 @@ async function fetchStudentData(students, type, day) {
         .where("day", "==", day)
         .get();
       let stop = {};
+
       stopsRef.docs.forEach((doc) => {
         const data = doc.data();
         stop = {
@@ -70,8 +91,8 @@ async function fetchStudentData(students, type, day) {
           id: doc.id,
         };
       });
-      const studentData = studentSnapshot.data();
-      studentData["id"] = studentSnapshot.id;
+      const studentData = studentSnapshot?.data();
+      studentData["id"] = studentSnapshot?.id;
       studentData["stop"] = stop;
       return studentData;
     }),
