@@ -24,6 +24,9 @@ const useMarkersMap = (params) => {
           lng: element.stop?.coords?.lng,
           studentId: element.id,
           name: element.name,
+          fullName: `${element.name || ""} ${element.lastName || ""} ${
+            element.secondLastName || ""
+          }`,
           draggable: false,
           color: COLORS_HEX.rutes,
         });
