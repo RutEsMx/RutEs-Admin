@@ -25,6 +25,7 @@ const createTravels = async (students) => {
       travelsObject[key] = {
         toHome: { students: [] },
         toSchool: { students: [] },
+        workshop: { students: [] },
       };
     }
 
@@ -45,6 +46,16 @@ const createTravels = async (students) => {
       ...travelsObject[key].toSchool.students,
       ...toSchoolStudents,
     ];
+
+    const workshopStudents =
+      students[key]?.workshop?.map((student) => {
+        return doc(db, "students", student.id);
+      }) || [];
+
+    travelsObject[key].workshop.students = [
+      ...travelsObject[key].workshop.students,
+      ...workshopStudents,
+    ];
   });
   return createDocument("travels", travelsObject);
 };
@@ -52,6 +63,8 @@ const updateTravels = async (id, students) => {
   Object.keys(students).map((key) => {
     let arrayToHome = [];
     let arrayToSchool = [];
+    let arrayWorkshop = [];
+
     const refTravel = doc(db, "travels", id);
     students[key]?.toHome?.map((student) => {
       const refStudent = doc(db, "students", student.id);
@@ -61,6 +74,11 @@ const updateTravels = async (id, students) => {
       const refStudent = doc(db, "students", student.id);
       arrayToSchool.push(refStudent);
     });
+    students[key]?.workshop?.map((student) => {
+      const refStudent = doc(db, "students", student.id);
+      arrayWorkshop.push(refStudent);
+    });
+
     updateDoc(refTravel, {
       [key]: {
         toHome: {
@@ -68,6 +86,9 @@ const updateTravels = async (id, students) => {
         },
         toSchool: {
           students: arrayToSchool,
+        },
+        workshop: {
+          students: arrayWorkshop,
         },
       },
     });
@@ -102,6 +123,20 @@ const createStops = async (students, routeId) => {
       };
       createDocument("stops", stopObject);
     });
+
+    students[key]?.workshop?.map((element) => {
+      if (element?.stop?.coords === undefined || element?.stop?.coords === null)
+        return;
+      delete element.value;
+      const stopObject = {
+        coords: element?.stop?.coords,
+        day: key,
+        student: element.id,
+        route: routeId,
+        type: "workshop",
+      };
+      createDocument("stops", stopObject);
+    });
   });
 };
 
@@ -116,8 +151,14 @@ const deleteStops = async (studentsToRemove) => {
           const qStop = doc(db, "stops", element?.stop?.id);
           deleteDoc(qStop);
         });
-      studentsToRemove[key].toSchool &&
+      studentsToRemove[key]?.toSchool &&
         studentsToRemove[key]?.toSchool.map((element) => {
+          if (element?.stop?.id === undefined) return;
+          const qStop = doc(db, "stops", element?.stop?.id);
+          deleteDoc(qStop);
+        });
+      studentsToRemove[key]?.workshop &&
+        studentsToRemove[key]?.workshop.map((element) => {
           if (element?.stop?.id === undefined) return;
           const qStop = doc(db, "stops", element?.stop?.id);
           deleteDoc(qStop);
@@ -135,10 +176,6 @@ const updateStops = async (students, routeId) => {
     for (const key of Object.keys(students)) {
       const processStudentStops = async (type) => {
         for (const element of students[key][type]) {
-          console.log(
-            "🚀 ~ file: RoutesServices.js:139 ~ processStudentStops ~ element:",
-            element,
-          );
           if (element?.stop?.id) {
             const qStop = doc(db, "stops", element?.stop.id);
             updatePromises.push(
@@ -147,10 +184,6 @@ const updateStops = async (students, routeId) => {
               }),
             );
           } else if (element?.stop?.coords) {
-            console.log(
-              "🚀 ~ file: RoutesServices.js:148 ~ processStudentStops ~ element:",
-              element,
-            );
             const stopData = {
               student: element.id,
               route: routeId,
@@ -169,6 +202,9 @@ const updateStops = async (students, routeId) => {
       if (students[key]?.toSchool) {
         await processStudentStops("toSchool");
       }
+      if (students[key]?.workshop) {
+        await processStudentStops("workshop");
+      }
     }
     await Promise.all(updatePromises);
   } catch (error) {
@@ -179,6 +215,7 @@ const updateStops = async (students, routeId) => {
 // Create a new route
 const createRoutesByForm = async (data) => {
   const { students } = data;
+
   try {
     const responseTravels = await createTravels(students);
     await createStops(students, responseTravels.id);
@@ -191,19 +228,22 @@ const createRoutesByForm = async (data) => {
       auxiliar: data.auxiliar,
       driver: data.driver,
       unit: data.unit,
+      workshop: data.workshop,
     };
 
     const responseRoute = await createDocument("routes", dataRoute);
+    const routeToUpdate = data.workshop ? "routeWorkshop" : "route";
+
     const responseUpdateAuxiliar = await updateDocument(
       "profile",
       data.auxiliar,
-      { route: responseRoute.id },
+      { [routeToUpdate]: responseRoute.id },
     );
     const responseUpdateDriver = await updateDocument("drivers", data.driver, {
-      route: responseRoute.id,
+      [routeToUpdate]: responseRoute.id,
     });
     const responseUpdateUnit = await updateDocument("units", data.unit, {
-      route: responseRoute.id,
+      [routeToUpdate]: responseRoute.id,
     });
 
     return Promise.all([
@@ -223,11 +263,18 @@ const createRoutesByForm = async (data) => {
   }
 };
 
-const updateEntity = async (entityType, id, routeId, oldId = null) => {
+const updateEntity = async (
+  entityType,
+  id,
+  routeId,
+  oldId = null,
+  workshop,
+) => {
+  const routeToUpdate = workshop ? "routeWorkshop" : "route";
   if (id !== oldId) {
-    await updateDocument(entityType, id, { route: routeId });
+    await updateDocument(entityType, id, { [routeToUpdate]: routeId });
     if (oldId) {
-      await updateDocument(entityType, oldId, { route: null });
+      await updateDocument(entityType, oldId, { [routeToUpdate]: null });
     }
   }
 };
@@ -247,18 +294,21 @@ const updateRoutesByForm = async (data) => {
       restData?.auxiliar,
       routeId,
       oldRouteData?.auxiliar,
+      restData?.workshop,
     );
     const updateDriver = updateEntity(
       "drivers",
       restData?.driver,
       routeId,
       oldRouteData?.driver,
+      restData?.workshop,
     );
     const updateUnit = updateEntity(
       "units",
       restData?.unit,
       routeId,
       oldRouteData?.unit,
+      restData?.workshop,
     );
 
     await Promise.all([
@@ -272,10 +322,6 @@ const updateRoutesByForm = async (data) => {
     ]);
     return { success: true, message: "Ruta actualizada correctamente" };
   } catch (error) {
-    console.log(
-      "🚀 ~ file: RoutesServices.js:270 ~ updateRoutesByForm ~ error:",
-      error,
-    );
     return { error };
   }
 };

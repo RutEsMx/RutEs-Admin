@@ -13,6 +13,7 @@ function useStudentManager() {
     typeTravel,
     temporalToHome,
     temporalToSchool,
+    temporalWorkshop,
   ) => {
     const students = values.students || {};
 
@@ -46,7 +47,11 @@ function useStudentManager() {
 
     if (selectedDay.includes(ALL_DAY)) {
       Object.keys(DAYS).forEach((day) => {
-        if (bothTravels) {
+        if (typeTravel === "workshop") {
+          const stop = createStop(temporalWorkshop);
+          const studentObj = { ...selectedStudent, stop };
+          updateStudentArray(day, "workshop", studentObj);
+        } else if (bothTravels) {
           const stop = createStop(temporalToHome);
           const studentObj = { ...selectedStudent, stop };
           updateStudentArray(day, "toHome", studentObj);
@@ -76,7 +81,11 @@ function useStudentManager() {
       });
     } else {
       selectedDay.forEach((day) => {
-        if (bothTravels) {
+        if (typeTravel === "workshop") {
+          const stop = createStop(temporalWorkshop);
+          const studentObj = { ...selectedStudent, stop };
+          updateStudentArray(day, "workshop", studentObj);
+        } else if (bothTravels) {
           const stop = createStop(temporalToHome);
           const studentObj = { ...selectedStudent, stop };
           updateStudentArray(day, "toHome", studentObj);
@@ -111,6 +120,7 @@ function useStudentManager() {
   const resetForm = () => {
     setFieldValue("temporalToHome", null);
     setFieldValue("temporalToSchool", null);
+    setFieldValue("temporalWorkshop", null);
   };
 
   return {
