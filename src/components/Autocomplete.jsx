@@ -36,7 +36,10 @@ const Autocomplete = ({
       const option = options.find((option) => {
         return option.id === value;
       });
-      setSearch(option?.name || "");
+      const full = `${option?.name || ""} ${option?.lastName || ""} ${
+        option?.secondLastName || ""
+      }`;
+      setSearch(full || "");
     }
   }, [value, options]);
 
