@@ -409,14 +409,30 @@ const auxiliarsColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
-    cell: (data) => {
-      const { row } = data;
+    cell: (info) => {
       return (
-        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
-          <div className="flex flex-row items-center justify-center">
-            <CellTable>{data.getValue()}</CellTable>
+        <div className="flex flex-col items-center justify-start">
+          <div key={stop?.id} className="text-xs flex flex-row">
+            <CellTableRoute className="text-base">
+              {info.getValue()}
+            </CellTableRoute>
           </div>
-        </Link>
+        </div>
+      );
+    },
+  },
+  {
+    header: () => <HeaderTable>Ruta taller</HeaderTable>,
+    accessorKey: "routeWorkshop",
+    cell: (info) => {
+      return (
+        <div className="flex flex-col items-center justify-start">
+          <div key={stop?.id} className="text-xs flex flex-row">
+            <CellTableRoute className="text-base">
+              {info.getValue()}
+            </CellTableRoute>
+          </div>
+        </div>
       );
     },
   },
@@ -524,14 +540,30 @@ const driversColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
-    cell: (data) => {
-      const { row } = data;
+    cell: (info) => {
       return (
-        <Link href={`/dashboard/drivers/edit/${row?.original?.id}`}>
-          <div className="flex flex-row items-center justify-center">
-            <CellTable>{data.getValue()}</CellTable>
+        <div className="flex flex-col items-center justify-start">
+          <div key={stop?.id} className="text-xs flex flex-row">
+            <CellTableRoute className="text-base">
+              {info.getValue()}
+            </CellTableRoute>
           </div>
-        </Link>
+        </div>
+      );
+    },
+  },
+  {
+    header: () => <HeaderTable>Ruta taller</HeaderTable>,
+    accessorKey: "routeWorkshop",
+    cell: (info) => {
+      return (
+        <div className="flex flex-col items-center justify-start">
+          <div key={stop?.id} className="text-xs flex flex-row">
+            <CellTableRoute className="text-base">
+              {info.getValue()}
+            </CellTableRoute>
+          </div>
+        </div>
       );
     },
   },
@@ -625,14 +657,30 @@ const unitsColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
-    cell: (data) => {
-      const { row } = data;
+    cell: (info) => {
       return (
-        <Link href={`/dashboard/units/edit/${row?.original?.id}`}>
-          <div className="flex flex-row items-center justify-center">
-            <CellTable>{data.getValue()}</CellTable>
+        <div className="flex flex-col items-center justify-start">
+          <div key={stop?.id} className="text-xs flex flex-row">
+            <CellTableRoute className="text-base">
+              {info.getValue()}
+            </CellTableRoute>
           </div>
-        </Link>
+        </div>
+      );
+    },
+  },
+  {
+    header: () => <HeaderTable>Ruta taller</HeaderTable>,
+    accessorKey: "routeWorkshop",
+    cell: (info) => {
+      return (
+        <div className="flex flex-col items-center justify-start">
+          <div key={stop?.id} className="text-xs flex flex-row">
+            <CellTableRoute className="text-base">
+              {info.getValue()}
+            </CellTableRoute>
+          </div>
+        </div>
       );
     },
   },
