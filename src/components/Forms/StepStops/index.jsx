@@ -70,7 +70,7 @@ const StepStops = () => {
 
   const handleAddStudent = (e) => {
     e.preventDefault();
-    const { temporalToHome, temporalToSchool } = values;
+    const { temporalToHome, temporalToSchool, temporalWorkshop } = values;
     addOrUpdateStudent(
       selectedStudent,
       selectedDay,
@@ -78,6 +78,7 @@ const StepStops = () => {
       typeTravel,
       temporalToHome,
       temporalToSchool,
+      temporalWorkshop,
     );
     handleReset();
   };
@@ -93,6 +94,7 @@ const StepStops = () => {
 
   const handleEditStudent = (e, student) => {
     e.preventDefault();
+    if (!student) return setIsEditStudent(false);
     student["value"] = student.id;
     setSelectedStudent(student);
     if (typeTravel === "toHome") {
@@ -172,31 +174,38 @@ const StepStops = () => {
     const modal = document.getElementById("my_modal_1");
     modal.showModal();
   };
+  // console.log("🚀 ~ file: index.jsx:184 ~ StepStops ~ typeTravel:", typeTravel)
+  console.log(
+    "🚀 ~ file: index.jsx:184 ~ StepStops ~ studentsData:",
+    studentsData,
+  );
 
   return (
     <div className={`mb-4 grid grid-rows-2`}>
       <div className="row-span-1">
         <div className="grid grid-flow-row gap-2">
-          <div className="mx-2 grid grid-cols-2">
-            <div className="form-control grid grid-cols-2 place-content-center">
-              {DAYS_OPTIONS.map((day) => (
-                <div key={day.label} className="grid place-content-start">
-                  <label className="cursor-pointer label gap-1">
-                    <input
-                      type="checkbox"
-                      name={day.value}
-                      checked={selectedDay.includes(day.value)}
-                      className="checkbox checkbox-xs"
-                      onChange={handleSelect}
-                    />
-                    <span className="label-text text-xs text-start">
-                      {day.label}
-                    </span>
-                  </label>
-                </div>
-              ))}
+          {typeTravel === "workshop" && (
+            <div className="mx-2 grid grid-cols-2">
+              <div className="form-control grid grid-cols-2 place-content-center">
+                {DAYS_OPTIONS.map((day) => (
+                  <div key={day.label} className="grid place-content-start">
+                    <label className="cursor-pointer label gap-1">
+                      <input
+                        type="checkbox"
+                        name={day.value}
+                        checked={selectedDay.includes(day.value)}
+                        className="checkbox checkbox-xs"
+                        onChange={handleSelect}
+                      />
+                      <span className="label-text text-xs text-start">
+                        {day.label}
+                      </span>
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           <div className="grid grid-cols-3">
             <div className="col-span-2">
               <SelectAutocomplete
@@ -242,16 +251,18 @@ const StepStops = () => {
           value={selectedDayEdit}
           onChange={(e) => setSelectedDayEdit(e.target.value)}
         />
-        <SelectField
-          label="Tipo de viaje"
-          name="typeTravel"
-          options={[
-            { label: "Escuela - Casa", value: "toHome" },
-            { label: "Casa - Escuela", value: "toSchool" },
-          ]}
-          value={typeTravel}
-          onChange={(e) => setTypeTravel(e.target.value)}
-        />
+        {typeTravel !== "workshop" && (
+          <SelectField
+            label="Tipo de viaje"
+            name="typeTravel"
+            options={[
+              { label: "Escuela - Casa", value: "toHome" },
+              { label: "Casa - Escuela", value: "toSchool" },
+            ]}
+            value={typeTravel}
+            onChange={(e) => setTypeTravel(e.target.value)}
+          />
+        )}
         {studentsData?.map((student, index) => (
           <div key={index} className="grid grid-cols-3 gap-2 my-2">
             <div className="col-span-2">

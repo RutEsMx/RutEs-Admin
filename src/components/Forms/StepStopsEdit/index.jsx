@@ -80,7 +80,7 @@ const StepStopsEdit = () => {
     );
     if (oldStudent) {
       if (
-        !studentWithoutRoute.find((student) => student.id === oldStudent.id)
+        !studentWithoutRoute.find((student) => student?.id === oldStudent.id)
       ) {
         studentWithoutRoute.push(oldStudent);
       }
@@ -156,17 +156,22 @@ const StepStopsEdit = () => {
 
   const handleEditStudent = (e, student) => {
     e.preventDefault();
+    if (!student) return setIsEditStudent(false);
     student["value"] = student.id;
     setSelectedStudent(student);
     if (student?.serviceType === "halfMorning") {
       setFieldValue("temporalToSchool", student?.stop?.coords || null);
     } else if (student?.serviceType === "halfAfternoon") {
-      setFieldValue("temporalToHome", student?.stop?.coords || null);
+      if (typeTravel === "workshop")
+        setFieldValue("temporalWorkshop", student?.stop?.coords || null);
+      else setFieldValue("temporalToHome", student?.stop?.coords || null);
     } else {
       if (typeTravel === "toHome")
         setFieldValue("temporalToHome", student?.stop?.coords || null);
       if (typeTravel === "toSchool")
         setFieldValue("temporalToSchool", student?.stop?.coords || null);
+      if (typeTravel === "workshop")
+        setFieldValue("temporalWorkshop", student?.stop?.coords || null);
     }
     setIsEditStudent(true);
   };
@@ -203,6 +208,7 @@ const StepStopsEdit = () => {
     setSelectedStudent(null);
     setFieldValue("temporalToHome", null);
     setFieldValue("temporalToSchool", null);
+    setFieldValue("temporalWorkshop", null);
     setSelectedDay(["all"]);
     setBothTravels(false);
     setIsEditStudent(false);
@@ -210,7 +216,7 @@ const StepStopsEdit = () => {
 
   const handleAddStudent = (e) => {
     e.preventDefault();
-    const { temporalToHome, temporalToSchool } = values;
+    const { temporalToHome, temporalToSchool, temporalWorkshop } = values;
     addOrUpdateStudent(
       selectedStudent,
       selectedDay,
@@ -218,6 +224,7 @@ const StepStopsEdit = () => {
       typeTravel,
       temporalToHome,
       temporalToSchool,
+      temporalWorkshop,
     );
     handleReset();
   };
@@ -301,50 +308,55 @@ const StepStopsEdit = () => {
           value={selectedDayEdit}
           onChange={(e) => setSelectedDayEdit(e.target.value)}
         />
-        <SelectField
-          label="Tipo de viaje"
-          name="typeTravel"
-          options={[
-            { label: "Escuela - Casa", value: "toHome" },
-            { label: "Casa - Escuela", value: "toSchool" },
-          ]}
-          value={typeTravel}
-          onChange={(e) => setTypeTravel(e.target.value)}
-        />
+        {typeTravel !== "workshop" && (
+          <SelectField
+            label="Tipo de viaje"
+            name="typeTravel"
+            options={[
+              { label: "Escuela - Casa", value: "toHome" },
+              { label: "Casa - Escuela", value: "toSchool" },
+            ]}
+            value={typeTravel}
+            onChange={(e) => setTypeTravel(e.target.value)}
+          />
+        )}
 
-        {studentsData?.map((student) => (
-          <div key={student.id} className="grid grid-cols-3 gap-2 my-2">
-            <div className="col-span-2">
-              <div className="flex flex-row items-center">
-                <MapPinIcon className="h-4 w-4 text-yellow" />
-                <div className="flex ps-2">
-                  <span className="text-sm font-semibold">{`${
-                    student?.name || ""
-                  } ${student?.lastName || ""} ${
-                    student?.secondLastName || ""
-                  }`}</span>
+        {studentsData?.map((student) => {
+          if (!student) return null;
+          return (
+            <div key={student?.id} className="grid grid-cols-3 gap-2 my-2">
+              <div className="col-span-2">
+                <div className="flex flex-row items-center">
+                  <MapPinIcon className="h-4 w-4 text-yellow" />
+                  <div className="flex ps-2">
+                    <span className="text-sm font-semibold">{`${
+                      student?.name || ""
+                    } ${student?.lastName || ""} ${
+                      student?.secondLastName || ""
+                    }`}</span>
+                  </div>
+                </div>
+              </div>
+              <div className="col-span-1">
+                <div className="flex justify-end pe-4 gap-2">
+                  <ButtonAction
+                    onClick={(e) => openDeleteModal(e, student)}
+                    disabled={false}
+                    color="bg-light-gray"
+                  >
+                    <TrashIcon className="h-4 w-4 text-black" />
+                  </ButtonAction>
+                  <ButtonAction
+                    onClick={(e) => handleEditStudent(e, student)}
+                    disabled={false}
+                  >
+                    <PencilIcon className="h-4 w-4 text-black" />
+                  </ButtonAction>
                 </div>
               </div>
             </div>
-            <div className="col-span-1">
-              <div className="flex justify-end pe-4 gap-2">
-                <ButtonAction
-                  onClick={(e) => openDeleteModal(e, student)}
-                  disabled={false}
-                  color="bg-light-gray"
-                >
-                  <TrashIcon className="h-4 w-4 text-black" />
-                </ButtonAction>
-                <ButtonAction
-                  onClick={(e) => handleEditStudent(e, student)}
-                  disabled={false}
-                >
-                  <PencilIcon className="h-4 w-4 text-black" />
-                </ButtonAction>
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box">

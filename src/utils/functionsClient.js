@@ -37,6 +37,17 @@ const validateServiceType = ({
   let element = null;
   const travelName = bothTravels ? "Ambos viajes" : "A la casa";
 
+  if (values?.workshop)
+    return (
+      <div className="flex flex-col ">
+        <PlacesAutocomplete
+          label={"Taller"}
+          setPlace={(value) => setFieldValue("temporalWorkshop", value)}
+          place={values?.temporalWorkshop}
+        />
+      </div>
+    );
+
   switch (serviceType) {
     case "halfAfternoon":
       element = (

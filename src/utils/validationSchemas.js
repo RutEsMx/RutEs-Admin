@@ -38,8 +38,7 @@ const validateStudent = Yup.object().shape({
       const { includeFather } = this.parent;
       return value || includeFather;
     }),
-  // schoolId: Yup.string().nullable().required('Escuela requerida'),
-  avatar: Yup.string().nullable().required("Avatar requerido"),
+  avatar: Yup.string().nullable(),
 });
 
 const validateStudentEdit = Yup.object().shape({
@@ -53,7 +52,7 @@ const validateStudentEdit = Yup.object().shape({
   group: Yup.string().nullable(),
   enrollment: Yup.string().nullable().required("Matricula requerida"),
   serviceType: Yup.string().nullable().required("Tipo de Servicio requerido"),
-  // avatar: Yup.string().nullable().required("Avatar requerido"),
+  avatar: Yup.string().nullable(),
 });
 
 const validateFather = Yup.object().shape({
@@ -76,8 +75,7 @@ const validateFather = Yup.object().shape({
       .email("Correo inválido")
       .required("Correo requerido")
       .test("email-exists", "Correo ya existe", emailExists),
-    avatar: Yup.string().nullable().required("Avatar requerido"),
-    // schoolId: Yup.string().nullable().required('Escuela requerida'),
+    avatar: Yup.string().nullable(),
   }),
 });
 
@@ -101,8 +99,7 @@ const validateMother = Yup.object().shape({
       .email("Correo inválido")
       .required("Correo requerido")
       .test("email-exists", "Correo ya existe", emailExists),
-    avatar: Yup.string().nullable().required("Avatar requerido"),
-    // schoolId: Yup.string().nullable().required('Escuela requerida'),
+    avatar: Yup.string().nullable(),
   }),
 });
 
@@ -122,8 +119,7 @@ const validateTutors = (step) =>
         .email("Correo inválido")
         .required("Correo requerido")
         .test("email-exists", "Correo ya existe", emailExists),
-      avatar: Yup.string().nullable().required("Avatar requerido"),
-      // schoolId: Yup.string().nullable().required('Escuela requerida'),
+      avatar: Yup.string().nullable(),
     }),
   });
 
@@ -145,7 +141,6 @@ const validateUsers = Yup.object().shape({
     .required("Correo requerido")
     .test("email-exists", "Correo ya existe", emailExists),
   avatar: Yup.string().nullable(),
-  // schoolId: Yup.string().nullable().required('Escuela requerida'),
 });
 
 const validateSchool = Yup.object().shape({
@@ -160,7 +155,6 @@ const validateSchool = Yup.object().shape({
     .email("Correo inválido")
     .required("Correo requerido")
     .test("email-exists", "Correo ya existe", emailExists),
-  // logo: Yup.string().nullable().required('Avatar requerido'),
 });
 
 const validationLogin = Yup.object().shape({
@@ -205,7 +199,7 @@ const validateAuxiliar = Yup.object().shape({
     .required("Correo requerido")
     .test("email-exists", "Correo ya existe", emailExists),
   adminNumber: Yup.string().nullable().required("Número de empleado requerido"),
-  avatar: Yup.string().nullable().required("Avatar requerido"),
+  avatar: Yup.string().nullable(),
   password: Yup.string()
     .nullable()
     .matches(REGEX_PASSWORD, "Contraseña inválida")
@@ -213,7 +207,6 @@ const validateAuxiliar = Yup.object().shape({
       const { isEdit } = this.parent;
       return isEdit ? true : !!value;
     }),
-  // .required("Contraseña requerida"),
   confirmPassword: Yup.string()
     .nullable()
     .oneOf([Yup.ref("password"), null], "Las contraseñas no coinciden")
@@ -221,7 +214,6 @@ const validateAuxiliar = Yup.object().shape({
       const { isEdit } = this.parent;
       return isEdit ? true : !!value;
     }),
-  // .required("Confirmar contraseña requerida"),
 });
 
 const validateDriver = Yup.object().shape({
@@ -234,7 +226,7 @@ const validateDriver = Yup.object().shape({
     .required("Teléfono requerido"),
   adminNumber: Yup.string().nullable().required("Número de empleado requerido"),
   license: Yup.string().nullable().required("Licencia requerida"),
-  avatar: Yup.string().nullable().required("Avatar requerido"),
+  avatar: Yup.string().nullable(),
 });
 
 const validateRoute = Yup.object().shape({

@@ -46,7 +46,7 @@ const PlacesAutocomplete = ({ label, setPlace, place }) => {
 
   return (
     <div className="ml-2 mb-2 pt-2">
-      {label && <label className="text-sm text-gray">{label}</label>}
+      {label && <label className="text-xs">{label}</label>}
       <GooglePlacesAutocomplete
         autocompletionRequest={{
           types: () => ["locality", "address", "postal_code"],

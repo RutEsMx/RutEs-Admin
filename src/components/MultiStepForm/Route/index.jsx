@@ -15,6 +15,8 @@ import {
 import MapStops from "@/components/MapStops";
 import { useSystemStore } from "@/store/useSystemStore";
 import StepStopsEdit from "@/components/Forms/StepStopsEdit";
+import { useRoutesStore } from "@/store/useRoutesStore";
+import { useEffect } from "react";
 
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
@@ -23,6 +25,7 @@ const FormRoute = ({ data, isEdit = false }) => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("DATOS");
+  const { setTypeTravel } = useRoutesStore();
 
   const initialValues = {
     name: data?.name || "",
@@ -32,6 +35,7 @@ const FormRoute = ({ data, isEdit = false }) => {
     driver: data?.driver || null,
     students: data?.students || [],
     routeId: data?.id || null,
+    workshop: data?.workshop || false,
   };
 
   const handleNext = async (values) => {
@@ -52,11 +56,16 @@ const FormRoute = ({ data, isEdit = false }) => {
           return navigation.back();
         }, 2000);
       }
+      setTypeTravel("toHome");
       return setMessage(message);
     } catch (error) {
       setError(error.message);
     }
   };
+
+  useEffect(() => {
+    if (data?.workshop) setTypeTravel("workshop");
+  }, [data?.workshop, setTypeTravel]);
 
   const handleBack = () => {
     return navigation.replace("/dashboard/routes");
@@ -115,7 +124,7 @@ const FormRoute = ({ data, isEdit = false }) => {
                 </div>
                 <div className="divider mx-0 my-2 before:h-2 after:h-2"></div>
                 {activeTab === "DATOS" ? (
-                  <StepRoute />
+                  <StepRoute isEdit={isEdit} />
                 ) : isEdit ? (
                   <StepStopsEdit />
                 ) : (

@@ -99,7 +99,12 @@ const Autocomplete = ({
               className="px-3 py-2 cursor-pointer hover:bg-gray "
               onClick={() => handleSelect(option)}
             >
-              <span className="font-bold">Nombre:</span> {option.name}{" "}
+              <span className="font-bold">
+                {option?.passengers && "Placa:"}
+              </span>{" "}
+              {`${option.name} ${option?.lastName || ""} ${
+                option?.secondLastName || ""
+              }`}
               {option?.passengers && (
                 <>
                   <span className="font-bold">Pasajeros:</span>{" "}
