@@ -8,16 +8,10 @@ import {
 } from "@react-google-maps/api";
 // import map_pin.svg from public
 
-const Maps = ({ markers, setMarker, options, ...props }) => {
+const Maps = ({ markers, setMarker, options, center, ...props }) => {
   const [markersMap, setMarkersMap] = useState([]);
   const libraries = useMemo(() => ["places"], []);
-  const mapCenter = useMemo(
-    () =>
-      markers[0]
-        ? markers[0]
-        : { lat: 19.432902439607627, lng: -99.13365305513578 },
-    [markers],
-  );
+
   const mapOptions = useMemo(
     () => ({
       disableDefaultUI: true,
@@ -83,7 +77,7 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
       <GoogleMap
         options={mapOptions}
         zoom={14}
-        center={markersMap[0] ? markersMap[0] : mapCenter}
+        center={center ? center : markersMap[0]}
         mapContainerStyle={{ width: "100%", height: "500px" }}
         {...props}
       >
@@ -98,7 +92,7 @@ const Maps = ({ markers, setMarker, options, ...props }) => {
                   setMarker(marker.studentId, e.latLng.toJSON())
                 }
                 color={marker.color}
-                label={marker.fullName}
+                label={marker.fullName || marker.name}
               />
             );
           })}
