@@ -84,7 +84,7 @@ const DAYS_OPTIONS = [
 ];
 
 const CURRENT_DAY =
-  DAYS_OPTIONS.slice(1)[new Date().getDay()].value || "monday";
+  DAYS_OPTIONS.slice(1)[new Date().getDay() - 1]?.value || "monday";
 
 export {
   OPTIONS_TYPE_SERVICES,
