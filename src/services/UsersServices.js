@@ -1,6 +1,7 @@
 import { validateEmail } from "@/utils/functionsClient";
 import { createDocument, updateDocument } from "@/firebase/crud";
 import { signUp } from "./AuthServices";
+import { sendPassword } from "./MailService";
 
 const createUsersByForm = async (data) => {
   // eslint-disable-next-line no-unused-vars
@@ -34,6 +35,7 @@ const createUsersByForm = async (data) => {
           avatar: avatarFilename,
         };
         await createDocument("profile", profileData);
+        await sendPassword(email, password, "Cuenta creada");
         return { success: true, message: "Usuario creado correctamente" };
       } else {
         return {
@@ -50,7 +52,7 @@ const createUsersByForm = async (data) => {
 
 const updateUsersByForm = async (data) => {
   const dataCopy = { ...data };
-  const { email, avatar } = dataCopy;
+  const { email, avatar, password } = dataCopy;
 
   if (validateEmail(email)) {
     try {
@@ -68,6 +70,9 @@ const updateUsersByForm = async (data) => {
       }
 
       const response = await updateDocument("profile", dataCopy.id, dataCopy);
+      if (password !== null) {
+        await updatePasswordAuth(dataCopy.id, password);
+      }
 
       if (response?.error) return { error: response.error };
       return {
@@ -79,7 +84,26 @@ const updateUsersByForm = async (data) => {
       return { error };
     }
   } else {
-    return { error: "El correo no es valido" };
+    throw new Error("El correo no es valido");
+  }
+};
+
+const updatePasswordAuth = async (id, password) => {
+  try {
+    const userResponse = await fetch(`/api/auth/profile`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, password }),
+    });
+
+    const response = await userResponse.json();
+    if (response.error) throw new Error(response.error.message);
+    await sendPassword(response.data.email, password, "Cambio de contraseña");
+    return response;
+  } catch (error) {
+    throw new Error(error);
   }
 };
 
