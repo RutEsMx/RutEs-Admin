@@ -37,7 +37,7 @@
     "@faker-js/faker": "^8.0.2",
     "@next/eslint-plugin-next": "^13.4.10",
     "@types/react": "18.2.12",
-    "daisyui": "^3.5.1",
+    "daisyui": "3.5.1",
     "encoding": "^0.1.13",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",

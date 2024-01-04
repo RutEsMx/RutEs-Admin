@@ -74,7 +74,7 @@ devDependencies:
     specifier: 18.2.12
     version: 18.2.12
   daisyui:
-    specifier: ^3.5.1
+    specifier: 3.5.1
     version: 3.5.1
   encoding:
     specifier: ^0.1.13

@@ -1,3 +1,4 @@
+import ButtonAction from "@/components/ButtonAction";
 import FileInput from "@/components/FileInput";
 import InputField from "@/components/InputField";
 import SelectField from "@/components/SelectField";
@@ -154,6 +155,23 @@ const StepStudent = ({ isEdit = false }) => {
               error={errors.avatar}
             />
             {errors && <span className="text-red">{errors.avatar}</span>}
+          </div>
+          <div className="flex flex-col pt-10 gap-4">
+            <label htmlFor="status" className="font-bold">
+              Estado de servicio
+            </label>
+            <ButtonAction
+              type="button"
+              onClick={() => {
+                setFieldValue(
+                  "status",
+                  values.status === "active" ? "inactive" : "active",
+                );
+              }}
+              color={values.status === "active" ? "bg-light-gray" : "bg-yellow"}
+            >
+              {values.status === "active" ? "Desactivar" : "Activar"}
+            </ButtonAction>
           </div>
         </div>
       </div>

@@ -15,6 +15,9 @@ export default function MainMap() {
   useEffect(() => {
     const unsubscribes = routes?.map((route) => {
       return onSnapshot(doc(db, "tracking", route?.id), (querySnapshot) => {
+        if (!querySnapshot.exists()) {
+          return null;
+        }
         const { tracking } = querySnapshot.data() || {};
         if (!tracking) return null;
         const { latitude, longitude } = tracking;
@@ -35,14 +38,6 @@ export default function MainMap() {
   }, [routes]);
 
   useEffect(() => {
-    // navigator.geolocation.getCurrentPosition((position) => {
-    //   console.log("🚀 ~ file: MainMap.jsx:35 ~ navigator.geolocation.getCurrentPosition ~ position:", position)
-    //   const { latitude, longitude } = position.coords;
-    //   setCenter((prevCenter) => [
-    //     ...prevCenter,
-    //     { lat: latitude, lng: longitude, name: "Me", color: COLORS_HEX.me },
-    //   ]);
-    // });
     if (navigator.geolocation) {
       navigator.permissions.query({ name: "geolocation" }).then((result) => {
         if (result.state === "prompt" || result.state === "granted") {
@@ -57,9 +52,6 @@ export default function MainMap() {
             options,
           );
         }
-        // if(result.state === "denied") {
-
-        // }
       });
     }
   }, []);

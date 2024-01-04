@@ -77,6 +77,12 @@ const Page = ({ params }) => {
                 <span className="font-bold">Tipo de servicio:</span>
                 <span className="">{typeService}</span>
               </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Estado de servicio:</span>
+                <span className="">
+                  {student?.status === "active" ? "Activo" : "Inactivo"}
+                </span>
+              </div>
             </div>
             <div className="flex flex-col justify-around">
               <div className="flex flex-row gap-2">
