@@ -24,6 +24,7 @@ const FormStudentEdit = ({ data, isEdit = false }) => {
     serviceType: data?.serviceType,
     avatar: data?.avatar,
     id: data?.id,
+    status: data?.status,
   };
 
   const onSubmit = async (values) => {
