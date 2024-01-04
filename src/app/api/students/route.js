@@ -15,10 +15,10 @@ export async function GET(request) {
   }
 
   try {
-    
     const response = await firestore()
       .collection("students")
       .where("schoolId", "==", profile.schoolId)
+      .where("status", "==", "active")
       .orderBy("name")
       .get();
 
