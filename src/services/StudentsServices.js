@@ -296,6 +296,7 @@ const updateStudentByForm = async (data) => {
 };
 
 const createStudentsOptions = async (students) => {
+  students = students.filter((student) => student.status === "active");
   const studentsPromise = students.map(async (student) => {
     const stops = query(
       collection(db, "stops"),

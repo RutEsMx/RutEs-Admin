@@ -18,15 +18,12 @@ export async function GET(request) {
     const response = await firestore()
       .collection("students")
       .where("schoolId", "==", profile.schoolId)
-      .where("status", "==", "active")
       .orderBy("name")
       .get();
 
     const data = response.docs.map((doc) => {
       const id = doc.id;
       const data = doc.data();
-      // const fullName = `${data.name || ""} ${data.lastName || ""} ${data.secondLastName || ""}}`
-      // data.fullName = fullName;
       return { id, ...data };
     });
 

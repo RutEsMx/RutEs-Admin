@@ -187,25 +187,6 @@ const parentsColumns = [
       );
     },
   },
-  {
-    header: () => <HeaderTable>Servicio</HeaderTable>,
-    accessorKey: "service",
-    cell: (data) => {
-      const { row } = data;
-      const isActive = row?.original?.status === "active";
-      return (
-        <div className="flex flex-row items-center justify-center">
-          <CellTable>
-            {isActive ? (
-              <CheckCircleIcon className="h-5 w-5 text-green" />
-            ) : (
-              <NoSymbolIcon className="h-5 w-5 text-red" />
-            )}
-          </CellTable>
-        </div>
-      );
-    },
-  },
   columnHelper.accessor("phone", {
     cell: (info) => info.getValue(),
     header: () => <HeaderTable>Teléfono</HeaderTable>,
