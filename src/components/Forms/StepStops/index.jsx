@@ -27,7 +27,7 @@ const StepStops = () => {
     useRoutesStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(false);
-  const [selectedDay, setSelectedDay] = useState([]);
+  const [selectedDay, setSelectedDay] = useState(["all"]);
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [studentsData, setStudentsData] = useState([]);
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
@@ -105,30 +105,23 @@ const StepStops = () => {
     setIsEditStudent(true);
   };
 
-  const handleRemoveStudentAll = (e) => {
-    e.preventDefault();
-    const students = values?.students || {};
-    const newStudents = Object.keys(students).reduce((acc, day) => {
-      const newStudents = students[day][typeTravel].filter(
-        (s) => s.id !== selectedStudentToRemove.id,
-      );
-      acc[day] = {
-        ...students[day],
-        [typeTravel]: newStudents,
-      };
-      return acc;
-    }, {});
-    setFieldValue(`students`, newStudents);
-    setStudentsData(newStudents[selectedDayEdit][typeTravel]);
-    const modal = document.getElementById("my_modal_1");
-    modal.close();
-  };
-
   const handleRemoveStudent = (e) => {
     e.preventDefault();
-    const newStudents = values?.students?.[selectedDayEdit]?.[
-      typeTravel
-    ]?.filter((s) => s.id !== selectedStudentToRemove.id);
+    const students = values?.students || {};
+    let updatedStudentsToRemove = { ...values.studentsToRemove };
+    if (!updatedStudentsToRemove[selectedDayEdit]) {
+      updatedStudentsToRemove[selectedDayEdit] = { [typeTravel]: [] };
+    }
+
+    updatedStudentsToRemove[selectedDayEdit][typeTravel] = [
+      ...(updatedStudentsToRemove[selectedDayEdit][typeTravel] || []),
+      selectedStudentToRemove,
+    ];
+
+    const newStudents = students?.[selectedDayEdit]?.[typeTravel]?.filter(
+      (s) => s.id !== selectedStudentToRemove.id,
+    );
+
     setFieldValue("students", {
       ...values?.students,
       [selectedDayEdit]: {
@@ -136,7 +129,36 @@ const StepStops = () => {
         [typeTravel]: newStudents,
       },
     });
-    setStudentsData(newStudents);
+    setFieldValue("studentsToRemove", updatedStudentsToRemove);
+
+    const modal = document.getElementById("my_modal_1");
+    modal.close();
+  };
+
+  const handleRemoveStudentAll = (e) => {
+    e.preventDefault();
+    const students = values?.students || {};
+    const newStudents = values?.students || {};
+    let updatedStudentsToRemove = { ...values.studentsToRemove };
+    Object.keys(students).forEach((day) => {
+      if (!updatedStudentsToRemove[day]) {
+        updatedStudentsToRemove[day] = { [typeTravel]: [] };
+      }
+      const studentToRemove = students[day][typeTravel].find(
+        (s) => s.id === selectedStudentToRemove.id,
+      );
+      updatedStudentsToRemove[day][typeTravel] = [
+        ...(updatedStudentsToRemove[day][typeTravel] || []),
+        studentToRemove,
+      ];
+      newStudents[day][typeTravel] = newStudents[day][typeTravel].filter(
+        (s) => s.id !== selectedStudentToRemove.id,
+      );
+    });
+
+    setFieldValue("studentsToRemove", updatedStudentsToRemove);
+    setStudentsData(newStudents[selectedDayEdit][typeTravel]);
+
     const modal = document.getElementById("my_modal_1");
     modal.close();
   };
@@ -174,11 +196,6 @@ const StepStops = () => {
     const modal = document.getElementById("my_modal_1");
     modal.showModal();
   };
-  // console.log("🚀 ~ file: index.jsx:184 ~ StepStops ~ typeTravel:", typeTravel)
-  console.log(
-    "🚀 ~ file: index.jsx:184 ~ StepStops ~ studentsData:",
-    studentsData,
-  );
 
   return (
     <div className={`mb-4 grid grid-rows-2`}>

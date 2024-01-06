@@ -88,11 +88,23 @@ const StepStopsEdit = () => {
     setAvailableStudents(studentWithoutRoute);
   };
 
-  const handleRemoveStudent = (e, student) => {
+  const handleRemoveStudent = (e) => {
     e.preventDefault();
-    const newStudents = values?.students?.[selectedDayEdit]?.[
-      typeTravel
-    ]?.filter((s) => s.id !== student.id);
+    const students = values?.students || {};
+    let updatedStudentsToRemove = { ...values.studentsToRemove };
+    if (!updatedStudentsToRemove[selectedDayEdit]) {
+      updatedStudentsToRemove[selectedDayEdit] = { [typeTravel]: [] };
+    }
+
+    updatedStudentsToRemove[selectedDayEdit][typeTravel] = [
+      ...(updatedStudentsToRemove[selectedDayEdit][typeTravel] || []),
+      selectedStudentToRemove,
+    ];
+
+    const newStudents = students?.[selectedDayEdit]?.[typeTravel]?.filter(
+      (s) => s.id !== selectedStudentToRemove.id,
+    );
+
     setFieldValue("students", {
       ...values?.students,
       [selectedDayEdit]: {
@@ -100,19 +112,8 @@ const StepStopsEdit = () => {
         [typeTravel]: newStudents,
       },
     });
-    setStudentsData(newStudents);
-    let updatedStudentsToRemove = { ...values.studentsToRemove };
-
-    if (!updatedStudentsToRemove[selectedDayEdit]) {
-      updatedStudentsToRemove[selectedDayEdit] = { [typeTravel]: [] };
-    }
-
-    updatedStudentsToRemove[selectedDayEdit][typeTravel] = [
-      ...(updatedStudentsToRemove[selectedDayEdit][typeTravel] || []),
-      student,
-    ];
-
     setFieldValue("studentsToRemove", updatedStudentsToRemove);
+
     const modal = document.getElementById("my_modal_1");
     modal.close();
   };
@@ -120,26 +121,25 @@ const StepStopsEdit = () => {
   const handleRemoveStudentAll = (e) => {
     e.preventDefault();
     const students = values?.students || {};
+    const newStudents = values?.students || {};
     let updatedStudentsToRemove = { ...values.studentsToRemove };
-    const newStudents = Object.keys(students).reduce((acc, day) => {
+    Object.keys(students).forEach((day) => {
       if (!updatedStudentsToRemove[day]) {
         updatedStudentsToRemove[day] = { [typeTravel]: [] };
       }
+      const studentToRemove = students[day][typeTravel].find(
+        (s) => s.id === selectedStudentToRemove.id,
+      );
       updatedStudentsToRemove[day][typeTravel] = [
         ...(updatedStudentsToRemove[day][typeTravel] || []),
-        selectedStudentToRemove,
+        studentToRemove,
       ];
-      setFieldValue("studentsToRemove", updatedStudentsToRemove);
-      const newStudents = students[day][typeTravel].filter(
+      newStudents[day][typeTravel] = newStudents[day][typeTravel].filter(
         (s) => s.id !== selectedStudentToRemove.id,
       );
-      acc[day] = {
-        ...students[day],
-        [typeTravel]: newStudents,
-      };
-      return acc;
-    }, {});
-    setFieldValue(`students`, newStudents);
+    });
+
+    setFieldValue("studentsToRemove", updatedStudentsToRemove);
     setStudentsData(newStudents[selectedDayEdit][typeTravel]);
 
     const modal = document.getElementById("my_modal_1");
@@ -227,6 +227,12 @@ const StepStopsEdit = () => {
       temporalWorkshop,
     );
     handleReset();
+  };
+
+  const handleCancelRemoveStudent = (e) => {
+    e.preventDefault();
+    const modal = document.getElementById("my_modal_1");
+    modal.close();
   };
 
   return (
@@ -320,7 +326,6 @@ const StepStopsEdit = () => {
             onChange={(e) => setTypeTravel(e.target.value)}
           />
         )}
-
         {studentsData?.map((student) => {
           if (!student) return null;
           return (
@@ -365,7 +370,7 @@ const StepStopsEdit = () => {
           <div className="modal-action">
             <ButtonAction
               color="bg-warning"
-              onClick={() => document.getElementById("my_modal_1").close()}
+              onClick={handleCancelRemoveStudent}
             >
               Cancelar
             </ButtonAction>
