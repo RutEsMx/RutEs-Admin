@@ -68,6 +68,7 @@ async function fetchStudentData(students, type, day) {
   if (!students) {
     return {};
   }
+
   const studentDataList = await Promise.all(
     students.map(async (student) => {
       if (!student || !student.get) {
@@ -85,9 +86,12 @@ async function fetchStudentData(students, type, day) {
 
       stopsRef.docs.forEach((doc) => {
         const data = doc.data();
+        let coords = data.coords;
+        coords.id = doc.id;
+
         stop = {
           ...data,
-          coords: data.coords,
+          coords: coords,
           id: doc.id,
         };
       });

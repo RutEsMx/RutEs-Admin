@@ -142,27 +142,23 @@ const createStops = async (students, routeId) => {
 
 const deleteStops = async (studentsToRemove) => {
   if (studentsToRemove === undefined) return;
-
   try {
-    Object.keys(studentsToRemove).map((key) => {
-      studentsToRemove[key]?.toHome &&
-        studentsToRemove[key].toHome.map((element) => {
-          if (element?.stop?.id === undefined) return;
-          const qStop = doc(db, "stops", element?.stop?.id);
-          deleteDoc(qStop);
-        });
-      studentsToRemove[key]?.toSchool &&
-        studentsToRemove[key]?.toSchool.map((element) => {
-          if (element?.stop?.id === undefined) return;
-          const qStop = doc(db, "stops", element?.stop?.id);
-          deleteDoc(qStop);
-        });
-      studentsToRemove[key]?.workshop &&
-        studentsToRemove[key]?.workshop.map((element) => {
-          if (element?.stop?.id === undefined) return;
-          const qStop = doc(db, "stops", element?.stop?.id);
-          deleteDoc(qStop);
-        });
+    Object.keys(studentsToRemove).forEach((key) => {
+      studentsToRemove[key]?.toHome?.forEach(async (element) => {
+        if (element?.stop?.id === undefined) return;
+        const qStop = doc(db, "stops", element?.stop?.id);
+        await deleteDoc(qStop);
+      });
+      studentsToRemove[key]?.toSchool?.forEach(async (element) => {
+        if (element?.stop?.id === undefined) return;
+        const qStop = doc(db, "stops", element?.stop?.id);
+        await deleteDoc(qStop);
+      });
+      studentsToRemove[key]?.workshop?.forEach(async (element) => {
+        if (element?.stop?.id === undefined) return;
+        const qStop = doc(db, "stops", element?.stop?.id);
+        await deleteDoc(qStop);
+      });
     });
   } catch (error) {
     return { error };
@@ -281,6 +277,7 @@ const updateEntity = async (
 
 const updateRoutesByForm = async (data) => {
   const { routeId, students, studentsToRemove, ...restData } = data;
+
   try {
     const getOldRoute = await getDoc(doc(db, "routes", routeId));
     const oldRouteData = getOldRoute.data();
