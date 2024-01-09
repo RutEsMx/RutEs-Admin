@@ -5,6 +5,7 @@ import ButtonLink from "@/components/ButtonLink";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
+import Maps from "@/components/Maps";
 
 const Page = ({ params }) => {
   const { routes } = useRoutesStore();
@@ -70,7 +71,9 @@ const Page = ({ params }) => {
               </div>
             </div>
           </div>
-          <div>Mapa</div>
+          <div className="bg-gray lg:h-[500px] sm:h-[250px] w-full">
+            <Maps markers={[]} />
+          </div>
         </div>
       </div>
     </div>

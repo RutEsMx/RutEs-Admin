@@ -153,7 +153,7 @@ const parentsColumns = [
     accessorKey: "parents",
     accessorFn: (data) => {
       const { name, lastName, secondLastName } = data;
-      return `${name} ${lastName} ${secondLastName}`;
+      return `${name || ""} ${lastName || ""} ${secondLastName || ""}`;
     },
     cell: (data) => {
       const { row } = data;

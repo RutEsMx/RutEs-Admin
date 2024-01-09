@@ -15,6 +15,7 @@ import { createParentsByForm } from "@/services/StudentsServices";
 import { useAuthContext } from "@/context/AuthContext";
 import { setAlert, useSystemStore } from "@/store/useSystemStore";
 import Alert from "@/components/Alert";
+import { fatherMock, motherMock, studentMock } from "@/mocks/createStudent";
 
 const STEPS = [StepStudent];
 const VALIDATE_SCHEMA = [validateStudent];
@@ -29,39 +30,55 @@ const MultiStepFormStudent = () => {
   const { alert } = useSystemStore();
 
   const initialValues = {
-    name: "",
-    lastName: "",
-    secondLastName: "",
-    birthDate: "",
-    bloodType: "",
+    name: process.env.NODE_ENV === "development" ? studentMock.name : "",
+    lastName:
+      process.env.NODE_ENV === "development" ? studentMock.lastName : "",
+    secondLastName:
+      process.env.NODE_ENV === "development" ? studentMock.secondLastName : "",
+    birthDate:
+      process.env.NODE_ENV === "development" ? studentMock.birthDate : "",
+    bloodType:
+      process.env.NODE_ENV === "development" ? studentMock.bloodType : "",
     allergies: "",
-    grade: "",
-    group: "",
-    enrollment: "",
-    serviceType: "",
+    grade: process.env.NODE_ENV === "development" ? studentMock.grade : "",
+    group: process.env.NODE_ENV === "development" ? studentMock.group : "",
+    enrollment:
+      process.env.NODE_ENV === "development" ? studentMock.enrollment : "",
+    serviceType:
+      process.env.NODE_ENV === "development" ? studentMock.serviceType : "",
     avatar: "",
-    includeFather: false,
-    includeMother: false,
+    includeFather:
+      process.env.NODE_ENV === "development"
+        ? studentMock.includeFather
+        : false,
+    includeMother:
+      process.env.NODE_ENV === "development"
+        ? studentMock.includeMother
+        : false,
     status: "active",
     father: {
-      name: "",
-      lastName: "",
-      secondLastName: "",
-      phone: "",
-      email: "",
+      name: process.env.NODE_ENV === "development" ? fatherMock.name : "",
+      lastName:
+        process.env.NODE_ENV === "development" ? fatherMock.lastName : "",
+      secondLastName:
+        process.env.NODE_ENV === "development" ? fatherMock.secondLastName : "",
+      phone: process.env.NODE_ENV === "development" ? fatherMock.phone : "",
+      email: process.env.NODE_ENV === "development" ? fatherMock.email : "",
       avatar: "",
       emailExist: false,
     },
     mother: {
-      name: "",
-      lastName: "",
-      secondLastName: "",
-      phone: "",
-      email: "",
+      name: process.env.NODE_ENV === "development" ? motherMock.name : "",
+      lastName:
+        process.env.NODE_ENV === "development" ? motherMock.lastName : "",
+      secondLastName:
+        process.env.NODE_ENV === "development" ? motherMock.secondLastName : "",
+      phone: process.env.NODE_ENV === "development" ? motherMock.phone : "",
+      email: process.env.NODE_ENV === "development" ? motherMock.email : "",
       avatar: "",
       emailExist: false,
     },
-    countTutors: 0,
+    countTutors: 1,
     // tutors: [],
   };
 
@@ -111,14 +128,14 @@ const MultiStepFormStudent = () => {
             });
           }
         })
-        .catch((error) =>
+        .catch((error) => {
           setAlert({
             type: "error",
             message:
               error?.message || "Ha ocurrido un error al crear el estudiante",
             show: true,
-          }),
-        )
+          });
+        })
         .finally(() => setIsLoading(false));
     }
   };

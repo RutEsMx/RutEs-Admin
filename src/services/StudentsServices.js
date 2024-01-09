@@ -49,7 +49,7 @@ const getStudentById = async (id) => {
 const createParentProfile = async (parent, schoolId, roles) => {
   if (parent.emailExist) return updateParentProfile(parent);
   const { email, avatar } = parent;
-  let avatarFilename = avatar;
+  let avatarFilename = avatar || "";
 
   if (validateEmail(email)) {
     try {
@@ -179,13 +179,12 @@ const createParentsByForm = async (data, schoolId) => {
   if (studentProfile?.error) {
     throw new Error(`Estudiante: ${studentProfile.error?.code}`);
   }
-
   const tutors = Array.from({ length: countTutors }, (_, i) => {
     const tutor = `tutors_${i}`;
     const tutorData = {
       ...data[tutor],
       schoolId,
-      students: [...data[tutor].students, studentProfile],
+      students: [...(data[tutor]?.students ?? []), studentProfile],
     };
     delete studentData[tutor];
     return createParentProfile(tutorData, schoolId, ["tutor"]);
