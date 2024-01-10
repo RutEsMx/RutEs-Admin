@@ -38,6 +38,8 @@ const StepAuxiliar = ({ isEdit }) => {
               value={values.secondLastName}
               onChange={handleChange}
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <InputField
               label="Correo electrónico"
               type="email"
@@ -56,6 +58,8 @@ const StepAuxiliar = ({ isEdit }) => {
               error={errors.phone}
               maxLength={10}
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <InputField
               label="Número de administrador"
               type="text"
@@ -64,6 +68,8 @@ const StepAuxiliar = ({ isEdit }) => {
               onChange={handleChange}
               error={errors.adminNumber}
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <InputField
               label="Contraseña"
               type="password"
@@ -82,6 +88,17 @@ const StepAuxiliar = ({ isEdit }) => {
               error={errors.confirmPassword}
               autoComplete="off"
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="ms-4 text-sm font-extralight">
+              La contraseña debe contener:
+              <ul className="ms-2 text-xs">
+                <li>Al menos una letra mayúscula</li>
+                <li>Al menos una letra minúscula</li>
+                <li>Al menos un número</li>
+                <li>Al menos 8 caracteres</li>
+              </ul>
+            </div>
           </div>
         </div>
         <div>
