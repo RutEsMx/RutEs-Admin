@@ -12,6 +12,8 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
+  arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { db } from "@/firebase/client";
 
@@ -233,13 +235,22 @@ const createRoutesByForm = async (data) => {
     const responseUpdateAuxiliar = await updateDocument(
       "profile",
       data.auxiliar,
-      { [routeToUpdate]: responseRoute.id },
+      {
+        [routeToUpdate]: data.workshop
+          ? arrayUnion(responseRoute.id)
+          : responseRoute.id,
+      },
     );
+
     const responseUpdateDriver = await updateDocument("drivers", data.driver, {
-      [routeToUpdate]: responseRoute.id,
+      [routeToUpdate]: data.workshop
+        ? arrayUnion(responseRoute.id)
+        : responseRoute.id,
     });
     const responseUpdateUnit = await updateDocument("units", data.unit, {
-      [routeToUpdate]: responseRoute.id,
+      [routeToUpdate]: data.workshop
+        ? arrayUnion(responseRoute.id)
+        : responseRoute.id,
     });
 
     return Promise.all([
@@ -268,9 +279,13 @@ const updateEntity = async (
 ) => {
   const routeToUpdate = workshop ? "routeWorkshop" : "route";
   if (id !== oldId) {
-    await updateDocument(entityType, id, { [routeToUpdate]: routeId });
+    await updateDocument(entityType, id, {
+      [routeToUpdate]: workshop ? arrayUnion(routeId) : routeId,
+    });
     if (oldId) {
-      await updateDocument(entityType, oldId, { [routeToUpdate]: null });
+      await updateDocument(entityType, oldId, {
+        [routeToUpdate]: workshop ? arrayRemove(routeId) : null,
+      });
     }
   }
 };

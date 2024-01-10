@@ -408,11 +408,13 @@ const auxiliarsColumns = [
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
-          <div key={stop?.id} className="text-xs flex flex-row">
-            <CellTableRoute className="text-base">
-              {info.getValue()}
-            </CellTableRoute>
-          </div>
+          {info.getValue()?.map((route) => {
+            return (
+              <div key={route} className="text-xs flex flex-row">
+                <CellTableRoute className="text-base">{route}</CellTableRoute>
+              </div>
+            );
+          })}
         </div>
       );
     },
@@ -539,11 +541,13 @@ const driversColumns = [
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
-          <div key={stop?.id} className="text-xs flex flex-row">
-            <CellTableRoute className="text-base">
-              {info.getValue()}
-            </CellTableRoute>
-          </div>
+          {info.getValue()?.map((route) => {
+            return (
+              <div key={route} className="text-xs flex flex-row">
+                <CellTableRoute className="text-base">{route}</CellTableRoute>
+              </div>
+            );
+          })}
         </div>
       );
     },
@@ -656,11 +660,13 @@ const unitsColumns = [
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
-          <div key={stop?.id} className="text-xs flex flex-row">
-            <CellTableRoute className="text-base">
-              {info.getValue()}
-            </CellTableRoute>
-          </div>
+          {info.getValue()?.map((route) => {
+            return (
+              <div key={route} className="text-xs flex flex-row">
+                <CellTableRoute className="text-base">{route}</CellTableRoute>
+              </div>
+            );
+          })}
         </div>
       );
     },
