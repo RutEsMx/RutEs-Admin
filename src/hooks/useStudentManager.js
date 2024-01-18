@@ -47,32 +47,94 @@ function useStudentManager() {
 
     if (selectedDay.includes(ALL_DAY)) {
       Object.keys(DAYS).forEach((day) => {
+        let stop = null;
         if (typeTravel === "workshop") {
-          const stop = createStop(temporalWorkshop);
+          const currentStudentByDay = students[day]?.[typeTravel]?.find(
+            (s) => s.id === selectedStudent.id,
+          );
+          if (currentStudentByDay?.stop) {
+            stop = currentStudentByDay?.stop;
+            stop.coords = temporalWorkshop;
+          } else {
+            stop = createStop(temporalWorkshop);
+          }
           const studentObj = { ...selectedStudent, stop };
           updateStudentArray(day, "workshop", studentObj);
         } else if (bothTravels) {
-          const stop = createStop(temporalToHome);
-          const studentObj = { ...selectedStudent, stop };
-          updateStudentArray(day, "toHome", studentObj);
-          updateStudentArray(day, "toSchool", studentObj);
+          const currentStudentByDayToHome = students[day]?.["toHome"]?.find(
+            (s) => s.id === selectedStudent.id,
+          );
+          const currentStudentByDayToSchool = students[day]?.["toSchool"]?.find(
+            (s) => s.id === selectedStudent.id,
+          );
+          let stopToHome = null;
+          let stopToSchool = null;
+          if (currentStudentByDayToHome?.stop) {
+            stopToHome = currentStudentByDayToHome?.stop;
+            stopToHome.coords = temporalToHome;
+          } else {
+            stopToHome = createStop(temporalToHome);
+          }
+          if (currentStudentByDayToSchool?.stop) {
+            stopToSchool = currentStudentByDayToSchool?.stop;
+            stopToSchool.coords = temporalToHome;
+          } else {
+            stopToSchool = createStop(temporalToHome);
+          }
+
+          const studentObjToHome = { ...selectedStudent, stop: stopToHome };
+          const studentObjToSchool = { ...selectedStudent, stop: stopToSchool };
+          updateStudentArray(day, "toHome", studentObjToHome);
+          updateStudentArray(day, "toSchool", studentObjToSchool);
         } else {
           if (selectedStudent.serviceType === "halfMorning") {
-            const stop = createStop(temporalToSchool);
-            const studentObj = { ...selectedStudent, stop };
-            updateStudentArray(day, "toHome", studentObj);
-          } else if (selectedStudent.serviceType === "halfAfternoon") {
-            const stop = createStop(temporalToHome);
+            const currentStudentByDay = students[day]?.["toSchool"]?.find(
+              (s) => s.id === selectedStudent.id,
+            );
+            if (currentStudentByDay?.stop) {
+              stop = currentStudentByDay?.stop;
+              stop.coords = temporalToSchool;
+            } else {
+              stop = createStop(temporalToSchool);
+            }
             const studentObj = { ...selectedStudent, stop };
             updateStudentArray(day, "toSchool", studentObj);
+          } else if (selectedStudent.serviceType === "halfAfternoon") {
+            const currentStudentByDay = students[day]?.["toHome"]?.find(
+              (s) => s.id === selectedStudent.id,
+            );
+            if (currentStudentByDay?.stop) {
+              stop = currentStudentByDay?.stop;
+              stop.coords = temporalToHome;
+            } else {
+              stop = createStop(temporalToHome);
+            }
+            const studentObj = { ...selectedStudent, stop };
+            updateStudentArray(day, "toHome", studentObj);
           } else {
             if (temporalToHome) {
-              const stop = createStop(temporalToHome);
+              const currentStudentByDay = students[day]?.["toHome"]?.find(
+                (s) => s.id === selectedStudent.id,
+              );
+              if (currentStudentByDay?.stop) {
+                stop = currentStudentByDay?.stop;
+                stop.coords = temporalToHome;
+              } else {
+                stop = createStop(temporalToHome);
+              }
               const studentObj = { ...selectedStudent, stop };
               updateStudentArray(day, "toHome", studentObj);
             }
             if (temporalToSchool) {
-              const stop = createStop(temporalToSchool);
+              const currentStudentByDay = students[day]?.["toSchool"]?.find(
+                (s) => s.id === selectedStudent.id,
+              );
+              if (currentStudentByDay?.stop) {
+                stop = currentStudentByDay?.stop;
+                stop.coords = temporalToSchool;
+              } else {
+                stop = createStop(temporalToSchool);
+              }
               const studentObj = { ...selectedStudent, stop };
               updateStudentArray(day, "toSchool", studentObj);
             }
@@ -81,32 +143,95 @@ function useStudentManager() {
       });
     } else {
       selectedDay.forEach((day) => {
+        let stop = null;
+
         if (typeTravel === "workshop") {
-          const stop = createStop(temporalWorkshop);
+          const currentStudentByDay = students[day]?.[typeTravel]?.find(
+            (s) => s.id === selectedStudent.id,
+          );
+          if (currentStudentByDay?.stop) {
+            stop = currentStudentByDay?.stop;
+            stop.coords = temporalWorkshop;
+          } else {
+            stop = createStop(temporalWorkshop);
+          }
           const studentObj = { ...selectedStudent, stop };
           updateStudentArray(day, "workshop", studentObj);
         } else if (bothTravels) {
-          const stop = createStop(temporalToHome);
-          const studentObj = { ...selectedStudent, stop };
-          updateStudentArray(day, "toHome", studentObj);
-          updateStudentArray(day, "toSchool", studentObj);
+          const currentStudentByDayToHome = students[day]?.["toHome"]?.find(
+            (s) => s.id === selectedStudent.id,
+          );
+          const currentStudentByDayToSchool = students[day]?.["toSchool"]?.find(
+            (s) => s.id === selectedStudent.id,
+          );
+          let stopToHome = null;
+          let stopToSchool = null;
+          if (currentStudentByDayToHome?.stop) {
+            stopToHome = currentStudentByDayToHome?.stop;
+            stopToHome.coords = temporalToHome;
+          } else {
+            stopToHome = createStop(temporalToHome);
+          }
+          if (currentStudentByDayToSchool?.stop) {
+            stopToSchool = currentStudentByDayToSchool?.stop;
+            stopToSchool.coords = temporalToHome;
+          } else {
+            stopToSchool = createStop(temporalToHome);
+          }
+
+          const studentObjToHome = { ...selectedStudent, stop: stopToHome };
+          const studentObjToSchool = { ...selectedStudent, stop: stopToSchool };
+          updateStudentArray(day, "toHome", studentObjToHome);
+          updateStudentArray(day, "toSchool", studentObjToSchool);
         } else {
           if (selectedStudent.serviceType === "halfMorning") {
-            const stop = createStop(temporalToSchool);
+            const currentStudentByDay = students[day]?.["toSchool"]?.find(
+              (s) => s.id === selectedStudent.id,
+            );
+            if (currentStudentByDay?.stop) {
+              stop = currentStudentByDay?.stop;
+              stop.coords = temporalToSchool;
+            } else {
+              stop = createStop(temporalToSchool);
+            }
             const studentObj = { ...selectedStudent, stop };
             updateStudentArray(day, "toHome", studentObj);
           } else if (selectedStudent.serviceType === "halfAfternoon") {
-            const stop = createStop(temporalToHome);
+            const currentStudentByDay = students[day]?.["toHome"]?.find(
+              (s) => s.id === selectedStudent.id,
+            );
+            if (currentStudentByDay?.stop) {
+              stop = currentStudentByDay?.stop;
+              stop.coords = temporalToHome;
+            } else {
+              stop = createStop(temporalToHome);
+            }
             const studentObj = { ...selectedStudent, stop };
             updateStudentArray(day, "toSchool", studentObj);
           } else {
             if (temporalToHome) {
-              const stop = createStop(temporalToHome);
+              const currentStudentByDay = students[day]?.["toHome"]?.find(
+                (s) => s.id === selectedStudent.id,
+              );
+              if (currentStudentByDay?.stop) {
+                stop = currentStudentByDay?.stop;
+                stop.coords = temporalToHome;
+              } else {
+                stop = createStop(temporalToHome);
+              }
               const studentObj = { ...selectedStudent, stop };
               updateStudentArray(day, "toHome", studentObj);
             }
             if (temporalToSchool) {
-              const stop = createStop(temporalToSchool);
+              const currentStudentByDay = students[day]?.["toSchool"]?.find(
+                (s) => s.id === selectedStudent.id,
+              );
+              if (currentStudentByDay?.stop) {
+                stop = currentStudentByDay?.stop;
+                stop.coords = temporalToSchool;
+              } else {
+                stop = createStop(temporalToSchool);
+              }
               const studentObj = { ...selectedStudent, stop };
               updateStudentArray(day, "toSchool", studentObj);
             }

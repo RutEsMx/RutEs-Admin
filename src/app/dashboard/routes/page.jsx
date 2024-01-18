@@ -2,6 +2,7 @@
 import ButtonLink from "@/components/ButtonLink";
 import MainMap from "./components/MainMap";
 import RoutesCards from "@/components/RoutesCards";
+import { Suspense } from "react";
 
 const Routes = () => {
   return (
@@ -20,17 +21,19 @@ const Routes = () => {
           </ButtonLink>
         </div>
       </div>
-      <div className="grid grid-rows-2 gap-4">
+      <div className="grid grid-rows-3 gap-4">
         <div className="row-span-1">
           <MainMap />
         </div>
-        <div className="row-span-1">
+        <div className="row-span-2">
           <div className="grid grid-cols-3 gap-4">
             <div>
               <span>Notificaciones</span>
             </div>
             <div className="col-span-2 pt-8">
-              <RoutesCards />
+              <Suspense fallback={<div>Loading...</div>}>
+                <RoutesCards />
+              </Suspense>
             </div>
           </div>
         </div>
