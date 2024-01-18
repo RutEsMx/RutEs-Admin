@@ -15,6 +15,7 @@ import { collection, doc, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import { CURRENT_DAY, DAYS } from "@/utils/options";
 import { setStructureDatatable } from "./TableServices";
+import { sendPassword } from "./MailService";
 
 const getStudentById = async (id) => {
   const studentData = await getDocumentById("students", id);
@@ -74,6 +75,8 @@ const createParentProfile = async (parent, schoolId, roles) => {
 
       const uid = signUpResult?.result?.uid;
       const password = signUpResult?.result?.password;
+
+      await sendPassword(email, password, "Cuenta creada");
 
       const profileData = {
         ...parent,
