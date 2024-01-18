@@ -8,7 +8,14 @@ import {
 } from "@react-google-maps/api";
 // import map_pin.svg from public
 
-const Maps = ({ markers, setMarker, options, center, ...props }) => {
+const Maps = ({
+  markers,
+  setMarker,
+  options,
+  center,
+  height = "500px",
+  ...props
+}) => {
   const [markersMap, setMarkersMap] = useState([]);
   const libraries = useMemo(() => ["places"], []);
 
@@ -73,32 +80,28 @@ const Maps = ({ markers, setMarker, options, center, ...props }) => {
   if (!isLoaded) return "Loading maps";
 
   return (
-    <div className="bg-gray h-full ">
-      <GoogleMap
-        options={mapOptions}
-        zoom={14}
-        center={center ? center : markersMap[0]}
-        mapContainerStyle={{ width: "100%", height: "500px" }}
-        {...props}
-      >
-        <>
-          {markersMap.map((marker, index) => {
-            return (
-              <CustomMarker
-                key={marker.studentId + index}
-                position={{ lat: marker?.lat, lng: marker?.lng }}
-                draggable={marker.draggable}
-                onDragEnd={(e) =>
-                  setMarker(marker.studentId, e.latLng.toJSON())
-                }
-                color={marker.color}
-                label={marker.fullName || marker.name}
-              />
-            );
-          })}
-        </>
-      </GoogleMap>
-    </div>
+    <GoogleMap
+      options={mapOptions}
+      zoom={14}
+      center={center ? center : markersMap[0]}
+      mapContainerStyle={{ width: "100%", height: height }}
+      {...props}
+    >
+      <>
+        {markersMap.map((marker, index) => {
+          return (
+            <CustomMarker
+              key={marker.studentId + index}
+              position={{ lat: marker?.lat, lng: marker?.lng }}
+              draggable={marker.draggable}
+              onDragEnd={(e) => setMarker(marker.studentId, e.latLng.toJSON())}
+              color={marker.color}
+              label={marker.fullName || marker.name}
+            />
+          );
+        })}
+      </>
+    </GoogleMap>
   );
 };
 

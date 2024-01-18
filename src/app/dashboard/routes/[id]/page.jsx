@@ -54,7 +54,7 @@ const Page = ({ params }) => {
         </div>
       </div>
       <div className="border border-black px-4 py-2 mt-4">
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-2">
           <div className="col-span-1">
             <div className="flex flex-col justify-around">
               <div className="flex flex-row gap-2">
@@ -66,7 +66,7 @@ const Page = ({ params }) => {
                 <span className="">{route?.capacity}</span>
               </div>
               <div className="flex flex-row gap-2">
-                <span className="font-bold">Status:</span>
+                <span className="font-bold">Estado:</span>
                 <span className={`${color}`}>{statusName}</span>
               </div>
             </div>
