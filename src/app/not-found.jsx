@@ -7,12 +7,7 @@ export default function NotFound() {
       <div className="grid grid-cols-2 h-full">
         <div className="grid-span-1">
           <div className="flex justify-end items-center h-full me-10">
-            <Image
-              src="/error_logo.png"
-              alt="error"
-              width={150}
-              height={150}
-            />
+            <Image src="/error_logo.png" alt="error" width={150} height={150} />
           </div>
         </div>
         <div className="grid-span-1">
@@ -21,7 +16,7 @@ export default function NotFound() {
             <span className="text-2xl font-thin mb-6">
               No se encontró el sitio
             </span>
-            <ButtonLink href="/dashboard" className={"text-black"}>
+            <ButtonLink href="/dashboard/routes" className={"text-black"}>
               Ir a inicio
             </ButtonLink>
           </div>

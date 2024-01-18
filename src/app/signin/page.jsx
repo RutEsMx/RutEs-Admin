@@ -24,7 +24,7 @@ export default function Page() {
     setLoading(true);
     try {
       await signIn(email, password);
-      return router.push("/dashboard");
+      return router.push("/dashboard/routes");
     } catch (error) {
       alert(error.message);
     }
