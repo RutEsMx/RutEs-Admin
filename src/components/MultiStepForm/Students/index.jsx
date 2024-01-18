@@ -78,8 +78,7 @@ const MultiStepFormStudent = () => {
       avatar: "",
       emailExist: false,
     },
-    countTutors: 1,
-    // tutors: [],
+    countTutors: process.env.NODE_ENV === "development" ? 1 : 0,
   };
 
   const handleNext = async (values) => {
