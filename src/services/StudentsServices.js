@@ -115,6 +115,8 @@ export const updateParentProfile = async (parent) => {
       const { result: resultAvatar } = await responseAvatar.json();
       if (resultAvatar) avatarFilename = resultAvatar;
     }
+    delete parent.isEdit;
+    delete parent.emailExist;
 
     const profileData = {
       ...parent,
