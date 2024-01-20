@@ -85,6 +85,7 @@ const createParentProfile = async (parent, schoolId, roles) => {
         roles: roles || ["user"],
         schoolId,
         avatar: avatarFilename,
+        isFirstTime: roles.find((role) => role === "user") ? true : false,
       };
 
       const responseCreateDocument = await createDocument(
