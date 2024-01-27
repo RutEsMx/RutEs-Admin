@@ -23,27 +23,30 @@ export async function GET(request) {
       .orderBy("name")
       .get();
 
-    const data = response.docs.map(async(doc) => {
+    const data = response.docs.map(async (doc) => {
       const studentsArray = [];
       if (doc.data()?.students?.length > 0) {
         for (const student of doc.data().students) {
           const snapshot = await student.get();
-          if(snapshot.exists) studentsArray.push(snapshot.data());
+          const studentData = snapshot.data();
+          studentData.id = snapshot.id;
+          if (snapshot.exists) studentsArray.push(studentData);
         }
       }
-      
-      
+
       const id = doc.id;
       const data = doc.data();
       data.students = studentsArray;
       return { id, ...data };
     });
 
-    return Promise.all(data).then((result) => {
-      return NextResponse.json(result);
-    }).catch((error) => {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    })
+    return Promise.all(data)
+      .then((result) => {
+        return NextResponse.json(result);
+      })
+      .catch((error) => {
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

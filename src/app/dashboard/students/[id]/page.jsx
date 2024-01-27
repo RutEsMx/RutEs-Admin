@@ -4,14 +4,21 @@ import { getStudentById } from "@/services/StudentsServices";
 import { OPTIONS_TYPE_SERVICES } from "@/utils/options";
 import Image from "next/image";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { setAlert } from "@/store/useSystemStore";
+import { setAlert, useSystemStore } from "@/store/useSystemStore";
 import ButtonLink from "@/components/ButtonLink";
 import { useStudentsStore } from "@/store/useStudentsStore";
+import useTutorsByStudents from "@/hooks/useTutorsByStudents";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase/client";
+import Alert from "@/components/Alert";
 const storage = getStorage();
 
 const Page = ({ params }) => {
-  const { student } = useStudentsStore();
+  const { student, updateStudent } = useStudentsStore();
+  const { tutors } = useTutorsByStudents(student);
   const [imageUrl, setImageUrl] = useState("");
+  const [isClient, setIsClient] = useState(false);
+  const { alert } = useSystemStore();
 
   useEffect(() => {
     const getStudent = async () => {
@@ -32,8 +39,43 @@ const Page = ({ params }) => {
           });
       }
     };
+    setIsClient(true);
     getStudent();
   }, []);
+
+  const handleStatus = async (tutorId) => {
+    const status = student?.tutorActive === tutorId ? "" : tutorId;
+    const updateTutorActive = await updateDoc(doc(db, "students", params.id), {
+      tutorActive: status,
+    });
+    const updateStudentGlobal = await updateStudent({
+      ...student,
+      tutorActive: status,
+    });
+
+    Promise.all([updateTutorActive, updateStudentGlobal])
+      .then(() => {
+        setAlert({
+          type: "success",
+          message: "Tutor actualizado correctamente",
+          isOpen: true,
+        });
+        setTimeout(() => {
+          setAlert({
+            type: "",
+            message: "",
+            isOpen: false,
+          });
+        }, 3000);
+      })
+      .catch((error) => {
+        setAlert({
+          type: "error",
+          message: error?.message,
+          isOpen: true,
+        });
+      });
+  };
 
   const typeService = OPTIONS_TYPE_SERVICES.find(
     (option) => option.value === student?.serviceType,
@@ -63,87 +105,98 @@ const Page = ({ params }) => {
             <div className="flex flex-col justify-around">
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Nombre:</span>
-                <span className="">{student?.name}</span>
+                <span className="">{isClient && student?.name}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Apellido Materno:</span>
-                <span className="">{student?.secondLastName}</span>
+                <span className="">{isClient && student?.secondLastName}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Grado:</span>
-                <span className="">{student?.grade}</span>
+                <span className="">{isClient && student?.grade}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Tipo de servicio:</span>
-                <span className="">{typeService}</span>
+                <span className="">{isClient && typeService}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Estado de servicio:</span>
                 <span className="">
-                  {student?.status === "active" ? "Activo" : "Inactivo"}
+                  {isClient && student?.status === "active"
+                    ? "Activo"
+                    : "Inactivo"}
                 </span>
               </div>
             </div>
             <div className="flex flex-col justify-around">
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Apellido Paterno:</span>
-                <span className="">{student?.lastName}</span>
+                <span className="">{isClient && student?.lastName}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Grupo:</span>
-                <span className="">{student?.group}</span>
+                <span className="">{isClient && student?.group}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Grupo Sanguíneo:</span>
-                <span className="">{student?.bloodType}</span>
+                <span className="">{isClient && student?.bloodType}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Matricula:</span>
-                <span className="">{student?.enrollment}</span>
+                <span className="">{isClient && student?.enrollment}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Alergias:</span>
-                <span className="">{student?.allergies}</span>
+                <span className="">{isClient && student?.allergies}</span>
               </div>
             </div>
           </div>
           <div>
-            <Image src={imageUrl} alt="avatar" width={200} height={200} />
+            {imageUrl && (
+              <Image src={imageUrl} alt="avatar" width={200} height={200} />
+            )}
           </div>
         </div>
         <div className="my-3">
-          <div className="flex flex-col justify-around">
-            {/* <div className="flex flex-row gap-2 mb-4">
-              <span className="font-bold text-2xl">Rutas:</span>
+          <div className="grid grid-flow-row md:grid-cols-5">
+            <div className="col-span-5">
+              <h2 className="font-bold text-2xl">Tutores:</h2>
             </div>
-            {student?.routes?.map((route) => (
-              <div className="flex flex-row gap-2" key={route?.id}>
-                <span className="font-bold">Nombre:</span>
-                <span className="">{route?.name}</span>
-              </div>
-            ))} */}
-            {/* <div className="grid grid-flow-col gap-4  mt-4">
-              {student?.stops?.map((stop) => (
-                <div className="flex flex-col gap-2 row-span-1" key={stop?.id}>
-                  <span className="font-bold">Día:</span>
-                  <span className="">{DAYS[stop?.day]}</span>
-                  {stop?.coords && (
-                    <>
-                      <span className="font-bold">A casa: </span>
-                      <span className="font-light">
-                        {stop?.coords?.toHome?.label}
-                      </span>
-                      <span className="font-bold">A la escuela: </span>
-                      <span className="font-light">
-                        {stop?.coords?.toSchool?.label}
-                      </span>
-                    </>
-                  )}
+
+            {tutors &&
+              tutors?.map((tutor) => (
+                <div
+                  className={`card shadow-xl ${
+                    student?.tutorActive === tutor?.id
+                      ? "bg-yellow hover:bg-yellow/80"
+                      : "bg-slate-200 hover:bg-slate-200/80"
+                  } cursor-pointer`}
+                  key={tutor?.id}
+                  onClick={() => handleStatus(tutor?.id)}
+                >
+                  <div className="card-body">
+                    <h2 className="card-title text-wrap">
+                      {`${tutor?.name || ""} ${tutor?.lastName || ""} ${
+                        tutor?.secondLastName || ""
+                      }`}
+                    </h2>
+                    <label className="cursor-pointer">
+                      {student?.tutorActive === tutor?.id
+                        ? "Tutor activo"
+                        : "Tutor inactivo"}
+                    </label>
+                  </div>
                 </div>
               ))}
-            </div> */}
           </div>
         </div>
+      </div>
+      <div className="mt-4">
+        <Alert
+          isOpen={alert.isOpen}
+          message={alert.message}
+          type={alert.type}
+        />
       </div>
     </div>
   );
