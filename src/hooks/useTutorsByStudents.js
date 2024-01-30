@@ -16,7 +16,7 @@ const useTutorsByStudents = (student) => {
       });
       setTutors(tutorsByStudent);
     }
-  }, [rows, student.id]);
+  }, [rows, student?.id]);
 
   return {
     tutors,
