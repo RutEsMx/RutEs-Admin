@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useState } from "react";
 import InputField from "@/components/InputField";
 import { useFormikContext } from "formik";
@@ -16,7 +17,7 @@ const StepTutors = ({ step }) => {
   const [oldStep, setOldStep] = useState(step);
   const [emailExist, setEmailExist] = useState(false);
   const [emailData, setEmailData] = useState(null);
-  
+
   useEffect(() => {
     if (step > oldStep) {
       setTitle(title + 1);
@@ -30,24 +31,27 @@ const StepTutors = ({ step }) => {
     }
     setOldStep(step);
   }, [step]);
-  
+
   const findEmailFirestore = async (e) => {
-    const email = e.target.value
-    setFieldValue(`tutors_${stepTutors}.email`, email)
+    const email = e.target.value;
+    setFieldValue(`tutors_${stepTutors}.email`, email);
     if (email.length > 3) {
       try {
-        const qProfile = query(collection(db, "profile"), where("email", "==", email))
-        const response = await getDocs(qProfile)
+        const qProfile = query(
+          collection(db, "profile"),
+          where("email", "==", email),
+        );
+        const response = await getDocs(qProfile);
         if (response.empty) {
-          setEmailExist(false)
-          setFieldValue(`tutors_${stepTutors}.emailExist`, false)
-          return
+          setEmailExist(false);
+          setFieldValue(`tutors_${stepTutors}.emailExist`, false);
+          return;
         }
         if (response.docs.length > 0) {
-          setEmailExist(true)
-          const data = response.docs[0].data()
-          setEmailData(data)
-          return
+          setEmailExist(true);
+          const data = response.docs[0].data();
+          setEmailData(data);
+          return;
         }
       } catch (error) {
         setAlert({
@@ -56,23 +60,26 @@ const StepTutors = ({ step }) => {
         });
       }
     }
-  }
-  
-  const addEmailData = async (e) => {
-    e.preventDefault()
+  };
 
-    setFieldValue(`tutors_${stepTutors}.name`, emailData.name)
-    setFieldValue(`tutors_${stepTutors}.lastName`, emailData.lastName)
-    setFieldValue(`tutors_${stepTutors}.secondLastName`, emailData.secondLastName)
-    setFieldValue(`tutors_${stepTutors}.phone`, emailData.phone)
-    setFieldValue(`tutors_${stepTutors}.id`, emailData.id)
-    setFieldValue(`tutors_${stepTutors}.students`, emailData.students)
+  const addEmailData = async (e) => {
+    e.preventDefault();
+
+    setFieldValue(`tutors_${stepTutors}.name`, emailData.name);
+    setFieldValue(`tutors_${stepTutors}.lastName`, emailData.lastName);
+    setFieldValue(
+      `tutors_${stepTutors}.secondLastName`,
+      emailData.secondLastName,
+    );
+    setFieldValue(`tutors_${stepTutors}.phone`, emailData.phone);
+    setFieldValue(`tutors_${stepTutors}.id`, emailData.id);
+    setFieldValue(`tutors_${stepTutors}.students`, emailData.students);
     if (emailData?.avatar) {
       const url = await downloadURL(emailData.avatar);
       setFieldValue(`tutors_${stepTutors}.avatar`, url);
     }
-    setFieldValue(`tutors_${stepTutors}.emailExist`, true)
-  }
+    setFieldValue(`tutors_${stepTutors}.emailExist`, true);
+  };
 
   return (
     <div className="border border-black px-4 py-2 mt-4">
@@ -90,19 +97,17 @@ const StepTutors = ({ step }) => {
               error={errors?.["tutors_" + stepTutors]?.email}
             />
             <div className="col-span-1 flex flex-col ms-2">
-              {
-                emailExist && (
-                  <>
-                    <p className="text-xs text-gray-500">El correo electrónico ya existe en la base de datos</p>
-                    <span>¿Quiere asignar este tutor al alumno?</span>
-                    <ButtonAction
-                      onClick={addEmailData}
-                    >
-                      <PlusIcon className="h-5 w-5 text-black" />
-                    </ButtonAction>
-                  </>
-                )
-              }
+              {emailExist && (
+                <>
+                  <p className="text-xs text-gray-500">
+                    El correo electrónico ya existe en la base de datos
+                  </p>
+                  <span>¿Quiere asignar este tutor al alumno?</span>
+                  <ButtonAction onClick={addEmailData}>
+                    <PlusIcon className="h-5 w-5 text-black" />
+                  </ButtonAction>
+                </>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">

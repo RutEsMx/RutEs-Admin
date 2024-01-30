@@ -32,11 +32,11 @@ const motherMock = {
 };
 
 const tutorMock = {
-  name: "Paola",
-  lastName: "Pérez",
-  secondLastName: "Mendoza",
-  phone: "9933601233",
-  email: "jonathan+32@rutes.mx",
+  name: "Luis",
+  lastName: "Mendez",
+  secondLastName: "",
+  phone: "9933601236",
+  email: "jonathan+36@rutes.mx",
 };
 
 export { studentMock, fatherMock, motherMock, tutorMock };

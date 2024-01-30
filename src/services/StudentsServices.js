@@ -11,7 +11,15 @@ import {
   setStudents,
   updateStudent,
 } from "@/store/useStudentsStore";
-import { collection, doc, getDocs, query, where } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "@/firebase/client";
 import { CURRENT_DAY, DAYS } from "@/utils/options";
 import { setStructureDatatable } from "./TableServices";
@@ -351,10 +359,73 @@ const createStudentsTable = async (students) => {
   return Promise.all(studentsPromise);
 };
 
+// const updateTutorsArray = async (studentId, tutorId, status) => {
+// }
+
+const createTutorProfile = async (parent, studentId, schoolId, roles) => {
+  // if (parent.emailExist) return updateParentProfile(parent);
+  const { email, avatar } = parent;
+  let avatarFilename = avatar || "";
+
+  if (validateEmail(email)) {
+    try {
+      if (avatar instanceof File) {
+        const dataFile = new FormData();
+        dataFile.set("avatar", avatar);
+        const responseAvatar = await fetch(`/api/images`, {
+          method: "POST",
+          body: dataFile,
+        });
+
+        const { result: resultAvatar } = await responseAvatar.json();
+        if (resultAvatar) avatarFilename = resultAvatar;
+      }
+
+      const signUpResult = await signUp(email);
+      if (signUpResult?.error) {
+        return {
+          error: signUpResult.error,
+        };
+      }
+
+      const uid = signUpResult?.result?.uid;
+      const password = signUpResult?.result?.password;
+
+      await sendPassword(email, password, "Cuenta creada");
+      const studentRef = doc(db, "students", studentId);
+
+      const profileData = {
+        ...parent,
+        id: uid,
+        password,
+        roles: roles || ["user"],
+        schoolId,
+        avatar: avatarFilename,
+        isFirstTime: roles.find((role) => role === "user") ? true : false,
+        students: [studentRef],
+      };
+
+      const responseCreateDocument = await createDocument(
+        "profile",
+        profileData,
+      );
+
+      await updateDoc(studentRef, {
+        tutors: arrayUnion(responseCreateDocument),
+      });
+
+      return profileData;
+    } catch (error) {
+      return { error };
+    }
+  }
+};
+
 export {
   createParentsByForm,
   getStudentById,
   getStudents,
   getStudentsForRoutes,
   updateStudentByForm,
+  createTutorProfile,
 };

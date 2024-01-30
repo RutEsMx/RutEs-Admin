@@ -6,7 +6,7 @@ const useTutorsByStudents = (student) => {
   const [tutors, setTutors] = useState([]);
 
   useEffect(() => {
-    if (rows.length > 0) {
+    if (rows?.length > 0) {
       const tutorsByStudent = rows.filter((tutor) => {
         return tutor?.students?.some((studentByTutor) => {
           return (
@@ -16,7 +16,7 @@ const useTutorsByStudents = (student) => {
       });
       setTutors(tutorsByStudent);
     }
-  }, []);
+  }, [rows]);
 
   return {
     tutors,
