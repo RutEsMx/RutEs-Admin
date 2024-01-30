@@ -10,7 +10,7 @@ const Page = ({ params }) => {
   const { student, setStudent } = useStudentsStore();
 
   useEffect(() => {
-    (!student || student.id !== id) && getStudentById(id);
+    (!student || student?.id !== id) && getStudentById(id);
     () => {
       setStudent(null);
     };
