@@ -6,6 +6,11 @@ import { useContext } from "react";
 import { getDocumentByField } from "@/firebase/crud";
 import { getSchooldById } from "@/services/SchoolServices";
 import { getCookies } from "@/services/CookiesServices";
+import { getAuxiliars } from "@/services/AuxiliarsServices";
+import { getDrivers } from "@/services/DriverServices";
+import { getUnits } from "@/services/UnitsServices";
+import { getParents } from "@/services/ParentsSevices";
+import { getStudents } from "@/services/StudentsServices";
 
 export const AuthContext = createContext();
 
@@ -30,7 +35,7 @@ export function AuthContextProvider({ children }) {
         const profile = await getDocumentByField("profile", "id", user?.uid);
         setUser(user);
         const jwt = await user?.getIdToken();
-        await getCookies(jwt)
+        await getCookies(jwt);
         const school = await getSchooldById(profile?.schoolId);
         if (school?.error) {
           throw new Error(school?.error?.message);
@@ -38,6 +43,11 @@ export function AuthContextProvider({ children }) {
         setProfile(profile);
         setSchool(school.data);
         setLoading(false);
+        getAuxiliars();
+        getDrivers();
+        getUnits();
+        getParents();
+        getStudents();
       } catch (error) {
         alert(error.message);
       }

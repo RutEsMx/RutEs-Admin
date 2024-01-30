@@ -159,8 +159,11 @@ const Page = ({ params }) => {
         </div>
         <div className="my-3">
           <div className="grid grid-flow-row md:grid-cols-5">
-            <div className="col-span-5">
+            <div className="col-span-5 flex justify-between">
               <h2 className="font-bold text-2xl">Tutores:</h2>
+              <ButtonLink href={`/dashboard/students/${params.id}/tutors`}>
+                Agregar tutor
+              </ButtonLink>
             </div>
 
             {tutors &&

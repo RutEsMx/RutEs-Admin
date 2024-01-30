@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -12,14 +12,6 @@ import { rankItem } from "@tanstack/match-sorter-utils";
 import ButtonAction from "@/components/ButtonAction";
 import FilterInput from "@/components/Table/elements/FilterInputTable";
 import ColumnSelected from "./columns";
-// eslint-disable-next-line no-unused-vars
-import { deleteParents, getParents } from "@/services/ParentsSevices";
-// eslint-disable-next-line no-unused-vars
-import { setAlert } from "@/store/useSystemStore";
-import { getDrivers } from "@/services/DriverServices";
-import { getUnits } from "@/services/UnitsServices";
-import { getStudents } from "@/services/StudentsServices";
-import { getAuxiliars } from "@/services/AuxiliarsServices";
 
 const fuzzyFilter = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -34,33 +26,6 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 const DataTable = ({ type, list = [] }) => {
   const columns = useMemo(() => ColumnSelected(type), []);
   const [globalFilter, setGlobalFilter] = useState("");
-
-  useEffect(() => {
-    const getData = async () => {
-      if (type === "units") {
-        getUnits();
-      }
-      if (type === "drivers") {
-        getDrivers();
-      }
-      if (type === "parents") {
-        getParents();
-      }
-      if (type === "students") {
-        getStudents();
-      }
-      if (type === "auxiliars") {
-        getAuxiliars();
-      }
-      if (type === "schools") {
-        console.log("get schools");
-      }
-      if (type === "users") {
-        console.log("get users");
-      }
-    };
-    getData();
-  }, []);
 
   const table = useReactTable({
     data: list?.rows ?? [],
