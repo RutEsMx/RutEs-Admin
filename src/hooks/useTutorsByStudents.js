@@ -10,13 +10,13 @@ const useTutorsByStudents = (student) => {
       const tutorsByStudent = rows.filter((tutor) => {
         return tutor?.students?.some((studentByTutor) => {
           return (
-            studentByTutor.id === student.id && tutor?.roles?.includes("tutor")
+            studentByTutor.id === student?.id && tutor?.roles?.includes("tutor")
           );
         });
       });
       setTutors(tutorsByStudent);
     }
-  }, [rows]);
+  }, [rows, student.id]);
 
   return {
     tutors,
