@@ -122,8 +122,8 @@ const DataTable = ({ type, list = [] }) => {
           <div className="flex flex-1 justify-center">
             <span>
               <strong>
-                {table.getState().pagination.pageIndex + 1} de{" "}
-                {table.getPageCount()}
+                {table && table?.getState()?.pagination?.pageIndex + 1} de{" "}
+                {table?.getPageCount() || 1}
               </strong>
             </span>
           </div>
@@ -178,23 +178,31 @@ const DataTable = ({ type, list = [] }) => {
           </thead>
         ))}
         <tbody>
-          {table.getRowModel()?.rows.map((row, index) => {
-            let color = index % 2 === 0 ? "bg-light-gray" : "bg-white";
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td key={cell.id} className={`${color}`}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
+          {table.getRowModel() ? (
+            table.getRowModel()?.rows.map((row, index) => {
+              let color = index % 2 === 0 ? "bg-light-gray" : "bg-white";
+              return (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <td key={cell.id} className={`${color}`}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })
+          ) : (
+            <tr>
+              <td colSpan={columns.length} className="text-center">
+                Cargando...
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </>

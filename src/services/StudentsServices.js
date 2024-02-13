@@ -128,7 +128,7 @@ export const updateParentProfile = async (parent) => {
 
     const profileData = {
       ...parent,
-      avatar: avatarFilename,
+      avatar: avatarFilename || null,
     };
 
     await updateDocument("profile", profileData.id, profileData);
@@ -234,12 +234,20 @@ const createParentsByForm = async (data, schoolId) => {
     );
   }
 
+  const tutorActive = Array.from({ length: countTutors }, (_, i) => {
+    const tutor = `tutors_${i}`;
+    if (data[tutor]?.active) {
+      return tutorProfiles[i].id;
+    }
+  }).filter(Boolean);
+
   const responseUpdateStudent = await updateDocument(
     "students",
     studentProfile.id,
     {
       parents: parents.filter((parent) => parent?.id),
       tutors: tutorProfiles.filter((profile) => profile?.id),
+      tutorActive: (tutorActive[0] && tutorActive[0]) || null,
     },
   );
 
@@ -363,58 +371,61 @@ const createStudentsTable = async (students) => {
 // }
 
 const createTutorProfile = async (parent, studentId, schoolId, roles) => {
-  // if (parent.emailExist) return updateParentProfile(parent);
   const { email, avatar } = parent;
-  let avatarFilename = avatar || "";
+  let avatarFilename = avatar || null;
 
   if (validateEmail(email)) {
     try {
-      if (avatar instanceof File) {
-        const dataFile = new FormData();
-        dataFile.set("avatar", avatar);
-        const responseAvatar = await fetch(`/api/images`, {
-          method: "POST",
-          body: dataFile,
-        });
-
-        const { result: resultAvatar } = await responseAvatar.json();
-        if (resultAvatar) avatarFilename = resultAvatar;
-      }
-
-      const signUpResult = await signUp(email);
-      if (signUpResult?.error) {
-        return {
-          error: signUpResult.error,
-        };
-      }
-
-      const uid = signUpResult?.result?.uid;
-      const password = signUpResult?.result?.password;
-
-      await sendPassword(email, password, "Cuenta creada");
+      let responseCreateDocument;
       const studentRef = doc(db, "students", studentId);
 
-      const profileData = {
-        ...parent,
-        id: uid,
-        password,
-        roles: roles || ["user"],
-        schoolId,
-        avatar: avatarFilename,
-        isFirstTime: roles.find((role) => role === "user") ? true : false,
-        students: [studentRef],
-      };
+      if (parent.emailExist) {
+        responseCreateDocument = await updateDocument("profile", parent.id, {
+          students: [...(parent.students || []), studentRef],
+        });
+      } else {
+        if (avatar instanceof File) {
+          const dataFile = new FormData();
+          dataFile.set("avatar", avatar);
+          const responseAvatar = await fetch(`/api/images`, {
+            method: "POST",
+            body: dataFile,
+          });
 
-      const responseCreateDocument = await createDocument(
-        "profile",
-        profileData,
-      );
+          const { result: resultAvatar } = await responseAvatar.json();
+          if (resultAvatar) avatarFilename = resultAvatar;
+        }
+
+        const signUpResult = await signUp(email);
+        if (signUpResult?.error) {
+          return {
+            error: signUpResult.error,
+          };
+        }
+
+        const uid = signUpResult?.result?.uid;
+        const password = signUpResult?.result?.password;
+
+        await sendPassword(email, password, "Cuenta creada");
+
+        const profileData = {
+          ...parent,
+          id: uid,
+          password,
+          roles: roles || ["user"],
+          schoolId,
+          avatar: avatarFilename,
+          isFirstTime: roles.find((role) => role === "user") ? true : false,
+          students: [studentRef],
+        };
+        responseCreateDocument = await createDocument("profile", profileData);
+      }
 
       await updateDoc(studentRef, {
         tutors: arrayUnion(responseCreateDocument),
       });
 
-      return profileData;
+      return;
     } catch (error) {
       return { error };
     }

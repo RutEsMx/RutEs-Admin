@@ -1,3 +1,4 @@
+"use client";
 import { createColumnHelper } from "@tanstack/table-core";
 import HeaderTable from "@/components/Table/elements/HeaderTable";
 import CellTable from "@/components/Table/elements/CellTable";

@@ -1,3 +1,4 @@
+"use client";
 import { useRoutesStore } from "@/store/useRoutesStore";
 
 export default function CellTableRoute({ className = "", children }) {
