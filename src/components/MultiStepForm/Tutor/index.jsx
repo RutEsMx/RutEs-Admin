@@ -47,6 +47,7 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
         const qProfile = query(
           collection(db, "profile"),
           where("email", "==", email),
+          where("schoolId", "==", profile.schoolId),
         );
         const response = await getDocs(qProfile);
         if (response.empty) {

@@ -9,6 +9,7 @@ import { db } from "@/firebase/client";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { downloadURL } from "@/utils/functionsClient";
 import { setAlert } from "@/store/useSystemStore";
+import { useAuthContext } from "@/context/AuthContext";
 
 const StepTutors = ({ step }) => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
@@ -17,6 +18,7 @@ const StepTutors = ({ step }) => {
   const [oldStep, setOldStep] = useState(step);
   const [emailExist, setEmailExist] = useState(false);
   const [emailData, setEmailData] = useState(null);
+  const { profile } = useAuthContext();
 
   useEffect(() => {
     if (step > oldStep) {
@@ -40,6 +42,7 @@ const StepTutors = ({ step }) => {
         const qProfile = query(
           collection(db, "profile"),
           where("email", "==", email),
+          where("schoolId", "==", profile.schoolId),
         );
         const response = await getDocs(qProfile);
         if (response.empty) {
