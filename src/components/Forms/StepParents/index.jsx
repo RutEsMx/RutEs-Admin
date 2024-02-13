@@ -8,6 +8,7 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import ButtonAction from "@/components/ButtonAction";
 import { downloadURL } from "@/utils/functionsClient";
 import { setAlert } from "@/store/useSystemStore";
+import { useAuthContext } from "@/context/AuthContext";
 
 const StepParents = ({ validation }) => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
@@ -15,6 +16,7 @@ const StepParents = ({ validation }) => {
   const [title, setTitle] = useState("Padre");
   const [emailExist, setEmailExist] = useState(false);
   const [emailData, setEmailData] = useState(null);
+  const { profile } = useAuthContext();
 
   useEffect(() => {
     setType(validation?._nodes[0]);
@@ -29,6 +31,7 @@ const StepParents = ({ validation }) => {
         const qProfile = query(
           collection(db, "profile"),
           where("email", "==", email),
+          where("schoolId", "==", profile.schoolId),
         );
         const response = await getDocs(qProfile);
         if (response.empty) {
@@ -43,6 +46,7 @@ const StepParents = ({ validation }) => {
           return;
         }
       } catch (error) {
+        console.log("🚀 ~ findEmailFirestore ~ error:", error);
         setAlert({
           type: "error",
           message: "Ocurrió un error al buscar el correo electrónico",
