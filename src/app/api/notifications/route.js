@@ -2,12 +2,12 @@ import { NextResponse } from "next/server";
 import { messaging } from "firebase-admin";
 import { customInitApp } from "@/firebase/admin";
 
-customInitApp();
+const app = customInitApp();
 
 export async function POST(request) {
   const res = await request.json();
   try {
-    const response = await messaging().sendEachForMulticast({
+    await messaging(app).sendEachForMulticast({
       notification: {
         title: res.title,
         body: res.body,
@@ -15,7 +15,7 @@ export async function POST(request) {
       data: res.data,
       tokens: res.tokens,
     });
-    return NextResponse.json({ success: true, result: response });
+    return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
