@@ -9,7 +9,7 @@ const app = customInitApp();
 // Salida de camion
 // Entrada de camion
 // Student abarca las siguientes categorias
-// - student
+// - parents
 // Estudiante subio a camion
 // Estudiante salio de la escuela
 // Estudiante bajo de camion o fue entregado
@@ -47,7 +47,7 @@ export async function POST(request) {
       createdAt: new Date(),
       category: res?.category || "general",
     };
-    const userId = res?.data?.userId;
+    const schoolId = res?.data?.schoolId;
 
     await messaging(app).sendEachForMulticast({
       ...notificationData,
@@ -62,14 +62,43 @@ export async function POST(request) {
     };
 
     await firestore()
+      .collection("notificationsSchool")
+      .doc(schoolId)
       .collection("notifications")
-      .doc(userId)
-      .collection("list")
       .add({
         ...saveData,
       });
 
     return NextResponse.json({ success: true });
+  } catch (error) {
+    const errorMessage = validateError(error);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  }
+}
+
+export async function GET(request) {
+  const searchParams = request.nextUrl.searchParams;
+  const schoolId = searchParams.get("schoolId");
+  const userId = searchParams.get("userId");
+
+  try {
+    if (schoolId) {
+      const notification = await firestore()
+        .collection("notificationsSchool")
+        .doc(schoolId)
+        .collection("notifications")
+        .orderBy("createdAt", "desc")
+        .limit(10)
+        .get();
+
+      const list = [];
+
+      notification.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() });
+      });
+      return NextResponse.json({ list });
+    }
+    return NextResponse.json({ userId });
   } catch (error) {
     const errorMessage = validateError(error);
     return NextResponse.json({ error: errorMessage }, { status: 500 });
