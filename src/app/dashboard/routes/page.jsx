@@ -3,6 +3,7 @@ import ButtonLink from "@/components/ButtonLink";
 import MainMap from "./components/MainMap";
 import RoutesCards from "@/components/RoutesCards";
 import { Suspense } from "react";
+import Notifications from "./components/Notifications";
 
 const Routes = () => {
   return (
@@ -28,7 +29,7 @@ const Routes = () => {
         <div className="row-span-2">
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <span>Notificaciones</span>
+              <Notifications />
             </div>
             <div className="col-span-2 pt-8">
               <Suspense fallback={<div>Loading...</div>}>
