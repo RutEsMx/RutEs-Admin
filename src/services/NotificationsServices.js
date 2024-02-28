@@ -9,4 +9,17 @@ const getNotifications = async (schoolId) => {
   }
 };
 
-export { getNotifications };
+const getNotificationsByRoute = async ({ schoolId, routeId, limit = 2 }) => {
+  try {
+    const response = await fetch(
+      `/api/notifications/${routeId}?schoolId=${schoolId}&limit=${limit}`,
+    );
+    const notification = await response.json();
+
+    return { success: true, data: notification };
+  } catch (error) {
+    return { error };
+  }
+};
+
+export { getNotifications, getNotificationsByRoute };

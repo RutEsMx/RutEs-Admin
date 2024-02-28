@@ -13,4 +13,16 @@ const getUSer = async (sessionid) => {
   }
 };
 
-export { getUSer };
+const validateError = (error) => {
+  let message = "Error desconocido";
+  switch (error?.code) {
+    case "messaging/invalid-argument":
+      message = "Argumentos inválidos";
+      break;
+    default:
+      break;
+  }
+  return message;
+};
+
+export { getUSer, validateError };

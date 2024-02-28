@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { firestore, messaging } from "firebase-admin";
 import { customInitApp } from "@/firebase/admin";
+import { validateError } from "@/utils/functionsServer";
 
 const app = customInitApp();
 
@@ -21,18 +22,6 @@ const app = customInitApp();
 // Notificaciones generales
 // - emergency
 // Notificaciones de emergencia
-
-const validateError = (error) => {
-  let message = "Error desconocido";
-  switch (error?.code) {
-    case "messaging/invalid-argument":
-      message = "Argumentos inválidos";
-      break;
-    default:
-      break;
-  }
-  return message;
-};
 
 export async function POST(request) {
   try {
