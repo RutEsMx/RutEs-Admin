@@ -1,4 +1,5 @@
 "use client";
+import NotificationList from "@/components/NotificationsList";
 import { getNotifications } from "@/services/NotificationsServices";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -31,15 +32,12 @@ const Notifications = async () => {
   }
 
   return (
-    <div>
-      <h1>Notificationes</h1>
+    <div className="border border-slate-400 rounded-lg">
+      <div className="h-20 bg-yellow justify-center flex items-center rounded-t-lg ">
+        <h1 className=" font-bold text-xl">Notificaciones</h1>
+      </div>
       <div>
-        {data?.map(({ id, notification }) => (
-          <div key={id}>
-            <h3>{notification?.title}</h3>
-            <p>{notification?.body}</p>
-          </div>
-        ))}
+        <NotificationList data={data} className={"h-full p-2"} />
       </div>
     </div>
   );

@@ -24,15 +24,17 @@ const Routes = () => {
       </div>
       <div className="grid grid-rows-3 gap-4">
         <div className="row-span-1">
-          <MainMap />
+          <Suspense fallback={<div>Cargando...</div>}>
+            <MainMap />
+          </Suspense>
         </div>
         <div className="row-span-2">
-          <div className="grid grid-cols-3 gap-4">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="col-span-1">
               <Notifications />
             </div>
             <div className="col-span-2 pt-8">
-              <Suspense fallback={<div>Loading...</div>}>
+              <Suspense fallback={<div>Cargando...</div>}>
                 <RoutesCards />
               </Suspense>
             </div>
