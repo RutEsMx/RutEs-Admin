@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 const { useAuthContext } = require("@/context/AuthContext");
 
-const Notifications = async () => {
+const Notifications = () => {
   const { school } = useAuthContext();
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);

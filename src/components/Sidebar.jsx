@@ -19,7 +19,7 @@ const Sidebar = ({ children }) => {
         </div>
         <div className="drawer-side">
           <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-          <ul className="menu sm:pt-20 md:pt-14 lg:pt-8 p-4 w-80 h-full bg-nandor text-xl">
+          <ul className="menu sm:pt-20 md:pt-14 lg:pt-8 p-4 w-60  h-full bg-nandor text-xl">
             <div
               className={`${isActive(
                 "/dashboard/routes",
