@@ -3,7 +3,6 @@ import Link from "next/link";
 import { useAuthContext } from "@/context/AuthContext";
 import { signOut } from "@/firebase/auth";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { removeCookies } from "@/services/CookiesServices";
 import {
   Cog6ToothIcon,
@@ -54,12 +53,12 @@ const NavBar = () => {
         </div>
         <div className="flex items-center">
           <Link href="/dashboard/routes">
-            <Image
+            <img
               src={logoSrc}
               alt="l-sc"
               className="md:ml-5 lg:ml-10"
-              width={40}
-              height={40}
+              width={80}
+              height={80}
             />
           </Link>
           <h1 className="text-2xl font-bold ml-5">{schoolName || ""}</h1>
@@ -69,7 +68,7 @@ const NavBar = () => {
         {user ? (
           <>
             <div className="flex flex-row items-center me-4">
-              <Image
+              <img
                 src={avatarSrc}
                 alt="avatar"
                 className="m-2 rounded-full ring-2 ring-white"
