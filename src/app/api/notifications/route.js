@@ -37,17 +37,21 @@ export async function POST(request) {
       category: res?.category || "general",
     };
     const schoolId = res?.data?.schoolId;
+    const { tokens, data, ...restNotification } = notificationData;
 
-    await messaging(app).sendEachForMulticast({
-      ...notificationData,
-    });
+    tokens &&
+      tokens.length > 0 &&
+      (await messaging(app).sendEachForMulticast({
+        ...notificationData,
+      }));
 
     // eslint-disable-next-line
-    const { tokens, data, ...restNotification } = notificationData;
 
     const saveData = {
       ...restNotification,
       ...data,
+      readByUser: false,
+      readBySchool: false,
     };
 
     await firestore()
