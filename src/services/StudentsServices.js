@@ -93,7 +93,10 @@ const createParentProfile = async (parent, schoolId, roles) => {
         roles: roles || ["user"],
         schoolId,
         avatar: avatarFilename,
-        isFirstTime: roles.find((role) => role === "user") ? true : false,
+        isFirstTime: roles.find((role) => role === "user" || role === "tutor")
+          ? true
+          : false,
+        isNeedPinDrop: roles.find((role) => role === "user") ? true : false,
       };
 
       const responseCreateDocument = await createDocument(
@@ -415,7 +418,10 @@ const createTutorProfile = async (parent, studentId, schoolId, roles) => {
           roles: roles || ["user"],
           schoolId,
           avatar: avatarFilename,
-          isFirstTime: roles.find((role) => role === "user") ? true : false,
+          isFirstTime: roles.find((role) => role === "user" || role === "tutor")
+            ? true
+            : false,
+          isNeedPinDrop: roles.find((role) => role === "user") ? true : false,
           students: [studentRef],
         };
         responseCreateDocument = await createDocument("profile", profileData);
