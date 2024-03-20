@@ -1,9 +1,9 @@
 "use client";
 import NavBar from "@/components/NavBar";
-import Sidebar from "@/components/Sidebar";
 import { useAuthContext } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Sidebar } from "@/components/Sidebar";
 
 const DashboardLayout = ({ children, ...props }) => {
   const { user, loading } = useAuthContext();
@@ -18,10 +18,11 @@ const DashboardLayout = ({ children, ...props }) => {
   return (
     <>
       <NavBar />
-      <Sidebar>
+      <div className="grid grid-cols-1 lg:grid-cols-5 h-screen">
+        <Sidebar className="hidden lg:block bg-muted-foreground" />
         {children}
-        {props.dialog}
-      </Sidebar>
+      </div>
+      {props.dialog}
     </>
   );
 };

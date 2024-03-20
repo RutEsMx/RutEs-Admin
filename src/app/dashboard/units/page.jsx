@@ -5,10 +5,10 @@ import DataTable from "@/components/Table/DataTable";
 import { useUnitsStore } from "@/store/useUnitsStore";
 
 const Units = () => {
-  const {units} = useUnitsStore();
-  
+  const { units } = useUnitsStore();
+
   return (
-    <div className="container mx-auto px-4 pb-12 h-screen pt-10">
+    <div className="container mx-auto">
       <div className="grid grid-cols-2 gap-4 p-2">
         <LogoLayout />
         <div className="flex justify-end items-center gap-4">
@@ -18,7 +18,7 @@ const Units = () => {
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">
-        <DataTable type={"units"} list={units}/>
+        <DataTable type={"units"} list={units} />
       </div>
     </div>
   );
