@@ -2,6 +2,7 @@ import { AuthContextProvider } from "@/context/AuthContext";
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
       <body className={`${inter.className} font-poppins`}>
         <AuthContextProvider>
           {children}
+          <Toaster />
           <SpeedInsights />
         </AuthContextProvider>
       </body>

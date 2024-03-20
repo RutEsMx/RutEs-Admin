@@ -113,4 +113,35 @@ const validateServiceType = ({
   return element;
 };
 
-export { downloadURL, generatePassword, validateEmail, validateServiceType };
+const validateError = (error) => {
+  console.log("🚀 ~ validateError ~ error:", error);
+  let message = "Error desconocido";
+  switch (error?.code) {
+    case "messaging/invalid-argument":
+      message = "Argumentos inválidos";
+      break;
+    case "auth/user-not-found":
+      message = "Usuario no encontrado";
+      break;
+    case "auth/wrong-password":
+      message = "Correo electrónico o contraseña incorrectos";
+      break;
+    case "auth/invalid-email":
+      message = "Correo electrónico inválido";
+      break;
+    case "auth/too-many-requests":
+      message = "Demasiados intentos, intente más tarde";
+      break;
+    default:
+      break;
+  }
+  return message;
+};
+
+export {
+  downloadURL,
+  generatePassword,
+  validateEmail,
+  validateServiceType,
+  validateError,
+};

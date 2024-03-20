@@ -42,7 +42,7 @@ const Page = ({ params }) => {
           >
             Eliminar
           </ButtonLink>
-          <ButtonLink color="bg-yellow" href={`/dashboard/routes/`}>
+          <ButtonLink color="bg-primary" href={`/dashboard/routes/`}>
             Atrás
           </ButtonLink>
           <ButtonLink

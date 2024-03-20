@@ -28,7 +28,7 @@ export default function Page({ params }) {
           </button>
           <button
             onClick={handleClick}
-            className="btn bg-yellow hover:text-white hover:bg-yellow-hover"
+            className="btn bg-primary hover:text-white hover:bg-primary-hover"
           >
             Aceptar
           </button>

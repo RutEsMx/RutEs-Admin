@@ -13,7 +13,7 @@ const Page = async ({ params }) => {
         {unit?.error ? (
           <div className="flex flex-col justify-center items-center h-full mt-4">
             <p className="h-full mx-auto text-2xl">Unida no encontrada</p>
-            <div className="bg-yellow rounded px-4 py-1 mt-6">
+            <div className="bg-primary rounded px-4 py-1 mt-6">
               <Link href="/dashboard/units">
                 <p className="h-full mx-auto text-2xl">Regresar</p>
               </Link>

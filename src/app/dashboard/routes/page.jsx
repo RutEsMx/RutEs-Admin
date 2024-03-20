@@ -16,7 +16,7 @@ const Routes = () => {
           {/* <span>Filtrar rutas</span> */}
           <ButtonLink
             href="/dashboard/routes/create"
-            className="bg-yellow hover:bg-yellow-dark"
+            className="bg-primary hover:bg-primary-dark"
           >
             Crear ruta
           </ButtonLink>

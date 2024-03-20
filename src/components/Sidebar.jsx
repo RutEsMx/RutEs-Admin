@@ -7,7 +7,7 @@ const Sidebar = ({ children }) => {
 
   const isActive = (href) => {
     const isSamePath = pathname.includes(href);
-    return isSamePath ? "bg-yellow" : "transparent";
+    return isSamePath ? "bg-primary" : "transparent";
   };
 
   return (
@@ -23,7 +23,7 @@ const Sidebar = ({ children }) => {
             <div
               className={`${isActive(
                 "/dashboard/routes",
-              )} flex flex-col items-center p-2 hover:bg-yellow"`}
+              )} flex flex-col items-center p-2 hover:bg-primary"`}
             >
               <Link className="w-full text-center" href="/dashboard/routes">
                 <div className="text-white">
@@ -34,7 +34,7 @@ const Sidebar = ({ children }) => {
             <div
               className={`${isActive(
                 "/dashboard/parents",
-              )} flex flex-col items-center p-2 hover:bg-yellow"`}
+              )} flex flex-col items-center p-2 hover:bg-primary"`}
             >
               <Link className="w-full text-center" href="/dashboard/parents">
                 <div className="text-white">
@@ -45,7 +45,7 @@ const Sidebar = ({ children }) => {
             <div
               className={`${isActive(
                 "/dashboard/students",
-              )} flex flex-col items-center p-2 hover:bg-yellow"`}
+              )} flex flex-col items-center p-2 hover:bg-primary"`}
             >
               <Link className="w-full text-center" href="/dashboard/students">
                 <div className="text-white">
@@ -56,7 +56,7 @@ const Sidebar = ({ children }) => {
             <div
               className={`${isActive(
                 "/dashboard/auxiliars",
-              )} flex flex-col items-center p-2 hover:bg-yellow"`}
+              )} flex flex-col items-center p-2 hover:bg-primary"`}
             >
               <Link className="w-full text-center" href="/dashboard/auxiliars">
                 <div className="text-white">
@@ -67,7 +67,7 @@ const Sidebar = ({ children }) => {
             <div
               className={`${isActive(
                 "/dashboard/drivers",
-              )} flex flex-col items-center p-2 hover:bg-yellow"`}
+              )} flex flex-col items-center p-2 hover:bg-primary"`}
             >
               <Link className="w-full text-center" href="/dashboard/drivers">
                 <div className="text-white">
@@ -78,7 +78,7 @@ const Sidebar = ({ children }) => {
             <div
               className={`${isActive(
                 "/dashboard/units",
-              )} flex flex-col items-center p-2 hover:bg-yellow"`}
+              )} flex flex-col items-center p-2 hover:bg-primary"`}
             >
               <Link className="w-full text-center" href="/dashboard/units">
                 <div className="text-white">

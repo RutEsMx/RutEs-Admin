@@ -32,7 +32,7 @@ const NavBar = () => {
   };
 
   return (
-    <div className="flex justify-between items-center h-15 bg-yellow text-white fixed w-full z-10">
+    <div className="flex justify-between items-center h-15 bg-primary text-white fixed w-full z-10">
       <div className="flex flex-row">
         <div className="flex lg:hidden items-center">
           <label htmlFor="my-drawer-2" className="btn btn-square btn-ghost">
@@ -57,8 +57,8 @@ const NavBar = () => {
               src={logoSrc}
               alt="l-sc"
               className="md:ml-5 lg:ml-10"
-              width={80}
-              height={80}
+              width={60}
+              height={60}
             />
           </Link>
           <h1 className="text-2xl font-bold ml-5">{schoolName || ""}</h1>

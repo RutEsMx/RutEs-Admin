@@ -1,14 +1,16 @@
 export default function ButtonAction({
   onClick,
   children,
-  color = "bg-yellow",
+  color = "bg-primary",
   ...props
 }) {
   const colorClasses = {
-    "bg-yellow": "bg-yellow hover:bg-yellow-hover",
-    "bg-light-gray": "bg-light-gray hover:bg-gray",
-    "bg-warning": "bg-warning hover:bg-warning-hover",
+    "bg-primary": "bg-primary hover:bg-primary-foreground",
+    "bg-light-gray": "bg-muted hover:bg-muted-foreground",
+    "bg-warning":
+      "bg-destructive hover:bg-destructive-foreground text-white hover:text-black ",
   };
+
   return (
     <button
       className={`${colorClasses[color]} rounded-md px-2 py-1 w-fit flex flex-row items-center justify-center cursor-pointer`}

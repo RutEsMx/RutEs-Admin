@@ -164,7 +164,7 @@ const DataTable = ({ type, list = [] }) => {
             <tr>
               {headerGroup.headers.map((header) => {
                 return (
-                  <th className="bg-yellow" key={header.id}>
+                  <th className="bg-primary" key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
