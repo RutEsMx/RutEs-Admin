@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
+import hbs from "nodemailer-express-handlebars";
 
-async function sendMail(subject, toEmail, otpText) {
+async function sendMail(subject, toEmail, context, path) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -9,11 +10,25 @@ async function sendMail(subject, toEmail, otpText) {
     },
   });
 
+  transporter.use(
+    "compile",
+    hbs({
+      viewEngine: {
+        extName: ".hbs",
+        layoutsDir: "./src/views/layouts",
+        defaultLayout: "",
+      },
+      viewPath: "./src/views/",
+      extName: ".hbs",
+    }),
+  );
+
   var mailOptions = {
     from: process.env.NODEMAILER_EMAIL,
     to: toEmail,
     subject: subject,
-    text: otpText,
+    context,
+    template: path,
   };
 
   await new Promise((resolve, reject) => {

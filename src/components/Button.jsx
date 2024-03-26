@@ -2,14 +2,14 @@ import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 
 export default function ButtonStep({
   icon,
-  color = "bg-yellow",
+  color = "bg-primary",
   children,
   className,
   ...props
 }) {
   const colorClasses = {
-    "bg-yellow": "bg-yellow hover:bg-yellow-hover",
-    "bg-light-gray": "bg-light-gray hover:bg-gray",
+    "bg-primary": "bg-primary hover:bg-primary-hover",
+    "bg-light-gray": "bg-muted hover:bg-muted-hover",
   };
 
   function Icon(props) {

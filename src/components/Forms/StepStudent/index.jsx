@@ -168,7 +168,9 @@ const StepStudent = ({ isEdit = false }) => {
                   values.status === "active" ? "inactive" : "active",
                 );
               }}
-              color={values.status === "active" ? "bg-light-gray" : "bg-yellow"}
+              color={
+                values.status === "active" ? "bg-light-gray" : "bg-primary"
+              }
             >
               {values.status === "active" ? "Desactivar" : "Activar"}
             </ButtonAction>

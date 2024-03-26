@@ -3,15 +3,16 @@ import Link from "next/link";
 
 export default function ButtonLink({
   icon,
-  color = "bg-yellow",
+  color = "bg-primary",
   children,
   className,
   href,
 }) {
   const colorClasses = {
-    "bg-yellow": "bg-yellow hover:bg-yellow-hover",
-    "bg-light-gray": "bg-light-gray hover:bg-gray",
-    "bg-warning": "bg-red hover:bg-rose-700 text-white ",
+    "bg-primary": "bg-primary hover:bg-primary-foreground",
+    "bg-light-gray": "bg-muted hover:bg-muted-foreground",
+    "bg-warning":
+      "bg-destructive hover:bg-destructive-foreground text-white hover:text-black ",
   };
 
   function Icon(props) {

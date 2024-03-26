@@ -45,7 +45,7 @@ const InputField = ({
           </div>
         ) : null}
       </div>
-      {error && <span className="text-red">{error}</span>}
+      {error && <span className="text-red-500">{error}</span>}
     </div>
   );
 };

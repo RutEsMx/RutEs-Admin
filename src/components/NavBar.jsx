@@ -6,8 +6,10 @@ import { useRouter } from "next/navigation";
 import { removeCookies } from "@/services/CookiesServices";
 import {
   Cog6ToothIcon,
-  ArrowLeftOnRectangleIcon,
+  ArrowLeftStartOnRectangleIcon,
 } from "@heroicons/react/24/solid";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sidebar } from "./Sidebar";
 
 const ADMIN = "admin";
 const ADMIN_RUTES = "admin-rutes";
@@ -32,24 +34,32 @@ const NavBar = () => {
   };
 
   return (
-    <div className="flex justify-between items-center h-15 bg-yellow text-white fixed w-full z-10">
+    <div className="flex justify-between items-center h-15 bg-primary text-white fixed w-full z-10">
       <div className="flex flex-row">
         <div className="flex lg:hidden items-center">
-          <label htmlFor="my-drawer-2" className="btn btn-square btn-ghost">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              className="inline-block w-6 h-6 stroke-current"
+          <Sheet>
+            <SheetTrigger>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="inline-block w-6 h-6 stroke-current"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                ></path>
+              </svg>
+            </SheetTrigger>
+            <SheetContent
+              side="left"
+              className="bg-muted-foreground text-white w-[300px]"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              ></path>
-            </svg>
-          </label>
+              <Sidebar className="" />
+            </SheetContent>
+          </Sheet>
         </div>
         <div className="flex items-center">
           <Link href="/dashboard/routes">
@@ -57,8 +67,8 @@ const NavBar = () => {
               src={logoSrc}
               alt="l-sc"
               className="md:ml-5 lg:ml-10"
-              width={80}
-              height={80}
+              width={60}
+              height={60}
             />
           </Link>
           <h1 className="text-2xl font-bold ml-5">{schoolName || ""}</h1>
@@ -86,7 +96,7 @@ const NavBar = () => {
                   />
                 </Link>
                 <div onClick={handleLogout} className="cursor-pointer">
-                  <ArrowLeftOnRectangleIcon
+                  <ArrowLeftStartOnRectangleIcon
                     className="h-6 w-6 m-2"
                     aria-hidden="true"
                   />

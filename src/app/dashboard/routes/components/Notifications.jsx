@@ -33,7 +33,7 @@ const Notifications = () => {
 
   return (
     <div className="border border-slate-400 rounded-lg">
-      <div className="h-20 bg-yellow justify-center flex items-center rounded-t-lg ">
+      <div className="h-20 bg-primary justify-center flex items-center rounded-t-lg ">
         <h1 className=" font-bold text-xl">Notificaciones</h1>
       </div>
       <div>

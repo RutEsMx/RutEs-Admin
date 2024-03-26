@@ -1,11 +1,12 @@
-const sendPassword = async (email, password, subject) => {
-  const otpText = `Tu contraseña es: ${password}`;
+const sendPassword = async (email, password, subject, path) => {
+  const otpText = `${password}`;
   const toEmail = email;
 
   const body = {
     subject,
     otpText,
     toEmail,
+    path,
   };
 
   const url = `${process.env.NEXT_PUBLIC_URL_API}api/mail`;

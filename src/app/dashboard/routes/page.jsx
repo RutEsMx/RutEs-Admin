@@ -4,19 +4,18 @@ import MainMap from "./components/MainMap";
 import RoutesCards from "@/components/RoutesCards";
 import { Suspense } from "react";
 import Notifications from "./components/Notifications";
+import LogoLayout from "@/components/LogoLayout";
 
 const Routes = () => {
   return (
-    <div className="container mx-auto px-4 pb-12 h-full pt-10">
+    <>
       <div className="grid grid-cols-2 gap-4 p-2">
-        <div>
-          <img src="/rutes_logo.png" alt="Rutes" className="w-36 h-full" />
-        </div>
+        <LogoLayout />
         <div className="flex justify-end items-center gap-4">
           {/* <span>Filtrar rutas</span> */}
           <ButtonLink
             href="/dashboard/routes/create"
-            className="bg-yellow hover:bg-yellow-dark"
+            className="bg-primary hover:bg-primary-dark"
           >
             Crear ruta
           </ButtonLink>
@@ -41,7 +40,7 @@ const Routes = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

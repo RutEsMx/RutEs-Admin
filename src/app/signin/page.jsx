@@ -9,6 +9,8 @@ import Link from "next/link";
 import { signIn } from "@/services/AuthServices";
 import { validationLogin } from "@/utils/validationSchemas";
 import { useAuthContext } from "@/context/AuthContext";
+import { toast } from "sonner";
+import { validateError } from "@/utils/functionsClient";
 
 export default function Page() {
   const router = useRouter();
@@ -26,7 +28,7 @@ export default function Page() {
       await signIn(email, password);
       return router.push("/dashboard/routes");
     } catch (error) {
-      alert(error.message);
+      toast.error(validateError(error));
     }
   };
 
@@ -35,7 +37,7 @@ export default function Page() {
       {/* Center grid  */}
       <div className="grid grid-cols-2 h-full">
         {/* Left grid  */}
-        <div className="col-span-1 bg-gray-100">
+        <div className="col-span-1">
           <div className="flex flex-col justify-center items-center h-full">
             <div className="flex flex-col justify-center items-center">
               <img src="/rutes_logo.png" alt="Rutes" className="w-36 h-full" />
@@ -43,7 +45,7 @@ export default function Page() {
           </div>
         </div>
         {/* Right grid  */}
-        <div className="col-span-1 bg-gray-50 ">
+        <div className="col-span-1 ">
           <div className="flex flex-col justify-center items-center h-full">
             <div className="flex flex-col justify-center items-center border-2 border-gray py-4 w-full rounded-lg">
               <h1 className="text-3xl font-bold">Iniciar Sesión</h1>

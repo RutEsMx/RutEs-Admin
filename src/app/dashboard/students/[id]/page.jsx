@@ -88,7 +88,7 @@ const Page = ({ params }) => {
           <h1 className="font-bold text-3xl">Datos del alumno</h1>
         </div>
         <div className="flex justify-end gap-2">
-          <ButtonLink color="bg-yellow" href={"/dashboard/students"}>
+          <ButtonLink color="bg-primary" href={"/dashboard/students"}>
             Atras
           </ButtonLink>
           <ButtonLink
@@ -171,7 +171,7 @@ const Page = ({ params }) => {
                 <div
                   className={`card shadow-xl ${
                     student?.tutorActive === tutor?.id
-                      ? "bg-yellow hover:bg-yellow/80"
+                      ? "bg-primary hover:bg-primary/80"
                       : "bg-slate-200 hover:bg-slate-200/80"
                   } cursor-pointer`}
                   key={tutor?.id}
