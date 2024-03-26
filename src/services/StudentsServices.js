@@ -84,7 +84,12 @@ const createParentProfile = async (parent, schoolId, roles) => {
       const uid = signUpResult?.result?.uid;
       const password = signUpResult?.result?.password;
 
-      await sendPassword(email, password, "Cuenta creada");
+      await sendPassword(
+        email,
+        password,
+        "Cuenta creada",
+        "sendPassword/index",
+      );
 
       const profileData = {
         ...parent,
@@ -409,7 +414,12 @@ const createTutorProfile = async (parent, studentId, schoolId, roles) => {
         const uid = signUpResult?.result?.uid;
         const password = signUpResult?.result?.password;
 
-        await sendPassword(email, password, "Cuenta creada");
+        await sendPassword(
+          email,
+          password,
+          "Cuenta creada",
+          "sendPassword/index",
+        );
 
         const profileData = {
           ...parent,

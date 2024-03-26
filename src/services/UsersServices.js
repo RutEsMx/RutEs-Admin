@@ -35,7 +35,12 @@ const createUsersByForm = async (data) => {
           avatar: avatarFilename,
         };
         await createDocument("profile", profileData);
-        await sendPassword(email, password, "Cuenta creada");
+        await sendPassword(
+          email,
+          password,
+          "Cuenta creada",
+          "sendPasswordUsers/index",
+        );
         return { success: true, message: "Usuario creado correctamente" };
       } else {
         return {
@@ -100,7 +105,12 @@ const updatePasswordAuth = async (id, password) => {
 
     const response = await userResponse.json();
     if (response.error) throw new Error(response.error.message);
-    await sendPassword(response.data.email, password, "Cambio de contraseña");
+    await sendPassword(
+      response.data.email,
+      password,
+      "Cambio de contraseña",
+      "updatePasswordUsers/index",
+    );
     return response;
   } catch (error) {
     throw new Error(error);
