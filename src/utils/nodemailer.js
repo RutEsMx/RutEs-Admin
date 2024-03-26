@@ -1,7 +1,8 @@
 import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
+import path from "path";
 
-async function sendMail(subject, toEmail, context, path) {
+async function sendMail(subject, toEmail, context, pathname) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -18,7 +19,7 @@ async function sendMail(subject, toEmail, context, path) {
         layoutsDir: "./src/views/layouts",
         defaultLayout: "",
       },
-      viewPath: "./src/views/",
+      viewPath: path.resolve("./src/views"),
       extName: ".hbs",
     }),
   );
@@ -28,7 +29,7 @@ async function sendMail(subject, toEmail, context, path) {
     to: toEmail,
     subject: subject,
     context,
-    template: path,
+    template: pathname,
   };
 
   await new Promise((resolve, reject) => {
