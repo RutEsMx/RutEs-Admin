@@ -1,10 +1,9 @@
-const sendPassword = async (email, password, subject, path) => {
-  const otpText = `${password}`;
+const sendPassword = async (email, context, subject, path) => {
   const toEmail = email;
 
   const body = {
     subject,
-    otpText,
+    context,
     toEmail,
     path,
   };

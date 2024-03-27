@@ -6,13 +6,17 @@ import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
 
 const DashboardLayout = ({ children, ...props }) => {
-  const { user, loading } = useAuthContext();
+  const { user, loading, profile } = useAuthContext();
   const router = useRouter();
+
+  const isAdmin =
+    profile?.roles?.includes("admin") ||
+    profile?.roles?.includes("admin-rutes");
 
   useEffect(() => {
     if (!loading && !user) {
       return router.push("/signin");
-    }
+    } else if (!isAdmin) return router.push("/dashboard/routes");
   }, [user, loading, router]);
 
   return (

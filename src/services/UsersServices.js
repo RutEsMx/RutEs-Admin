@@ -37,9 +37,16 @@ const createUsersByForm = async (data) => {
           avatar: avatarFilename,
         };
         await createDocument("profile", profileData);
+        const context = {
+          name: `${restData?.name} ${restData?.lastName || ""} ${
+            restData?.secondLastName || ""
+          }`.trim(),
+          school: profileData?.school,
+          password,
+        };
         await sendPassword(
           email,
-          password,
+          context,
           "Cuenta creada",
           "sendPasswordUsers/index",
         );
