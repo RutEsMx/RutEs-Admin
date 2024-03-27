@@ -245,18 +245,17 @@ const usersColumns = [
                 if (role === "admin") {
                   return (
                     <BuildingLibraryIcon
-                      className="h-5 w-5 text-green"
+                      className="h-5 w-5 text-green-500"
                       key={role}
                     />
                   );
                 } else if (role === "user-school") {
-                  return <UserIcon className="h-5 w-5 text-blue" key={role} />;
+                  return (
+                    <UserIcon className="h-5 w-5 text-blue-500" key={role} />
+                  );
                 } else if (role === "admin-rutes") {
                   return (
-                    <UserIcon
-                      className="h-5 w-5 text-yellow-pressed"
-                      key={role}
-                    />
+                    <UserIcon className="h-5 w-5 text-yellow-500" key={role} />
                   );
                 }
               })}
@@ -297,10 +296,10 @@ const schoolsColumns = [
     header: () => <HeaderTable>Teléfono</HeaderTable>,
     accessorKey: "phone",
   },
-  {
-    header: () => <HeaderTable>Dirección</HeaderTable>,
-    accessorKey: "address",
-  },
+  // {
+  //   header: () => <HeaderTable>Dirección</HeaderTable>,
+  //   accessorKey: "address",
+  // },
 ];
 
 const auxiliarsColumns = [

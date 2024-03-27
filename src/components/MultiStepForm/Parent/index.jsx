@@ -8,6 +8,7 @@ import { setAlert, useSystemStore } from "@/store/useSystemStore";
 import InputField from "@/components/InputField";
 import FileInput from "@/components/FileInput";
 import { updateParentProfile } from "@/services/StudentsServices";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const FormParent = ({ data, isEdit = false }) => {
   const navigation = useRouter();
@@ -110,93 +111,99 @@ const FormParent = ({ data, isEdit = false }) => {
                 type={alert.type}
               />
             </div>
-            <div className="border border-black px-4 py-2 mt-4">
-              <h1 className="text-2xl font-bold">{"Editar"}</h1>
-              <div className="grid grid-cols-3 gap-4 p-4">
-                <div className="col-span-2">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <InputField
-                      label="Nombre(s)"
-                      type="text"
-                      name="name"
-                      value={values.name}
-                      onChange={handleChange}
-                      error={errors.name}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <InputField
-                      label="Apellido Paterno"
-                      type="text"
-                      name="lastName"
-                      value={values.lastName}
-                      onChange={handleChange}
-                      error={errors.lastName}
-                    />
-                    <InputField
-                      label="Apellido Materno"
-                      type="text"
-                      name="secondLastName"
-                      value={values.secondLastName}
-                      onChange={handleChange}
-                    />
-                    <InputField
-                      label="Correo electrónico"
-                      type="email"
-                      name="email"
-                      value={values.email}
-                      onChange={handleChange}
-                      error={errors.email}
-                      disabled={isEdit}
-                    />
-                    <InputField
-                      label="Teléfono"
-                      type="text"
-                      name="phone"
-                      value={values.phone}
-                      onChange={handleChange}
-                      error={errors.phone}
-                      maxLength={10}
-                    />
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  <h1 className="text-2xl font-bold">Editar</h1>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-3 gap-4 p-4">
+                  <div className="col-span-2">
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <InputField
+                        label="Nombre(s)"
+                        type="text"
+                        name="name"
+                        value={values.name}
+                        onChange={handleChange}
+                        error={errors.name}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <InputField
+                        label="Apellido Paterno"
+                        type="text"
+                        name="lastName"
+                        value={values.lastName}
+                        onChange={handleChange}
+                        error={errors.lastName}
+                      />
+                      <InputField
+                        label="Apellido Materno"
+                        type="text"
+                        name="secondLastName"
+                        value={values.secondLastName}
+                        onChange={handleChange}
+                      />
+                      <InputField
+                        label="Correo electrónico"
+                        type="email"
+                        name="email"
+                        value={values.email}
+                        onChange={handleChange}
+                        error={errors.email}
+                        disabled={isEdit}
+                      />
+                      <InputField
+                        label="Teléfono"
+                        type="text"
+                        name="phone"
+                        value={values.phone}
+                        onChange={handleChange}
+                        error={errors.phone}
+                        maxLength={10}
+                      />
 
-                    {/* <InputField
-                      label="Contraseña"
-                      type="password"
-                      name="password"
-                      value={values.password}
-                      onChange={handleChange}
-                      error={errors.password}
-                      autoComplete="off"
-                    />
-                    <InputField
-                      label="Confirmar contraseña"
-                      type="password"
-                      name="confirmPassword"
-                      value={values.confirmPassword}
-                      onChange={handleChange}
-                      error={errors.confirmPassword}
-                      autoComplete="off"
-                    /> */}
+                      {/* <InputField
+                        label="Contraseña"
+                        type="password"
+                        name="password"
+                        value={values.password}
+                        onChange={handleChange}
+                        error={errors.password}
+                        autoComplete="off"
+                      />
+                      <InputField
+                        label="Confirmar contraseña"
+                        type="password"
+                        name="confirmPassword"
+                        value={values.confirmPassword}
+                        onChange={handleChange}
+                        error={errors.confirmPassword}
+                        autoComplete="off"
+                      /> */}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex flex-col">
+                      <FileInput
+                        label="Avatar"
+                        name="avatar"
+                        value={values.avatar}
+                        onChange={(event) => {
+                          setFieldValue("avatar", event.currentTarget.files[0]);
+                        }}
+                        error={errors.avatar}
+                      />
+                      {errors && (
+                        <span className="text-red">{errors.avatar}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <div className="flex flex-col">
-                    <FileInput
-                      label="Avatar"
-                      name="avatar"
-                      value={values.avatar}
-                      onChange={(event) => {
-                        setFieldValue("avatar", event.currentTarget.files[0]);
-                      }}
-                      error={errors.avatar}
-                    />
-                    {errors && (
-                      <span className="text-red">{errors.avatar}</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </Form>
         )}
       </Formik>

@@ -1,5 +1,4 @@
 import { getStudents } from "./StudentsServices";
-import { getUsers } from "./UsersServices";
 import { getSchools } from "./SchoolServices";
 import { getParents } from "./ParentsSevices";
 
@@ -19,12 +18,6 @@ export async function fetchDataStudents(options) {
     ),
     pageCount: Math.ceil(data?.length / options.pageSize),
   };
-}
-
-export async function fetchDataUsers(options) {
-  const data = await getUsers({ ...options });
-  if (data?.error) return data;
-  return data;
 }
 
 export async function fetchDataSchools(options) {

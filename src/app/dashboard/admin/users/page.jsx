@@ -1,32 +1,29 @@
 "use client";
-import { useAuthContext } from "@/context/AuthContext";
 import DataTable from "@/components/Table/DataTable";
-import ButtonLink from "@/components/ButtonLink";
+import AdminCreateButton from "@/components/AdminCreateButton";
+import { useUsersStore } from "@/store/useUsersStore";
+import { useEffect } from "react";
+import { getUsers } from "@/services/UsersServices";
 
-export default async function Page() {
-  const { profile } = useAuthContext();
-
-  const isAdmin =
-    profile?.roles?.includes("admin-rutes") ||
-    profile?.roles?.includes("admin");
+const Page = () => {
+  const { users } = useUsersStore();
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   return (
     <>
       <div className="grid grid-cols-2">
         <h1 className="font-bold text-3xl">Usuarios</h1>
         <div className="grid-start-2 me-5">
-          <div className="flex justify-end gap-2">
-            {isAdmin && (
-              <ButtonLink href="/dashboard/admin/users/create">
-                Crear
-              </ButtonLink>
-            )}
-          </div>
+          <AdminCreateButton href={"/dashboard/admin/users/create"} />
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">
-        <DataTable type={"users"} />
+        <DataTable type={"users"} list={users} />
       </div>
     </>
   );
-}
+};
+
+export default Page;

@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/context/AuthContext";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,7 +13,6 @@ const Layout = ({ children }) => {
 
   useEffect(() => {
     const links = document.querySelectorAll("a");
-
     links.forEach((link) => {
       const path = pathname.split("/")[3];
       if (link.id === path) {
@@ -24,16 +24,16 @@ const Layout = ({ children }) => {
   }, [pathname]);
 
   return (
-    <div className="container mx-auto px-4 py-10 h-screen">
-      <div className="grid grid-cols-2 gap-4 p-2">
-        <div>
-          <h1 className="font-bold">Administrador</h1>
-        </div>
-        <div className="col-span-2 border border-gray rounded-md min-h-[200px]">
-          <div className="grid grid-cols-5 gap-4 p-2">
-            <div className="col-span-1 flex flex-col">
-              <ul className="menu menu-lg bg-base-200 rounded-box">
-                <li>
+    <div className="col-span-3 lg:col-span-4 mt-16 mx-8">
+      <div className="container mx-auto px-4 py-10">
+        <div className="grid grid-cols-2 gap-4 p-2">
+          <div>
+            <h1 className="font-bold">Administrador</h1>
+          </div>
+          <div className="col-span-2 border border-gray rounded-md min-h-[200px]">
+            <div className="grid grid-cols-5 gap-4 p-2 h-screen">
+              <div className="space-y-1 flex justify-start flex-col">
+                <Button variant="secondary" className="w-full" asChild>
                   <Link
                     id="school"
                     href="/dashboard/admin/school"
@@ -41,8 +41,8 @@ const Layout = ({ children }) => {
                   >
                     Escuela
                   </Link>
-                </li>
-                <li>
+                </Button>
+                <Button variant="secondary" className="w-full" asChild>
                   <Link
                     id="users"
                     href="/dashboard/admin/users"
@@ -50,9 +50,9 @@ const Layout = ({ children }) => {
                   >
                     Usuarios
                   </Link>
-                </li>
+                </Button>
                 {isAdminRutes && (
-                  <li>
+                  <Button variant="secondary" className="w-full" asChild>
                     <Link
                       id="schools"
                       href="/dashboard/admin/schools"
@@ -60,11 +60,11 @@ const Layout = ({ children }) => {
                     >
                       Escuelas
                     </Link>
-                  </li>
+                  </Button>
                 )}
-              </ul>
+              </div>
+              <div className="col-span-4">{children}</div>
             </div>
-            <div className="col-span-4">{children}</div>
           </div>
         </div>
       </div>
