@@ -19,7 +19,7 @@ const NavBar = () => {
   const router = useRouter();
   const { name: schoolName, logo } = school || {};
   const { name, avatar } = profile || {};
-  const logoSrc = logo || "/rutes_logo_grey.png";
+  const logoSrc = logo || "";
   const avatarSrc = avatar ? avatar : "/rutes_logo_grey.png";
   const isAdmin =
     profile?.roles?.includes(ADMIN) || profile?.roles?.includes(ADMIN_RUTES);
@@ -34,8 +34,8 @@ const NavBar = () => {
   };
 
   return (
-    <div className="flex justify-between items-center h-15 bg-primary text-white fixed w-full z-10">
-      <div className="flex flex-row">
+    <div className="flex justify-between items-center bg-primary text-white fixed w-full z-10">
+      <div className="flex flex-row h-16">
         <div className="flex lg:hidden items-center">
           <Sheet>
             <SheetTrigger>
@@ -57,20 +57,22 @@ const NavBar = () => {
               side="left"
               className="bg-muted-foreground text-white w-[300px]"
             >
-              <Sidebar className="" />
+              <Sidebar />
             </SheetContent>
           </Sheet>
         </div>
         <div className="flex items-center">
-          <Link href="/dashboard/routes">
-            <img
-              src={logoSrc}
-              alt="l-sc"
-              className="md:ml-5 lg:ml-10"
-              width={60}
-              height={60}
-            />
-          </Link>
+          {logoSrc && (
+            <Link href="/dashboard/routes">
+              <img
+                src={logoSrc}
+                alt="logo-school"
+                className="md:ml-5 lg:ml-10"
+                width={60}
+                height={60}
+              />
+            </Link>
+          )}
           <h1 className="text-2xl font-bold ml-5">{schoolName || ""}</h1>
         </div>
       </div>
@@ -88,21 +90,19 @@ const NavBar = () => {
               <span className="">{name || ""}</span>
             </div>
             {isAdmin && (
-              <>
-                <Link href="/dashboard/admin/school">
-                  <Cog6ToothIcon
-                    className="h-6 w-6 m-2 cursor-pointer"
-                    aria-hidden="true"
-                  />
-                </Link>
-                <div onClick={handleLogout} className="cursor-pointer">
-                  <ArrowLeftStartOnRectangleIcon
-                    className="h-6 w-6 m-2"
-                    aria-hidden="true"
-                  />
-                </div>
-              </>
+              <Link href="/dashboard/admin/school">
+                <Cog6ToothIcon
+                  className="h-6 w-6 m-2 cursor-pointer"
+                  aria-hidden="true"
+                />
+              </Link>
             )}
+            <div onClick={handleLogout} className="cursor-pointer">
+              <ArrowLeftStartOnRectangleIcon
+                className="h-6 w-6 m-2"
+                aria-hidden="true"
+              />
+            </div>
           </>
         ) : (
           <Link href="/signin">

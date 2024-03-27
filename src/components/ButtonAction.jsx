@@ -8,7 +8,7 @@ export default function ButtonAction({
     "bg-primary": "bg-primary hover:bg-primary-foreground",
     "bg-light-gray": "bg-muted hover:bg-muted-foreground",
     "bg-warning":
-      "bg-destructive hover:bg-destructive-foreground text-white hover:text-black ",
+      "bg-destructive hover:bg-destructive-foreground text-white hover:text-black",
   };
 
   return (

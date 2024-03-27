@@ -2,6 +2,8 @@ import { validateEmail } from "@/utils/functionsClient";
 import { createDocument, updateDocument } from "@/firebase/crud";
 import { signUp } from "./AuthServices";
 import { sendPassword } from "./MailService";
+import { setStructureDatatable } from "./TableServices";
+import { setUsers } from "@/store/useUsersStore";
 
 const createUsersByForm = async (data) => {
   // eslint-disable-next-line no-unused-vars
@@ -35,9 +37,16 @@ const createUsersByForm = async (data) => {
           avatar: avatarFilename,
         };
         await createDocument("profile", profileData);
+        const context = {
+          name: `${restData?.name} ${restData?.lastName || ""} ${
+            restData?.secondLastName || ""
+          }`.trim(),
+          school: profileData?.school,
+          password,
+        };
         await sendPassword(
           email,
-          password,
+          context,
           "Cuenta creada",
           "sendPasswordUsers/index",
         );
@@ -117,18 +126,21 @@ const updatePasswordAuth = async (id, password) => {
   }
 };
 
-const getUsers = async ({ pageIndex, pageSize }) => {
+const getUsers = async () => {
   try {
-    const response = await fetch(
-      `/api/users?pageIndex=${pageIndex}&pageSize=${pageSize}`,
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}api/users`);
+
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
+    console.log("🚀 ~ getUsers ~ response:", response);
     const data = await response.json();
-
-    return data;
+    console.log("🚀 ~ getUsers ~ data:", data);
+    const dataTable = setStructureDatatable(data);
+    console.log("🚀 ~ getUsers ~ dataTable:", dataTable);
+    return setUsers(dataTable);
   } catch (error) {
+    console.log("🚀 ~ getUsers ~ error:", error);
     return { error };
   }
 };
