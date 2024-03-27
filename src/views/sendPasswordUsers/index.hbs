@@ -38,15 +38,10 @@
       inline-block; font-size: 16px; font-weight: bold; margin: 0; padding: 12px
       24px; text-decoration: none; text-transform: capitalize; } .btn-primary
       table td { background-color: #FFBF3B; } .btn-primary p { background-color:
-      #FFBF3B; border-color: #FFBF3B; color: #000; text-align: center; }
-      .btn-secondary table { background-color: #0867ec; } .btn-secondary a {
-      background-color: #0867ec; border-color: #0867ec; color: #ffffff;
-      text-align: center; } @media all { .btn-secondary table:hover {
-      background-color: #ec0867 !important; } .btn-secondary a:hover {
-      background-color: #ec0867 !important; border-color: #ec0867 !important; }
-      } /* ------------------------------------- OTHER STYLES THAT MIGHT BE
-      USEFUL ------------------------------------- */ .last { margin-bottom: 0;
-      } .first { margin-top: 0; } .align-center { text-align: center; }
+      #FFBF3B; border-color: #FFBF3B; color: #000; text-align: center; } /*
+      ------------------------------------- OTHER STYLES THAT MIGHT BE USEFUL
+      ------------------------------------- */ .last { margin-bottom: 0; }
+      .first { margin-top: 0; } .align-center { text-align: center; }
       .align-right { text-align: right; } .align-left { text-align: left; }
       .text-link { color: #0867ec !important; text-decoration: underline
       !important; } .clear { clear: both; } .mt0 { margin-top: 0; } .mb0 {
@@ -106,8 +101,8 @@
                   <h2>Hola {{name}}</h2>
                   <p>Bienvenid@, la escuela
                     {{school}}
-                    te ha creado una cuenta de RutEs para ir siguiendo tus hijos
-                    en tiempo real cuando estan en el transporte escolar.</p>
+                    te ha creado una cuenta de RutEs para ingresar a la
+                    plataforma.</p>
                   <p>Estos son tus datos de acceso:</p>
                   <table
                     role="presentation"
@@ -137,17 +132,17 @@
                       </tr>
                     </tbody>
                   </table>
-                  <h4>Descarga la app</h4>
+                  <!-- Logos tiendas -->
                   <table
                     role="presentation"
                     border="0"
                     cellpadding="0"
                     cellspacing="0"
-                    class="btn btn-secondary"
+                    class="btn"
                   >
                     <tbody>
                       <tr>
-                        <td align="left">
+                        <td align="center">
                           <table
                             role="presentation"
                             border="0"
@@ -155,33 +150,33 @@
                             cellspacing="0"
                           >
                             <tbody>
+                              <tr>
+                                <h4>Descarga la app</h4>
+                              </tr>
                               <tr>
                                 <td>
                                   <a
                                     href="https://play.google.com/store/apps/details?id=com.rutes"
                                   >
-                                    <p>Android</p>
+                                    <img
+                                      src="../google_play.png"
+                                      alt="Google Play"
+                                      width="120"
+                                      height="40.5"
+                                    />
                                   </a>
                                 </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </td>
-                        <td align="right">
-                          <table
-                            role="presentation"
-                            border="0"
-                            cellpadding="0"
-                            cellspacing="0"
-                          >
-                            <tbody>
-                              <tr>
                                 <td>
                                   <a
                                     href="https://apps.apple.com/us/app/rutes/id1532856344"
                                   >
-                                    <p>iOS</p>
+                                    <img
+                                      src="../app_store.png"
+                                      alt="App Store"
+                                      width="120"
+                                    />
                                   </a>
+
                                 </td>
                               </tr>
                             </tbody>
