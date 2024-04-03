@@ -17,6 +17,7 @@ const app = customInitApp();
 // Estudiante llego a la escuela
 // - status
 // Cambio de estados
+// - travelWithFriend
 // Viaje con un amigo
 // - general
 // Notificaciones generales
@@ -46,11 +47,12 @@ export async function POST(request) {
       }));
 
     // eslint-disable-next-line
-
     const saveData = {
       ...restNotification,
       ...data,
       readByUser: false,
+      readByAux: false,
+      readByTutor: false,
       readBySchool: false,
     };
 

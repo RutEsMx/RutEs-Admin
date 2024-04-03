@@ -9,12 +9,13 @@
 - [x] Ver notificaciones de cada ruta
 - [ ] Ver alumnos de las rutas en pin (gris entregado, gris por entregar)
 - [x] Asignar NIP de nanas
-- [ ] Tener dos roles de usuarios (principal puede ver todo, secundario solo ve por donde va la ruta sin ver datos personales de alumnos)
+- [x] Tener dos roles de usuarios (principal puede ver todo, secundario solo ve por donde va la ruta sin ver datos personales de alumnos)
 - [ ] Generar un reporte básico descargable
 
 - [ ] Corregir Notificaciones (Unicas, no repetidas)
 - [ ] Agregar formulario para dirección de los niños
 - [ ] Cambiar correo emisor
+- [ ] Dejar ruta para todos los dias y solo agregar talleres por encima.
 
 <!-- Mensaje para correo -->
 <!-- Bienvenida la escuela XXXX te ha creado una cuenta de RutEs para ir siguiendo tus hijos en tiempo real cuando estan en el transporte.
