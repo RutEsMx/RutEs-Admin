@@ -37,7 +37,7 @@ const Notifications = () => {
         <h1 className=" font-bold text-xl">Notificaciones</h1>
       </div>
       <div>
-        <NotificationList data={data} className={"h-full p-2"} />
+        <NotificationList data={data} className={"h-full pb-2 px-2"} />
       </div>
     </div>
   );
