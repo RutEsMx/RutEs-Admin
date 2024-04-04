@@ -13,18 +13,42 @@ customInitApp();
 // fullName
 // student
 // schoolId
+// studentRequest
 
 export async function PATCH(request) {
   const body = await request.json();
   try {
-    // Update travelsWithFriend collection
-    const response = await firestore()
-      .collection("travelsWithFriend")
-      .doc(body.id)
-      .update({
+    // Start a new transaction
+    await firestore().runTransaction(async (transaction) => {
+      // Get a reference to the travelsWithFriend document
+      const travelsWithFriendRef = await firestore()
+        .collection("travelsWithFriend")
+        .doc(body.id);
+
+      // Update travelsWithFriend collection
+      transaction.update(travelsWithFriendRef, {
         [`${body.day}.status`]: body.status,
         [`${body.day}.updatedAt`]: new Date(),
       });
+
+      // Get a reference to the travels document
+      const travelsRef = firestore().collection("travels").doc(body.route);
+
+      // Update travels collection based on the status
+      if (body.status === "accepted") {
+        transaction.update(travelsRef, {
+          [`${body.day}.toHome.travelWithFriend`]:
+            firestore.FieldValue.arrayUnion(body.studentRequest),
+        });
+      } else {
+        transaction.update(travelsRef, {
+          [`${body.day}.toHome.travelWithFriend`]:
+            firestore.FieldValue.arrayRemove(body.studentRequest),
+        });
+      }
+    });
+
+    // Send a notification after the transaction is completed
     fetch(`${process.env.NEXT_PUBLIC_URL_API}api/notifications`, {
       method: "POST",
       headers: {
@@ -44,9 +68,11 @@ export async function PATCH(request) {
         category: "travelWithFriend",
       }),
     });
-    return NextResponse.json(response);
+
+    return NextResponse.json({
+      message: "Viaje actualizado",
+    });
   } catch (error) {
-    console.log("🚀 ~ GET ~ error:", error);
-    return NextResponse.json(error);
+    return NextResponse.json({ error }, { status: 500 });
   }
 }

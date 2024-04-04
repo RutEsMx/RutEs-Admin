@@ -31,7 +31,7 @@ const confirmTravelWithFriend = async (data) => {
     const dataResponse = await response.json();
     return dataResponse;
   } catch (error) {
-    return { error: error.message };
+    throw new Error(error.message);
   }
 };
 

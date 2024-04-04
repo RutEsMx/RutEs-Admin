@@ -38,6 +38,7 @@ const TravelCard = ({ id, item, getData }) => {
       } ${item?.studentRequest?.secondLastName || ""}`,
       student: item.student,
       schoolId: item.routeData.schoolId,
+      studentRequest: item.studentRequest.id,
     };
     try {
       await confirmTravelWithFriend(data);
