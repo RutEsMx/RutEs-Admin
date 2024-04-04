@@ -86,6 +86,18 @@ const DAYS_OPTIONS = [
 const CURRENT_DAY =
   DAYS_OPTIONS.slice(1)[new Date().getDay() - 1]?.value || "monday";
 
+const TRAVEL_WITH_FRIEND_OPTIONS = [
+  { value: "pending", label: "Pendiente" },
+  { value: "accepted", label: "Aceptado" },
+  { value: "rejected", label: "Rechazado" },
+];
+
+const TRAVEL_WITH_FRIEND_STATUS = {
+  pending: "Pendiente",
+  accepted: "Aceptado",
+  rejected: "Rechazado",
+};
+
 export {
   OPTIONS_TYPE_SERVICES,
   OPTIONS_BLOOD_TYPES,
@@ -98,4 +110,6 @@ export {
   DAYS_OPTIONS,
   COLORS_HEX,
   CURRENT_DAY,
+  TRAVEL_WITH_FRIEND_OPTIONS,
+  TRAVEL_WITH_FRIEND_STATUS,
 };

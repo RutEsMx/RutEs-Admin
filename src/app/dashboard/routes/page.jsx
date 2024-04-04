@@ -21,13 +21,13 @@ const Routes = () => {
           </ButtonLink>
         </div>
       </div>
-      <div className="grid grid-rows-3 gap-4">
+      <div className="grid grid-flow-row gap-4">
         <div className="row-span-1">
           <Suspense fallback={<div>Cargando...</div>}>
             <MainMap />
           </Suspense>
         </div>
-        <div className="row-span-2">
+        <div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="col-span-1">
               <Notifications />
