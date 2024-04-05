@@ -15,9 +15,11 @@ const DashboardLayout = ({ children, ...props }) => {
 
   useEffect(() => {
     if (!loading && !user) {
-      return router.push("/signin");
-    } else if (!isAdmin) return router.push("/dashboard/routes");
-  }, [user, loading, router]);
+      router.push("/signin");
+    } else if (profile && !isAdmin) {
+      router.push("/dashboard/routes");
+    }
+  }, [user, loading, router, profile]);
 
   return (
     <>
