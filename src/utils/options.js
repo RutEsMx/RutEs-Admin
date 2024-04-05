@@ -53,11 +53,11 @@ const STATUS_TRAVEL = {
 };
 
 const COLORS = {
-  active: "text-green",
-  inactive: "text-red",
-  absent: "text-yellow",
-  toSchool: "text-green",
-  toHome: "text-blue",
+  active: "text-green-500",
+  inactive: "text-red-500",
+  absent: "text-yellow-500",
+  toSchool: "text-green-500",
+  toHome: "text-blue-500",
 };
 
 const COLORS_HEX = {

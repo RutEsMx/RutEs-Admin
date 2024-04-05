@@ -24,7 +24,7 @@ const RouteCard = ({ route }) => {
         const response = await getNotificationsByRoute({
           schoolId: route?.schoolId,
           routeId: route?.id,
-          limit: 3,
+          limit: 4,
         });
         setNotifications(response?.data?.list);
       } catch (error) {
@@ -38,15 +38,24 @@ const RouteCard = ({ route }) => {
   const statusName = STATUS_TRAVEL[status] || "Sin estado";
 
   return (
-    <div className="grid col-span-2 lg:col-span-1 grid-rows-3 grid-flow-col  overflow-hidden shadow-l border-2 rounded-lg border-yellow p-3 max-h-56">
-      <Link href={`routes/${route.id}`}>
-        <div className="flex flex-col justify-center items-center cursor-pointer">
-          <h2 className="text-xl font-bold">{name}</h2>
-          <span className={`${statusColor}`}>{statusName}</span>
-        </div>
-      </Link>
-      <div className="h-full">
+    <div className="grid col-span-2 lg:col-span-1 grid-row-5 overflow-hidden shadow-l border-2 rounded-lg border-yellow-500 p-3 max-h-72 md:max-h-64">
+      <div className="row-span-1">
+        <Link href={`routes/${route.id}`}>
+          <div className="flex flex-col justify-center items-center cursor-pointer border-b-2 border-yellow-500">
+            <h2 className="text-xl font-bold">{name}</h2>
+            <span className={`${statusColor}`}>{statusName}</span>
+          </div>
+        </Link>
+      </div>
+      <div className="row-span-2">
         <NotificationList data={notifications} className={"h-32"} />
+      </div>
+      <div className="row-span-1">
+        <Link href={`notifications/${route.id}`}>
+          <div className="flex justify-center items-center cursor-pointer border-t-2 border-yellow-500">
+            <span className="text-yellow-500">Ver más</span>
+          </div>
+        </Link>
       </div>
     </div>
   );
