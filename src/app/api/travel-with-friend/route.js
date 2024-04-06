@@ -133,18 +133,22 @@ async function createTravelWithFriendRequest(
   studentRequest,
   date,
 ) {
-  return await firestore()
+  const data = {
+    [day]: {
+      route,
+      day,
+      status: "pending",
+      student,
+      date,
+    },
+  };
+  const travelsWithFriendRef = firestore()
     .collection("travelsWithFriend")
-    .doc(studentRequest)
-    .update({
-      [day]: {
-        route,
-        day,
-        status: "pending",
-        student,
-        date,
-      },
-    });
+    .doc(studentRequest);
+  if (!(await travelsWithFriendRef.get()).exists) {
+    await travelsWithFriendRef.set(data);
+  }
+  return await travelsWithFriendRef.update(data);
 }
 
 export async function POST(request) {
