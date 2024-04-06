@@ -23,6 +23,7 @@ export async function GET(request, { params }) {
         .doc(id)
         .get();
       const studentRequest = responseStudentRequest.data();
+      studentRequest.id = id;
       const responseRoute = await firestore()
         .collection("routes")
         .doc(data[item].route)
