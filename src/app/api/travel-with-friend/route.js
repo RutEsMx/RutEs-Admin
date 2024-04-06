@@ -22,7 +22,7 @@ export async function PATCH(request) {
     // Start a new transaction
     await firestore().runTransaction(async (transaction) => {
       // Get a reference to the travelsWithFriend document
-      const travelsWithFriendRef = await firestore()
+      const travelsWithFriendRef = firestore()
         .collection("travelsWithFriend")
         .doc(body.id);
 
