@@ -6,7 +6,7 @@ import { validateError } from "@/utils/functionsServer";
 const app = customInitApp();
 
 // Categoria
-// - bus
+// - travel
 // Salida de camion
 // Entrada de camion
 // Student abarca las siguientes categorias
