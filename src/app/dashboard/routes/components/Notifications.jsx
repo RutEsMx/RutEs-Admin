@@ -1,35 +1,47 @@
 "use client";
 import NotificationList from "@/components/NotificationsList";
-import { getNotifications } from "@/services/NotificationsServices";
+import { db } from "@/firebase/client";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+  limit,
+} from "firebase/firestore";
 import { useEffect } from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 const { useAuthContext } = require("@/context/AuthContext");
 
 const Notifications = () => {
   const { school } = useAuthContext();
   const [data, setData] = useState([]);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getData = async () => {
+    let unsubscribe = () => {};
+    if (school?.id) {
       try {
-        const { data } = await getNotifications(school?.id);
-        if (!data) {
-          setError("No data");
-        } else {
-          setData(data?.list);
-        }
+        unsubscribe = onSnapshot(
+          query(
+            collection(db, "notificationsSchool", school?.id, "notifications"),
+            orderBy("createdAt", "desc"),
+            limit(10),
+          ),
+          (snapshot) => {
+            const data = snapshot.docs.map((doc) => {
+              return { id: doc.id, ...doc.data() };
+            });
+            setData(data);
+          },
+        );
       } catch (error) {
-        setError(error);
+        toast.error("Error al obtener las notificaciones");
       }
+    }
+    return () => {
+      unsubscribe();
     };
-
-    getData();
   }, [school?.id]);
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
 
   return (
     <div className="border border-slate-400 rounded-lg">
