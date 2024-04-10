@@ -11,27 +11,51 @@ import { COLORS, STATUS_TRAVEL } from "@/utils/options";
 import Link from "next/link";
 import NotificationList from "./NotificationsList";
 import { useEffect } from "react";
-import { getNotificationsByRoute } from "@/services/NotificationsServices";
 import { useState } from "react";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  where,
+  query,
+  limit,
+} from "firebase/firestore";
+import { toast } from "sonner";
+import { db } from "@/firebase/client";
 
 const RouteCard = ({ route }) => {
   const { name, status } = route;
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-    const getNotifications = async () => {
-      try {
-        const response = await getNotificationsByRoute({
-          schoolId: route?.schoolId,
-          routeId: route?.id,
-          limit: 4,
-        });
-        setNotifications(response?.data?.list);
-      } catch (error) {
-        return { error };
-      }
+    let unsubscribe = () => {};
+    try {
+      unsubscribe = onSnapshot(
+        query(
+          collection(
+            db,
+            "notificationsSchool",
+            route?.schoolId,
+            "notifications",
+          ),
+          where("routeId", "==", route?.id),
+          orderBy("createdAt", "desc"),
+          limit(5),
+        ),
+        (snapshot) => {
+          const data = snapshot.docs.map((doc) => {
+            return { id: doc.id, ...doc.data() };
+          });
+          setNotifications(data);
+        },
+      );
+    } catch (error) {
+      console.log("🚀 ~ useEffect ~ error:", error);
+      toast.error("Error al obtener las notificaciones");
+    }
+    return () => {
+      unsubscribe();
     };
-    getNotifications();
   }, []);
 
   const statusColor = COLORS[status];
