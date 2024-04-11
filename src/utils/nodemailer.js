@@ -2,6 +2,12 @@ import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
 
+const PATHS = {
+  WELCOME_USERS: "sendPasswordUsers/index",
+  UPDATE_PASSWORD_USERS: "updatePasswordUsers/index",
+  WELCOME: "sendPassword/index",
+};
+
 async function sendMail(subject, toEmail, context, pathname) {
   var transporter = nodemailer.createTransport({
     service: "gmail",
@@ -29,7 +35,7 @@ async function sendMail(subject, toEmail, context, pathname) {
     to: toEmail,
     subject: subject,
     context,
-    template: pathname,
+    template: PATHS[pathname],
   };
 
   await new Promise((resolve, reject) => {

@@ -44,12 +44,7 @@ const createUsersByForm = async (data) => {
           school: profileData?.school,
           password,
         };
-        await sendPassword(
-          email,
-          context,
-          "Cuenta creada",
-          "sendPasswordUsers/index",
-        );
+        await sendPassword(email, context, "Cuenta creada", "WELCOME_USERS");
         return { success: true, message: "Usuario creado correctamente" };
       } else {
         return {
@@ -85,7 +80,7 @@ const updateUsersByForm = async (data) => {
 
       const response = await updateDocument("profile", dataCopy.id, dataCopy);
       if (password !== null) {
-        await updatePasswordAuth(dataCopy.id, password);
+        await updatePasswordAuth(dataCopy.id, password, data);
       }
 
       if (response?.error) return { error: response.error };
@@ -102,7 +97,7 @@ const updateUsersByForm = async (data) => {
   }
 };
 
-const updatePasswordAuth = async (id, password) => {
+const updatePasswordAuth = async (id, password, data) => {
   try {
     const userResponse = await fetch(`/api/auth/profile`, {
       method: "POST",
@@ -114,11 +109,18 @@ const updatePasswordAuth = async (id, password) => {
 
     const response = await userResponse.json();
     if (response.error) throw new Error(response.error.message);
+    const context = {
+      name: `${data?.name} ${data?.lastName || ""} ${
+        data?.secondLastName || ""
+      }`.trim(),
+      school: data?.schoolName,
+      password,
+    };
     await sendPassword(
       response.data.email,
-      password,
+      context,
       "Cambio de contraseña",
-      "updatePasswordUsers/index",
+      "UPDATE_PASSWORD_USERS",
     );
     return response;
   } catch (error) {
@@ -133,14 +135,10 @@ const getUsers = async () => {
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
-    console.log("🚀 ~ getUsers ~ response:", response);
     const data = await response.json();
-    console.log("🚀 ~ getUsers ~ data:", data);
     const dataTable = setStructureDatatable(data);
-    console.log("🚀 ~ getUsers ~ dataTable:", dataTable);
     return setUsers(dataTable);
   } catch (error) {
-    console.log("🚀 ~ getUsers ~ error:", error);
     return { error };
   }
 };

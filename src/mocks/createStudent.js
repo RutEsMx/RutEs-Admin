@@ -1,34 +1,34 @@
 const studentMock = {
-  name: "Blanca",
-  lastName: "Sainz",
-  secondLastName: "Vázquez",
-  birthDate: "2016-06-03",
+  name: "Pierre Jean-Jacques",
+  lastName: "Gasly",
+  secondLastName: "",
+  birthDate: "2017-06-03",
   bloodType: "O+",
   allergies: "",
-  grade: "2",
+  grade: "3",
   group: "A",
-  enrollment: "Alumno 1",
+  enrollment: "Alumno 3",
   serviceType: "complete",
   avatar: "",
   includeFather: true,
-  includeMother: false,
+  includeMother: true,
 };
 
 const fatherMock = {
-  name: "",
-  lastName: "",
+  name: "Jean-Jacques",
+  lastName: "Gasly",
   secondLastName: "",
-  phone: "",
-  email: "jonathan+5@rutes.mx",
+  phone: "1234567890",
+  email: "jonathan+11@rutes.mx",
   avatar: "",
 };
 
 const motherMock = {
-  name: "",
-  lastName: "",
+  name: "Pascale",
+  lastName: "Gasly",
   secondLastName: "",
-  phone: "",
-  email: "",
+  phone: "1234567890",
+  email: "jonathan+12@rutes.mx",
 };
 
 const tutorMock = {

@@ -15,7 +15,7 @@ body: {
   "subject": "string",
   "context": "object",
   "toEmail": "string",
-  "path": "string"
+  "path": "string" -> | WELCOME_USERS | UPDATE_PASSWORD_USERS | WELCOME
 }
 ```
 

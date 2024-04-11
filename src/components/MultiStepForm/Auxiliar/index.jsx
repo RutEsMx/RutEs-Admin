@@ -9,10 +9,11 @@ import { useAuthContext } from "@/context/AuthContext";
 import StepAuxiliar from "@/components/Forms/StepAuxiliar";
 import Alert from "@/components/Alert";
 import { setAlert, useSystemStore } from "@/store/useSystemStore";
+import { toast } from "sonner";
 
 const FormAuxiliar = ({ data, isEdit = false }) => {
   const navigation = useRouter();
-  const { profile } = useAuthContext();
+  const { profile, school } = useAuthContext();
   const { alert } = useSystemStore();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -35,6 +36,7 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
     setIsLoading(true);
     try {
       values.schoolId = profile?.schoolId;
+      values.schoolName = school?.name;
       if (isEdit) values.id = data?.id;
       const { success, message, error } = isEdit
         ? await updateUsersByForm(values)
@@ -42,23 +44,12 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
 
       if (error) {
         setIsLoading(false);
-        return setAlert({
-          type: "error",
-          message: error?.message,
-          isOpen: true,
-        });
+        toast.error(error?.message);
       }
       if (success) {
-        setAlert({
-          type: "success",
-          message: message,
-          isOpen: true,
-        });
         setIsLoading(false);
         navigation.replace("/dashboard/auxiliars");
-        return setAlert({
-          isOpen: false,
-        });
+        return toast.success(message);
       }
       setIsLoading(false);
       return setAlert({
@@ -68,11 +59,7 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
       });
     } catch (error) {
       setIsLoading(false);
-      setAlert({
-        type: "error",
-        message: error?.message,
-        isOpen: true,
-      });
+      toast.error(error?.message);
     }
   };
 

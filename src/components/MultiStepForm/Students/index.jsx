@@ -27,7 +27,7 @@ const MultiStepFormStudent = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [validationSchemas, setValidationSchemas] = useState(VALIDATE_SCHEMA);
   const navigation = useRouter();
-  const { profile } = useAuthContext();
+  const { profile, school } = useAuthContext();
   const { alert } = useSystemStore();
 
   const initialValues = {
@@ -79,7 +79,7 @@ const MultiStepFormStudent = () => {
       avatar: "",
       emailExist: false,
     },
-    countTutors: process.env.NODE_ENV === "development" ? 1 : 0,
+    countTutors: process.env.NODE_ENV === "development" ? 0 : 0,
   };
 
   const handleNext = async (values) => {
@@ -114,6 +114,7 @@ const MultiStepFormStudent = () => {
       setIsLoading(false);
       setStep(step + 1);
     } else {
+      values.schoolName = school?.name;
       createParentsByForm(values, profile?.schoolId)
         .then((response) => {
           if (response?.success) {
