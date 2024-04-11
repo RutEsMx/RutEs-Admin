@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import { validateDriver } from "@/utils/validationSchemas";
@@ -10,13 +9,11 @@ import {
   createDriverByForm,
   updateDriverByForm,
 } from "@/services/DriverServices";
-import Alert from "@/components/Alert";
+import { toast } from "sonner";
 
 const FormDriver = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext();
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
 
   const initialValues = {
     name: data?.name || "",
@@ -37,14 +34,14 @@ const FormDriver = ({ data, isEdit = false }) => {
         ? await updateDriverByForm(values)
         : await createDriverByForm(values);
 
-      if (error) return setError(error?.message);
+      if (error) throw new Error(error);
       if (success) {
-        setMessage(message);
+        toast.success(message);
         return navigation.replace("/dashboard/drivers");
       }
-      return setMessage(message);
+      return toast.success(message);
     } catch (error) {
-      setError(error.message);
+      toast.error(error?.message || "Ocurrió un error, intenta de nuevo");
     }
   };
 
@@ -74,13 +71,6 @@ const FormDriver = ({ data, isEdit = false }) => {
             >
               {isEdit ? "Guardar" : "Enviar"}
             </Button>
-          </div>
-          <div className="mt-4">
-            <Alert
-              isOpen={!!message || !!error}
-              message={message || error}
-              type={message ? "success" : "error"}
-            />
           </div>
           <StepDriver isEdit={isEdit} />
         </Form>

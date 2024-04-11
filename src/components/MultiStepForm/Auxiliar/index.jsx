@@ -8,7 +8,7 @@ import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
 import StepAuxiliar from "@/components/Forms/StepAuxiliar";
 import Alert from "@/components/Alert";
-import { setAlert, useSystemStore } from "@/store/useSystemStore";
+import { useSystemStore } from "@/store/useSystemStore";
 import { toast } from "sonner";
 
 const FormAuxiliar = ({ data, isEdit = false }) => {
@@ -52,11 +52,7 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
         return toast.success(message);
       }
       setIsLoading(false);
-      return setAlert({
-        type: "warning",
-        message: message,
-        isOpen: true,
-      });
+      return toast.error(message);
     } catch (error) {
       setIsLoading(false);
       toast.error(error?.message);

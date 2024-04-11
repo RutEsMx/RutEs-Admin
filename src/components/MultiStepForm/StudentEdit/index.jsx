@@ -6,7 +6,7 @@ import Button from "@/components/Button";
 import { useAuthContext } from "@/context/AuthContext";
 import StepStudent from "@/components/Forms/StepStudent";
 import { updateStudentByForm } from "@/services/StudentsServices";
-import { setAlert } from "@/store/useSystemStore";
+import { toast } from "sonner";
 
 const FormStudentEdit = ({ data, isEdit = false }) => {
   const navigation = useRouter();
@@ -30,22 +30,10 @@ const FormStudentEdit = ({ data, isEdit = false }) => {
   const onSubmit = async (values) => {
     values.schoolId = profile?.schoolId;
     const { success, message, error } = await updateStudentByForm(values);
-    if (error)
-      return setAlert({
-        type: "warning",
-        message: message,
-        isOpen: true,
-      });
+    if (error) return toast.error(message);
     if (success) {
-      setAlert({
-        type: "success",
-        message: message,
-        isOpen: true,
-      });
       handleBack();
-      return setAlert({
-        isOpen: false,
-      });
+      return toast.success(message);
     }
   };
 

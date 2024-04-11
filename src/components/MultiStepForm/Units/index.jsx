@@ -6,6 +6,7 @@ import Button from "@/components/Button";
 import { useAuthContext } from "@/context/AuthContext";
 import StepUnits from "@/components/Forms/StepUnits";
 import { createUnitsByForm, updateUnitsByForm } from "@/services/UnitsServices";
+import { toast } from "sonner";
 
 const FormUnits = ({ data, isEdit = false }) => {
   const navigation = useRouter();
@@ -28,9 +29,9 @@ const FormUnits = ({ data, isEdit = false }) => {
       ? await updateUnitsByForm(values)
       : await createUnitsByForm(values);
 
-    if (error) return alert(error?.message);
+    if (error) return toast.error(error?.message);
     if (success) {
-      alert(message);
+      toast.success(message);
       return handleBack();
     }
   };
