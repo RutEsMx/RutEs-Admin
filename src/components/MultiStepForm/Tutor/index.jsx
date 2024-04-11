@@ -245,7 +245,7 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
                       error={errors.avatar}
                     />
                     {errors && (
-                      <span className="text-red">{errors.avatar}</span>
+                      <span className="text-red-500">{errors.avatar}</span>
                     )}
                   </div>
                 </div>

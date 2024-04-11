@@ -18,7 +18,7 @@ const SelectField = ({ name, labelTitle, options, error, ...props }) => {
           </option>
         ))}
       </Field>
-      {error && <span className="text-red">{error}</span>}
+      {error && <span className="text-red-500 text-xs pt-1">{error}</span>}
     </div>
   );
 };

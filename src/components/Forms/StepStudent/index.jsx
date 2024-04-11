@@ -136,7 +136,7 @@ const StepStudent = ({ isEdit = false }) => {
                 </div>
               </div>
               <div>
-                <span className="text-red ">
+                <span className="text-red-500">
                   {errors?.includeFather || errors?.includeMother}
                 </span>
               </div>
@@ -154,7 +154,7 @@ const StepStudent = ({ isEdit = false }) => {
               }}
               error={errors.avatar}
             />
-            {errors && <span className="text-red">{errors.avatar}</span>}
+            {errors && <span className="text-red-500">{errors.avatar}</span>}
           </div>
           <div className="flex flex-col pt-10 gap-4">
             <label htmlFor="status" className="font-bold">

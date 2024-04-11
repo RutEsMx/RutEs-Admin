@@ -112,7 +112,7 @@ const StepAuxiliar = ({ isEdit }) => {
               }}
               error={errors.avatar}
             />
-            {errors && <span className="text-red">{errors.avatar}</span>}
+            {errors && <span className="text-red-500">{errors.avatar}</span>}
           </div>
         </div>
       </div>

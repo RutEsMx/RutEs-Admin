@@ -93,7 +93,7 @@ const Autocomplete = ({
           <ChevronDownIcon className="w-5 h-5" />
         </button>
       </div>
-      {error && <span className="text-red">{error}</span>}
+      {error && <span className="text-red-500">{error}</span>}
       {showOptions && (
         <div className="absolute z-10 w-full overflow-auto bg-white rounded-sm shadow top-auto text-sm">
           {filteredOptions.map((option) => (

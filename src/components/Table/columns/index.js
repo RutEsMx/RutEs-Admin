@@ -14,11 +14,11 @@ import {
 import Link from "next/link";
 
 const COLORS = {
-  active: "text-green",
-  inactive: "text-red",
-  absent: "text-yellow",
-  toSchool: "text-green",
-  toHome: "text-blue",
+  active: "text-green-500",
+  inactive: "text-red-500",
+  absent: "text-yellow-500",
+  toSchool: "text-green-500",
+  toHome: "text-blue-500",
 };
 
 const columnHelper = createColumnHelper();
@@ -95,7 +95,7 @@ const studentsColumns = [
             {isActive ? (
               <CheckCircleIcon className="h-5 w-5 text-green" />
             ) : (
-              <NoSymbolIcon className="h-5 w-5 text-red" />
+              <NoSymbolIcon className="h-5 w-5 text-red-500" />
             )}
           </CellTable>
         </div>
