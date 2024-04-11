@@ -55,11 +55,10 @@ const getStudentById = async (id) => {
   return studentData;
 };
 
-const createParentProfile = async (parent, schoolId, roles) => {
+const createParentProfile = async (parent, schoolId, roles, schoolName) => {
   if (parent.emailExist) return updateParentProfile(parent);
   const { email, avatar } = parent;
   let avatarFilename = avatar || "";
-
   if (validateEmail(email)) {
     try {
       if (avatar instanceof File) {
@@ -83,13 +82,14 @@ const createParentProfile = async (parent, schoolId, roles) => {
 
       const uid = signUpResult?.result?.uid;
       const password = signUpResult?.result?.password;
-
-      await sendPassword(
-        email,
+      const context = {
+        name: `${parent?.name} ${parent?.lastName || ""} ${
+          parent?.secondLastName || ""
+        }`.trim(),
+        school: schoolName,
         password,
-        "Cuenta creada",
-        "sendPassword/index",
-      );
+      };
+      await sendPassword(email, context, "Cuenta creada", "WELCOME");
 
       const profileData = {
         ...parent,
@@ -157,12 +157,13 @@ const createParentsByForm = async (data, schoolId) => {
     includeMother,
     // eslint-disable-next-line no-unused-vars
     includeFather,
+    schoolName,
     ...studentData
   } = data;
 
   const [fatherProfile, motherProfile] = await Promise.all([
-    createParentProfile(father, schoolId, ["user"]),
-    createParentProfile(mother, schoolId, ["user"]),
+    createParentProfile(father, schoolId, ["user"], schoolName),
+    createParentProfile(mother, schoolId, ["user"], schoolName),
   ]);
 
   if (fatherProfile?.error) {
@@ -209,7 +210,7 @@ const createParentsByForm = async (data, schoolId) => {
       students: [...(data[tutor]?.students ?? []), studentProfile],
     };
     delete studentData[tutor];
-    return createParentProfile(tutorData, schoolId, ["tutor"]);
+    return createParentProfile(tutorData, schoolId, ["tutor"], schoolName);
   });
 
   let responseProfile;
@@ -379,9 +380,9 @@ const createStudentsTable = async (students) => {
 // }
 
 const createTutorProfile = async (parent, studentId, schoolId, roles) => {
-  const { email, avatar } = parent;
-  let avatarFilename = avatar || null;
+  const { email, avatar, schoolName } = parent;
 
+  let avatarFilename = avatar || null;
   if (validateEmail(email)) {
     try {
       let responseCreateDocument;
@@ -413,13 +414,14 @@ const createTutorProfile = async (parent, studentId, schoolId, roles) => {
 
         const uid = signUpResult?.result?.uid;
         const password = signUpResult?.result?.password;
-
-        await sendPassword(
-          email,
+        const context = {
+          name: `${parent?.name} ${parent?.lastName || ""} ${
+            parent?.secondLastName || ""
+          }`.trim(),
+          school: schoolName,
           password,
-          "Cuenta creada",
-          "sendPassword/index",
-        );
+        };
+        await sendPassword(email, context, "Cuenta creada", "WELCOME");
 
         const profileData = {
           ...parent,

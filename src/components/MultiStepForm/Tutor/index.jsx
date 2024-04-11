@@ -25,7 +25,7 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [emailExist, setEmailExist] = useState(false);
   const [emailData, setEmailData] = useState(null);
-  const { profile } = useAuthContext();
+  const { profile, school } = useAuthContext();
 
   const initialValues = {
     name: IS_DEV ? tutorMock.name : data?.name || "",
@@ -90,6 +90,7 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
     setIsLoading(true);
     try {
       // values.id = data?.id;
+      values.schoolName = school?.name;
       await createTutorProfile(values, studentId, profile.schoolId, ["tutor"]);
 
       getParents();
