@@ -28,7 +28,7 @@ const updateUnitsByForm = async (data) => {
     updateUnits(dataCopy.id, dataCopy);
     return {
       success: true,
-      message: "Unidad actualizado correctamente",
+      message: "Unidad actualizada correctamente",
       result: dataCopy,
     };
   } catch (error) {
@@ -38,9 +38,7 @@ const updateUnitsByForm = async (data) => {
 
 const getUnits = async () => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units`,
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}api/units`);
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
@@ -54,13 +52,11 @@ const getUnits = async () => {
 
 const getUnitsRoutes = async () => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units`,
-    );
+    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}api/units`);
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
-    
+
     const data = await response.json();
     const formatData = data.map((unit) => {
       return {
@@ -90,6 +86,10 @@ const getUnit = async (id) => {
   }
 };
 
-
-
-export { createUnitsByForm, getUnits, updateUnitsByForm, getUnit, getUnitsRoutes };
+export {
+  createUnitsByForm,
+  getUnits,
+  updateUnitsByForm,
+  getUnit,
+  getUnitsRoutes,
+};

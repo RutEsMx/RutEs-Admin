@@ -11,6 +11,10 @@ import useTutorsByStudents from "@/hooks/useTutorsByStudents";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import Alert from "@/components/Alert";
+import { toast } from "sonner";
+import { Card, CardContent } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+
 const storage = getStorage();
 
 const Page = ({ params }) => {
@@ -55,25 +59,10 @@ const Page = ({ params }) => {
 
     Promise.all([updateTutorActive, updateStudentGlobal])
       .then(() => {
-        setAlert({
-          type: "success",
-          message: "Tutor actualizado correctamente",
-          isOpen: true,
-        });
-        setTimeout(() => {
-          setAlert({
-            type: "",
-            message: "",
-            isOpen: false,
-          });
-        }, 3000);
+        toast.success("Tutor actualizado correctamente");
       })
       .catch((error) => {
-        setAlert({
-          type: "error",
-          message: error?.message,
-          isOpen: true,
-        });
+        toast.error(error?.message);
       });
   };
 
@@ -165,32 +154,37 @@ const Page = ({ params }) => {
                 Agregar tutor
               </ButtonLink>
             </div>
-
-            {tutors &&
-              tutors?.map((tutor) => (
-                <div
-                  className={`card shadow-xl ${
-                    student?.tutorActive === tutor?.id
-                      ? "bg-primary hover:bg-primary/80"
-                      : "bg-slate-200 hover:bg-slate-200/80"
-                  } cursor-pointer`}
-                  key={tutor?.id}
-                  onClick={() => handleStatus(tutor?.id)}
-                >
-                  <div className="card-body">
-                    <h2 className="card-title text-wrap">
-                      {`${tutor?.name || ""} ${tutor?.lastName || ""} ${
-                        tutor?.secondLastName || ""
-                      }`}
-                    </h2>
-                    <label className="cursor-pointer">
-                      {student?.tutorActive === tutor?.id
-                        ? "Tutor activo"
-                        : "Tutor inactivo"}
-                    </label>
-                  </div>
-                </div>
-              ))}
+            <div className="grid grid-flow-row grid-cols-1 md:grid-cols-3 gap-4 col-span-5">
+              {tutors &&
+                tutors?.map((tutor) => (
+                  <Card className="cursor-pointer col-span-1" key={tutor?.id}>
+                    <CardContent className="p-0">
+                      <div
+                        className={`
+                        ${
+                          student?.tutorActive === tutor?.id
+                            ? "bg-primary hover:bg-primary/80"
+                            : "bg-slate-200 hover:bg-slate-200/80"
+                        } cursor-pointer p-4 rounded-md`}
+                        onClick={() => handleStatus(tutor?.id)}
+                      >
+                        <div className="flex items-center gap-2 flex-col ">
+                          <Label className="cursor-pointer">
+                            {`${tutor?.name || ""} ${tutor?.lastName || ""} ${
+                              tutor?.secondLastName || ""
+                            }`}
+                          </Label>
+                          <Label className="cursor-pointer text-xs">
+                            {student?.tutorActive === tutor?.id
+                              ? "Tutor activo"
+                              : "Tutor inactivo"}
+                          </Label>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+            </div>
           </div>
         </div>
       </div>

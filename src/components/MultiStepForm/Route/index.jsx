@@ -17,6 +17,7 @@ import { useSystemStore } from "@/store/useSystemStore";
 import StepStopsEdit from "@/components/Forms/StepStopsEdit";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { useEffect } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
@@ -24,7 +25,6 @@ const FormRoute = ({ data, isEdit = false }) => {
   const { alert } = useSystemStore();
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState("DATOS");
   const { setTypeTravel } = useRoutesStore();
 
   const initialValues = {
@@ -104,32 +104,18 @@ const FormRoute = ({ data, isEdit = false }) => {
             </div>
             <div className="grid grid-cols-5 gap-4">
               <div className="col-span-2 border-2 border-gray rounded-lg p-4">
-                <div className="tabs">
-                  <a
-                    className={`tab tab-bordered ${
-                      activeTab === "DATOS" ? "tab-active" : ""
-                    }`}
-                    onClick={() => setActiveTab("DATOS")}
-                  >
-                    DATOS
-                  </a>
-                  <a
-                    className={`tab tab-bordered ${
-                      activeTab === "PARADAS" ? "tab-active" : ""
-                    }`}
-                    onClick={() => setActiveTab("PARADAS")}
-                  >
-                    PARADAS
-                  </a>
-                </div>
-                <div className="divider mx-0 my-2 before:h-2 after:h-2"></div>
-                {activeTab === "DATOS" ? (
-                  <StepRoute isEdit={isEdit} />
-                ) : isEdit ? (
-                  <StepStopsEdit />
-                ) : (
-                  <StepStops />
-                )}
+                <Tabs defaultValue="data">
+                  <TabsList>
+                    <TabsTrigger value="data">DATOS</TabsTrigger>
+                    <TabsTrigger value="stops">PARADAS</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="data">
+                    <StepRoute isEdit={isEdit} />
+                  </TabsContent>
+                  <TabsContent value="stops">
+                    {isEdit ? <StepStopsEdit /> : <StepStops />}
+                  </TabsContent>
+                </Tabs>
               </div>
               <div className="col-span-3 border-2 border-gray rounded-lg p-4">
                 <MapStops />

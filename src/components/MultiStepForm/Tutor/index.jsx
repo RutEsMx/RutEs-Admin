@@ -3,8 +3,6 @@ import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
-import Alert from "@/components/Alert";
-import { setAlert, useSystemStore } from "@/store/useSystemStore";
 import InputField from "@/components/InputField";
 import FileInput from "@/components/FileInput";
 import { createTutorProfile } from "@/services/StudentsServices";
@@ -16,12 +14,12 @@ import { downloadURL } from "@/utils/functionsClient";
 import { useAuthContext } from "@/context/AuthContext";
 import { tutorMock } from "@/mocks/createStudent";
 import { getParents } from "@/services/ParentsSevices";
+import { toast } from "sonner";
 
 const IS_DEV = process.env.NODE_ENV === "development";
 
 const FormTutor = ({ data, isEdit = false, studentId }) => {
   const navigation = useRouter();
-  const { alert } = useSystemStore();
   const [isLoading, setIsLoading] = useState(false);
   const [emailExist, setEmailExist] = useState(false);
   const [emailData, setEmailData] = useState(null);
@@ -62,10 +60,7 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
           return;
         }
       } catch (error) {
-        setAlert({
-          type: "error",
-          message: "Ocurrió un error al buscar el correo electrónico",
-        });
+        toast.error("Ocurrió un error al buscar el correo electrónico");
       }
     }
   };
@@ -94,22 +89,10 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
       await createTutorProfile(values, studentId, profile.schoolId, ["tutor"]);
 
       getParents();
-
-      setAlert({
-        type: "success",
-        message: "Perfil actualizado correctamente",
-        isOpen: true,
-      });
       navigation.back();
-      return setAlert({
-        isOpen: false,
-      });
+      return toast.success("Perfil actualizado correctamente");
     } catch (error) {
-      setAlert({
-        type: "error",
-        message: error?.message,
-        isOpen: true,
-      });
+      toast.error(error?.message);
     } finally {
       setIsLoading(false);
     }
@@ -157,13 +140,6 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
                   "Crear"
                 )}
               </Button>
-            </div>
-            <div className="mt-4">
-              <Alert
-                isOpen={alert.isOpen}
-                message={alert.message}
-                type={alert.type}
-              />
             </div>
             <div className="border border-black px-4 py-2 mt-4">
               <h1 className="text-2xl font-bold">{"Crear"}</h1>
