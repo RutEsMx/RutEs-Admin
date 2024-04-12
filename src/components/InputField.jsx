@@ -1,6 +1,7 @@
 import { Field } from "formik";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import { Label } from "./ui/label";
 
 const InputField = ({
   label,
@@ -15,9 +16,9 @@ const InputField = ({
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="flex flex-col text-xs m-2">
-      <label htmlFor={name} className="mb-1">
+      <Label htmlFor={name} className="mb-1">
         {label}
-      </label>
+      </Label>
       <div className="flex flex-row gap-2">
         <Field
           name={name}

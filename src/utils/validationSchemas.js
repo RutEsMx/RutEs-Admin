@@ -39,6 +39,14 @@ const validateStudent = Yup.object().shape({
       return value || includeFather;
     }),
   avatar: Yup.string().nullable(),
+  address: Yup.object().shape({
+    street: Yup.string().nullable().required("Calle requerida"),
+    number: Yup.string().nullable().required("Número requerido"),
+    neighborhood: Yup.string().nullable().required("Colonia requerida"),
+    postalCode: Yup.string().nullable().required("Código Postal requerido"),
+    city: Yup.string().nullable().required("Ciudad requerida"),
+    state: Yup.string().nullable().required("Estado requerido"),
+  }),
 });
 
 const validateStudentEdit = Yup.object().shape({

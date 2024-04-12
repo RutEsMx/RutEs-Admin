@@ -114,7 +114,6 @@ const validateServiceType = ({
 };
 
 const validateError = (error) => {
-  console.log("🚀 ~ validateError ~ error:", error);
   let message = "Error desconocido";
   switch (error?.code) {
     case "messaging/invalid-argument":

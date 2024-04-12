@@ -2,7 +2,11 @@ import ButtonAction from "@/components/ButtonAction";
 import FileInput from "@/components/FileInput";
 import InputField from "@/components/InputField";
 import SelectField from "@/components/SelectField";
-import { OPTIONS_BLOOD_TYPES, OPTIONS_TYPE_SERVICES } from "@/utils/options";
+import {
+  OPTIONS_BLOOD_TYPES,
+  OPTIONS_TYPE_SERVICES,
+  STATES_MX,
+} from "@/utils/options";
 import { useFormikContext } from "formik";
 
 const StepStudent = ({ isEdit = false }) => {
@@ -14,85 +18,214 @@ const StepStudent = ({ isEdit = false }) => {
         {isEdit ? "Editar Alumno" : "Crear Alumno"}
       </h1>
       <div className="grid grid-cols-3 gap-4 p-4">
-        <div className="col-span-2">
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <InputField
-              label="Nombre(s)"
-              type="text"
-              name="name"
-              value={values.name}
-              onChange={handleChange}
-              error={errors.name}
+        <div className="col-span-3 md:hidden bg-red-500">
+          <div className="flex flex-col items-center">
+            <FileInput
+              label="Avatar"
+              name="avatar"
+              value={values.avatar}
+              onChange={(event) => {
+                setFieldValue("avatar", event.currentTarget.files[0]);
+              }}
+              error={errors.avatar}
             />
+            {errors && <span className="text-red-500">{errors.avatar}</span>}
+          </div>
+          {isEdit && (
+            <div className="flex flex-col pt-10 gap-4">
+              <label htmlFor="status" className="font-bold">
+                Estado de servicio
+              </label>
+              <ButtonAction
+                type="button"
+                onClick={() => {
+                  setFieldValue(
+                    "status",
+                    values.status === "active" ? "inactive" : "active",
+                  );
+                }}
+                color={
+                  values.status === "active" ? "bg-light-gray" : "bg-primary"
+                }
+              >
+                {values.status === "active" ? "Desactivar" : "Activar"}
+              </ButtonAction>
+            </div>
+          )}
+        </div>
+        <div className="md:col-span-2 col-span-3">
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="col-span-2 md:col-span-1">
+              <InputField
+                label="Nombre(s)"
+                type="text"
+                name="name"
+                value={values.name}
+                onChange={handleChange}
+                error={errors.name}
+              />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <InputField
-              label="Apellido Paterno"
-              type="text"
-              name="lastName"
-              value={values.lastName}
-              onChange={handleChange}
-              error={errors.lastName}
-            />
-            <InputField
-              label="Apellido Materno"
-              type="text"
-              name="secondLastName"
-              value={values.secondLastName}
-              onChange={handleChange}
-            />
-            <InputField
-              label="Fecha de Nacimiento"
-              type="date"
-              name="birthDate"
-              value={values.birthDate}
-              onChange={handleChange}
-              error={errors.birthDate}
-            />
-            <SelectField
-              labelTitle="Tipo de Sangre"
-              name="bloodType"
-              options={OPTIONS_BLOOD_TYPES}
-            />
-            <InputField
-              label="Alergias"
-              type="text"
-              name="allergies"
-              value={values.allergies}
-              onChange={handleChange}
-            />
-            <InputField
-              label="Grado"
-              type="text"
-              name="grade"
-              value={values.grade}
-              onChange={handleChange}
-            />
-            <InputField
-              label="Grupo"
-              type="text"
-              name="group"
-              value={values.group}
-              onChange={handleChange}
-            />
-            <InputField
-              label="Matricula"
-              type="text"
-              name="enrollment"
-              value={values.enrollment}
-              onChange={handleChange}
-              error={errors.enrollment}
-            />
-            <SelectField
-              labelTitle="Tipo de Servicio"
-              name="serviceType"
-              options={OPTIONS_TYPE_SERVICES}
-              error={errors.serviceType}
-            />
+            <div className="col-span-2 md:col-span-1">
+              <InputField
+                label="Apellido Paterno"
+                type="text"
+                name="lastName"
+                value={values.lastName}
+                onChange={handleChange}
+                error={errors.lastName}
+              />
+            </div>
+            <div className="col-span-2 md:col-span-1">
+              <InputField
+                label="Apellido Materno"
+                type="text"
+                name="secondLastName"
+                value={values.secondLastName}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-span-1">
+              <InputField
+                label="Fecha de Nacimiento"
+                type="date"
+                name="birthDate"
+                value={values.birthDate}
+                onChange={handleChange}
+                error={errors.birthDate}
+              />
+            </div>
+            <div className="col-span-1">
+              <SelectField
+                labelTitle="Tipo de Sangre"
+                name="bloodType"
+                options={OPTIONS_BLOOD_TYPES}
+                placeholder="Selecciona un tipo de sangre"
+                value={values.bloodType}
+                onValueChange={(value) => setFieldValue("bloodType", value)}
+                error={errors.bloodType}
+              />
+            </div>
+            <div className="col-span-1">
+              <InputField
+                label="Alergias"
+                type="text"
+                name="allergies"
+                value={values.allergies}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-span-1">
+              <InputField
+                label="Grado"
+                type="text"
+                name="grade"
+                value={values.grade}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-span-1">
+              <InputField
+                label="Grupo"
+                type="text"
+                name="group"
+                value={values.group}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="col-span-1">
+              <InputField
+                label="Matricula"
+                type="text"
+                name="enrollment"
+                value={values.enrollment}
+                onChange={handleChange}
+                error={errors.enrollment}
+              />
+            </div>
+            <div className="col-span-2 grid grid-cols-4">
+              <div className="col-span-4 md:col-span-2">
+                <InputField
+                  label="Calle"
+                  type="text"
+                  name="address.street"
+                  value={values.address.street}
+                  onChange={handleChange}
+                  error={errors.address?.street}
+                />
+              </div>
+              <div className="col-span-2 md:col-span-1">
+                <InputField
+                  label="Número de Casa"
+                  type="text"
+                  name="address.number"
+                  value={values.address.number}
+                  onChange={handleChange}
+                  error={errors.address?.number}
+                />
+              </div>
+              <div className="col-span-2 md:col-span-1">
+                <InputField
+                  label="Codigo Postal"
+                  type="text"
+                  name="address.postalCode"
+                  value={values.address.postalCode}
+                  onChange={handleChange}
+                  error={errors.address?.postalCode}
+                />
+              </div>
+            </div>
+            <div className="grid md:grid-cols-3 md:col-span-2 grid-cols-1 col-span-2">
+              <div className="col-span-1">
+                <InputField
+                  label="Colonia"
+                  type="text"
+                  name="address.neighborhood"
+                  value={values.address.neighborhood}
+                  onChange={handleChange}
+                  error={errors.address?.neighborhood}
+                />
+              </div>
+              <div className="col-span-1">
+                <InputField
+                  label="Ciudad"
+                  type="text"
+                  name="address.city"
+                  value={values.address.city}
+                  onChange={handleChange}
+                  error={errors.address?.city}
+                />
+              </div>
+              <div className="col-span-1">
+                <SelectField
+                  labelTitle="Estado"
+                  name="address.state"
+                  options={STATES_MX}
+                  placeholder="Selecciona un estado"
+                  value={values.address?.state}
+                  onValueChange={(value) =>
+                    setFieldValue("address.state", value)
+                  }
+                  error={errors.address?.state}
+                />
+              </div>
+              <div className="col-span-1">
+                <SelectField
+                  labelTitle="Tipo de Servicio"
+                  name="serviceType"
+                  options={OPTIONS_TYPE_SERVICES}
+                  placeholder="Selecciona un tipo de servicio"
+                  value={values.serviceType}
+                  onValueChange={(value) => setFieldValue("serviceType", value)}
+                  error={errors.serviceType}
+                />
+              </div>
+            </div>
           </div>
           {!isEdit && (
             <div className="grid grid-rows-1 p-4">
-              <div className="grid grid-cols-3">
+              <div className="grid md:grid-cols-3 grid-cols-2">
                 <div className="flex justify-around">
                   <div className="flex items-center">
                     <input
@@ -143,8 +276,8 @@ const StepStudent = ({ isEdit = false }) => {
             </div>
           )}
         </div>
-        <div>
-          <div className="flex flex-col">
+        <div className="md:col-span-1 hidden md:block">
+          <div className="flex flex-col items-center">
             <FileInput
               label="Avatar"
               name="avatar"

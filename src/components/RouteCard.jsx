@@ -50,7 +50,6 @@ const RouteCard = ({ route }) => {
         },
       );
     } catch (error) {
-      console.log("🚀 ~ useEffect ~ error:", error);
       toast.error("Error al obtener las notificaciones");
     }
     return () => {

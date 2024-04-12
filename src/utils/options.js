@@ -7,8 +7,7 @@
 // Tercer hijo o más - si el alumno tiene dos o más hermanos en el colegio, el servicio es con costo reducido
 
 const OPTIONS_TYPE_SERVICES = [
-  { value: "", label: "Seleccione una opción" },
-  { value: "complete", label: "Completo" },
+  { value: "complete", label: "Servicio completo" },
   // { value: "halfMorning", label: "Media Ruta Mañana" }, // Viaje a la escuela
   // { value: "halfAfternoon", label: "Media Ruta Tarde" }, // Viaje a la casa
   // { value: "scholarship", label: "Beca" },
@@ -17,7 +16,6 @@ const OPTIONS_TYPE_SERVICES = [
 ];
 
 const OPTIONS_BLOOD_TYPES = [
-  { value: "", label: "Seleccione una opción" },
   { value: "A+", label: "A+" },
   { value: "A-", label: "A-" },
   { value: "B+", label: "B+" },
@@ -31,14 +29,14 @@ const OPTIONS_BLOOD_TYPES = [
 const OPTIONS_USER_ROLES_ADMIN = [
   { value: "admin", label: "Admin escuela" },
   { value: "user-school", label: "Usuario escuela" },
-  { value: "minor-user", label: "Usuario limitado" },
+  // { value: "minor-user", label: "Usuario limitado" },
 ];
 
 const OPTIONS_USER_ROLES_ADMIN_RUTES = [
   { value: "admin-rutes", label: "Admin RutEs" },
   { value: "admin", label: "Admin escuela" },
   { value: "user-school", label: "Usuario escuela" },
-  { value: "minor-user", label: "Usuario limitado" },
+  // { value: "minor-user", label: "Usuario limitado" },
 ];
 
 const STATUS = {
@@ -98,6 +96,41 @@ const TRAVEL_WITH_FRIEND_STATUS = {
   rejected: "Rechazado",
 };
 
+const STATES_MX = [
+  { value: "AGU", label: "Aguascalientes" },
+  { value: "BCN", label: "Baja California" },
+  { value: "BCS", label: "Baja California Sur" },
+  { value: "CAM", label: "Campeche" },
+  { value: "CHP", label: "Chiapas" },
+  { value: "CHH", label: "Chihuahua" },
+  { value: "CDMX", label: "Ciudad de México" },
+  { value: "COA", label: "Coahuila" },
+  { value: "COL", label: "Colima" },
+  { value: "DUR", label: "Durango" },
+  { value: "GUA", label: "Guanajuato" },
+  { value: "GRO", label: "Guerrero" },
+  { value: "HID", label: "Hidalgo" },
+  { value: "JAL", label: "Jalisco" },
+  { value: "MEX", label: "México" },
+  { value: "MIC", label: "Michoacán" },
+  { value: "MOR", label: "Morelos" },
+  { value: "NAY", label: "Nayarit" },
+  { value: "NLE", label: "Nuevo León" },
+  { value: "OAX", label: "Oaxaca" },
+  { value: "PUE", label: "Puebla" },
+  { value: "QUE", label: "Querétaro" },
+  { value: "ROO", label: "Quintana Roo" },
+  { value: "SLP", label: "San Luis Potosí" },
+  { value: "SIN", label: "Sinaloa" },
+  { value: "SON", label: "Sonora" },
+  { value: "TAB", label: "Tabasco" },
+  { value: "TAM", label: "Tamaulipas" },
+  { value: "TLA", label: "Tlaxcala" },
+  { value: "VER", label: "Veracruz" },
+  { value: "YUC", label: "Yucatán" },
+  { value: "ZAC", label: "Zacatecas" },
+];
+
 export {
   OPTIONS_TYPE_SERVICES,
   OPTIONS_BLOOD_TYPES,
@@ -112,4 +145,5 @@ export {
   CURRENT_DAY,
   TRAVEL_WITH_FRIEND_OPTIONS,
   TRAVEL_WITH_FRIEND_STATUS,
+  STATES_MX,
 };

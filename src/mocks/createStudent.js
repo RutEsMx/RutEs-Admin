@@ -12,6 +12,14 @@ const studentMock = {
   avatar: "",
   includeFather: true,
   includeMother: true,
+  address: {
+    street: "Calle 3",
+    number: "3",
+    neighborhood: "Colonia 3",
+    postalCode: "12345",
+    city: "Ciudad 3",
+    state: "TAB",
+  },
 };
 
 const fatherMock = {

@@ -110,7 +110,7 @@ const TravelCard = ({ id, item, getData }) => {
         validateOnChange={false}
         validateOnMount={false}
       >
-        {({ isSubmitting, handleSubmit, handleChange, values }) => (
+        {({ isSubmitting, handleSubmit, values, setFieldValue }) => (
           <Form>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -122,11 +122,11 @@ const TravelCard = ({ id, item, getData }) => {
               <div className="grid py-2">
                 <div>
                   <SelectField
-                    label="Estado"
+                    labelTitle="Estado"
                     name="status"
                     options={TRAVEL_WITH_FRIEND_OPTIONS}
                     value={values.status}
-                    onChange={handleChange}
+                    onValueChange={(values) => setFieldValue("status", values)}
                   />
                 </div>
               </div>
