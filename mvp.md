@@ -13,7 +13,7 @@
 - [ ] Generar un reporte básico descargable
 
 - [x] Corregir Notificaciones (Unicas, no repetidas)
-- [ ] Agregar formulario para dirección de los niños
+- [x] Agregar formulario para dirección de los niños
 - [x] Cambiar correo emisor
 - [ ] Dejar ruta para todos los dias y solo agregar talleres por encima.
 

@@ -80,6 +80,32 @@ const MultiStepFormStudent = () => {
       emailExist: false,
     },
     countTutors: process.env.NODE_ENV === "development" ? 0 : 0,
+    address: {
+      street:
+        process.env.NODE_ENV === "development"
+          ? studentMock?.address?.street
+          : "",
+      number:
+        process.env.NODE_ENV === "development"
+          ? studentMock?.address?.number
+          : "",
+      neighborhood:
+        process.env.NODE_ENV === "development"
+          ? studentMock?.address?.neighborhood
+          : "",
+      postalCode:
+        process.env.NODE_ENV === "development"
+          ? studentMock?.address?.postalCode
+          : "",
+      city:
+        process.env.NODE_ENV === "development"
+          ? studentMock?.address?.city
+          : "",
+      state:
+        process.env.NODE_ENV === "development"
+          ? studentMock?.address?.state
+          : "",
+    },
   };
 
   const handleNext = async (values) => {

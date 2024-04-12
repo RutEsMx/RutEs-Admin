@@ -83,6 +83,72 @@ const StepStudent = ({ isEdit = false }) => {
               onChange={handleChange}
               error={errors.enrollment}
             />
+            <div className="col-span-2 grid grid-cols-4">
+              <div className="col-span-2">
+                <InputField
+                  label="Calle"
+                  type="text"
+                  name="address.street"
+                  value={values.address.street}
+                  onChange={handleChange}
+                  error={errors.address?.street}
+                />
+              </div>
+              <div className="col-span-1 justify-center flex ">
+                <div className="w-2/3 ">
+                  <InputField
+                    label="Número de Casa"
+                    type="text"
+                    name="address.number"
+                    value={values.address.number}
+                    onChange={handleChange}
+                    error={errors.address?.number}
+                  />
+                </div>
+              </div>
+              <div className="col-span-1">
+                <InputField
+                  label="Codigo Postal"
+                  type="text"
+                  name="address.postalCode"
+                  value={values.address.postalCode}
+                  onChange={handleChange}
+                  error={errors.address?.postalCode}
+                />
+              </div>
+            </div>
+            <div className="col-span-2 grid grid-cols-3">
+              <div className="col-span-1">
+                <InputField
+                  label="Colonia"
+                  type="text"
+                  name="address.neighborhood"
+                  value={values.address.neighborhood}
+                  onChange={handleChange}
+                  error={errors.address?.neighborhood}
+                />
+              </div>
+              <div className="col-span-1">
+                <InputField
+                  label="Ciudad"
+                  type="text"
+                  name="address.city"
+                  value={values.address.city}
+                  onChange={handleChange}
+                  error={errors.address?.city}
+                />
+              </div>
+              <div className="col-span-1">
+                <InputField
+                  label="Estado"
+                  type="text"
+                  name="address.state"
+                  value={values.address.state}
+                  onChange={handleChange}
+                  error={errors.address?.state}
+                />
+              </div>
+            </div>
             <SelectField
               labelTitle="Tipo de Servicio"
               name="serviceType"
