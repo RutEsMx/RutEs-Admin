@@ -40,7 +40,6 @@ export async function GET(request, { params }) {
 
     return NextResponse.json(travel);
   } catch (error) {
-    console.log("🚀 ~ GET ~ error:", error);
     return NextResponse.json(error);
   }
 }

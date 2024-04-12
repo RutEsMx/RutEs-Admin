@@ -46,7 +46,6 @@ const StepParents = ({ validation }) => {
           return;
         }
       } catch (error) {
-        console.log("🚀 ~ findEmailFirestore ~ error:", error);
         setAlert({
           type: "error",
           message: "Ocurrió un error al buscar el correo electrónico",

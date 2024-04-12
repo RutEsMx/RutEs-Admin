@@ -1,12 +1,12 @@
 import FileInput from "@/components/FileInput";
 import InputField from "@/components/InputField";
-import SelectField from "@/components/SelectField";
+import { Label } from "@/components/ui/label";
 import { useAuthContext } from "@/context/AuthContext";
 import {
   OPTIONS_USER_ROLES_ADMIN_RUTES,
   OPTIONS_USER_ROLES_ADMIN,
 } from "@/utils/options";
-import { useFormikContext } from "formik";
+import { Field, useFormikContext } from "formik";
 
 const StepUsers = ({ isEdit }) => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
@@ -61,17 +61,35 @@ const StepUsers = ({ isEdit }) => {
               error={errors.phone}
               maxLength={10}
             />
-            <SelectField
-              labelTitle="Tipo de usuario"
-              name="roles"
-              options={
-                isAdminRutes
-                  ? OPTIONS_USER_ROLES_ADMIN_RUTES
-                  : OPTIONS_USER_ROLES_ADMIN
-              }
-              error={errors.roles}
-              multiple={true}
-            />
+            <div className="flex flex-col m-2">
+              <Label htmlFor="roles" className="mb-1">
+                Roles
+              </Label>
+              <Field
+                name="roles"
+                component="select"
+                multiple={true}
+                onChange={handleChange}
+                className="border border-gray rounded-sm p-1 h-full text-sm"
+              >
+                {isAdminRutes
+                  ? OPTIONS_USER_ROLES_ADMIN_RUTES.map(({ value, label }) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))
+                  : OPTIONS_USER_ROLES_ADMIN.map(({ value, label }) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+              </Field>
+              {errors?.roles && (
+                <span className="text-red-500 text-xs pt-1">
+                  {errors?.roles}
+                </span>
+              )}
+            </div>
           </div>
         </div>
         <div>

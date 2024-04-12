@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { getAuxiliarsRoutes } from "@/services/AuxiliarsServices";
 import { getDriversRoutes } from "@/services/DriverServices";
 import { useRoutesStore } from "@/store/useRoutesStore";
+import { Label } from "@/components/ui/label";
 
 const StepRoute = ({ isEdit }) => {
   const { values, handleChange, errors, setFieldValue } = useFormikContext();
@@ -102,8 +103,8 @@ const StepRoute = ({ isEdit }) => {
 
   return (
     <div className="mb-4 ">
-      <div className="grid place-content-start ml-2">
-        <label className="cursor-pointer label gap-1">
+      <div className="ml-2 gap-4">
+        <Label className="cursor-pointer">
           <input
             type="checkbox"
             name="workshop"
@@ -111,9 +112,12 @@ const StepRoute = ({ isEdit }) => {
             className="checkbox checkbox-xs"
             onChange={setWorkshop}
             disabled={isEdit}
+            id="workshop"
           />
-          <span className="label-text text-xs text-start">Taller</span>
-        </label>
+          <Label className="text-xs ml-2" htmlFor="workshop">
+            Taller
+          </Label>
+        </Label>
       </div>
       <InputField
         label="Nombre"

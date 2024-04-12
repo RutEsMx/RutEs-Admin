@@ -12,11 +12,10 @@ import {
   validateTutors,
 } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
-import { createParentsByForm } from "@/services/StudentsServices";
+import { createParentsByForm, getStudents } from "@/services/StudentsServices";
 import { useAuthContext } from "@/context/AuthContext";
-import { setAlert, useSystemStore } from "@/store/useSystemStore";
-import Alert from "@/components/Alert";
 import { fatherMock, motherMock, studentMock } from "@/mocks/createStudent";
+import { toast } from "sonner";
 
 const STEPS = [StepStudent];
 const VALIDATE_SCHEMA = [validateStudent];
@@ -28,7 +27,6 @@ const MultiStepFormStudent = () => {
   const [validationSchemas, setValidationSchemas] = useState(VALIDATE_SCHEMA);
   const navigation = useRouter();
   const { profile, school } = useAuthContext();
-  const { alert } = useSystemStore();
 
   const initialValues = {
     name: process.env.NODE_ENV === "development" ? studentMock.name : "",
@@ -144,24 +142,16 @@ const MultiStepFormStudent = () => {
       createParentsByForm(values, profile?.schoolId)
         .then((response) => {
           if (response?.success) {
-            setAlert({
-              type: "success",
-              message: "Se ha creado el estudiante correctamente",
-              show: true,
-            });
+            toast.success("Estudiante creado correctamente");
+            getStudents();
             navigation.replace("/dashboard/students");
-            return setAlert({
-              isOpen: false,
-            });
+            return;
           }
         })
         .catch((error) => {
-          setAlert({
-            type: "error",
-            message:
-              error?.message || "Ha ocurrido un error al crear el estudiante",
-            show: true,
-          });
+          toast.error(
+            error?.message || "Ocurrió un error al crear el estudiante",
+          );
         })
         .finally(() => setIsLoading(false));
     }
@@ -197,7 +187,20 @@ const MultiStepFormStudent = () => {
               disabled={isSubmitting || isLoading}
             >
               {isLoading ? (
-                <span className="loading loading-dots loading-xs"></span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6 animate-spin text-white"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
+                </svg>
               ) : (
                 "Atrás"
               )}
@@ -208,20 +211,26 @@ const MultiStepFormStudent = () => {
               type="button"
             >
               {isLoading ? (
-                <span className="loading loading-dots loading-xs"></span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6 animate-spin text-black"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                  />
+                </svg>
               ) : step !== steps.length - 1 || step === 0 ? (
                 "Siguiente"
               ) : (
                 "Enviar"
               )}
             </Button>
-          </div>
-          <div className="mt-4">
-            <Alert
-              isOpen={alert?.show}
-              message={alert?.message}
-              type={alert?.type}
-            />
           </div>
           <CurrentStep
             validation={validationSchemas[step]}

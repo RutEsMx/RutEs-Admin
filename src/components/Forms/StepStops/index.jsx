@@ -262,22 +262,22 @@ const StepStops = () => {
       <div className="mx-2 row-span-1 my-6">
         <div className="w-full bg-gray-hover px-2 mb-4">Paradas</div>
         <SelectField
-          label="Día"
+          labelTitle="Día"
           name="day"
           options={SELECT_DAY}
           value={selectedDayEdit}
-          onChange={(e) => setSelectedDayEdit(e.target.value)}
+          onValueChange={(value) => setSelectedDayEdit(value)}
         />
         {typeTravel !== "workshop" && (
           <SelectField
-            label="Tipo de viaje"
+            labelTitle="Tipo de viaje"
             name="typeTravel"
             options={[
               { label: "Escuela - Casa", value: "toHome" },
               { label: "Casa - Escuela", value: "toSchool" },
             ]}
             value={typeTravel}
-            onChange={(e) => setTypeTravel(e.target.value)}
+            onValueChange={(value) => setTypeTravel(value)}
           />
         )}
         {studentsData?.map((student, index) => (

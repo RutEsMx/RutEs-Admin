@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { Label } from "./ui/label";
 
 const Autocomplete = ({
   options,
@@ -72,9 +73,9 @@ const Autocomplete = ({
   return (
     <div className="relative m-2 text-xs" ref={ref}>
       {label && (
-        <label htmlFor={label} className="mb-1">
+        <Label htmlFor={label} className="mb-2">
           {label}
-        </label>
+        </Label>
       )}
       <div className="flex ">
         <input

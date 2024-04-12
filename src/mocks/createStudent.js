@@ -18,7 +18,7 @@ const studentMock = {
     neighborhood: "Colonia 3",
     postalCode: "12345",
     city: "Ciudad 3",
-    state: "Estado 3",
+    state: "TAB",
   },
 };
 
