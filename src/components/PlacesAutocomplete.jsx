@@ -6,8 +6,13 @@ import GooglePlacesAutocomplete, {
   getLatLng,
 } from "react-google-places-autocomplete";
 
-const PlacesAutocomplete = ({ label, setPlace, place }) => {
+const PlacesAutocomplete = ({ label, setPlace, place, address }) => {
   const [value, setValue] = useState(place);
+  const [addressValue, setAddressValue] = useState("");
+
+  useEffect(() => {
+    setAddressValue(address);
+  }, [address]);
 
   useEffect(() => {
     const getPlaceId = async () => {
@@ -60,7 +65,11 @@ const PlacesAutocomplete = ({ label, setPlace, place }) => {
           region: "mx",
         }}
         selectProps={{
-          // value,
+          inputValue: addressValue,
+          onInputChange: (e) => {
+            setAddressValue(e);
+          },
+          isClearable: true,
           defaultInputValue: value?.label,
           onChange: handleChange,
           placeholder: "Buscar dirección...",

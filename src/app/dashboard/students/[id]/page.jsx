@@ -139,6 +139,35 @@ const Page = ({ params }) => {
                 <span className="">{isClient && student?.allergies}</span>
               </div>
             </div>
+            <div className="col-span-2 gap-2 grid grid-cols-2 py-4">
+              <div className="col-span-2">
+                <h3 className="font-bold text-2xl">Domicilio</h3>
+              </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Calle:</span>
+                <span className="">{student?.address?.street || ""}</span>
+              </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Número de Casa:</span>
+                <span className="">{student?.address?.number || ""}</span>
+              </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Codigo Postal:</span>
+                <span className="">{student?.address?.postalCode || ""}</span>
+              </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Colonia:</span>
+                <span className="">{student?.address?.neighborhood || ""}</span>
+              </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Ciudad:</span>
+                <span className="">{student?.address?.city || ""}</span>
+              </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Estado:</span>
+                <span className="">{student?.address?.state || ""}</span>
+              </div>
+            </div>
           </div>
           <div>
             {imageUrl && (

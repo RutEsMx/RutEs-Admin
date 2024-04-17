@@ -33,6 +33,7 @@ const validateServiceType = ({
   setBothTravels,
   bothTravels,
   values,
+  address,
 }) => {
   let element = null;
   const travelName = bothTravels ? "Ambos viajes" : "A la casa";
@@ -56,6 +57,7 @@ const validateServiceType = ({
             label={"A la casa"}
             setPlace={(value) => setFieldValue("temporalToHome", value)}
             place={values?.temporalToHome}
+            address={address}
           />
           <p className="text-red-500 ml-2 text-sm">Medio servicio*</p>
         </div>
@@ -68,6 +70,7 @@ const validateServiceType = ({
             label={"A la escuela"}
             setPlace={(value) => setFieldValue("temporalToSchool", value)}
             place={values?.temporalToSchool}
+            address={address}
           />
           <p className="text-red-500 ml-2 text-sm">Medio servicio*</p>
         </div>
@@ -92,6 +95,7 @@ const validateServiceType = ({
               label={travelName}
               setPlace={(value) => setFieldValue("temporalToHome", value)}
               place={values?.temporalToHome}
+              address={address}
             />
           </div>
           {!bothTravels && (
@@ -100,6 +104,7 @@ const validateServiceType = ({
                 label={"A la escuela"}
                 setPlace={(value) => setFieldValue("temporalToSchool", value)}
                 place={values?.temporalToSchool}
+                address={address}
               />
             </div>
           )}
