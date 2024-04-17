@@ -335,11 +335,18 @@ const createStudentsOptions = async (students) => {
 
     const stopsSnapshot = await getDocs(stops);
     if (!stopsSnapshot.empty) {
-      const stopsData = await stopsSnapshot.docs.map((doc) => {
+      let stopWorkshop = [];
+      const stopsData = stopsSnapshot.docs.map((doc) => {
         const stop = doc.data();
-        return { ...stop, id: doc.id };
+        if (stop.type === "workshop") {
+          stopWorkshop.push({ ...stop, id: doc.id });
+        } else {
+          return { ...stop, id: doc.id };
+        }
       });
-      student.stops = stopsData;
+      student.stopWorkshop = stopWorkshop;
+      const stopsFilter = stopsData.filter((stop) => stop);
+      student.stops = stopsFilter;
     }
 
     const { name, lastName, secondLastName } = student;
