@@ -101,5 +101,10 @@ async function fetchStudentData(students, type, day) {
       return studentData;
     }),
   );
-  return studentDataList;
+
+  const filteredStudentDataList = studentDataList.filter(
+    (student) => student !== null,
+  );
+
+  return filteredStudentDataList;
 }

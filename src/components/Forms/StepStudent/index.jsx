@@ -150,7 +150,7 @@ const StepStudent = ({ isEdit = false }) => {
                   label="Calle"
                   type="text"
                   name="address.street"
-                  value={values.address.street}
+                  value={values.address?.street}
                   onChange={handleChange}
                   error={errors.address?.street}
                 />
@@ -160,7 +160,7 @@ const StepStudent = ({ isEdit = false }) => {
                   label="Número de Casa"
                   type="text"
                   name="address.number"
-                  value={values.address.number}
+                  value={values.address?.number}
                   onChange={handleChange}
                   error={errors.address?.number}
                 />
@@ -170,7 +170,7 @@ const StepStudent = ({ isEdit = false }) => {
                   label="Codigo Postal"
                   type="text"
                   name="address.postalCode"
-                  value={values.address.postalCode}
+                  value={values.address?.postalCode}
                   onChange={handleChange}
                   error={errors.address?.postalCode}
                 />
@@ -182,7 +182,7 @@ const StepStudent = ({ isEdit = false }) => {
                   label="Colonia"
                   type="text"
                   name="address.neighborhood"
-                  value={values.address.neighborhood}
+                  value={values.address?.neighborhood}
                   onChange={handleChange}
                   error={errors.address?.neighborhood}
                 />
@@ -192,7 +192,7 @@ const StepStudent = ({ isEdit = false }) => {
                   label="Ciudad"
                   type="text"
                   name="address.city"
-                  value={values.address.city}
+                  value={values.address?.city}
                   onChange={handleChange}
                   error={errors.address?.city}
                 />

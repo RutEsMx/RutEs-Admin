@@ -26,7 +26,7 @@ const StepStops = () => {
   const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } =
     useRoutesStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [bothTravels, setBothTravels] = useState(false);
+  const [bothTravels, setBothTravels] = useState(true);
   const [selectedDay, setSelectedDay] = useState(["all"]);
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [studentsData, setStudentsData] = useState([]);
@@ -240,6 +240,7 @@ const StepStops = () => {
                 setFieldValue,
                 values,
                 bothTravels,
+                address: selectedStudent?.address?.street || "",
               })}
             </div>
             <div className="col-span-1 grid place-items-center place-content-center">

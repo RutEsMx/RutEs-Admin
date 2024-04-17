@@ -30,7 +30,7 @@ const StepStopsEdit = () => {
   );
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
   const [selectedDay, setSelectedDay] = useState(["all"]);
-  const [bothTravels, setBothTravels] = useState(false);
+  const [bothTravels, setBothTravels] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [availableStudents, setAvailableStudents] = useState([]);
@@ -286,6 +286,7 @@ const StepStopsEdit = () => {
                 setFieldValue,
                 values,
                 bothTravels,
+                address: selectedStudent?.address?.street || "",
               })}
             </div>
             <div className="col-span-1 grid place-items-center place-content-center">
