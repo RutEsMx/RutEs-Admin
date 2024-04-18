@@ -45,6 +45,7 @@ const validateServiceType = ({
           label={"Taller"}
           setPlace={(value) => setFieldValue("temporalWorkshop", value)}
           place={values?.temporalWorkshop}
+          address={address}
         />
       </div>
     );

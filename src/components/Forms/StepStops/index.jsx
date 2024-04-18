@@ -49,6 +49,7 @@ const StepStops = () => {
     if (selectedDay.includes(ALL_DAY)) {
       Object.keys(DAYS).forEach((day) => {
         const filterStudents = studentsRoutes.filter((student) => {
+          if (typeTravel === "workshop") return true;
           if (!student.stops) return true;
           return !student.stops.some((stop) => stop.day === day);
         });
@@ -56,6 +57,7 @@ const StepStops = () => {
       });
     } else {
       const filterStudents = studentsRoutes.filter((student) => {
+        if (typeTravel === "workshop") return true;
         if (!student.stops) return true;
         return !student.stops.some((stop) => selectedDay.includes(stop.day));
       });

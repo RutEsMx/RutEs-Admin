@@ -35,6 +35,7 @@ const StepStopsEdit = () => {
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [availableStudents, setAvailableStudents] = useState([]);
 
+  // Reiniciar formulario
   const handleReset = () => {
     setSelectedDay(["all"]);
     setSelectedStudent(null);
@@ -53,6 +54,7 @@ const StepStopsEdit = () => {
     if (selectedDay.includes(ALL_DAY)) {
       Object.keys(DAYS).forEach((day) => {
         const filterStudents = studentsRoutes.filter((student) => {
+          if (typeTravel === "workshop") return true;
           if (!student.stops) return true;
           return !student.stops.some((stop) => stop.day === day);
         });
@@ -60,6 +62,7 @@ const StepStopsEdit = () => {
       });
     } else {
       const filterStudents = studentsRoutes.filter((student) => {
+        if (typeTravel === "workshop") return true;
         if (!student.stops) return true;
         return !student.stops.some((stop) => selectedDay.includes(stop.day));
       });

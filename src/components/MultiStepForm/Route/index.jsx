@@ -1,11 +1,9 @@
 "use client";
-import { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import { validateRoute } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
 import { useAuthContext } from "@/context/AuthContext";
-import Alert from "@/components/Alert";
 import StepRoute from "@/components/Forms/StepRoute";
 import StepStops from "@/components/Forms/StepStops";
 import {
@@ -13,18 +11,15 @@ import {
   updateRoutesByForm,
 } from "@/services/RoutesServices";
 import MapStops from "@/components/MapStops";
-import { useSystemStore } from "@/store/useSystemStore";
 import StepStopsEdit from "@/components/Forms/StepStopsEdit";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
 
 const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext() || {};
-  const { alert } = useSystemStore();
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
   const { setTypeTravel } = useRoutesStore();
 
   const initialValues = {
@@ -39,8 +34,6 @@ const FormRoute = ({ data, isEdit = false }) => {
   };
 
   const handleNext = async (values) => {
-    setError("");
-    setMessage("");
     try {
       values.schoolId = profile?.schoolId;
       if (isEdit) values.id = data?.id;
@@ -48,18 +41,15 @@ const FormRoute = ({ data, isEdit = false }) => {
         ? await updateRoutesByForm(values)
         : await createRoutesByForm(values);
       if (error) {
-        setError(error?.message);
+        toast.error(error?.message);
       }
       if (success) {
-        setMessage(message);
-        setTimeout(() => {
-          return navigation.back();
-        }, 2000);
+        toast.success(message);
+        navigation.back();
       }
       setTypeTravel("toHome");
-      return setMessage(message);
     } catch (error) {
-      setError(error.message);
+      toast.error(error?.message);
     }
   };
 
@@ -83,7 +73,7 @@ const FormRoute = ({ data, isEdit = false }) => {
       >
         {({ isSubmitting, handleSubmit }) => (
           <Form>
-            <div className="flex justify-end gap-4 -mt-8">
+            <div className="flex justify-end gap-4 -mt-8 mb-4">
               <Button onClick={handleBack} color="bg-light-gray" type="button">
                 Cancelar
               </Button>
@@ -94,13 +84,6 @@ const FormRoute = ({ data, isEdit = false }) => {
               >
                 {isEdit ? "Guardar" : "Crear"}
               </Button>
-            </div>
-            <div className="my-4">
-              <Alert
-                isOpen={!!message || !!error || alert?.show}
-                message={message || error || alert?.message}
-                type={message ? "success" : "error" || alert?.type}
-              />
             </div>
             <div className="grid grid-cols-5 gap-4">
               <div className="col-span-2 border-2 border-gray rounded-lg p-4">

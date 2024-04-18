@@ -149,16 +149,43 @@ const deleteStops = async (studentsToRemove) => {
       studentsToRemove[key]?.toHome?.forEach(async (element) => {
         if (element?.stop?.id === undefined) return;
         const qStop = doc(db, "stops", element?.stop?.id);
+        const route = element?.stop?.route;
+        const refTravel = doc(db, "travels", route);
+        await updateDoc(refTravel, {
+          [key]: {
+            toHome: {
+              students: arrayRemove(element.id),
+            },
+          },
+        });
         await deleteDoc(qStop);
       });
       studentsToRemove[key]?.toSchool?.forEach(async (element) => {
         if (element?.stop?.id === undefined) return;
         const qStop = doc(db, "stops", element?.stop?.id);
+        const route = element?.stop?.route;
+        const refTravel = doc(db, "travels", route);
+        await updateDoc(refTravel, {
+          [key]: {
+            toSchool: {
+              students: arrayRemove(element.id),
+            },
+          },
+        });
         await deleteDoc(qStop);
       });
       studentsToRemove[key]?.workshop?.forEach(async (element) => {
         if (element?.stop?.id === undefined) return;
         const qStop = doc(db, "stops", element?.stop?.id);
+        const route = element?.stop?.route;
+        const refTravel = doc(db, "travels", route);
+        await updateDoc(refTravel, {
+          [key]: {
+            workshop: {
+              students: arrayRemove(element.id),
+            },
+          },
+        });
         await deleteDoc(qStop);
       });
     });
@@ -297,8 +324,8 @@ const updateRoutesByForm = async (data) => {
     const getOldRoute = await getDoc(doc(db, "routes", routeId));
     const oldRouteData = getOldRoute.data();
     const responseRoute = await updateDocument("routes", routeId, restData);
-    const responseUpdateTravels = await updateTravels(routeId, students);
     const responseDeleteStops = await deleteStops(studentsToRemove);
+    const responseUpdateTravels = await updateTravels(routeId, students);
     const responseUpdateStops = await updateStops(students, routeId);
 
     const updateAuxiliar = updateEntity(
