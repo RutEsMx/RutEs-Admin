@@ -35,6 +35,7 @@ const StepStopsEdit = () => {
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [availableStudents, setAvailableStudents] = useState([]);
 
+  // Reiniciar formulario
   const handleReset = () => {
     setSelectedDay(["all"]);
     setSelectedStudent(null);
