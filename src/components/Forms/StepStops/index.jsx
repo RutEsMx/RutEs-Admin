@@ -16,12 +16,13 @@ import { validateServiceType } from "@/utils/functionsClient";
 import SelectAutocomplete from "@/components/SelectAutocomplete";
 import { useStudentsStore } from "@/store/useStudentsStore";
 import useStudentManager from "@/hooks/useStudentManager";
+import { toast } from "sonner";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const StepStops = () => {
-  const { values, setFieldValue } = useFormikContext();
+  const { values, setFieldValue, errors } = useFormikContext();
   const { studentsRoutes, getStudentsRoutes } = useStudentsStore();
   const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } =
     useRoutesStore();
@@ -69,6 +70,14 @@ const StepStops = () => {
     setFieldValue("temporalToHome", null);
     setFieldValue("temporalToSchool", null);
   }, [bothTravels]);
+
+  useEffect(() => {
+    if (errors) {
+      Object.values(errors).forEach((error) => {
+        toast.error(error);
+      });
+    }
+  }, [errors]);
 
   const handleAddStudent = (e) => {
     e.preventDefault();
@@ -200,7 +209,7 @@ const StepStops = () => {
   };
 
   return (
-    <div className={`mb-4 grid grid-rows-2`}>
+    <div className={`mb-4 grid grid-rows-2 divide-y-2`}>
       <div className="row-span-1">
         <div className="grid grid-flow-row gap-2">
           {typeTravel === "workshop" && (
@@ -263,7 +272,9 @@ const StepStops = () => {
         </div>
       </div>
       <div className="mx-2 row-span-1 my-6">
-        <div className="w-full bg-gray-hover px-2 mb-4">Paradas</div>
+        <div className="w-full bg-gray-hover px-2 my-4">
+          Información de Paradas
+        </div>
         <SelectField
           labelTitle="Día"
           name="day"
