@@ -16,6 +16,16 @@ import { validateServiceType } from "@/utils/functionsClient";
 import SelectAutocomplete from "@/components/SelectAutocomplete";
 import { useStudentsStore } from "@/store/useStudentsStore";
 import useStudentManager from "@/hooks/useStudentManager";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
@@ -25,6 +35,7 @@ const StepStopsEdit = () => {
   const { studentsRoutes } = useStudentsStore();
   const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } =
     useRoutesStore();
+
   const [studentsData, setStudentsData] = useState(
     values?.students?.[selectedDayEdit]?.[typeTravel] || [],
   );
@@ -34,6 +45,7 @@ const StepStopsEdit = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [availableStudents, setAvailableStudents] = useState([]);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   // Reiniciar formulario
   const handleReset = () => {
@@ -116,9 +128,6 @@ const StepStopsEdit = () => {
       },
     });
     setFieldValue("studentsToRemove", updatedStudentsToRemove);
-
-    const modal = document.getElementById("my_modal_1");
-    modal.close();
   };
 
   const handleRemoveStudentAll = (e) => {
@@ -144,17 +153,15 @@ const StepStopsEdit = () => {
 
     setFieldValue("studentsToRemove", updatedStudentsToRemove);
     setStudentsData(newStudents[selectedDayEdit][typeTravel]);
-
-    const modal = document.getElementById("my_modal_1");
-    modal.close();
   };
 
-  const openDeleteModal = (e, student) => {
-    e.preventDefault();
-    setSelectedStudentToRemove(student);
-
-    const modal = document.getElementById("my_modal_1");
-    modal.showModal();
+  const openDeleteModal = (student) => {
+    if (!openDeleteDialog) {
+      setSelectedStudentToRemove(student);
+    } else {
+      setSelectedStudentToRemove(null);
+    }
+    setOpenDeleteDialog(!openDeleteDialog);
   };
 
   const handleEditStudent = (e, student) => {
@@ -232,14 +239,8 @@ const StepStopsEdit = () => {
     handleReset();
   };
 
-  const handleCancelRemoveStudent = (e) => {
-    e.preventDefault();
-    const modal = document.getElementById("my_modal_1");
-    modal.close();
-  };
-
   return (
-    <div className="mb-4 grid grid-rows-1">
+    <div className="mb-4 grid grid-rows-1 divide-y-2">
       <div className="row-span-1">
         <div className="grid grid-flow-row gap-2">
           <div className="mx-2 grid grid-cols-2">
@@ -310,7 +311,9 @@ const StepStopsEdit = () => {
         </div>
       </div>
       <div className="mx-2 row-span-1 my-6">
-        <div className="w-full bg-gray-hover px-2 mb-4">Paradas</div>
+        <div className="w-full bg-gray-hover px-2 my-4">
+          Información de Paradas
+        </div>
         <SelectField
           labelTitle="Día"
           name="day"
@@ -348,13 +351,56 @@ const StepStopsEdit = () => {
               </div>
               <div className="col-span-1">
                 <div className="flex justify-end pe-4 gap-2">
-                  <ButtonAction
-                    onClick={(e) => openDeleteModal(e, student)}
-                    disabled={false}
-                    color="bg-light-gray"
+                  <Dialog
+                    open={openDeleteDialog}
+                    onOpenChange={() => openDeleteModal(student)}
                   >
-                    <TrashIcon className="h-4 w-4 text-black" />
-                  </ButtonAction>
+                    <DialogTrigger asChild>
+                      <ButtonAction disabled={false} color="bg-light-gray">
+                        <TrashIcon className="h-4 w-4 text-black" />
+                      </ButtonAction>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>
+                          ¿Deseas eliminar la parada todos los dias?
+                        </DialogTitle>
+                        <DialogDescription>
+                          {`
+                           Al seleccionar "Todos" se eliminará las paradas de todos los días de
+                         `}
+                          {typeTravel === "workshop" ? (
+                            <Label className="text-base">Taller</Label>
+                          ) : typeTravel === "toHome" ? (
+                            <Label className="text-base">viaje a casa</Label>
+                          ) : (
+                            <Label className="text-base">
+                              viaje a la escuela
+                            </Label>
+                          )}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <div className="flex flex-row gap-4">
+                          <ButtonAction
+                            color="bg-warning"
+                            onClick={() => setOpenDeleteDialog(false)}
+                          >
+                            Cancelar
+                          </ButtonAction>
+                          <ButtonAction
+                            color="bg-light-gray"
+                            onClick={handleRemoveStudentAll}
+                          >
+                            Todos
+                          </ButtonAction>
+                          <ButtonAction
+                            onClick={handleRemoveStudent}
+                          >{`Solo ${DAYS[selectedDayEdit]}`}</ButtonAction>
+                        </div>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                   <ButtonAction
                     onClick={(e) => handleEditStudent(e, student)}
                     disabled={false}
@@ -367,29 +413,6 @@ const StepStopsEdit = () => {
           );
         })}
       </div>
-      <dialog id="my_modal_1" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg"></h3>
-          <p className="py-4">Deseas eliminar todos los dias?</p>
-          <div className="modal-action">
-            <ButtonAction
-              color="bg-warning"
-              onClick={handleCancelRemoveStudent}
-            >
-              Cancelar
-            </ButtonAction>
-            <ButtonAction
-              color="bg-light-gray"
-              onClick={handleRemoveStudentAll}
-            >
-              Todos
-            </ButtonAction>
-            <ButtonAction
-              onClick={handleRemoveStudent}
-            >{`Solo ${DAYS[selectedDayEdit]}`}</ButtonAction>
-          </div>
-        </div>
-      </dialog>
     </div>
   );
 };

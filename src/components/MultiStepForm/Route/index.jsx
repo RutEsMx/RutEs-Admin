@@ -54,7 +54,11 @@ const FormRoute = ({ data, isEdit = false }) => {
   };
 
   useEffect(() => {
-    if (data?.workshop) setTypeTravel("workshop");
+    if (data?.workshop) {
+      setTypeTravel("workshop");
+    } else {
+      setTypeTravel("toHome");
+    }
   }, [data?.workshop, setTypeTravel]);
 
   const handleBack = () => {
@@ -67,7 +71,7 @@ const FormRoute = ({ data, isEdit = false }) => {
         initialValues={initialValues}
         onSubmit={handleNext}
         validationSchema={validateRoute}
-        validateOnBlur={false}
+        validateOnBlur={true}
         validateOnChange={false}
         validateOnMount={false}
       >
