@@ -26,7 +26,7 @@ const createUsersByForm = async (data) => {
         const avatarData = await responseAvatar.json();
         avatarFilename = avatarData?.result;
       }
-      const signUpResult = await signUp(email);
+      const signUpResult = await signUp(email, confirmPassword);
       if (!signUpResult?.error) {
         const uid = signUpResult?.result?.uid;
         const password = restData?.password || signUpResult?.result?.password;

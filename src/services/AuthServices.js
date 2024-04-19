@@ -2,21 +2,21 @@ import { generatePassword, validateEmail } from "@/utils/functionsClient";
 import { signInAuth } from "@/firebase/auth";
 import { getCookies } from "./CookiesServices";
 
-const signUp = async (email) => {
-  const password = generatePassword();
+const signUp = async (email, password = false) => {
+  const passwordData = password || generatePassword();
   if (validateEmail(email)) {
     const response = await fetch("/api/users", {
       method: "POST",
       body: JSON.stringify({
         email: email,
-        password: password,
+        password: passwordData,
       }),
       headers: { "Content-Type": "application/json" },
     });
     const data = await response.json();
 
     if (response.ok) {
-      data.result.password = password;
+      data.result.password = passwordData;
       return data;
     }
     if (data.error) {
