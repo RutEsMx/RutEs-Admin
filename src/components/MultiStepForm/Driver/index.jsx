@@ -7,6 +7,7 @@ import { useAuthContext } from "@/context/AuthContext";
 import StepDriver from "@/components/Forms/StepDriver";
 import {
   createDriverByForm,
+  getDrivers,
   updateDriverByForm,
 } from "@/services/DriverServices";
 import { toast } from "sonner";
@@ -37,6 +38,7 @@ const FormDriver = ({ data, isEdit = false }) => {
       if (error) throw new Error(error);
       if (success) {
         toast.success(message);
+        getDrivers();
         return navigation.replace("/dashboard/drivers");
       }
       return toast.success(message);

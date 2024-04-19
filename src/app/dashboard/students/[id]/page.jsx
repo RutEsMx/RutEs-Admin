@@ -1,28 +1,29 @@
 "use client";
 import { useEffect, useState } from "react";
 import { getStudentById } from "@/services/StudentsServices";
-import { OPTIONS_TYPE_SERVICES } from "@/utils/options";
+import { DAYS, OPTIONS_TYPE_SERVICES, TYPE_TRAVEL } from "@/utils/options";
 import Image from "next/image";
 import { getStorage, ref, getDownloadURL } from "firebase/storage";
-import { setAlert, useSystemStore } from "@/store/useSystemStore";
 import ButtonLink from "@/components/ButtonLink";
 import { useStudentsStore } from "@/store/useStudentsStore";
 import useTutorsByStudents from "@/hooks/useTutorsByStudents";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/client";
-import Alert from "@/components/Alert";
 import { toast } from "sonner";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { useRoutesStore } from "@/store/useRoutesStore";
+import useStopsStudentDetails from "@/hooks/useStopsStudentDetails";
 
 const storage = getStorage();
 
 const Page = ({ params }) => {
   const { student, updateStudent } = useStudentsStore();
+  const { routes } = useRoutesStore();
   const { tutors } = useTutorsByStudents(student);
+  const { stops } = useStopsStudentDetails(student);
   const [imageUrl, setImageUrl] = useState("");
   const [isClient, setIsClient] = useState(false);
-  const { alert } = useSystemStore();
 
   useEffect(() => {
     const getStudent = async () => {
@@ -35,11 +36,7 @@ const Page = ({ params }) => {
             setImageUrl(url);
           })
           .catch((error) => {
-            setAlert({
-              type: "error",
-              message: error?.message,
-              isOpen: true,
-            });
+            toast.error(error?.message);
           });
       }
     };
@@ -148,16 +145,18 @@ const Page = ({ params }) => {
                 <span className="">{student?.address?.street || ""}</span>
               </div>
               <div className="flex flex-row gap-2">
-                <span className="font-bold">Número de Casa:</span>
+                <span className="font-bold">Número exterior:</span>
                 <span className="">{student?.address?.number || ""}</span>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="font-bold">Codigo Postal:</span>
-                <span className="">{student?.address?.postalCode || ""}</span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Colonia:</span>
                 <span className="">{student?.address?.neighborhood || ""}</span>
+              </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Número interior:</span>
+                <span className="">
+                  {student?.address?.interiorNumber || ""}
+                </span>
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Ciudad:</span>
@@ -166,6 +165,10 @@ const Page = ({ params }) => {
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Estado:</span>
                 <span className="">{student?.address?.state || ""}</span>
+              </div>
+              <div className="flex flex-row gap-2">
+                <span className="font-bold">Codigo Postal:</span>
+                <span className="">{student?.address?.postalCode || ""}</span>
               </div>
             </div>
           </div>
@@ -216,13 +219,48 @@ const Page = ({ params }) => {
             </div>
           </div>
         </div>
-      </div>
-      <div className="mt-4">
-        <Alert
-          isOpen={alert.isOpen}
-          message={alert.message}
-          type={alert.type}
-        />
+        <div className="col-span-2 gap-2 grid grid-cols-3 py-4">
+          <div className="col-span-3">
+            <h3 className="font-bold text-2xl">Rutas y paradas</h3>
+          </div>
+          {stops?.map((stopsByDay, index) => {
+            return (
+              <div className="grid grid-cols-3 col-span-3 gap-4" key={index}>
+                {stopsByDay?.map((stop) => (
+                  <Card
+                    key={stop?.id}
+                    className={`col-span-1 ${
+                      stop?.type === "workshop"
+                        ? "bg-blue-400/50 animate-[pulse_1s_linear_5]"
+                        : ""
+                    }`}
+                  >
+                    <CardHeader>
+                      <CardTitle>
+                        <span className="">{DAYS[stop?.day]}</span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-row gap-2">
+                        <span className="font-bold">Ruta:</span>
+                        <span className="">
+                          {
+                            routes?.find((route) => route?.id === stop?.route)
+                              ?.name
+                          }
+                        </span>
+                      </div>
+                      <div className="flex flex-row gap-2">
+                        <span className="font-bold">Tipo:</span>
+                        <span className="">{TYPE_TRAVEL[stop.type]}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

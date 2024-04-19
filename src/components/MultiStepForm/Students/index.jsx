@@ -87,6 +87,10 @@ const MultiStepFormStudent = () => {
         process.env.NODE_ENV === "development"
           ? studentMock?.address?.number
           : "",
+      interiorNumber:
+        process.env.NODE_ENV === "development"
+          ? studentMock?.address?.interiorNumber
+          : "",
       neighborhood:
         process.env.NODE_ENV === "development"
           ? studentMock?.address?.neighborhood

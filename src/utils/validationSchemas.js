@@ -42,6 +42,7 @@ const validateStudent = Yup.object().shape({
   address: Yup.object().shape({
     street: Yup.string().nullable().required("Calle requerida"),
     number: Yup.string().nullable().required("Número requerido"),
+    interiorNumber: Yup.string().nullable(),
     neighborhood: Yup.string().nullable().required("Colonia requerida"),
     postalCode: Yup.string().nullable().required("Código Postal requerido"),
     city: Yup.string().nullable().required("Ciudad requerida"),
