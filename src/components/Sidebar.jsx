@@ -12,7 +12,7 @@ export const Sidebar = ({ className }) => {
   const linkClass = (href) =>
     cn(
       "w-full justify-start",
-      pathname === href
+      pathname.includes(href)
         ? buttonVariants({ variant: "default" })
         : buttonVariants({ variant: "ghost" }),
     );
@@ -62,6 +62,12 @@ export const Sidebar = ({ className }) => {
                   className={linkClass("/dashboard/units")}
                 >
                   Unidades
+                </Link>
+                <Link
+                  href="/dashboard/alerts"
+                  className={linkClass("/dashboard/alerts")}
+                >
+                  Permisos y Alertas
                 </Link>
               </>
             )}

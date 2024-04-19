@@ -7,6 +7,7 @@ import {
   orderBy,
   query,
   limit,
+  where,
 } from "firebase/firestore";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -24,14 +25,19 @@ const Notifications = () => {
         unsubscribe = onSnapshot(
           query(
             collection(db, "notificationsSchool", school?.id, "notifications"),
+            where("category", "!=", "parent"),
+            orderBy("category", "desc"),
             orderBy("createdAt", "desc"),
-            limit(10),
+            limit(25),
           ),
           (snapshot) => {
             const data = snapshot.docs.map((doc) => {
-              return { id: doc.id, ...doc.data() };
+              const notify = doc.data();
+              if (notify?.category === "parent") return;
+              return { id: doc.id, ...notify };
             });
-            setData(data);
+            const dataFilter = data.filter((item) => item);
+            setData(dataFilter);
           },
         );
       } catch (error) {
@@ -46,7 +52,7 @@ const Notifications = () => {
   return (
     <div className="border border-slate-400 rounded-lg">
       <div className="h-20 bg-primary justify-center flex items-center rounded-t-lg ">
-        <h1 className=" font-bold text-xl">Notificaciones</h1>
+        <h1 className=" font-bold text-xl">Permisos y Alertas</h1>
       </div>
       <div>
         <NotificationList data={data} className={"h-full pb-2 px-2"} />

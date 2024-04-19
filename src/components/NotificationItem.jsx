@@ -24,7 +24,9 @@ const NotificationItem = ({ data }) => {
 
   return (
     <div
-      className="flex flex-row text-sm mt-2 pt-2 cursor-pointer justify-between"
+      className={`flex flex-row text-sm py-2 cursor-pointer justify-between ${
+        category === "travelWithFriend" ? "bg-blue-400/50" : ""
+      }`}
       onClick={() => handleClick(category, data?.studentRequest, router)}
     >
       <div className=" w-2/6 flex justify-center items-center cursor-pointer">
