@@ -14,6 +14,8 @@ const useStopsStudentDetails = (student) => {
           .sort((a, b) => a.type.localeCompare(b.type));
       });
       setStops(stopsByDay);
+    } else {
+      setStops([]);
     }
   }, [student]);
 
