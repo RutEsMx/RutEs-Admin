@@ -369,7 +369,7 @@ const createStudentsTable = async (students) => {
 
     const stopsSnapshot = await getDocs(stops);
     if (!stopsSnapshot.empty) {
-      const stopsData = await stopsSnapshot.docs.map((doc) => {
+      const stopsData = stopsSnapshot.docs.map((doc) => {
         const stop = doc.data();
         if (stop.day === CURRENT_DAY) {
           return { ...stop, id: doc.id };
