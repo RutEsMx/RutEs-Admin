@@ -71,8 +71,8 @@ const FormRoute = ({ data, isEdit = false }) => {
         initialValues={initialValues}
         onSubmit={handleNext}
         validationSchema={validateRoute}
-        validateOnBlur={true}
-        validateOnChange={false}
+        validateOnBlur={false}
+        validateOnChange={true}
         validateOnMount={false}
       >
         {({ isSubmitting, handleSubmit }) => (
