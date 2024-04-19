@@ -5,7 +5,11 @@ import { validateUnits } from "@/utils/validationSchemas";
 import Button from "@/components/Button";
 import { useAuthContext } from "@/context/AuthContext";
 import StepUnits from "@/components/Forms/StepUnits";
-import { createUnitsByForm, updateUnitsByForm } from "@/services/UnitsServices";
+import {
+  createUnitsByForm,
+  getUnits,
+  updateUnitsByForm,
+} from "@/services/UnitsServices";
 import { toast } from "sonner";
 
 const FormUnits = ({ data, isEdit = false }) => {
@@ -32,6 +36,7 @@ const FormUnits = ({ data, isEdit = false }) => {
     if (error) return toast.error(error?.message);
     if (success) {
       toast.success(message);
+      getUnits();
       return handleBack();
     }
   };

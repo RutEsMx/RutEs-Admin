@@ -7,14 +7,12 @@ import Button from "@/components/Button";
 import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
 import StepAuxiliar from "@/components/Forms/StepAuxiliar";
-import Alert from "@/components/Alert";
-import { useSystemStore } from "@/store/useSystemStore";
 import { toast } from "sonner";
+import { getAuxiliars } from "@/services/AuxiliarsServices";
 
 const FormAuxiliar = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile, school } = useAuthContext();
-  const { alert } = useSystemStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const initialValues = {
@@ -49,6 +47,7 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
       if (success) {
         setIsLoading(false);
         navigation.replace("/dashboard/auxiliars");
+        getAuxiliars();
         return toast.success(message);
       }
       setIsLoading(false);
@@ -122,13 +121,6 @@ const FormAuxiliar = ({ data, isEdit = false }) => {
                   "Enviar"
                 )}
               </Button>
-            </div>
-            <div className="mt-4">
-              <Alert
-                isOpen={alert.isOpen}
-                message={alert.message}
-                type={alert.type}
-              />
             </div>
             <StepAuxiliar isEdit={isEdit} />
           </Form>

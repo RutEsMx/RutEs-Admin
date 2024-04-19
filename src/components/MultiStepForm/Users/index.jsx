@@ -8,6 +8,7 @@ import Button from "@/components/Button";
 import { createUsersByForm, updateUsersByForm } from "@/services/UsersServices";
 import { useAuthContext } from "@/context/AuthContext";
 import Alert from "@/components/Alert";
+import { getParents } from "@/services/ParentsSevices";
 
 const FormUser = ({ data, isEdit = false }) => {
   const navigation = useRouter();
@@ -37,6 +38,7 @@ const FormUser = ({ data, isEdit = false }) => {
       if (error) return setError(error?.message);
       if (success) {
         setMessage(message);
+        getParents();
         return navigation.replace("/dashboard/admin/users");
       }
       return setMessage(message);
