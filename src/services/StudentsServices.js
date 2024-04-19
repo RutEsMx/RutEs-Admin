@@ -314,7 +314,7 @@ const updateStudentByForm = async (data) => {
     if (resultAvatar) avatarFilename = resultAvatar;
   }
 
-  data.avatar = avatarFilename;
+  data.avatar = avatarFilename || null;
 
   data.fullName = [data?.name, data?.lastName, data?.secondLastName];
   const response = await updateDocument("students", data?.id, data);

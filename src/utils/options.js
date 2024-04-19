@@ -96,6 +96,12 @@ const TRAVEL_WITH_FRIEND_STATUS = {
   rejected: "Rechazado",
 };
 
+const TYPE_TRAVEL = {
+  toSchool: "Viaje a la escuela",
+  toHome: "Viaje a la casa",
+  workshop: "Taller",
+};
+
 const STATES_MX = [
   { value: "AGU", label: "Aguascalientes" },
   { value: "BCN", label: "Baja California" },
@@ -146,4 +152,5 @@ export {
   TRAVEL_WITH_FRIEND_OPTIONS,
   TRAVEL_WITH_FRIEND_STATUS,
   STATES_MX,
+  TYPE_TRAVEL,
 };

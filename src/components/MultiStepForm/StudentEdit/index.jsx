@@ -25,12 +25,21 @@ const FormStudentEdit = ({ data, isEdit = false }) => {
     avatar: data?.avatar,
     id: data?.id,
     status: data?.status,
+    address: {
+      street: data?.address?.street || "",
+      number: data?.address?.number || "",
+      interiorNumber: data?.address?.interiorNumber || "",
+      neighborhood: data?.address?.neighborhood || "",
+      postalCode: data?.address?.postalCode || "",
+      city: data?.address?.city || "",
+      state: data?.address?.state || "",
+    },
   };
 
   const onSubmit = async (values) => {
     values.schoolId = profile?.schoolId;
     const { success, message, error } = await updateStudentByForm(values);
-    if (error) return toast.error(message);
+    if (error) return toast.error(message || "Error al actualizar el alumno");
     if (success) {
       handleBack();
       return toast.success(message);

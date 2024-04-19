@@ -157,12 +157,22 @@ const StepStudent = ({ isEdit = false }) => {
               </div>
               <div className="col-span-2 md:col-span-1">
                 <InputField
-                  label="Número de Casa"
+                  label="Número exterior"
                   type="text"
                   name="address.number"
                   value={values.address?.number}
                   onChange={handleChange}
                   error={errors.address?.number}
+                />
+              </div>
+              <div className="col-span-2 md:col-span-1">
+                <InputField
+                  label="Número interior"
+                  type="text"
+                  name="address.interiorNumber"
+                  value={values.address?.interiorNumber}
+                  onChange={handleChange}
+                  error={errors.address?.interiorNumber}
                 />
               </div>
               <div className="col-span-2 md:col-span-1">
