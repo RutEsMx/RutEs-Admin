@@ -49,7 +49,7 @@ const PlacesAutocomplete = ({ label, setPlace, place, address }) => {
 
   return (
     <div className="ml-2 mb-2 pt-2">
-      {address && (
+      {address !== "      " && (
         <div className="text-xs pt-4 flex flex-col gap-2">
           <Label>Domicilio sugerido:</Label>
           <Label className="font-normal">{address}</Label>
