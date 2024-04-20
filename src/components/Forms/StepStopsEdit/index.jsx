@@ -63,7 +63,8 @@ const StepStopsEdit = ({ name }) => {
       return;
     } else if (
       (values?.temporalToHome && values?.temporalToSchool) ||
-      values?.temporalWorkshop
+      values?.temporalWorkshop ||
+      isEditStudent
     ) {
       setDisabledAddStudent(false);
     } else {
@@ -241,8 +242,8 @@ const StepStopsEdit = ({ name }) => {
     setSelectedStudent(value);
   };
 
-  const handleClearStudent = (e) => {
-    e.preventDefault();
+  const handleClearStudent = (e = false) => {
+    e && e.preventDefault();
     setSelectedStudent(null);
     setFieldValue("temporalToHome", null);
     setFieldValue("temporalToSchool", null);
@@ -322,7 +323,17 @@ const StepStopsEdit = ({ name }) => {
                 setFieldValue,
                 values,
                 bothTravels,
-                address: selectedStudent?.address?.street || "",
+                address:
+                  `${selectedStudent?.address?.street || ""} ${
+                    selectedStudent?.address?.number || ""
+                  } ${selectedStudent?.address?.interiorNumber || ""} ${
+                    selectedStudent?.address?.neighborhood || ""
+                  } ${selectedStudent?.address?.postalCode || ""} ${
+                    selectedStudent?.address?.city || ""
+                  } ${selectedStudent?.address?.state || ""}` || "",
+                isEditStudent,
+                typeTravel,
+                selectedStudent,
               })}
             </div>
             <div className="col-span-1 grid place-items-center place-content-center">
@@ -354,7 +365,10 @@ const StepStopsEdit = ({ name }) => {
           name="day"
           options={SELECT_DAY}
           value={selectedDayEdit}
-          onValueChange={(value) => setSelectedDayEdit(value)}
+          onValueChange={(value) => {
+            handleClearStudent();
+            setSelectedDayEdit(value);
+          }}
         />
         {typeTravel !== "workshop" && (
           <SelectField
@@ -365,7 +379,10 @@ const StepStopsEdit = ({ name }) => {
               { label: "Casa - Escuela", value: "toSchool" },
             ]}
             value={typeTravel}
-            onValueChange={(value) => setTypeTravel(value)}
+            onValueChange={(value) => {
+              handleClearStudent();
+              setTypeTravel(value);
+            }}
           />
         )}
         {studentsData?.map((student) => {

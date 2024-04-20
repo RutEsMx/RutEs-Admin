@@ -34,11 +34,15 @@ const validateServiceType = ({
   bothTravels,
   values,
   address,
+  isEditStudent,
+  typeTravel,
+  selectedStudent,
 }) => {
   let element = null;
   const travelName = bothTravels ? "Ambos viajes" : "A la casa";
 
   if (serviceType && values?.workshop) serviceType = "workshop";
+
   switch (serviceType) {
     case "workshop":
       element = (
@@ -79,39 +83,58 @@ const validateServiceType = ({
       );
       break;
     case "complete":
-      element = (
-        <>
-          <div className="form-control m-2">
-            <label className="label cursor-pointer">
-              <span className="label-text">Ambos viajes</span>
-              <input
-                type="checkbox"
-                checked={bothTravels}
-                className="checkbox"
-                onChange={(e) => setBothTravels(e.target.checked)}
-              />
-            </label>
-          </div>
-          <div className="">
+      if (isEditStudent) {
+        const temporalName =
+          typeTravel === "toHome" ? "temporalToHome" : "temporalToSchool";
+        const labelName =
+          typeTravel === "toHome" ? "A la casa" : "A la escuela";
+        element = (
+          <div className="flex flex-col ">
             <PlacesAutocomplete
-              label={travelName}
-              setPlace={(value) => setFieldValue("temporalToHome", value)}
-              place={values?.temporalToHome}
+              label={labelName}
+              setPlace={() =>
+                setFieldValue(temporalName, selectedStudent.stop.coords)
+              }
+              place={values?.[temporalName]}
               address={address}
             />
           </div>
-          {!bothTravels && (
+        );
+      } else {
+        element = (
+          <>
+            <div className="form-control m-2">
+              <label className="label cursor-pointer">
+                <span className="label-text">Ambos viajes</span>
+                <input
+                  type="checkbox"
+                  checked={bothTravels}
+                  className="checkbox"
+                  onChange={(e) => setBothTravels(e.target.checked)}
+                />
+              </label>
+            </div>
             <div className="">
               <PlacesAutocomplete
-                label={"A la escuela"}
-                setPlace={(value) => setFieldValue("temporalToSchool", value)}
-                place={values?.temporalToSchool}
+                label={travelName}
+                setPlace={(value) => setFieldValue("temporalToHome", value)}
+                place={values?.temporalToHome}
                 address={address}
               />
             </div>
-          )}
-        </>
-      );
+            {!bothTravels && (
+              <div className="">
+                <PlacesAutocomplete
+                  label={"A la escuela"}
+                  setPlace={(value) => setFieldValue("temporalToSchool", value)}
+                  place={values?.temporalToSchool}
+                  address={address}
+                />
+              </div>
+            )}
+          </>
+        );
+      }
       break;
     default:
       element = null;
