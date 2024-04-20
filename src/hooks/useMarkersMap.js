@@ -6,6 +6,7 @@ const useMarkersMap = (params) => {
     students,
     temporalToHome,
     temporalToSchool,
+    temporalWorkshop,
     selectedDayEdit,
     typeTravel,
   } = params;
@@ -35,11 +36,11 @@ const useMarkersMap = (params) => {
   };
 
   const setTemporalCoords = (coords, type) => {
-    setMarkers((prevMarkers) => {
+    setMarkers(() => {
       const newMarkers = [];
-      const temporalMarker = prevMarkers.find((marker) =>
-        marker?.studentId?.includes("temporal"),
-      );
+      // const temporalMarker = prevMarkers.find((marker) =>
+      //   marker?.studentId?.includes("temporal"),
+      // );
 
       newMarkers.push({
         lat: coords?.lat,
@@ -50,7 +51,8 @@ const useMarkersMap = (params) => {
         color: COLORS_HEX.inactive,
       });
 
-      temporalMarker && newMarkers.push(temporalMarker);
+      // temporalMarker && newMarkers.push(temporalMarker);
+      // console.log("🚀 ~ setMarkers ~ newMarkers:", newMarkers)
       return newMarkers;
     });
   };
@@ -59,8 +61,18 @@ const useMarkersMap = (params) => {
     if (temporalToHome) setTemporalCoords(temporalToHome, "temporalToHome");
     if (temporalToSchool)
       setTemporalCoords(temporalToSchool, "temporalToSchool");
-    if (!temporalToHome && !temporalToSchool) setMarkersFromStudents(students);
-  }, [students, temporalToHome, temporalToSchool, day, typeTravel]);
+    if (temporalWorkshop)
+      setTemporalCoords(temporalWorkshop, "temporalWorkshop");
+    if (!temporalToHome && !temporalToSchool && !temporalWorkshop)
+      setMarkersFromStudents(students);
+  }, [
+    students,
+    temporalToHome,
+    temporalToSchool,
+    temporalWorkshop,
+    day,
+    typeTravel,
+  ]);
 
   return { markers, setMarkersFromStudents };
 };

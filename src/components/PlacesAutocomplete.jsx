@@ -65,7 +65,7 @@ const PlacesAutocomplete = ({ label, setPlace, place, address }) => {
           region: "mx",
         }}
         selectProps={{
-          inputValue: addressValue,
+          inputValue: value?.label || addressValue,
           onInputChange: (e) => {
             setAddressValue(e);
           },

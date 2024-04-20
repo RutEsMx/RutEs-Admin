@@ -12,6 +12,7 @@ const MapStops = () => {
     students: values?.students,
     temporalToHome: values?.temporalToHome,
     temporalToSchool: values?.temporalToSchool,
+    temporalWorkshop: values?.temporalWorkshop,
     selectedDayEdit,
     typeTravel,
   });
@@ -30,6 +31,14 @@ const MapStops = () => {
     }
     if (studentId === "temporalToSchool") {
       setFieldValue("temporalToSchool", {
+        label: responseGeocode[0]?.formatted_address,
+        ...coords,
+        ...responseGeocode[0],
+      });
+      return;
+    }
+    if (studentId === "temporalWorkshop") {
+      setFieldValue("temporalWorkshop", {
         label: responseGeocode[0]?.formatted_address,
         ...coords,
         ...responseGeocode[0],
