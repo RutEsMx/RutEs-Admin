@@ -6,12 +6,26 @@ import { useRoutesStore } from "@/store/useRoutesStore";
 import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import Maps from "@/components/Maps";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import ButtonAction from "@/components/ButtonAction";
+import { removeRoutes } from "@/services/RoutesServices";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const Page = ({ params }) => {
   const { routes } = useRoutesStore();
   const [route, setRoute] = useState({});
   const [color, setColor] = useState("");
   const [statusName, setStatusName] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const q = query(collection(db, "routes"), where("id", "==", params.id));
@@ -29,6 +43,16 @@ const Page = ({ params }) => {
     };
   }, [routes, params.id]);
 
+  const handleDelete = async (id) => {
+    const response = await removeRoutes(id);
+    if (!response?.success) {
+      toast.error("Error al eliminar la ruta");
+      return;
+    }
+    toast.success("Ruta eliminada correctamente");
+    return router.replace("/dashboard/routes");
+  };
+
   return (
     <div className="container mx-auto px-4 pb-12 h-screen pt-10">
       <div className="grid grid-cols-3 gap-4">
@@ -36,17 +60,34 @@ const Page = ({ params }) => {
           <h1 className="font-bold text-3xl">Datos de ruta</h1>
         </div>
         <div className="flex justify-end gap-2">
-          <ButtonLink
-            color="bg-warning"
-            href={`/dashboard/routes/${params.id}/confirm`}
-          >
-            Eliminar
-          </ButtonLink>
-          <ButtonLink color="bg-primary" href={`/dashboard/routes/`}>
+          <Dialog>
+            <DialogTrigger asChild>
+              <ButtonAction color="bg-warning">Eliminar</ButtonAction>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>
+                  ¿Deseas eliminar la parada todos los dias?
+                </DialogTitle>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <ButtonAction color="bg-warning">Cancelar</ButtonAction>
+                </DialogClose>
+                <ButtonAction
+                  color="bg-primary"
+                  onClick={() => handleDelete(params.id)}
+                >
+                  Eliminar
+                </ButtonAction>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <ButtonLink color="bg-light-gray" href={`/dashboard/routes/`}>
             Atrás
           </ButtonLink>
           <ButtonLink
-            color="bg-light-gray"
+            color="bg-primary"
             href={`/dashboard/routes/edit/${params.id}`}
           >
             Editar
