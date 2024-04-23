@@ -8,7 +8,7 @@ import { query, collection, where, getDocs } from "firebase/firestore";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { db } from "@/firebase/client";
 
-const DashboardLayout = ({ children, ...props }) => {
+const DashboardLayout = ({ children }) => {
   const { user, loading, profile, school } = useAuthContext();
   const router = useRouter();
   const { setRoutes } = useRoutesStore();
@@ -48,7 +48,6 @@ const DashboardLayout = ({ children, ...props }) => {
         <Sidebar className="hidden lg:block bg-muted-foreground" />
         {children}
       </div>
-      {props.dialog}
     </>
   );
 };

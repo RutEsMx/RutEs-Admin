@@ -1,8 +1,3 @@
-export default function Layout({ children, ...props }) {
-  return (
-    <>
-      {children}
-      {props.dialog}
-    </>
-  );
+export default function Layout({ children }) {
+  return <>{children}</>;
 }
