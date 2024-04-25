@@ -26,7 +26,7 @@ const Maps = ({
       scrollwheel: true,
       draggable: true,
       zoomControl: true,
-      minZoom: 13,
+      minZoom: 10,
       maxZoom: 20,
       streetViewControl: false,
       ...options,

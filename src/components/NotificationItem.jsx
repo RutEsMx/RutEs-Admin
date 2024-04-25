@@ -1,15 +1,38 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { Label } from "./ui/label";
+import { db } from "@/firebase/client";
+import { doc, updateDoc } from "firebase/firestore";
+import { toast } from "sonner";
 
-const handleClick = (category, studentRequest, router) => {
+const updateStatus = async (id, schoolId) => {
+  try {
+    const docRef = doc(
+      db,
+      "notificationsSchool",
+      schoolId,
+      "notifications",
+      id,
+    );
+    if (!docRef) {
+      return;
+    }
+    await updateDoc(docRef, { readBySchool: true });
+  } catch (error) {
+    toast.error(error?.message || "Error al actualizar el estado");
+  }
+};
+
+const handleClick = async (data, studentRequest, router) => {
+  const { category, id, schoolId } = data;
   if (category !== "travelWithFriend") return null;
+  await updateStatus(id, schoolId);
   return router.push(`/dashboard/travel/${studentRequest}`);
 };
 
 const NotificationItem = ({ data }) => {
   const router = useRouter();
-  const { notification, createdAt, category } = data;
+  const { notification, createdAt, category, readBySchool } = data;
   const createdAtDate = createdAt._seconds || createdAt.seconds;
   const dateFormat = new Date(createdAtDate * 1000).toLocaleTimeString(
     "es-MX",
@@ -24,10 +47,15 @@ const NotificationItem = ({ data }) => {
 
   return (
     <div
-      className={`flex flex-row text-sm py-2 cursor-pointer justify-between ${
-        category === "travelWithFriend" ? "bg-blue-400/50" : ""
-      }`}
-      onClick={() => handleClick(category, data?.studentRequest, router)}
+      className={`
+        flex flex-row text-sm py-2 cursor-pointer justify-between 
+        ${
+          category === "travelWithFriend" && !readBySchool
+            ? "bg-blue-400/50"
+            : ""
+        }
+      `}
+      onClick={() => handleClick(data, data?.studentRequest, router)}
     >
       <div className=" w-2/6 flex justify-center items-center cursor-pointer">
         <Label className="cursor-pointer text-xs">{dateFormat}</Label>

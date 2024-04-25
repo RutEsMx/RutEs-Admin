@@ -5,14 +5,10 @@ import GooglePlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from "react-google-places-autocomplete";
+import { Label } from "./ui/label";
 
 const PlacesAutocomplete = ({ label, setPlace, place, address }) => {
   const [value, setValue] = useState(place);
-  const [addressValue, setAddressValue] = useState("");
-
-  useEffect(() => {
-    setAddressValue(address);
-  }, [address]);
 
   useEffect(() => {
     const getPlaceId = async () => {
@@ -39,6 +35,7 @@ const PlacesAutocomplete = ({ label, setPlace, place, address }) => {
           lat,
           lng,
           label: results[0]?.formatted_address,
+          place_id: "",
           ...results[0],
         });
       } catch (error) {
@@ -52,6 +49,12 @@ const PlacesAutocomplete = ({ label, setPlace, place, address }) => {
 
   return (
     <div className="ml-2 mb-2 pt-2">
+      {address !== "      " && (
+        <div className="text-xs pt-4 flex flex-col gap-2">
+          <Label>Domicilio sugerido:</Label>
+          <Label className="font-normal">{address}</Label>
+        </div>
+      )}
       {label && <label className="text-xs">{label}</label>}
       <GooglePlacesAutocomplete
         autocompletionRequest={{
@@ -65,12 +68,11 @@ const PlacesAutocomplete = ({ label, setPlace, place, address }) => {
           region: "mx",
         }}
         selectProps={{
-          inputValue: addressValue,
-          onInputChange: (e) => {
-            setAddressValue(e);
-          },
           isClearable: true,
-          defaultInputValue: value?.label,
+          value: {
+            label: value?.label,
+            value: value?.label || {},
+          },
           onChange: handleChange,
           placeholder: "Buscar dirección...",
           noOptionsMessage: () => "No hay resultados",

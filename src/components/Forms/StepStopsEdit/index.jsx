@@ -26,11 +26,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
-const StepStopsEdit = () => {
+const StepStopsEdit = ({ name }) => {
   const { values, setFieldValue } = useFormikContext();
   const { studentsRoutes } = useStudentsStore();
   const { selectedDayEdit, setSelectedDayEdit, typeTravel, setTypeTravel } =
@@ -46,6 +47,7 @@ const StepStopsEdit = () => {
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [availableStudents, setAvailableStudents] = useState([]);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [disabledAddStudent, setDisabledAddStudent] = useState(true);
 
   // Reiniciar formulario
   const handleReset = () => {
@@ -55,6 +57,20 @@ const StepStopsEdit = () => {
     setBothTravels(false);
     resetForm();
   };
+  useEffect(() => {
+    if (bothTravels && values?.temporalToHome) {
+      setDisabledAddStudent(false);
+      return;
+    } else if (
+      (values?.temporalToHome && values?.temporalToSchool) ||
+      values?.temporalWorkshop ||
+      isEditStudent
+    ) {
+      setDisabledAddStudent(false);
+    } else {
+      setDisabledAddStudent(true);
+    }
+  }, [values, bothTravels]);
 
   const { addOrUpdateStudent, resetForm } = useStudentManager();
 
@@ -105,54 +121,66 @@ const StepStopsEdit = () => {
 
   const handleRemoveStudent = (e) => {
     e.preventDefault();
-    const students = values?.students || {};
-    let updatedStudentsToRemove = { ...values.studentsToRemove };
-    if (!updatedStudentsToRemove[selectedDayEdit]) {
-      updatedStudentsToRemove[selectedDayEdit] = { [typeTravel]: [] };
+    try {
+      const students = values?.students || {};
+      let updatedStudentsToRemove = { ...values.studentsToRemove };
+      if (!updatedStudentsToRemove[selectedDayEdit]) {
+        updatedStudentsToRemove[selectedDayEdit] = { [typeTravel]: [] };
+      }
+
+      updatedStudentsToRemove[selectedDayEdit][typeTravel] = [
+        ...(updatedStudentsToRemove[selectedDayEdit][typeTravel] || []),
+        selectedStudentToRemove,
+      ];
+
+      const newStudents = students?.[selectedDayEdit]?.[typeTravel]?.filter(
+        (s) => s.id !== selectedStudentToRemove.id,
+      );
+
+      setFieldValue("students", {
+        ...values?.students,
+        [selectedDayEdit]: {
+          ...values?.students?.[selectedDayEdit],
+          [typeTravel]: newStudents,
+        },
+      });
+      setFieldValue("studentsToRemove", updatedStudentsToRemove);
+    } catch (error) {
+      toast.error("Error al eliminar el alumno");
+    } finally {
+      setOpenDeleteDialog(false);
     }
-
-    updatedStudentsToRemove[selectedDayEdit][typeTravel] = [
-      ...(updatedStudentsToRemove[selectedDayEdit][typeTravel] || []),
-      selectedStudentToRemove,
-    ];
-
-    const newStudents = students?.[selectedDayEdit]?.[typeTravel]?.filter(
-      (s) => s.id !== selectedStudentToRemove.id,
-    );
-
-    setFieldValue("students", {
-      ...values?.students,
-      [selectedDayEdit]: {
-        ...values?.students?.[selectedDayEdit],
-        [typeTravel]: newStudents,
-      },
-    });
-    setFieldValue("studentsToRemove", updatedStudentsToRemove);
   };
 
   const handleRemoveStudentAll = (e) => {
     e.preventDefault();
-    const students = values?.students || {};
-    const newStudents = values?.students || {};
-    let updatedStudentsToRemove = { ...values.studentsToRemove };
-    Object.keys(students).forEach((day) => {
-      if (!updatedStudentsToRemove[day]) {
-        updatedStudentsToRemove[day] = { [typeTravel]: [] };
-      }
-      const studentToRemove = students[day][typeTravel].find(
-        (s) => s.id === selectedStudentToRemove.id,
-      );
-      updatedStudentsToRemove[day][typeTravel] = [
-        ...(updatedStudentsToRemove[day][typeTravel] || []),
-        studentToRemove,
-      ];
-      newStudents[day][typeTravel] = newStudents[day][typeTravel].filter(
-        (s) => s.id !== selectedStudentToRemove.id,
-      );
-    });
+    try {
+      const students = values?.students || {};
+      const newStudents = values?.students || {};
+      let updatedStudentsToRemove = { ...values.studentsToRemove };
+      Object.keys(students).forEach((day) => {
+        if (!updatedStudentsToRemove[day]) {
+          updatedStudentsToRemove[day] = { [typeTravel]: [] };
+        }
+        const studentToRemove = students[day][typeTravel].find(
+          (s) => s.id === selectedStudentToRemove.id,
+        );
+        updatedStudentsToRemove[day][typeTravel] = [
+          ...(updatedStudentsToRemove[day][typeTravel] || []),
+          studentToRemove,
+        ];
+        newStudents[day][typeTravel] = newStudents[day][typeTravel].filter(
+          (s) => s.id !== selectedStudentToRemove.id,
+        );
+      });
 
-    setFieldValue("studentsToRemove", updatedStudentsToRemove);
-    setStudentsData(newStudents[selectedDayEdit][typeTravel]);
+      setFieldValue("studentsToRemove", updatedStudentsToRemove);
+      setStudentsData(newStudents[selectedDayEdit][typeTravel]);
+    } catch (error) {
+      toast.error("Error al eliminar el alumno");
+    } finally {
+      setOpenDeleteDialog(false);
+    }
   };
 
   const openDeleteModal = (student) => {
@@ -183,6 +211,7 @@ const StepStopsEdit = () => {
       if (typeTravel === "workshop")
         setFieldValue("temporalWorkshop", student?.stop?.coords || null);
     }
+    setSelectedDay([selectedDayEdit]);
     setIsEditStudent(true);
   };
 
@@ -213,8 +242,8 @@ const StepStopsEdit = () => {
     setSelectedStudent(value);
   };
 
-  const handleClearStudent = (e) => {
-    e.preventDefault();
+  const handleClearStudent = (e = false) => {
+    e && e.preventDefault();
     setSelectedStudent(null);
     setFieldValue("temporalToHome", null);
     setFieldValue("temporalToSchool", null);
@@ -237,10 +266,14 @@ const StepStopsEdit = () => {
       temporalWorkshop,
     );
     handleReset();
+    setDisabledAddStudent(true);
   };
 
   return (
     <div className="mb-4 grid grid-rows-1 divide-y-2">
+      <div>
+        <Label>{name}</Label>
+      </div>
       <div className="row-span-1">
         <div className="grid grid-flow-row gap-2">
           <div className="mx-2 grid grid-cols-2">
@@ -290,7 +323,17 @@ const StepStopsEdit = () => {
                 setFieldValue,
                 values,
                 bothTravels,
-                address: selectedStudent?.address?.street || "",
+                address:
+                  `${selectedStudent?.address?.street || ""} ${
+                    selectedStudent?.address?.number || ""
+                  } ${selectedStudent?.address?.interiorNumber || ""} ${
+                    selectedStudent?.address?.neighborhood || ""
+                  } ${selectedStudent?.address?.postalCode || ""} ${
+                    selectedStudent?.address?.city || ""
+                  } ${selectedStudent?.address?.state || ""}` || "",
+                isEditStudent,
+                typeTravel,
+                selectedStudent,
               })}
             </div>
             <div className="col-span-1 grid place-items-center place-content-center">
@@ -302,7 +345,10 @@ const StepStopsEdit = () => {
                 >
                   <XMarkIcon className="h-5 w-5 text-black" />
                 </ButtonAction>
-                <ButtonAction onClick={handleAddStudent} disabled={false}>
+                <ButtonAction
+                  onClick={handleAddStudent}
+                  disabled={disabledAddStudent}
+                >
                   <CheckIcon className="h-5 w-5 text-black" />
                 </ButtonAction>
               </div>
@@ -319,7 +365,10 @@ const StepStopsEdit = () => {
           name="day"
           options={SELECT_DAY}
           value={selectedDayEdit}
-          onValueChange={(value) => setSelectedDayEdit(value)}
+          onValueChange={(value) => {
+            handleClearStudent();
+            setSelectedDayEdit(value);
+          }}
         />
         {typeTravel !== "workshop" && (
           <SelectField
@@ -330,7 +379,10 @@ const StepStopsEdit = () => {
               { label: "Casa - Escuela", value: "toSchool" },
             ]}
             value={typeTravel}
-            onValueChange={(value) => setTypeTravel(value)}
+            onValueChange={(value) => {
+              handleClearStudent();
+              setTypeTravel(value);
+            }}
           />
         )}
         {studentsData?.map((student) => {

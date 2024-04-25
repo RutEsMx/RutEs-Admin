@@ -48,14 +48,16 @@ const STATUS_TRAVEL = {
   absent: "Ausente",
   toSchool: "En camino a escuela",
   toHome: "En camino a casa",
+  workshop: "En camino a casa desde taller",
 };
 
 const COLORS = {
   active: "text-green-500",
   inactive: "text-red-500",
   absent: "text-yellow-500",
-  toSchool: "text-green-500",
+  toSchool: "text-green-600",
   toHome: "text-blue-500",
+  workshop: "text-gray-500",
 };
 
 const COLORS_HEX = {

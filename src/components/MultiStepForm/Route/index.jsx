@@ -31,6 +31,9 @@ const FormRoute = ({ data, isEdit = false }) => {
     students: data?.students || [],
     routeId: data?.id || null,
     workshop: data?.workshop || false,
+    temporalWorkshop: undefined,
+    temporalToSchool: undefined,
+    temporalToHome: undefined,
   };
 
   const handleNext = async (values) => {
@@ -75,7 +78,7 @@ const FormRoute = ({ data, isEdit = false }) => {
         validateOnChange={true}
         validateOnMount={false}
       >
-        {({ isSubmitting, handleSubmit }) => (
+        {({ isSubmitting, handleSubmit, values }) => (
           <Form>
             <div className="flex justify-end gap-4 -mt-8 mb-4">
               <Button onClick={handleBack} color="bg-light-gray" type="button">
@@ -100,7 +103,11 @@ const FormRoute = ({ data, isEdit = false }) => {
                     <StepRoute isEdit={isEdit} />
                   </TabsContent>
                   <TabsContent value="stops">
-                    {isEdit ? <StepStopsEdit /> : <StepStops />}
+                    {isEdit ? (
+                      <StepStopsEdit name={values?.name} />
+                    ) : (
+                      <StepStops name={values?.name} />
+                    )}
                   </TabsContent>
                 </Tabs>
               </div>
