@@ -1,9 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
-import { COLORS, STATUS_TRAVEL } from "@/utils/options";
+import {
+  COLORS,
+  CURRENT_DAY,
+  DAYS_OPTIONS,
+  STATUS_TRAVEL,
+} from "@/utils/options";
 import ButtonLink from "@/components/ButtonLink";
-import { useRoutesStore } from "@/store/useRoutesStore";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "@/firebase/client";
 import Maps from "@/components/Maps";
 import {
@@ -19,29 +31,299 @@ import ButtonAction from "@/components/ButtonAction";
 import { removeRoutes } from "@/services/RoutesServices";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import SelectField from "@/components/SelectField";
+import { Label } from "@/components/ui/label";
+
+const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const Page = ({ params }) => {
-  const { routes } = useRoutesStore();
   const [route, setRoute] = useState({});
   const [color, setColor] = useState("");
   const [statusName, setStatusName] = useState("");
   const router = useRouter();
+  const [center, setCenter] = useState({ lat: 0, lng: 0 });
+  const [markers, setMarkers] = useState([]);
+  const [selectedDay, setSelectedDay] = useState(CURRENT_DAY);
+  const [typeTravel, setTypeTravel] = useState("toSchool");
+  const [isWorkshop, setIsWorkshop] = useState(false);
+  const [listStudents, setListStudents] = useState([]);
 
   useEffect(() => {
-    const q = query(collection(db, "routes"), where("id", "==", params.id));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      let route = null;
-      querySnapshot.forEach((doc) => {
-        route = { ...doc.data(), id: doc.id };
+    if (navigator.geolocation) {
+      navigator.permissions.query({ name: "geolocation" }).then((result) => {
+        if (result.state === "prompt" || result.state === "granted") {
+          var options = {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          };
+          navigator.geolocation.getCurrentPosition(
+            successPosition,
+            errorPosition,
+            options,
+          );
+        }
       });
-      setColor(COLORS[route?.status]);
-      setStatusName(STATUS_TRAVEL[route?.status] || "Sin estado");
-      setRoute(route);
+    }
+  }, []);
+
+  const successPosition = (position) => {
+    const { latitude, longitude } = position.coords;
+    setCenter({ lat: latitude, lng: longitude });
+  };
+
+  const errorPosition = () => {};
+
+  useEffect(() => {
+    // Obtiene la ubicación en tiempo real
+    const qTracking = doc(db, "tracking", params.id);
+    const unsubscribeTracking = onSnapshot(qTracking, (doc) => {
+      if (!doc.exists()) return;
+      const { tracking } = doc.data();
+      setCenter({ lat: tracking?._lat, lng: tracking?._long });
+      setMarkers((prev) => [
+        ...prev,
+        {
+          lat: tracking?._lat,
+          lng: tracking?._long,
+          studentId: params.id,
+          color: "#049818",
+          name: "Autobús",
+        },
+      ]);
     });
-    return () => {
-      unsubscribe();
+    // Obtiene la ruta una sola vez
+    const getRoute = async () => {
+      try {
+        const q = doc(db, "routes", params.id);
+        const routeData = await getDoc(q);
+        if (!routeData.exists()) {
+          toast.error("Ruta no encontrada");
+          return;
+        }
+        if (routeData.data()["workshop"]) setIsWorkshop(true);
+        setRoute({ ...routeData.data(), id: routeData.id });
+      } catch (error) {
+        toast.error("Error al obtener la ruta");
+      }
     };
-  }, [routes, params.id]);
+    getRoute();
+    return () => {
+      unsubscribeTracking();
+    };
+  }, [params.id]);
+
+  useEffect(() => {
+    const qTravel = doc(db, "travels", params.id);
+    const unsubscribeStudents = [];
+    setListStudents([]);
+    setMarkers([]);
+    const unsubscribeTravel = onSnapshot(qTravel, (snp) => {
+      try {
+        if (!snp.exists()) return;
+        const travel = snp.data();
+        let students = travel[selectedDay][typeTravel]?.students || [];
+
+        if (isWorkshop) {
+          const startWorkshop = travel[selectedDay]["workshop"]?.start
+            ? STATUS_TRAVEL["workshop"]
+            : "Viaje de taller finalizado";
+          students = travel[selectedDay]["workshop"]?.students || [];
+          students.forEach(async (student) => {
+            // ref student
+            const qStudent = doc(db, "students", student.id);
+            // ref stops
+            const qStops = query(
+              collection(db, "stops"),
+              where("student", "==", student.id),
+              where("day", "==", selectedDay),
+              where("type", "==", "workshop"),
+            );
+            const stopResponse = await getDocs(qStops);
+
+            const unsubscribeStudent = onSnapshot(
+              qStudent,
+              async (snpStudent) => {
+                if (!snpStudent.exists()) return;
+                const studentData = snpStudent.data();
+                const colorMarker =
+                  studentData["workshop"].delivered &&
+                  travel[selectedDay]["workshop"]?.start
+                    ? "#FFBF3B"
+                    : studentData["workshop"].pickedUp
+                    ? "#0867ec"
+                    : "#4F504F";
+                stopResponse.forEach(async (stop) => {
+                  if (stop.exists() === false) return;
+                  const { coords } = stop.data();
+                  setMarkers((prev) => [
+                    ...prev,
+                    {
+                      lat: coords.lat,
+                      lng: coords.lng,
+                      color: colorMarker,
+                      studentId: student.id,
+                      fullName: `${studentData.name || ""} ${
+                        studentData.lastName || ""
+                      } ${studentData.secondLastName || ""}`,
+                    },
+                  ]);
+                  setListStudents((prev) => {
+                    return prev.concat({
+                      id: student.id,
+                      name: studentData.name,
+                      lastName: studentData.lastName,
+                      secondLastName: studentData.secondLastName,
+                      stop: {
+                        lat: coords.lat,
+                        lng: coords.lng,
+                      },
+                    });
+                  });
+                });
+              },
+            );
+            unsubscribeStudents.push(unsubscribeStudent);
+          });
+          setStatusName(startWorkshop);
+          return setColor(COLORS.workshop);
+        }
+
+        if (typeTravel === "toSchool") {
+          const startFromSchool = travel[selectedDay][typeTravel]
+            ?.startTravelFromSchool
+            ? STATUS_TRAVEL[typeTravel]
+            : "Viaje a escuela finalizado";
+          students.forEach(async (student) => {
+            // ref student
+            const qStudent = doc(db, "students", student.id);
+            // ref stops
+            const qStops = query(
+              collection(db, "stops"),
+              where("student", "==", student.id),
+              where("day", "==", selectedDay),
+              where("type", "==", typeTravel),
+            );
+            const stopResponse = await getDocs(qStops);
+
+            const unsubscribeStudent = onSnapshot(
+              qStudent,
+              async (snpStudent) => {
+                if (!snpStudent.exists()) return;
+                const studentData = snpStudent.data();
+                const colorMarker =
+                  studentData[typeTravel].delivered &&
+                  !travel[selectedDay][typeTravel]?.startTravelFromSchool
+                    ? "#FFBF3B"
+                    : studentData[typeTravel].pickedUp
+                    ? "#0867ec"
+                    : "#4F504F";
+                stopResponse.forEach(async (stop) => {
+                  if (stop.exists() === false) return;
+                  const { coords } = stop.data();
+                  setMarkers((prev) => [
+                    ...prev,
+                    {
+                      lat: coords.lat,
+                      lng: coords.lng,
+                      color: colorMarker,
+                      studentId: student.id,
+                      fullName: `${studentData.name || ""} ${
+                        studentData.lastName || ""
+                      } ${studentData.secondLastName || ""}`,
+                    },
+                  ]);
+                  setListStudents((prev) => {
+                    return prev.concat({
+                      id: student.id,
+                      name: studentData.name,
+                      lastName: studentData.lastName,
+                      secondLastName: studentData.secondLastName,
+                      stop: {
+                        lat: coords.lat,
+                        lng: coords.lng,
+                      },
+                    });
+                  });
+                });
+              },
+            );
+            unsubscribeStudents.push(unsubscribeStudent);
+          });
+          setStatusName(startFromSchool);
+          return setColor(COLORS.toHome);
+        } else if (typeTravel === "toHome") {
+          const startFromHome = travel[selectedDay][typeTravel]?.start
+            ? STATUS_TRAVEL[typeTravel]
+            : "Viaje a casa finalizado";
+          students.forEach(async (student) => {
+            // ref student
+            const qStudent = doc(db, "students", student.id);
+            // ref stops
+            const qStops = query(
+              collection(db, "stops"),
+              where("student", "==", student.id),
+              where("day", "==", selectedDay),
+              where("type", "==", typeTravel),
+            );
+            const stopResponse = await getDocs(qStops);
+            const unsubscribeStudent = onSnapshot(
+              qStudent,
+              async (snpStudent) => {
+                if (!snpStudent.exists()) return;
+                const studentData = snpStudent.data();
+                const colorMarker =
+                  studentData[typeTravel].delivered &&
+                  travel[selectedDay][typeTravel]?.start
+                    ? "#FFBF3B"
+                    : studentData[typeTravel].pickedUp
+                    ? "#0867ec"
+                    : "#4F504F";
+                stopResponse.forEach(async (stop) => {
+                  if (stop.exists() === false) return;
+                  const { coords } = stop.data();
+                  setMarkers((prev) => [
+                    ...prev,
+                    {
+                      lat: coords.lat,
+                      lng: coords.lng,
+                      color: colorMarker,
+                      studentId: student.id,
+                      fullName: `${studentData.name || ""} ${
+                        studentData.lastName || ""
+                      } ${studentData.secondLastName || ""}`,
+                    },
+                  ]);
+                  setListStudents((prev) => {
+                    return prev.concat({
+                      id: student.id,
+                      name: studentData.name,
+                      lastName: studentData.lastName,
+                      secondLastName: studentData.secondLastName,
+                      stop: {
+                        lat: coords.lat,
+                        lng: coords.lng,
+                      },
+                    });
+                  });
+                });
+              },
+            );
+            unsubscribeStudents.push(unsubscribeStudent);
+          });
+          setStatusName(startFromHome);
+          return setColor(COLORS.toSchool);
+        }
+      } catch (error) {
+        toast.error("Error al obtener el estado del viaje");
+      }
+    });
+
+    return () => {
+      unsubscribeTravel();
+      unsubscribeStudents.forEach((unsubscribe) => unsubscribe());
+    };
+  }, [params.id, selectedDay, typeTravel, isWorkshop]);
 
   const handleDelete = async (id) => {
     const response = await removeRoutes(id);
@@ -51,6 +333,11 @@ const Page = ({ params }) => {
     }
     toast.success("Ruta eliminada correctamente");
     return router.replace("/dashboard/routes");
+  };
+
+  const handleStudent = (student) => {
+    // recenter map
+    setCenter(student.stop);
   };
 
   return (
@@ -95,7 +382,7 @@ const Page = ({ params }) => {
         </div>
       </div>
       <div className="border border-black px-4 py-2 mt-4">
-        <div className="grid grid-cols-2">
+        <div className="grid grid-cols-4">
           <div className="col-span-1">
             <div className="flex flex-col justify-around">
               <div className="flex flex-row gap-2">
@@ -110,10 +397,52 @@ const Page = ({ params }) => {
                 <span className="font-bold">Estado:</span>
                 <span className={`${color}`}>{statusName}</span>
               </div>
+              <div className="flex flex-row gap-2 pt-2 mt-3 border-t-2">
+                <Label className="text-2xl">Estudiantes</Label>
+              </div>
+              <div className="flex flex-col gap-2 mt-2 border-t-2">
+                {listStudents.map((student) => {
+                  return (
+                    <div
+                      key={student.id}
+                      className="flex flex-row cursor-pointer mt-2"
+                      onClick={() => handleStudent(student)}
+                    >
+                      <Label>
+                        {student.name} {student.lastName}{" "}
+                        {student.secondLastName}
+                      </Label>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-          <div className="bg-gray lg:h-[500px] sm:h-[250px] w-full">
-            <Maps markers={[]} />
+          <div className="col-span-1 mx-3">
+            {!isWorkshop && (
+              <SelectField
+                labelTitle="Tipo de viaje"
+                name="typeTravel"
+                options={[
+                  { label: "Escuela - Casa", value: "toHome" },
+                  { label: "Casa - Escuela", value: "toSchool" },
+                ]}
+                value={typeTravel}
+                onValueChange={(value) => {
+                  setTypeTravel(value);
+                }}
+              />
+            )}
+            <SelectField
+              labelTitle="Día"
+              name="day"
+              options={SELECT_DAY}
+              value={selectedDay}
+              onValueChange={setSelectedDay}
+            />
+          </div>
+          <div className="col-span-2 bg-gray lg:h-[500px] sm:h-[250px] w-full bg-yellow-300">
+            <Maps markers={markers} center={center} />
           </div>
         </div>
       </div>

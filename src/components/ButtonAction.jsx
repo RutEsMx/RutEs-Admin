@@ -1,3 +1,5 @@
+import { Button } from "./ui/button";
+
 export default function ButtonAction({
   onClick,
   children,
@@ -12,7 +14,7 @@ export default function ButtonAction({
   };
 
   return (
-    <button
+    <Button
       className={`${
         colorClasses[color]
       } rounded-md px-2 py-1 w-fit flex flex-row items-center justify-center cursor-pointer ${
@@ -22,6 +24,6 @@ export default function ButtonAction({
       {...props}
     >
       {children}
-    </button>
+    </Button>
   );
 }

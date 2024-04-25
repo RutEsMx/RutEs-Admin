@@ -17,6 +17,23 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase/client";
 
+const getRouteById = async (id) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/routes/${id}/`,
+      {
+        cache: "no-store",
+      },
+    );
+    if (!response.ok) return { error: true };
+    const data = await response.json();
+    data.id = id;
+    return data;
+  } catch (error) {
+    return { error };
+  }
+};
+
 const createTravels = async (students) => {
   const travelsObject = {};
 
@@ -398,4 +415,4 @@ const removeRoutes = async (id) => {
   }
 };
 
-export { createRoutesByForm, updateRoutesByForm, removeRoutes };
+export { createRoutesByForm, updateRoutesByForm, removeRoutes, getRouteById };
