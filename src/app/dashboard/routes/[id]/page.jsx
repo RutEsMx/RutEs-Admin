@@ -117,7 +117,6 @@ const Page = ({ params }) => {
     const qTravel = doc(db, "travels", params.id);
     const unsubscribeStudents = [];
     setListStudents([]);
-    setMarkers([]);
     const unsubscribeTravel = onSnapshot(qTravel, (snp) => {
       try {
         if (!snp.exists()) return;
@@ -156,29 +155,66 @@ const Page = ({ params }) => {
                 stopResponse.forEach(async (stop) => {
                   if (stop.exists() === false) return;
                   const { coords } = stop.data();
-                  setMarkers((prev) => [
-                    ...prev,
-                    {
-                      lat: coords.lat,
-                      lng: coords.lng,
-                      color: colorMarker,
-                      studentId: student.id,
-                      fullName: `${studentData.name || ""} ${
-                        studentData.lastName || ""
-                      } ${studentData.secondLastName || ""}`,
-                    },
-                  ]);
-                  setListStudents((prev) => {
-                    return prev.concat({
-                      id: student.id,
-                      name: studentData.name,
-                      lastName: studentData.lastName,
-                      secondLastName: studentData.secondLastName,
-                      stop: {
+                  setMarkers((prev) => {
+                    const state = [...prev];
+                    const index = state.findIndex(
+                      (item) => item.studentId === student.id,
+                    );
+                    if (index !== -1) {
+                      state[index] = {
                         lat: coords.lat,
                         lng: coords.lng,
-                      },
-                    });
+                        color: colorMarker,
+                        studentId: student.id,
+                        fullName: `${studentData.name || ""} ${
+                          studentData.lastName || ""
+                        } ${studentData.secondLastName || ""}`,
+                      };
+                    } else {
+                      state.push({
+                        lat: coords.lat,
+                        lng: coords.lng,
+                        color: colorMarker,
+                        studentId: student.id,
+                        fullName: `${studentData.name || ""} ${
+                          studentData.lastName || ""
+                        } ${studentData.secondLastName || ""}`,
+                      });
+                    }
+                    return state;
+                  });
+
+                  // setListStudents push into same position
+                  setListStudents((prev) => {
+                    const state = [...prev];
+                    // find student.id in list and update
+                    const index = state.findIndex(
+                      (item) => item.id === student.id,
+                    );
+                    if (index !== -1) {
+                      state[index] = {
+                        id: student.id,
+                        name: studentData.name,
+                        lastName: studentData.lastName,
+                        secondLastName: studentData.secondLastName,
+                        stop: {
+                          lat: coords.lat,
+                          lng: coords.lng,
+                        },
+                      };
+                    } else {
+                      state.push({
+                        id: student.id,
+                        name: studentData.name,
+                        lastName: studentData.lastName,
+                        secondLastName: studentData.secondLastName,
+                        stop: {
+                          lat: coords.lat,
+                          lng: coords.lng,
+                        },
+                      });
+                    }
+                    return state;
                   });
                 });
               },
@@ -221,29 +257,65 @@ const Page = ({ params }) => {
                 stopResponse.forEach(async (stop) => {
                   if (stop.exists() === false) return;
                   const { coords } = stop.data();
-                  setMarkers((prev) => [
-                    ...prev,
-                    {
-                      lat: coords.lat,
-                      lng: coords.lng,
-                      color: colorMarker,
-                      studentId: student.id,
-                      fullName: `${studentData.name || ""} ${
-                        studentData.lastName || ""
-                      } ${studentData.secondLastName || ""}`,
-                    },
-                  ]);
-                  setListStudents((prev) => {
-                    return prev.concat({
-                      id: student.id,
-                      name: studentData.name,
-                      lastName: studentData.lastName,
-                      secondLastName: studentData.secondLastName,
-                      stop: {
+                  setMarkers((prev) => {
+                    const state = [...prev];
+                    const index = state.findIndex(
+                      (item) => item?.studentId === student?.id,
+                    );
+                    if (index !== -1) {
+                      state[index] = {
                         lat: coords.lat,
                         lng: coords.lng,
-                      },
-                    });
+                        color: colorMarker,
+                        studentId: student.id,
+                        fullName: `${studentData.name || ""} ${
+                          studentData.lastName || ""
+                        } ${studentData.secondLastName || ""}`,
+                      };
+                    } else {
+                      state.push({
+                        lat: coords.lat,
+                        lng: coords.lng,
+                        color: colorMarker,
+                        studentId: student.id,
+                        fullName: `${studentData.name || ""} ${
+                          studentData.lastName || ""
+                        } ${studentData.secondLastName || ""}`,
+                      });
+                    }
+                    return state;
+                  });
+                  // setListStudents push into same position
+                  setListStudents((prev) => {
+                    const state = [...prev];
+                    // find student.id in list and update
+                    const index = state.findIndex(
+                      (item) => item.id === student.id,
+                    );
+                    if (index !== -1) {
+                      state[index] = {
+                        id: student.id,
+                        name: studentData.name,
+                        lastName: studentData.lastName,
+                        secondLastName: studentData.secondLastName,
+                        stop: {
+                          lat: coords.lat,
+                          lng: coords.lng,
+                        },
+                      };
+                    } else {
+                      state.push({
+                        id: student.id,
+                        name: studentData.name,
+                        lastName: studentData.lastName,
+                        secondLastName: studentData.secondLastName,
+                        stop: {
+                          lat: coords.lat,
+                          lng: coords.lng,
+                        },
+                      });
+                    }
+                    return state;
                   });
                 });
               },
@@ -282,29 +354,65 @@ const Page = ({ params }) => {
                 stopResponse.forEach(async (stop) => {
                   if (stop.exists() === false) return;
                   const { coords } = stop.data();
-                  setMarkers((prev) => [
-                    ...prev,
-                    {
-                      lat: coords.lat,
-                      lng: coords.lng,
-                      color: colorMarker,
-                      studentId: student.id,
-                      fullName: `${studentData.name || ""} ${
-                        studentData.lastName || ""
-                      } ${studentData.secondLastName || ""}`,
-                    },
-                  ]);
-                  setListStudents((prev) => {
-                    return prev.concat({
-                      id: student.id,
-                      name: studentData.name,
-                      lastName: studentData.lastName,
-                      secondLastName: studentData.secondLastName,
-                      stop: {
+                  setMarkers((prev) => {
+                    const state = [...prev];
+                    const index = state.findIndex(
+                      (item) => item.studentId === student.id,
+                    );
+                    if (index !== -1) {
+                      state[index] = {
                         lat: coords.lat,
                         lng: coords.lng,
-                      },
-                    });
+                        color: colorMarker,
+                        studentId: student.id,
+                        fullName: `${studentData.name || ""} ${
+                          studentData.lastName || ""
+                        } ${studentData.secondLastName || ""}`,
+                      };
+                    } else {
+                      state.push({
+                        lat: coords.lat,
+                        lng: coords.lng,
+                        color: colorMarker,
+                        studentId: student.id,
+                        fullName: `${studentData.name || ""} ${
+                          studentData.lastName || ""
+                        } ${studentData.secondLastName || ""}`,
+                      });
+                    }
+                    return state;
+                  });
+                  // setListStudents push into same position
+                  setListStudents((prev) => {
+                    const state = [...prev];
+                    // find student.id in list and update
+                    const index = state.findIndex(
+                      (item) => item.id === student.id,
+                    );
+                    if (index !== -1) {
+                      state[index] = {
+                        id: student.id,
+                        name: studentData.name,
+                        lastName: studentData.lastName,
+                        secondLastName: studentData.secondLastName,
+                        stop: {
+                          lat: coords.lat,
+                          lng: coords.lng,
+                        },
+                      };
+                    } else {
+                      state.push({
+                        id: student.id,
+                        name: studentData.name,
+                        lastName: studentData.lastName,
+                        secondLastName: studentData.secondLastName,
+                        stop: {
+                          lat: coords.lat,
+                          lng: coords.lng,
+                        },
+                      });
+                    }
+                    return state;
                   });
                 });
               },
