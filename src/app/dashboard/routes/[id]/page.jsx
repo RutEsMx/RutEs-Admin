@@ -248,10 +248,10 @@ const Page = ({ params }) => {
                 if (!snpStudent.exists()) return;
                 const studentData = snpStudent.data();
                 const colorMarker =
-                  studentData[typeTravel].delivered &&
+                  studentData[typeTravel]?.delivered &&
                   !travel[selectedDay][typeTravel]?.startTravelFromSchool
                     ? "#FFBF3B"
-                    : studentData[typeTravel].pickedUp
+                    : studentData[typeTravel]?.pickedUp
                     ? "#0867ec"
                     : "#4F504F";
                 stopResponse.forEach(async (stop) => {
@@ -345,10 +345,10 @@ const Page = ({ params }) => {
                 if (!snpStudent.exists()) return;
                 const studentData = snpStudent.data();
                 const colorMarker =
-                  studentData[typeTravel].delivered &&
+                  studentData[typeTravel]?.delivered &&
                   travel[selectedDay][typeTravel]?.start
                     ? "#FFBF3B"
-                    : studentData[typeTravel].pickedUp
+                    : studentData[typeTravel]?.pickedUp
                     ? "#0867ec"
                     : "#4F504F";
                 stopResponse.forEach(async (stop) => {

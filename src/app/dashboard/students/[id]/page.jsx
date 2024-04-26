@@ -133,7 +133,9 @@ const Page = ({ params }) => {
               </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Alergias:</span>
-                <span className="">{isClient && student?.allergies}</span>
+                <span className="">
+                  {(isClient && student?.allergies) || "Sin dato"}
+                </span>
               </div>
             </div>
             <div className="col-span-2 gap-2 grid grid-cols-2 py-4">
@@ -155,7 +157,7 @@ const Page = ({ params }) => {
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Número interior:</span>
                 <span className="">
-                  {student?.address?.interiorNumber || ""}
+                  {student?.address?.interiorNumber || "S/N"}
                 </span>
               </div>
               <div className="flex flex-row gap-2">

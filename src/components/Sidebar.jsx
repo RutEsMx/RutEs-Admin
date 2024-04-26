@@ -64,7 +64,8 @@ export const Sidebar = ({ className }) => {
                   Unidades
                 </Link>
                 <Link
-                  href="/dashboard/alerts"
+                  // href="/dashboard/alerts"
+                  href="#"
                   className={linkClass("/dashboard/alerts")}
                 >
                   Permisos y Alertas

@@ -257,11 +257,11 @@ const StepStops = ({ name }) => {
   };
 
   return (
-    <div className={`mb-4 grid grid-rows-2 divide-y-2`}>
-      <div>
+    <div className={`mb-4 grid grid-rows-1 divide-y-2`}>
+      <div className="mb-2">
         <Label>{name}</Label>
       </div>
-      <div className="row-span-1">
+      <div className="row-span-1 pt-2">
         <div className="grid grid-flow-row gap-2">
           {typeTravel === "workshop" && (
             <div className="mx-2 grid grid-cols-2">
@@ -441,31 +441,6 @@ const StepStops = ({ name }) => {
           </div>
         ))}
       </div>
-      <dialog id="my_modal_1" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg"></h3>
-          <p className="py-4">{`Deseas eliminar el estudiante todos los dias para ${
-            typeTravel === "toHome" ? "Viaje a casa" : "Viaje a escuela"
-          }? `}</p>
-          <div className="modal-action">
-            <ButtonAction
-              color="bg-warning"
-              onClick={() => document.getElementById("my_modal_1").close()}
-            >
-              Cancelar
-            </ButtonAction>
-            <ButtonAction
-              color="bg-light-gray"
-              onClick={handleRemoveStudentAll}
-            >
-              Todos
-            </ButtonAction>
-            <ButtonAction
-              onClick={handleRemoveStudent}
-            >{`Solo ${DAYS[selectedDayEdit]}`}</ButtonAction>
-          </div>
-        </div>
-      </dialog>
     </div>
   );
 };
