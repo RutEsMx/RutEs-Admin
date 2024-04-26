@@ -257,10 +257,14 @@ const updateStops = async (students, routeId) => {
 // Create a new route
 const createRoutesByForm = async (data) => {
   const { students } = data;
-
   try {
+    // Crear los viajes
     const responseTravels = await createTravels(students);
+    // Crear paradas y se le asigna el id de la ruta
     await createStops(students, responseTravels.id);
+
+    // Crear el objeto de la ruta
+    // Se asigna el id de los viajes a la ruta
     const dataRoute = {
       name: data.name,
       capacity: data.capacity,
@@ -273,9 +277,13 @@ const createRoutesByForm = async (data) => {
       workshop: data.workshop,
     };
 
+    // Crear la ruta
     const responseRoute = await createDocument("routes", dataRoute);
+
+    // Actualizar los perfiles de los auxiliares, conductores y unidades
     const routeToUpdate = data.workshop ? "routeWorkshop" : "route";
 
+    // Actualizar el perfil del auxiliar
     const responseUpdateAuxiliar = await updateDocument(
       "profile",
       data.auxiliar,
@@ -286,17 +294,21 @@ const createRoutesByForm = async (data) => {
       },
     );
 
+    // Actualizar el perfil del conductor
     const responseUpdateDriver = await updateDocument("drivers", data.driver, {
       [routeToUpdate]: data.workshop
         ? arrayUnion(responseRoute.id)
         : responseRoute.id,
     });
+
+    // Actualizar el perfil de la unidad
     const responseUpdateUnit = await updateDocument("units", data.unit, {
       [routeToUpdate]: data.workshop
         ? arrayUnion(responseRoute.id)
         : responseRoute.id,
     });
 
+    // Retornar un objeto con el mensaje de éxito
     return Promise.all([
       responseRoute,
       responseUpdateAuxiliar,

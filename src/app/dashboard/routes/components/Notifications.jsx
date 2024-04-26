@@ -52,7 +52,7 @@ const Notifications = () => {
   return (
     <div className="border border-slate-400 rounded-lg">
       <div className="h-20 bg-primary justify-center flex items-center rounded-t-lg ">
-        <h1 className=" font-bold text-xl">Permisos y Alertas</h1>
+        <h1 className="font-bold text-xl">Permisos y Alertas</h1>
       </div>
       <div>
         <NotificationList data={data} className={"h-full pb-2 px-2"} />

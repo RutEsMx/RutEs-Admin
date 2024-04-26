@@ -200,6 +200,7 @@ const createParentsByForm = async (data, schoolId) => {
   ];
   const studentProfile = await createDocument("students", studentData);
   if (studentProfile?.error) {
+    // console.log("🚀 ~ createParentsByForm ~ studentProfile?.error:", studentProfile?.error)
     throw new Error(`Estudiante: ${studentProfile.error?.code}`);
   }
   const tutors = Array.from({ length: countTutors }, (_, i) => {

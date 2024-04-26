@@ -28,7 +28,7 @@ const FormRoute = ({ data, isEdit = false }) => {
     unit: data?.unit || null,
     auxiliar: data?.auxiliar || null,
     driver: data?.driver || null,
-    students: data?.students || [],
+    students: data?.students || {},
     routeId: data?.id || null,
     workshop: data?.workshop || false,
     temporalWorkshop: undefined,
