@@ -1,42 +1,43 @@
 const studentMock = {
-  name: "Pierre Jean-Jacques",
-  lastName: "Gasly",
+  name: "Oscar Jack",
+  lastName: "Piastri",
   secondLastName: "",
-  birthDate: "2017-06-03",
+  birthDate: "2016-03-06",
   bloodType: "O+",
   allergies: "",
-  grade: "3",
+  grade: "2",
   group: "A",
-  enrollment: "Alumno 3",
+  enrollment: "Alumno 4",
   serviceType: "complete",
   avatar: "",
   includeFather: true,
-  includeMother: true,
+  includeMother: false,
   address: {
-    street: "Calle 3",
-    number: "3",
-    neighborhood: "Colonia 3",
-    postalCode: "12345",
-    city: "Ciudad 3",
-    state: "TAB",
+    street: "Guillermo Prieto, Magdalena Mixihuca",
+    number: "180",
+    interiorNumber: "",
+    neighborhood: "Venustiano Carranza",
+    postalCode: "15860",
+    city: "Ciudad de México",
+    state: "CDMX",
   },
 };
 
 const fatherMock = {
-  name: "Jean-Jacques",
-  lastName: "Gasly",
+  name: "Chris",
+  lastName: "Piastri",
   secondLastName: "",
   phone: "1234567890",
-  email: "jonathan+11@rutes.mx",
+  email: "jonathan+13@rutes.mx",
   avatar: "",
 };
 
 const motherMock = {
-  name: "Pascale",
-  lastName: "Gasly",
+  name: "",
+  lastName: "",
   secondLastName: "",
-  phone: "1234567890",
-  email: "jonathan+12@rutes.mx",
+  phone: "",
+  email: "",
 };
 
 const tutorMock = {
@@ -44,7 +45,7 @@ const tutorMock = {
   lastName: "",
   secondLastName: "",
   phone: "",
-  email: "jonathan+36@rutes.mx",
+  email: "",
 };
 
 export { studentMock, fatherMock, motherMock, tutorMock };
