@@ -348,7 +348,6 @@ const updateEntity = async (
 
 const updateRoutesByForm = async (data) => {
   const { routeId, students, studentsToRemove, ...restData } = data;
-
   try {
     const getOldRoute = await getDoc(doc(db, "routes", routeId));
     const oldRouteData = getOldRoute.data();

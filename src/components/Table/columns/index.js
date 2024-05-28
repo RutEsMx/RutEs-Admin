@@ -376,16 +376,6 @@ const auxiliarsColumns = [
   {
     header: () => <HeaderTable>Correo electrónico</HeaderTable>,
     accessorKey: "email",
-    cell: (data) => {
-      const { row } = data;
-      return (
-        <Link href={`/dashboard/auxiliars/edit/${row?.original?.id}`}>
-          <div className="flex flex-row items-center justify-center">
-            <CellTable>{data.getValue()}</CellTable>
-          </div>
-        </Link>
-      );
-    },
   },
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,

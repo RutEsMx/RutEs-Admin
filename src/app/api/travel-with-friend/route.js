@@ -37,9 +37,16 @@ export async function PATCH(request) {
 
       // Update travels collection based on the status
       if (body.status === "accepted") {
+        const studentRequestData = firestore()
+          .collection("students")
+          .doc(body.studentRequest);
         transaction.update(travelsRef, {
           [`${body.day}.toHome.travelWithFriend`]:
             firestore.FieldValue.arrayUnion(body.studentRequest),
+        });
+        // update statusTravel of the studentRequest
+        transaction.update(studentRequestData, {
+          [`statusTravel`]: "travelWithFriend",
         });
       } else {
         transaction.update(travelsRef, {

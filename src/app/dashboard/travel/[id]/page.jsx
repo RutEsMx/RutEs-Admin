@@ -40,6 +40,7 @@ const TravelCard = ({ id, item, getData }) => {
       schoolId: item.routeData.schoolId,
       studentRequest: item.studentRequest.id,
     };
+    console.log("🚀 ~ handleClick ~ data:", data);
     try {
       await confirmTravelWithFriend(data);
       getData();
@@ -149,7 +150,7 @@ const Page = ({ params }) => {
   const getData = async () => {
     try {
       const response = await getTravelWithFriend(params?.id);
-      setData(response);
+      setData(response.reverse());
     } catch (error) {
       toast.error(error?.message || "Error al obtener los datos");
     }
@@ -165,7 +166,7 @@ const Page = ({ params }) => {
             <Label className="text-3xl">Viajes solicitados</Label>
           </CardTitle>
           <CardContent>
-            <div className="grid grid-cols-2 mt-4">
+            <div className="grid grid-cols-2 mt-4 gap-2">
               {data &&
                 data.map((item) => (
                   <TravelCard

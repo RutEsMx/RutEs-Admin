@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  "@formkit/drag-and-drop":
+    specifier: ^0.0.38
+    version: 0.0.38
   "@heroicons/react":
     specifier: ^2.1.1
     version: 2.1.1(react@18.2.0)
@@ -1033,6 +1036,13 @@ packages:
     resolution:
       {
         integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==,
+      }
+    dev: false
+
+  /@formkit/drag-and-drop@0.0.38:
+    resolution:
+      {
+        integrity: sha512-3uJFcqz1xL7x/5pClDnyqEDfyFRDFH+75MFpJYXnVF17oekxLrwbUaOBN7ttKGn1jW2MdojRw4WMnSN1iLryvw==,
       }
     dev: false
 

@@ -30,6 +30,10 @@ const createDocument = async (collectionName, data) => {
 const updateDocument = async (collectionName, id, data) => {
   try {
     const setDocRef = doc(db, collectionName, id);
+    // remove all undefined values from data
+    Object.keys(data).forEach(
+      (key) => data[key] === undefined && delete data[key],
+    );
     const docRef = await updateDoc(setDocRef, { ...data });
     return docRef;
   } catch (error) {

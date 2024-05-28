@@ -516,7 +516,7 @@ const Page = ({ params }) => {
                       className="flex flex-row cursor-pointer mt-2"
                       onClick={() => handleStudent(student)}
                     >
-                      <Label>
+                      <Label className="cursor-pointer">
                         {student.name} {student.lastName}{" "}
                         {student.secondLastName}
                       </Label>
