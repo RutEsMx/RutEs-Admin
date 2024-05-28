@@ -27,6 +27,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 
 const ALL_DAY = "all";
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
@@ -40,10 +41,23 @@ const StepStops = ({ name }) => {
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedDay, setSelectedDay] = useState(["all"]);
   const [isEditStudent, setIsEditStudent] = useState(false);
-  const [studentsData, setStudentsData] = useState([]);
+  const [parentRef, studentsData, setStudentsData] = useDragAndDrop([]);
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [disabledAddStudent, setDisabledAddStudent] = useState(true);
+
+  useEffect(() => {
+    if (studentsData.length === 0) {
+      return;
+    }
+    setFieldValue("students", {
+      ...values?.students,
+      [selectedDayEdit]: {
+        ...values?.students?.[selectedDayEdit],
+        [typeTravel]: studentsData,
+      },
+    });
+  }, [studentsData]);
 
   const handleReset = () => {
     setSelectedDay(["all"]);
@@ -276,7 +290,7 @@ const StepStops = ({ name }) => {
                         className="checkbox checkbox-xs"
                         onChange={handleSelect}
                       />
-                      <span className="label-text text-xs text-start">
+                      <span className="label-text text-xs text-start ml-2">
                         {day.label}
                       </span>
                     </label>
@@ -364,82 +378,88 @@ const StepStops = ({ name }) => {
             }}
           />
         )}
-        {studentsData?.map((student, index) => (
-          <div key={index} className="grid grid-cols-3 gap-2 my-2">
-            <div className="col-span-2">
-              <div className="flex flex-row items-center">
-                <MapPinIcon className="h-4 w-4 text-yellow" />
-                <div className="flex ps-2 items-center">
-                  <span className="text-sm font-semibold leading-6">{`${
-                    student?.name || ""
-                  } ${student?.lastName || ""} ${
-                    student?.secondLastName || ""
-                  }`}</span>
+        <ul ref={parentRef}>
+          {studentsData?.map((student, index) => (
+            <li
+              key={index}
+              className="grid grid-cols-3 gap-2 my-2 self-center"
+              data-label={index}
+            >
+              <div className="col-span-2">
+                <div className="flex flex-row items-center">
+                  <MapPinIcon className="h-4 w-4 text-yellow" />
+                  <div className="flex ps-2 items-center">
+                    <span className="text-sm font-semibold leading-6">{`${
+                      student?.name || ""
+                    } ${student?.lastName || ""} ${
+                      student?.secondLastName || ""
+                    }`}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="col-span-1">
-              <div className="flex justify-end pe-4 gap-2">
-                <Dialog
-                  open={openDeleteDialog}
-                  onOpenChange={() => openDeleteModal(student)}
-                >
-                  <DialogTrigger asChild>
-                    <ButtonAction disabled={false} color="bg-light-gray">
-                      <TrashIcon className="h-4 w-4 text-black" />
-                    </ButtonAction>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>
-                        ¿Deseas eliminar la parada todos los dias?
-                      </DialogTitle>
-                      <DialogDescription>
-                        {`
+              <div className="col-span-1">
+                <div className="flex justify-end pe-4 gap-2">
+                  <Dialog
+                    open={openDeleteDialog}
+                    onOpenChange={() => openDeleteModal(student)}
+                  >
+                    <DialogTrigger asChild>
+                      <ButtonAction disabled={false} color="bg-light-gray">
+                        <TrashIcon className="h-4 w-4 text-black" />
+                      </ButtonAction>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>
+                          ¿Deseas eliminar la parada todos los dias?
+                        </DialogTitle>
+                        <DialogDescription>
+                          {`
                            Al seleccionar "Todos" se eliminará las paradas de todos los días de
                          `}
-                        {typeTravel === "workshop" ? (
-                          <Label className="text-base">Taller</Label>
-                        ) : typeTravel === "toHome" ? (
-                          <Label className="text-base">viaje a casa</Label>
-                        ) : (
-                          <Label className="text-base">
-                            viaje a la escuela
-                          </Label>
-                        )}
-                      </DialogDescription>
-                    </DialogHeader>
-                    <DialogFooter>
-                      <div className="flex flex-row gap-4">
-                        <ButtonAction
-                          color="bg-warning"
-                          onClick={() => setOpenDeleteDialog(false)}
-                        >
-                          Cancelar
-                        </ButtonAction>
-                        <ButtonAction
-                          color="bg-light-gray"
-                          onClick={handleRemoveStudentAll}
-                        >
-                          Todos
-                        </ButtonAction>
-                        <ButtonAction
-                          onClick={handleRemoveStudent}
-                        >{`Solo ${DAYS[selectedDayEdit]}`}</ButtonAction>
-                      </div>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                <ButtonAction
-                  onClick={(e) => handleEditStudent(e, student)}
-                  disabled={false}
-                >
-                  <PencilIcon className="h-4 w-4 text-black" />
-                </ButtonAction>
+                          {typeTravel === "workshop" ? (
+                            <Label className="text-base">Taller</Label>
+                          ) : typeTravel === "toHome" ? (
+                            <Label className="text-base">viaje a casa</Label>
+                          ) : (
+                            <Label className="text-base">
+                              viaje a la escuela
+                            </Label>
+                          )}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter>
+                        <div className="flex flex-row gap-4">
+                          <ButtonAction
+                            color="bg-warning"
+                            onClick={() => setOpenDeleteDialog(false)}
+                          >
+                            Cancelar
+                          </ButtonAction>
+                          <ButtonAction
+                            color="bg-light-gray"
+                            onClick={handleRemoveStudentAll}
+                          >
+                            Todos
+                          </ButtonAction>
+                          <ButtonAction
+                            onClick={handleRemoveStudent}
+                          >{`Solo ${DAYS[selectedDayEdit]}`}</ButtonAction>
+                        </div>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                  <ButtonAction
+                    onClick={(e) => handleEditStudent(e, student)}
+                    disabled={false}
+                  >
+                    <PencilIcon className="h-4 w-4 text-black" />
+                  </ButtonAction>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
