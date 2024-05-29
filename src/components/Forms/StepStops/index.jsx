@@ -39,12 +39,16 @@ const StepStops = ({ name }) => {
     useRoutesStore();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [bothTravels, setBothTravels] = useState(true);
-  const [selectedDay, setSelectedDay] = useState(["all"]);
+  const [selectedDay, setSelectedDay] = useState([]);
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [parentRef, studentsData, setStudentsData] = useDragAndDrop([]);
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [disabledAddStudent, setDisabledAddStudent] = useState(true);
+
+  useEffect(() => {
+    setSelectedDay(["all"]);
+  }, []);
 
   useEffect(() => {
     if (studentsData.length === 0) {
@@ -382,7 +386,7 @@ const StepStops = ({ name }) => {
           {studentsData?.map((student, index) => (
             <li
               key={index}
-              className="grid grid-cols-3 gap-2 my-2 self-center"
+              className="grid grid-cols-3 gap-2 my-2 self-center bg-slate-300/60 items-center px-2 py-2 rounded-md cursor-move"
               data-label={index}
             >
               <div className="col-span-2">
