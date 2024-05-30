@@ -1,13 +1,13 @@
 const studentMock = {
-  name: "Oscar Jack",
-  lastName: "Piastri",
-  secondLastName: "",
-  birthDate: "2016-03-06",
+  name: "Charles Marc Hervé",
+  lastName: "Perceval",
+  secondLastName: "Leclerc",
+  birthDate: "2016-10-16",
   bloodType: "O+",
   allergies: "",
   grade: "2",
   group: "A",
-  enrollment: "Alumno 4",
+  enrollment: "Alumno 5",
   serviceType: "complete",
   avatar: "",
   includeFather: true,
@@ -24,11 +24,11 @@ const studentMock = {
 };
 
 const fatherMock = {
-  name: "Chris",
-  lastName: "Piastri",
+  name: "Hervé",
+  lastName: "Leclerc",
   secondLastName: "",
-  phone: "1234567890",
-  email: "jonathan+13@rutes.mx",
+  phone: "1234567810",
+  email: "jonathan+14@rutes.mx",
   avatar: "",
 };
 
