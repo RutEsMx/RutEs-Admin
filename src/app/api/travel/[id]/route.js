@@ -17,21 +17,25 @@ customInitApp();
  * @returns {Promise<Object>} - A promise that resolves to the JSON response containing the travel routes.
  */
 export async function GET(request, { params }) {
-  const { id } = params;
-  const searchParams = request.nextUrl.searchParams;
-  const day = searchParams.get("day");
-  const type = searchParams.get("type");
-  const response = await firestore()
-    .collection("routes")
-    .where("auxiliar", "==", id)
-    .where("isDeleted", "!=", true)
-    .get();
-  const routes = response.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  }));
-  const travelsToday = await getTravels(routes, day, type);
-  return NextResponse.json(travelsToday);
+  try {
+    const { id } = params;
+    const searchParams = request.nextUrl.searchParams;
+    const day = searchParams.get("day");
+    const type = searchParams.get("type");
+    const response = await firestore()
+      .collection("routes")
+      .where("auxiliar", "==", id)
+      .where("isDeleted", "!=", true)
+      .get();
+    const routes = response.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    const travelsToday = await getTravels(routes, day, type);
+    return NextResponse.json(travelsToday);
+  } catch (error) {
+    console.log("Error:", error);
+  }
 }
 
 /**
@@ -59,9 +63,15 @@ const getTravels = async (routes, day, type) => {
           const studentData = await student.get();
 
           if (studentData.data().status === "inactive") return null;
+          let statusTravel = studentData.data().statusTravel;
+          if (type !== "workshop" && type !== "toSchool") {
+            statusTravel = !studentData.data().statusTravel
+              ? await validateStudentTravelWorkshop(student, day)
+              : studentData.data().statusTravel;
+          }
           return {
             [studentData.id]: {
-              statusTravel: studentData.data().statusTravel,
+              statusTravel: statusTravel,
             },
           };
         }),
@@ -75,3 +85,14 @@ const getTravels = async (routes, day, type) => {
   }
   return travels;
 };
+
+// Validar si el estudiante viaja en algun taller el mismo día
+const validateStudentTravelWorkshop = async (student, day) => {
+  const response = await firestore()
+    .collection("travels")
+    .where(day + ".workshop.students", "array-contains", student)
+    .get();
+  return response.docs.length > 0 ? "workshop" : "";
+};
+
+// Validar si el estudiante viaja con un amigo el mismo día
