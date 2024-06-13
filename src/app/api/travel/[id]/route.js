@@ -57,9 +57,9 @@ const getTravels = async (routes, day, type) => {
         .collection("travels")
         .doc(route.id)
         .get();
-
+      const travelData = responseTravel.data();
       const studentsResponse = await Promise.all(
-        responseTravel.data()[day][type].students.map(async (student) => {
+        travelData[day][type].students.map(async (student) => {
           const studentData = await student.get();
 
           if (studentData.data().status === "inactive") return null;
@@ -76,6 +76,35 @@ const getTravels = async (routes, day, type) => {
           };
         }),
       );
+      let travelWithFriend = [];
+      if (type === "toHome") {
+        travelWithFriend = await getStudentTravelWithFriend(
+          travelData[day][type],
+          day,
+        );
+        if (travelWithFriend.length > 0) {
+          const studentsResponseCopy = [...studentsResponse];
+          // Agregar a la lista de estudiantes(studentsReponse) el amigo que viaja con el estudiante
+          for (const student of studentsResponseCopy) {
+            const studentId = Object.keys(student)[0];
+            const travelStudent = travelWithFriend.find(
+              (item) => item.friendId === studentId,
+            );
+            if (travelStudent) {
+              const friendIndex = travelWithFriend.findIndex(
+                (item) => item.friendId === travelStudent?.friendId,
+              );
+              // Agregarlo en el orden despues del friendIndex
+              studentsResponse.splice(friendIndex + 1, 0, {
+                [travelStudent?.studentId]: {
+                  statusTravel: "accepted",
+                  studentFriend: travelStudent?.friendId,
+                },
+              });
+            }
+          }
+        }
+      }
       travels[route.id] = {
         [type]: {
           students: studentsResponse.filter((student) => student !== null),
@@ -95,4 +124,25 @@ const validateStudentTravelWorkshop = async (student, day) => {
   return response.docs.length > 0 ? "workshop" : "";
 };
 
-// Validar si el estudiante viaja con un amigo el mismo día
+// Obtener el estudiante que viaja con un amigo el mismo día
+// Retornar un array con objetos que contiene el id del estudiante y el id del amigo
+// Si el status es "accepted"
+const getStudentTravelWithFriend = async (travel, day) => {
+  const studentsWithFriend = [];
+  const travelWithFriend = travel?.travelWithFriend || [];
+  for (const student of travelWithFriend) {
+    const travelWithFriendData = await firestore()
+      .collection("travelsWithFriend")
+      .doc(student)
+      .get();
+    const friend = travelWithFriendData?.data()?.[day]?.student;
+    const status = travelWithFriendData?.data()?.[day]?.status;
+    if (status === "accepted") {
+      studentsWithFriend.push({
+        studentId: student,
+        friendId: friend,
+      });
+    }
+  }
+  return studentsWithFriend;
+};
