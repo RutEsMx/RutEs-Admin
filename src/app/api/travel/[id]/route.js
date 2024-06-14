@@ -65,9 +65,11 @@ const getTravels = async (routes, day, type) => {
           if (studentData.data().status === "inactive") return null;
           let statusTravel = studentData.data().statusTravel;
           if (type !== "workshop" && type !== "toSchool") {
-            statusTravel = !studentData.data().statusTravel
-              ? await validateStudentTravelWorkshop(student, day)
-              : studentData.data().statusTravel;
+            statusTravel =
+              !studentData.data().statusTravel ||
+              studentData.data().statusTravel === "cancelToSchool"
+                ? await validateStudentTravelWorkshop(student, day)
+                : studentData.data().statusTravel;
           }
           return {
             [studentData.id]: {
