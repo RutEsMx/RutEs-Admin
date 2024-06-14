@@ -94,14 +94,20 @@ async function getStudentRoute(student, day) {
     .get();
 
   let route = null;
-  stopsRef.forEach((doc) => {
-    route = doc.data().route;
-  });
 
+  // Si stopsRef viene con type 'workshop' retornar el valor de route de ese documento
+  // Si stopsRef viene con type 'toHome' retornar el valor de route de ese documento siempre y y cuando no haya un documento con type 'workshop'
+  // Si stopsRef viene con type 'toSchool' ignorar ese documento
+  stopsRef.docs.forEach((doc) => {
+    if (doc.data().type === "workshop") {
+      route = doc.data().route;
+    } else if (doc.data().type === "toHome" && !route) {
+      route = doc.data().route;
+    }
+  });
   if (!route) {
     throw new Error("Ruta no encontrada");
   }
-
   return route;
 }
 
