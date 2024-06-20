@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { downloadURL } from "@/utils/functionsClient";
 
 const FileInput = ({ label, onChange, value, ...props }) => {
   const [fileName, setFileName] = useState("");
@@ -22,12 +21,7 @@ const FileInput = ({ label, onChange, value, ...props }) => {
     const getImage = async () => {
       if (value) {
         if (typeof value === "string") {
-          try {
-            const url = await downloadURL(value);
-            setImageUrl(url);
-          } catch (error) {
-            console.error(error);
-          }
+          setImageUrl(value);
         } else {
           const file = value;
           const reader = new FileReader();
