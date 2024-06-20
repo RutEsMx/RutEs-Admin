@@ -79,11 +79,12 @@ const getTravels = async (routes, day, type) => {
         }),
       );
       let travelWithFriend = [];
-      if (type === "toHome") {
+      if (type === "toHome" || type === "workshop") {
         travelWithFriend = await getStudentTravelWithFriend(
           travelData[day][type],
           day,
         );
+
         if (travelWithFriend.length > 0) {
           const studentsResponseCopy = [...studentsResponse];
           // Agregar a la lista de estudiantes(studentsReponse) el amigo que viaja con el estudiante
