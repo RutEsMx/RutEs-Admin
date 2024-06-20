@@ -11,7 +11,6 @@ import {
 import StepSchool from "@/components/Forms/StepSchool";
 import { useAuthContext } from "@/context/AuthContext";
 import Alert from "@/components/Alert";
-import { downloadURL } from "@/utils/functionsClient";
 
 const FormSchool = ({ data, isEdit = false }) => {
   const navigation = useRouter();
@@ -38,12 +37,7 @@ const FormSchool = ({ data, isEdit = false }) => {
     if (error) return setError(error?.message);
 
     if (success) {
-      const { logo, ...rest } = result || {};
-      if (typeof logo === "string") {
-        const responseLogo = await downloadURL(logo);
-        rest.logo = responseLogo;
-      }
-      setSchool(rest);
+      setSchool(result);
       setMessage(message);
       return navigation.replace("/dashboard/admin/schools");
     }

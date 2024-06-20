@@ -1,15 +1,4 @@
 import PlacesAutocomplete from "@/components/PlacesAutocomplete";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
-
-const downloadURL = async (path) => {
-  const storage = getStorage();
-  try {
-    const fileRef = ref(storage, path);
-    return getDownloadURL(fileRef);
-  } catch (error) {
-    return { error: error?.message, code: error?.code };
-  }
-};
 
 const generatePassword = () => {
   const length = 8;
@@ -167,10 +156,4 @@ const validateError = (error) => {
   return message;
 };
 
-export {
-  downloadURL,
-  generatePassword,
-  validateEmail,
-  validateServiceType,
-  validateError,
-};
+export { generatePassword, validateEmail, validateServiceType, validateError };
