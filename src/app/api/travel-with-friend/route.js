@@ -5,17 +5,6 @@ import { TRAVEL_WITH_FRIEND_STATUS } from "@/utils/options";
 
 customInitApp();
 
-// Documentation
-// PATCH
-// id
-// day
-// status
-// route
-// fullName
-// student
-// schoolId
-// studentRequest
-
 export async function PATCH(request) {
   const body = await request.json();
   try {
@@ -35,13 +24,17 @@ export async function PATCH(request) {
       // Get a reference to the travels document
       const travelsRef = firestore().collection("travels").doc(body.route);
 
+      // Get a reference of route data
+      const routeData = await getRouteData(body.route);
+
       // Update travels collection based on the status
       if (body.status === "accepted") {
         const studentRequestData = firestore()
           .collection("students")
           .doc(body.studentRequest);
+        const type = routeData?.workshop ? "workshop" : "toHome";
         transaction.update(travelsRef, {
-          [`${body.day}.toHome.travelWithFriend`]:
+          [`${body.day}.${type}.travelWithFriend`]:
             firestore.FieldValue.arrayUnion(body.studentRequest),
         });
         // update statusTravel of the studentRequest
