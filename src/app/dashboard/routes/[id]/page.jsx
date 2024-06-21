@@ -490,13 +490,33 @@ const Page = ({ params }) => {
         </div>
       </div>
       <div className="border border-black px-4 py-2 mt-4">
-        <div className="grid grid-cols-4">
-          <div className="col-span-1">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          <div className="col-span-2 md:col-span-1 mx-3">
+            <span className="">{route?.name}</span>
+            {!isWorkshop && (
+              <SelectField
+                labelTitle="Tipo de viaje"
+                name="typeTravel"
+                options={[
+                  { label: "Escuela - Casa", value: "toHome" },
+                  { label: "Casa - Escuela", value: "toSchool" },
+                ]}
+                value={typeTravel}
+                onValueChange={(value) => {
+                  setTypeTravel(value);
+                }}
+              />
+            )}
+            <SelectField
+              labelTitle="Día"
+              name="day"
+              options={SELECT_DAY}
+              value={selectedDay}
+              onValueChange={setSelectedDay}
+            />
+          </div>
+          <div className="col-span-2 md:col-span-1">
             <div className="flex flex-col justify-around">
-              <div className="flex flex-row gap-2">
-                <span className="font-bold">Nombre:</span>
-                <span className="">{route?.name}</span>
-              </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Capacidad:</span>
                 <span className="">{route?.capacity}</span>
@@ -526,30 +546,8 @@ const Page = ({ params }) => {
               </div>
             </div>
           </div>
-          <div className="col-span-1 mx-3">
-            {!isWorkshop && (
-              <SelectField
-                labelTitle="Tipo de viaje"
-                name="typeTravel"
-                options={[
-                  { label: "Escuela - Casa", value: "toHome" },
-                  { label: "Casa - Escuela", value: "toSchool" },
-                ]}
-                value={typeTravel}
-                onValueChange={(value) => {
-                  setTypeTravel(value);
-                }}
-              />
-            )}
-            <SelectField
-              labelTitle="Día"
-              name="day"
-              options={SELECT_DAY}
-              value={selectedDay}
-              onValueChange={setSelectedDay}
-            />
-          </div>
-          <div className="col-span-2 bg-gray lg:h-[500px] sm:h-[250px] w-full bg-yellow-300">
+
+          <div className="col-span-2 bg-gray md:h-[500px] w-full bg-yellow-300">
             <Maps markers={markers} center={center} />
           </div>
         </div>
