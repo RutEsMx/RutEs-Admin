@@ -69,7 +69,9 @@ const getTravels = async (routes, day, type) => {
               !studentData.data().statusTravel ||
               studentData.data().statusTravel === "cancelToSchool"
                 ? await validateStudentTravelWorkshop(student, day)
-                : studentData.data().statusTravel;
+                : (studentData.data().statusTravel !== "workshop" &&
+                    studentData.data().statusTravel) ||
+                  "";
           }
           return {
             [studentData.id]: {
