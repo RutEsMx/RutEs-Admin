@@ -48,7 +48,7 @@ const MapStops = () => {
   };
 
   return (
-    <div className="bg-gray lg:h-[500px] sm:h-[250px]">
+    <div className="bg-gray md:h-[500px]">
       <Maps markers={markers} setMarker={setMarkerValue} />
     </div>
   );

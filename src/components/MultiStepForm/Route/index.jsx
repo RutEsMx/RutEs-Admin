@@ -92,8 +92,8 @@ const FormRoute = ({ data, isEdit = false }) => {
                 {isEdit ? "Guardar" : "Crear"}
               </Button>
             </div>
-            <div className="grid grid-cols-5 gap-4">
-              <div className="col-span-2 border-2 border-gray rounded-lg p-4">
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+              <div className="col-span-3 md:col-span-2 border-2 border-gray rounded-lg p-4">
                 <Tabs defaultValue="data">
                   <TabsList>
                     <TabsTrigger value="data">DATOS</TabsTrigger>
