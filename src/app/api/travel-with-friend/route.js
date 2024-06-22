@@ -210,6 +210,12 @@ export async function POST(request) {
 
     return NextResponse.json({ route, travel });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    if (error.message === "Ruta no encontrada") {
+      return NextResponse.json(
+        { error: "No hay ruta asignada de este estudiante para este día" },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json({ error: error?.message }, { status: 500 });
   }
 }
