@@ -70,7 +70,6 @@ export async function POST(request) {
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
-
 export async function GET(request) {
   const searchParams = request.nextUrl.searchParams;
   const schoolId = searchParams.get("schoolId");
