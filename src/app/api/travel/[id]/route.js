@@ -71,8 +71,11 @@ const getTravels = async (routes, day, type) => {
                 ? await validateStudentTravelWorkshop(student, day)
                 : (studentData.data().statusTravel !== "workshop" &&
                     studentData.data().statusTravel) ||
+                  (studentData.data().statusTravel === "workshop" &&
+                    studentData.data().statusTravel) ||
                   "";
           }
+
           return {
             [studentData.id]: {
               statusTravel: statusTravel,
@@ -80,10 +83,9 @@ const getTravels = async (routes, day, type) => {
           };
         }),
       );
+
       let travelWithFriend = [];
       if (type === "toHome" || type === "workshop") {
-        console.log("🚀 ~ getTravels ~ travelData[day]:", travelData[day]);
-
         if (travelData[day]?.[type])
           travelWithFriend = await getStudentTravelWithFriend(
             travelData[day][type],
