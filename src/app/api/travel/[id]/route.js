@@ -50,8 +50,8 @@ const getTravels = async (routes, day, type) => {
 
   for (const route of routes) {
     if (
-      (type === "workshop" && route.workshop) ||
-      (type !== "workshop" && !route.workshop)
+      (type === "workshop" && route?.workshop) ||
+      (type !== "workshop" && !route?.workshop)
     ) {
       const responseTravel = await firestore()
         .collection("travels")
@@ -82,10 +82,13 @@ const getTravels = async (routes, day, type) => {
       );
       let travelWithFriend = [];
       if (type === "toHome" || type === "workshop") {
-        travelWithFriend = await getStudentTravelWithFriend(
-          travelData[day][type],
-          day,
-        );
+        console.log("🚀 ~ getTravels ~ travelData[day]:", travelData[day]);
+
+        if (travelData[day]?.[type])
+          travelWithFriend = await getStudentTravelWithFriend(
+            travelData[day][type],
+            day,
+          );
 
         if (travelWithFriend.length > 0) {
           const studentsResponseCopy = [...studentsResponse];
@@ -110,11 +113,20 @@ const getTravels = async (routes, day, type) => {
           }
         }
       }
-      travels[route.id] = {
-        [type]: {
-          students: studentsResponse.filter((student) => student !== null),
-        },
-      };
+      // Asegúrate de que travels[route.id] esté inicializado
+      if (!travels[route.id]) {
+        travels[route.id] = {};
+      }
+
+      // Asegúrate de que travels[route.id][type] esté inicializado
+      if (!travels[route.id][type]) {
+        travels[route.id][type] = {};
+      }
+
+      // Ahora es seguro asignar la propiedad students
+      travels[route.id][type].students = studentsResponse.filter(
+        (student) => student !== null,
+      );
     }
   }
   return travels;
@@ -122,11 +134,15 @@ const getTravels = async (routes, day, type) => {
 
 // Validar si el estudiante viaja en algun taller el mismo día
 const validateStudentTravelWorkshop = async (student, day) => {
-  const response = await firestore()
-    .collection("travels")
-    .where(day + ".workshop.students", "array-contains", student)
-    .get();
-  return response.docs.length > 0 ? "workshop" : "";
+  try {
+    const response = await firestore()
+      .collection("travels")
+      .where(day + ".workshop.students", "array-contains", student)
+      .get();
+    return response.docs.length > 0 ? "workshop" : "";
+  } catch (error) {
+    return "";
+  }
 };
 
 // Obtener el estudiante que viaja con un amigo el mismo día
