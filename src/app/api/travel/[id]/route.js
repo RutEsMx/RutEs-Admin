@@ -58,8 +58,9 @@ const getTravels = async (routes, day, type) => {
         .doc(route.id)
         .get();
       const travelData = responseTravel.data();
+      if (!travelData?.[day]) return null;
       const studentsResponse = await Promise.all(
-        travelData[day][type].students.map(async (student) => {
+        travelData?.[day]?.[type]?.students.map(async (student) => {
           const studentData = await student.get();
 
           if (studentData.data().status === "inactive") return null;
