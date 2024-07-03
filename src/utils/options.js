@@ -56,8 +56,9 @@ const COLORS = {
   inactive: "text-red-500",
   absent: "text-yellow-500",
   toSchool: "text-green-600",
-  toHome: "text-blue-500",
+  toHome: "text-green-500",
   workshop: "text-gray-500",
+  finished: "text-gray-500",
 };
 
 const COLORS_HEX = {

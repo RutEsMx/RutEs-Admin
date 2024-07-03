@@ -1,3 +1,4 @@
+"use client";
 import FormRoute from "@/components/MultiStepForm/Route";
 import Link from "next/link";
 
