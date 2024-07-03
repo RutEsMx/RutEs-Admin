@@ -372,8 +372,8 @@ const StepStops = ({ name }) => {
             labelTitle="Tipo de viaje"
             name="typeTravel"
             options={[
-              { label: "Escuela - Casa", value: "toHome" },
-              { label: "Casa - Escuela", value: "toSchool" },
+              { label: "Viaje a Casa", value: "toHome" },
+              { label: "Viaje a Escuela", value: "toSchool" },
             ]}
             value={typeTravel}
             onValueChange={(value) => {

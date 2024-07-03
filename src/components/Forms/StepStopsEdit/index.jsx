@@ -106,7 +106,9 @@ const StepStopsEdit = ({ name }) => {
       const filterStudents = studentsRoutes.filter((student) => {
         if (typeTravel === "workshop") return true;
         if (!student.stops) return true;
-        return !student.stops.some((stop) => selectedDay.includes(stop.day));
+        return !student.stops.some(
+          (stop) => selectedDay.includes(stop.day) && stop.type === typeTravel,
+        );
       });
       setAvailableStudents(filterStudents);
     }
@@ -389,8 +391,8 @@ const StepStopsEdit = ({ name }) => {
             labelTitle="Tipo de viaje"
             name="typeTravel"
             options={[
-              { label: "Escuela - Casa", value: "toHome" },
-              { label: "Casa - Escuela", value: "toSchool" },
+              { label: "Viaje a Casa", value: "toHome" },
+              { label: "Viaje a Escuela", value: "toSchool" },
             ]}
             value={typeTravel}
             onValueChange={(value) => {
