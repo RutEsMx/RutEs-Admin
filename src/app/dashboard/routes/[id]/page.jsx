@@ -146,10 +146,10 @@ const Page = ({ params }) => {
                 if (!snpStudent.exists()) return;
                 const studentData = snpStudent.data();
                 const colorMarker =
-                  studentData["workshop"].delivered &&
+                  studentData["workshop"]?.delivered &&
                   travel[selectedDay]["workshop"]?.start
                     ? "#4F504F"
-                    : studentData["workshop"].pickedUp
+                    : studentData["workshop"]?.pickedUp
                     ? "#FFBF3B"
                     : "#4F504F";
                 stopResponse.forEach(async (stop) => {
