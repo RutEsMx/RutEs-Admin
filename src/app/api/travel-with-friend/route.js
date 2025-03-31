@@ -5,16 +5,38 @@ import { TRAVEL_WITH_FRIEND_STATUS } from "@/utils/options";
 
 customInitApp();
 
-// Documentation
-// PATCH
-// id
-// day
-// status
-// route
-// fullName
-// student
-// schoolId
-// studentRequest
+const getTokensFromParents = async (id) => {
+  const studentRef = await firestore().collection("students").doc(id).get();
+  const parents = studentRef.data().parents;
+  const tutors = studentRef.data().tutors;
+  const tokens = [];
+
+  const parentPromises = parents.map(async (parent) => {
+    if (!parent?.id) return;
+    const parentRef = await firestore()
+      .collection("profile")
+      .doc(parent?.id)
+      .get();
+    const parentTokens = parentRef.data().tokens;
+    if (parentTokens?.length > 0)
+      tokens.push(parentTokens[parentTokens?.length - 1]);
+  });
+
+  const tutorPromises = tutors.map(async (tutor) => {
+    if (!tutor?.id) return;
+    const tutorRef = await firestore()
+      .collection("profile")
+      .doc(tutor?.id)
+      .get();
+    const tutorTokens = tutorRef.data().tokens;
+    if (tutorTokens?.length > 0)
+      tokens.push(tutorTokens[tutorTokens.length - 1]);
+  });
+
+  await Promise.all([...parentPromises, ...tutorPromises]);
+  const tokensFilter = tokens.filter((token) => token);
+  return tokensFilter;
+};
 
 export async function PATCH(request) {
   const body = await request.json();
@@ -35,13 +57,17 @@ export async function PATCH(request) {
       // Get a reference to the travels document
       const travelsRef = firestore().collection("travels").doc(body.route);
 
+      // Get a reference of route data
+      const routeData = await getRouteData(body.route);
+
       // Update travels collection based on the status
       if (body.status === "accepted") {
         const studentRequestData = firestore()
           .collection("students")
           .doc(body.studentRequest);
+        const type = routeData?.workshop ? "workshop" : "toHome";
         transaction.update(travelsRef, {
-          [`${body.day}.toHome.travelWithFriend`]:
+          [`${body.day}.${type}.travelWithFriend`]:
             firestore.FieldValue.arrayUnion(body.studentRequest),
         });
         // update statusTravel of the studentRequest
@@ -55,7 +81,7 @@ export async function PATCH(request) {
         });
       }
     });
-
+    const tokens = await getTokensFromParents(body.id);
     // Send a notification after the transaction is completed
     fetch(`${process.env.NEXT_PUBLIC_URL_API}api/notifications`, {
       method: "POST",
@@ -64,7 +90,7 @@ export async function PATCH(request) {
       },
       body: JSON.stringify({
         title: `El viaje con amigo ha sido actualizado`,
-        body: `El viaje con amigo de ${body.fullName} ha sido actualizado a ${
+        body: `El viaje con amigo de ${body.fullName?.trim()} ha sido actualizado a ${
           TRAVEL_WITH_FRIEND_STATUS[body.status]
         }`,
         data: {
@@ -73,6 +99,7 @@ export async function PATCH(request) {
           studentRequest: body.id,
           student: body.student,
         },
+        tokens,
         category: "travelWithFriend",
       }),
     });
@@ -94,14 +121,20 @@ async function getStudentRoute(student, day) {
     .get();
 
   let route = null;
-  stopsRef.forEach((doc) => {
-    route = doc.data().route;
-  });
 
+  // Si stopsRef viene con type 'workshop' retornar el valor de route de ese documento
+  // Si stopsRef viene con type 'toHome' retornar el valor de route de ese documento siempre y y cuando no haya un documento con type 'workshop'
+  // Si stopsRef viene con type 'toSchool' ignorar ese documento
+  stopsRef.docs.forEach((doc) => {
+    if (doc.data().type === "workshop") {
+      route = doc.data().route;
+    } else if (doc.data().type === "toHome" && !route) {
+      route = doc.data().route;
+    }
+  });
   if (!route) {
     throw new Error("Ruta no encontrada");
   }
-
   return route;
 }
 
@@ -211,6 +244,12 @@ export async function POST(request) {
 
     return NextResponse.json({ route, travel });
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    if (error.message === "Ruta no encontrada") {
+      return NextResponse.json(
+        { error: "No hay ruta asignada de este estudiante para este día" },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json({ error: error?.message }, { status: 500 });
   }
 }

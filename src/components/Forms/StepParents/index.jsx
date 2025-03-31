@@ -6,7 +6,6 @@ import { db } from "@/firebase/client";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import ButtonAction from "@/components/ButtonAction";
-import { downloadURL } from "@/utils/functionsClient";
 import { setAlert } from "@/store/useSystemStore";
 import { useAuthContext } from "@/context/AuthContext";
 
@@ -65,8 +64,7 @@ const StepParents = ({ validation }) => {
     setFieldValue(`${type}.id`, emailData.id);
     setFieldValue(`${type}.students`, emailData.students);
     if (emailData?.avatar) {
-      const url = await downloadURL(emailData.avatar);
-      setFieldValue(`${type}.avatar`, url);
+      setFieldValue(`${type}.avatar`, emailData?.avatar);
     }
     setFieldValue(`${type}.emailExist`, true);
   };

@@ -10,7 +10,6 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import ButtonAction from "@/components/ButtonAction";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { downloadURL } from "@/utils/functionsClient";
 import { useAuthContext } from "@/context/AuthContext";
 import { tutorMock } from "@/mocks/createStudent";
 import { getParents } from "@/services/ParentsSevices";
@@ -75,8 +74,7 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
     setFieldValue("id", emailData.id);
     setFieldValue("students", emailData.students);
     if (emailData?.avatar) {
-      const url = await downloadURL(emailData.avatar);
-      setFieldValue("avatar", url);
+      setFieldValue("avatar", emailData?.avatar);
     }
     setFieldValue("emailExist", true);
   };

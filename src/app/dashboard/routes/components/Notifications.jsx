@@ -34,7 +34,6 @@ const Notifications = () => {
           (snapshot) => {
             const data = snapshot.docs.map((doc) => {
               const notify = doc.data();
-              if (notify?.category === "parent") return;
               return { id: doc.id, ...notify };
             });
             const dataFilter = data.filter((item) => item);

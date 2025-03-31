@@ -4,13 +4,11 @@ import { useRoutesStore } from "@/store/useRoutesStore";
 import { onSnapshot, query, collection, where } from "firebase/firestore";
 import { db } from "@/firebase/client";
 import { useAuthContext } from "@/context/AuthContext";
-import { useState } from "react";
 import { useEffect } from "react";
 
 const RoutesCards = () => {
-  const { setRoutes } = useRoutesStore();
+  const { setRoutes, routes } = useRoutesStore();
   const { school } = useAuthContext();
-  const [routesData, setRoutesData] = useState([]);
 
   useEffect(() => {
     if (!school) return;
@@ -25,7 +23,6 @@ const RoutesCards = () => {
         routes.push({ ...doc.data(), id: doc.id });
       });
       setRoutes(routes);
-      setRoutesData(routes);
     });
 
     return () => {
@@ -35,7 +32,7 @@ const RoutesCards = () => {
 
   return (
     <div className="grid grid-cols-2 gap-2">
-      {routesData?.map((route) => (
+      {routes?.map((route) => (
         <RouteCard route={route} key={route?.id} />
       ))}
     </div>

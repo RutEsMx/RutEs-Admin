@@ -75,7 +75,7 @@ const Page = ({ params }) => {
   const errorPosition = () => {};
 
   useEffect(() => {
-    // Obtiene la ubicación en tiempo real
+    // Obtiene la ubicación en tiempo real del autobús
     const qTracking = doc(db, "tracking", params.id);
     const unsubscribeTracking = onSnapshot(qTracking, (doc) => {
       if (!doc.exists()) return;
@@ -87,7 +87,7 @@ const Page = ({ params }) => {
           lat: tracking?._lat,
           lng: tracking?._long,
           studentId: params.id,
-          color: "#049818",
+          color: "#000",
           name: "Autobús",
         },
       ]);
@@ -146,11 +146,11 @@ const Page = ({ params }) => {
                 if (!snpStudent.exists()) return;
                 const studentData = snpStudent.data();
                 const colorMarker =
-                  studentData["workshop"].delivered &&
+                  studentData["workshop"]?.delivered &&
                   travel[selectedDay]["workshop"]?.start
+                    ? "#4F504F"
+                    : studentData["workshop"]?.pickedUp
                     ? "#FFBF3B"
-                    : studentData["workshop"].pickedUp
-                    ? "#0867ec"
                     : "#4F504F";
                 stopResponse.forEach(async (stop) => {
                   if (stop.exists() === false) return;
@@ -250,9 +250,9 @@ const Page = ({ params }) => {
                 const colorMarker =
                   studentData[typeTravel]?.delivered &&
                   !travel[selectedDay][typeTravel]?.startTravelFromSchool
-                    ? "#FFBF3B"
+                    ? "#4F504F"
                     : studentData[typeTravel]?.pickedUp
-                    ? "#0867ec"
+                    ? "#FFBF3B"
                     : "#4F504F";
                 stopResponse.forEach(async (stop) => {
                   if (stop.exists() === false) return;
@@ -323,6 +323,9 @@ const Page = ({ params }) => {
             unsubscribeStudents.push(unsubscribeStudent);
           });
           setStatusName(startFromSchool);
+          if (startFromSchool.includes("finalizado")) {
+            return setColor(COLORS.finished);
+          }
           return setColor(COLORS.toHome);
         } else if (typeTravel === "toHome") {
           const startFromHome = travel[selectedDay][typeTravel]?.start
@@ -347,9 +350,9 @@ const Page = ({ params }) => {
                 const colorMarker =
                   studentData[typeTravel]?.delivered &&
                   travel[selectedDay][typeTravel]?.start
-                    ? "#FFBF3B"
+                    ? "#4F504F"
                     : studentData[typeTravel]?.pickedUp
-                    ? "#0867ec"
+                    ? "#FFBF3B"
                     : "#4F504F";
                 stopResponse.forEach(async (stop) => {
                   if (stop.exists() === false) return;
@@ -420,6 +423,9 @@ const Page = ({ params }) => {
             unsubscribeStudents.push(unsubscribeStudent);
           });
           setStatusName(startFromHome);
+          if (startFromHome.includes("finalizado")) {
+            return setColor(COLORS.finished);
+          }
           return setColor(COLORS.toSchool);
         }
       } catch (error) {
@@ -490,13 +496,33 @@ const Page = ({ params }) => {
         </div>
       </div>
       <div className="border border-black px-4 py-2 mt-4">
-        <div className="grid grid-cols-4">
-          <div className="col-span-1">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          <div className="col-span-2 md:col-span-1 mx-3">
+            <span className="">{route?.name}</span>
+            {!isWorkshop && (
+              <SelectField
+                labelTitle="Tipo de viaje"
+                name="typeTravel"
+                options={[
+                  { label: "Viaje a Casa", value: "toHome" },
+                  { label: "Viaje a Escuela", value: "toSchool" },
+                ]}
+                value={typeTravel}
+                onValueChange={(value) => {
+                  setTypeTravel(value);
+                }}
+              />
+            )}
+            <SelectField
+              labelTitle="Día"
+              name="day"
+              options={SELECT_DAY}
+              value={selectedDay}
+              onValueChange={setSelectedDay}
+            />
+          </div>
+          <div className="col-span-2 md:col-span-1">
             <div className="flex flex-col justify-around">
-              <div className="flex flex-row gap-2">
-                <span className="font-bold">Nombre:</span>
-                <span className="">{route?.name}</span>
-              </div>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Capacidad:</span>
                 <span className="">{route?.capacity}</span>
@@ -526,30 +552,8 @@ const Page = ({ params }) => {
               </div>
             </div>
           </div>
-          <div className="col-span-1 mx-3">
-            {!isWorkshop && (
-              <SelectField
-                labelTitle="Tipo de viaje"
-                name="typeTravel"
-                options={[
-                  { label: "Escuela - Casa", value: "toHome" },
-                  { label: "Casa - Escuela", value: "toSchool" },
-                ]}
-                value={typeTravel}
-                onValueChange={(value) => {
-                  setTypeTravel(value);
-                }}
-              />
-            )}
-            <SelectField
-              labelTitle="Día"
-              name="day"
-              options={SELECT_DAY}
-              value={selectedDay}
-              onValueChange={setSelectedDay}
-            />
-          </div>
-          <div className="col-span-2 bg-gray lg:h-[500px] sm:h-[250px] w-full bg-yellow-300">
+
+          <div className="col-span-2 bg-gray md:h-[500px] w-full">
             <Maps markers={markers} center={center} />
           </div>
         </div>

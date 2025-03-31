@@ -1,5 +1,5 @@
 import { customInitApp } from "@/firebase/admin";
-import { getStorage } from "firebase-admin/storage";
+import { getStorage, getDownloadURL } from "firebase-admin/storage";
 import { NextResponse } from "next/server";
 import { writeFile } from "fs/promises";
 
@@ -29,11 +29,11 @@ export async function POST(request) {
     });
 
   const responseUpdload = await uploadFile(file, type);
-  const filename = responseUpdload[0].name;
-
+  // Get url of the uploaded file getDownloadURL()
+  const url = await getDownloadURL(responseUpdload[0]);
   return NextResponse.json({
     success: true,
-    result: filename,
+    result: url,
     message: "Imagen subida correctamente",
   });
 }

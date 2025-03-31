@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { getStudentById } from "@/services/StudentsServices";
 import { DAYS, OPTIONS_TYPE_SERVICES, TYPE_TRAVEL } from "@/utils/options";
 import Image from "next/image";
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
 import ButtonLink from "@/components/ButtonLink";
 import { useStudentsStore } from "@/store/useStudentsStore";
 import useTutorsByStudents from "@/hooks/useTutorsByStudents";
@@ -14,8 +13,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import useStopsStudentDetails from "@/hooks/useStopsStudentDetails";
-
-const storage = getStorage();
 
 const Page = ({ params }) => {
   const { student, updateStudent } = useStudentsStore();
@@ -30,14 +27,7 @@ const Page = ({ params }) => {
       const student = await getStudentById(params.id);
 
       if (student?.avatar) {
-        const fileRef = ref(storage, student?.avatar);
-        getDownloadURL(fileRef)
-          .then((url) => {
-            setImageUrl(url);
-          })
-          .catch((error) => {
-            toast.error(error?.message);
-          });
+        setImageUrl(student?.avatar);
       }
     };
     setIsClient(true);

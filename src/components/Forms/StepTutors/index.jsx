@@ -7,7 +7,6 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import ButtonAction from "@/components/ButtonAction";
 import { db } from "@/firebase/client";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { downloadURL } from "@/utils/functionsClient";
 import { setAlert } from "@/store/useSystemStore";
 import { useAuthContext } from "@/context/AuthContext";
 
@@ -78,8 +77,7 @@ const StepTutors = ({ step }) => {
     setFieldValue(`tutors_${stepTutors}.id`, emailData.id);
     setFieldValue(`tutors_${stepTutors}.students`, emailData.students);
     if (emailData?.avatar) {
-      const url = await downloadURL(emailData.avatar);
-      setFieldValue(`tutors_${stepTutors}.avatar`, url);
+      setFieldValue(`tutors_${stepTutors}.avatar`, emailData.avatar);
     }
     setFieldValue(`tutors_${stepTutors}.emailExist`, true);
   };

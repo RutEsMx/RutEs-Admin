@@ -5,7 +5,6 @@ import {
   updateDocument,
 } from "@/firebase/crud";
 import { signOut } from "@/firebase/auth";
-import { downloadURL } from "@/utils/functionsClient";
 
 const createSchoolByForm = async (data) => {
   const { logo, ...restData } = data;
@@ -79,10 +78,6 @@ const getSchooldById = async (id) => {
   try {
     const response = await getDocumentById("schools", id);
     if (response?.error) return { error: response.error };
-    if (typeof response?.logo === "string") {
-      const logoResponse = await downloadURL(response?.logo);
-      response.logo = logoResponse;
-    }
     return { success: true, data: response };
   } catch (error) {
     signOut();

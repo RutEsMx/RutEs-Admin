@@ -41,13 +41,17 @@ const StepStopsEdit = ({ name }) => {
     values?.students?.[selectedDayEdit]?.[typeTravel] || [],
   );
   const [selectedStudentToRemove, setSelectedStudentToRemove] = useState(null);
-  const [selectedDay, setSelectedDay] = useState(["all"]);
+  const [selectedDay, setSelectedDay] = useState([]);
   const [bothTravels, setBothTravels] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [isEditStudent, setIsEditStudent] = useState(false);
   const [availableStudents, setAvailableStudents] = useState([]);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [disabledAddStudent, setDisabledAddStudent] = useState(true);
+
+  useEffect(() => {
+    setSelectedDay(["all"]);
+  }, []);
 
   useEffect(() => {
     setFieldValue("students", {
@@ -102,7 +106,9 @@ const StepStopsEdit = ({ name }) => {
       const filterStudents = studentsRoutes.filter((student) => {
         if (typeTravel === "workshop") return true;
         if (!student.stops) return true;
-        return !student.stops.some((stop) => selectedDay.includes(stop.day));
+        return !student.stops.some(
+          (stop) => selectedDay.includes(stop.day) && stop.type === typeTravel,
+        );
       });
       setAvailableStudents(filterStudents);
     }
@@ -385,8 +391,8 @@ const StepStopsEdit = ({ name }) => {
             labelTitle="Tipo de viaje"
             name="typeTravel"
             options={[
-              { label: "Escuela - Casa", value: "toHome" },
-              { label: "Casa - Escuela", value: "toSchool" },
+              { label: "Viaje a Casa", value: "toHome" },
+              { label: "Viaje a Escuela", value: "toSchool" },
             ]}
             value={typeTravel}
             onValueChange={(value) => {
@@ -401,7 +407,7 @@ const StepStopsEdit = ({ name }) => {
             return (
               <li
                 key={student?.id}
-                className="grid grid-cols-3 gap-2 my-2 self-center"
+                className="grid grid-cols-3 gap-2 my-2 self-center bg-slate-300/60 items-center px-2 py-2 rounded-md cursor-grab"
                 data-label={student.id}
               >
                 <div className="col-span-2">
