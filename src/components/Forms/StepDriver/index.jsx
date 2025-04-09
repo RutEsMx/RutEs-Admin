@@ -14,11 +14,31 @@ const StepDriver = ({ isEdit }) => {
         <div className="col-span-2">
           <div className="grid grid-cols-2 gap-4 mb-4">
             <InputField
+              //modifique en nombres y apellidos en onChane y adicione el onKeyDown
               label="Nombre(s)"
               type="text"
               name="name"
               value={values.name}
-              onChange={handleChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                  handleChange(e);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (
+                  !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                  ![
+                    "Backspace",
+                    "Tab",
+                    "Delete",
+                    "ArrowLeft",
+                    "ArrowRight",
+                  ].includes(e.key)
+                ) {
+                  e.preventDefault();
+                }
+              }}
               error={errors.name}
             />
           </div>
@@ -28,7 +48,26 @@ const StepDriver = ({ isEdit }) => {
               type="text"
               name="lastName"
               value={values.lastName}
-              onChange={handleChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                  handleChange(e);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (
+                  !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                  ![
+                    "Backspace",
+                    "Tab",
+                    "Delete",
+                    "ArrowLeft",
+                    "ArrowRight",
+                  ].includes(e.key)
+                ) {
+                  e.preventDefault();
+                }
+              }}
               error={errors.lastName}
             />
             <InputField
@@ -36,7 +75,26 @@ const StepDriver = ({ isEdit }) => {
               type="text"
               name="secondLastName"
               value={values.secondLastName}
-              onChange={handleChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                  handleChange(e);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (
+                  !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                  ![
+                    "Backspace",
+                    "Tab",
+                    "Delete",
+                    "ArrowLeft",
+                    "ArrowRight",
+                  ].includes(e.key)
+                ) {
+                  e.preventDefault();
+                }
+              }}
             />
             <InputField
               label="Teléfono"
@@ -54,14 +112,22 @@ const StepDriver = ({ isEdit }) => {
               value={values.adminNumber}
               onChange={handleChange}
               error={errors.adminNumber}
+              maxLength={10}
+              //Limite el numero de adminitrador a 10 caracteres
             />
             <InputField
               label="Licencia de conducir"
               type="text"
               name="license"
               value={values.license}
-              onChange={handleChange}
+              onChange={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+                handleChange(e);
+              }}
+              //considero que en letras mayusculas se podira usar para mantener un estandar
               error={errors.license}
+              maxLength={10}
+              //limite a 10 el numero de la licencia
             />
           </div>
         </div>
