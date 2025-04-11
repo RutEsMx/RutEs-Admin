@@ -18,7 +18,12 @@ const StepAuxiliar = ({ isEdit }) => {
               type="text"
               name="name"
               value={values.name}
-              onChange={handleChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                  handleChange(e);
+                }
+              }}
               error={errors.name}
             />
           </div>
@@ -28,7 +33,12 @@ const StepAuxiliar = ({ isEdit }) => {
               type="text"
               name="lastName"
               value={values.lastName}
-              onChange={handleChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                  handleChange(e);
+                }
+              }}
               error={errors.lastName}
             />
             <InputField
@@ -36,7 +46,12 @@ const StepAuxiliar = ({ isEdit }) => {
               type="text"
               name="secondLastName"
               value={values.secondLastName}
-              onChange={handleChange}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                  handleChange(e);
+                }
+              }}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -65,7 +80,17 @@ const StepAuxiliar = ({ isEdit }) => {
               type="text"
               name="adminNumber"
               value={values.adminNumber}
-              onChange={handleChange}
+              onChange={(e) => {
+                const onlyNums = e.target.value.replace(/\D/g, ""); // elimina todo lo que no sea número
+                if (onlyNums.length <= 10) {
+                  handleChange({
+                    target: {
+                      name: e.target.name,
+                      value: onlyNums,
+                    },
+                  });
+                }
+              }}
               error={errors.adminNumber}
             />
           </div>
