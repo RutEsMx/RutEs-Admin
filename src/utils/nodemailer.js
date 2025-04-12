@@ -1,3 +1,5 @@
+"use server";
+
 import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
@@ -9,6 +11,10 @@ const PATHS = {
 };
 
 async function sendMail(subject, toEmail, context, pathname) {
+  if (typeof window !== "undefined") {
+    throw new Error("Esta función solo puede ser llamada desde el servidor");
+  }
+
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -17,26 +23,25 @@ async function sendMail(subject, toEmail, context, pathname) {
     },
   });
 
+  const safeContext = JSON.parse(JSON.stringify(context || {}));
   const enrichedContext = {
-    ...context,
+    ...safeContext,
     year: new Date().getFullYear(),
   };
 
-  if (typeof window === "undefined") {
-    transporter.use(
-      "compile",
-      hbs({
-        viewEngine: {
-          extName: ".hbs",
-          layoutsDir: path.resolve("./src/views/layouts"),
-          defaultLayout: false,
-          partialsDir: path.resolve("./src/views"),
-        },
-        viewPath: path.resolve("./src/views"),
+  transporter.use(
+    "compile",
+    hbs({
+      viewEngine: {
         extName: ".hbs",
-      }),
-    );
-  }
+        layoutsDir: path.resolve("./src/views/layouts"),
+        defaultLayout: false,
+        partialsDir: path.resolve("./src/views"),
+      },
+      viewPath: path.resolve("./src/views"),
+      extName: ".hbs",
+    }),
+  );
 
   var mailOptions = {
     from: process.env.NODEMAILER_EMAIL,
@@ -46,15 +51,27 @@ async function sendMail(subject, toEmail, context, pathname) {
     template: PATHS[pathname],
   };
 
-  return await new Promise((resolve, reject) => {
-    transporter.sendMail(mailOptions, (err, response) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(response);
-      }
+  try {
+    const result = await new Promise((resolve, reject) => {
+      transporter.sendMail(mailOptions, (err, response) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(response);
+        }
+      });
     });
-  });
+
+    return {
+      success: true,
+      messageId: result.messageId,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
 }
 
 export default sendMail;

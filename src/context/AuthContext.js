@@ -32,24 +32,47 @@ export function AuthContextProvider({ children }) {
         return;
       }
       try {
+        // Obtener perfil
         const profile = await getDocumentByField("profile", "id", user?.uid);
-        setUser(user);
+
+        // Almacenar usuario de Firebase
+        setUser({
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          emailVerified: user.emailVerified,
+        });
+
+        // Obtener token JWT y establecer cookies
         const jwt = await user?.getIdToken();
         await getCookies(jwt);
-        const school = await getSchooldById(profile?.schoolId);
-        if (school?.error) {
-          throw new Error(school?.error?.message);
+
+        // Obtener datos de la escuela
+        const schoolResponse = await getSchooldById(profile?.schoolId);
+        if (schoolResponse?.error) {
+          throw new Error(schoolResponse?.error?.message);
         }
+
+        // Establecer datos del perfil y escuela
         setProfile(profile);
-        setSchool(school.data);
+        setSchool(schoolResponse.data);
         setLoading(false);
-        getAuxiliars();
-        getDrivers();
-        getUnits();
-        getParents();
-        getStudents();
+
+        // Cargar datos adicionales
+        Promise.all([
+          getAuxiliars(),
+          getDrivers(),
+          getUnits(),
+          getParents(),
+          getStudents(),
+        ]).catch((error) => {
+          console.error("Error al cargar datos adicionales:", error);
+        });
       } catch (error) {
+        console.error("Error en AuthContext:", error);
         alert(error.message);
+        setLoading(false);
       }
     });
 
