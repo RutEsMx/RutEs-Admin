@@ -1,22 +1,20 @@
+"use client";
 import DataTable from "@/components/Table/DataTable";
 import ButtonLink from "@/components/ButtonLink";
+import { getSchools } from "@/services/SchoolServices";
+import { useState, useEffect } from "react";
 
-const getDataSchools = async () => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/schools?pageIndex=0&pageSize=10`,
-      { cache: "no-store" },
-    );
-    if (!response.ok) return { error: response.statusText };
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    return { error };
-  }
-};
+export default function Page() {
+  const [dataSchools, setDataSchools] = useState(null);
 
-export default async function Page() {
-  const dataSchools = await getDataSchools();
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await getSchools();
+      setDataSchools(response);
+    };
+    fetchData();
+  }, []);
+
   return (
     <>
       <div className="grid grid-cols-2">

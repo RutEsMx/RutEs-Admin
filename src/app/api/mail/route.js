@@ -6,9 +6,23 @@ export async function POST(request) {
   const { subject, context, toEmail, path } = res;
 
   try {
-    await sendMail(subject, toEmail, context, path);
-    return NextResponse.json({ message: "Email Enviado" });
+    const result = await sendMail(subject, toEmail, context, path);
+
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      message: "Email enviado correctamente",
+      messageId: result.messageId,
+    });
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Error al enviar email:", error);
+    return NextResponse.json(
+      {
+        error: error.message || "Error al enviar el correo",
+      },
+      { status: 500 },
+    );
   }
 }

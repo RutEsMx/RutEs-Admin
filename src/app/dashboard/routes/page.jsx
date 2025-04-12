@@ -1,3 +1,5 @@
+"use client";
+
 /* eslint-disable @next/next/no-img-element */
 import ButtonLink from "@/components/ButtonLink";
 import MainMap from "./components/MainMap";
