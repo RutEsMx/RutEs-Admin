@@ -140,6 +140,16 @@ const STATES_MX = [
   { value: "ZAC", label: "Zacatecas" },
 ];
 
+//dropdown to grades of the school
+const SCHOOL_GRADES = [
+  { value: "1", label: "1" },
+  { value: "2", label: "2" },
+  { value: "3", label: "3" },
+  { value: "4", label: "4" },
+  { value: "5", label: "5" },
+  { value: "6", label: "6" },
+];
+
 export {
   OPTIONS_TYPE_SERVICES,
   OPTIONS_BLOOD_TYPES,
@@ -156,4 +166,6 @@ export {
   TRAVEL_WITH_FRIEND_STATUS,
   STATES_MX,
   TYPE_TRAVEL,
+  //adding grades to dropdown
+  SCHOOL_GRADES,
 };
