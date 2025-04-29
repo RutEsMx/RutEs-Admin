@@ -5,6 +5,7 @@ import SelectField from "@/components/SelectField";
 import {
   OPTIONS_BLOOD_TYPES,
   OPTIONS_TYPE_SERVICES,
+  SCHOOL_GRADES,
   STATES_MX,
 } from "@/utils/options";
 import { useFormikContext } from "formik";
@@ -61,7 +62,26 @@ const StepStudent = ({ isEdit = false }) => {
                 type="text"
                 name="name"
                 value={values.name}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                    handleChange(e);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                    ![
+                      "Backspace",
+                      "Tab",
+                      "Delete",
+                      "ArrowLeft",
+                      "ArrowRight",
+                    ].includes(e.key)
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
                 error={errors.name}
               />
             </div>
@@ -73,7 +93,26 @@ const StepStudent = ({ isEdit = false }) => {
                 type="text"
                 name="lastName"
                 value={values.lastName}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                    handleChange(e);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                    ![
+                      "Backspace",
+                      "Tab",
+                      "Delete",
+                      "ArrowLeft",
+                      "ArrowRight",
+                    ].includes(e.key)
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
                 error={errors.lastName}
               />
             </div>
@@ -83,7 +122,26 @@ const StepStudent = ({ isEdit = false }) => {
                 type="text"
                 name="secondLastName"
                 value={values.secondLastName}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                    handleChange(e);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                    ![
+                      "Backspace",
+                      "Tab",
+                      "Delete",
+                      "ArrowLeft",
+                      "ArrowRight",
+                    ].includes(e.key)
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
             <div className="col-span-1">
@@ -113,25 +171,79 @@ const StepStudent = ({ isEdit = false }) => {
                 type="text"
                 name="allergies"
                 value={values.allergies}
-                onChange={handleChange}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                    handleChange(e);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                    ![
+                      "Backspace",
+                      "Tab",
+                      "Delete",
+                      "ArrowLeft",
+                      "ArrowRight",
+                    ].includes(e.key)
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
-            <div className="col-span-1">
+
+            {/* <div className="col-span-1">
               <InputField
                 label="Grado"
                 type="text"
                 name="grade"
                 value={values.grade}
                 onChange={handleChange}
+                maxLength={1}
+              />
+            </div> */}
+
+            <div className="col-span-1">
+              <SelectField
+                labelTitle="Grado"
+                name="grade"
+                options={SCHOOL_GRADES}
+                placeholder="Selecciona un grado"
+                value={values.grade}
+                onValueChange={handleChange}
               />
             </div>
+
             <div className="col-span-1">
               <InputField
                 label="Grupo"
                 type="text"
                 name="group"
                 value={values.group}
-                onChange={handleChange}
+                //Only acepts letters
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                    handleChange(e);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (
+                    !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                    ![
+                      "Backspace",
+                      "Tab",
+                      "Delete",
+                      "ArrowLeft",
+                      "ArrowRight",
+                    ].includes(e.key)
+                  ) {
+                    e.preventDefault();
+                  }
+                }}
+                maxLength={1} //limit of characters
               />
             </div>
             <div className="col-span-1">
@@ -142,6 +254,7 @@ const StepStudent = ({ isEdit = false }) => {
                 value={values.enrollment}
                 onChange={handleChange}
                 error={errors.enrollment}
+                maxLength={25} //limit of characters
               />
             </div>
             <div className="col-span-2 grid grid-cols-4">
@@ -163,6 +276,7 @@ const StepStudent = ({ isEdit = false }) => {
                   value={values.address?.number}
                   onChange={handleChange}
                   error={errors.address?.number}
+                  maxLength={10} //limit of numbers
                 />
               </div>
               <div className="col-span-2 md:col-span-1">
@@ -173,6 +287,7 @@ const StepStudent = ({ isEdit = false }) => {
                   value={values.address?.interiorNumber}
                   onChange={handleChange}
                   error={errors.address?.interiorNumber}
+                  maxLength={10} //limit of numbers
                 />
               </div>
               <div className="col-span-2 md:col-span-1">
@@ -181,8 +296,35 @@ const StepStudent = ({ isEdit = false }) => {
                   type="text"
                   name="address.postalCode"
                   value={values.address?.postalCode}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^\d*$/.test(value)) {
+                      handleChange(e);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    // Only numbers in the zip code.
+                    if (
+                      !/[0-9]/.test(e.key) &&
+                      ![
+                        "Backspace",
+                        "Tab",
+                        "Delete",
+                        "ArrowLeft",
+                        "ArrowRight",
+                      ].includes(e.key)
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onPaste={(e) => {
+                    const pasted = e.clipboardData.getData("Text");
+                    if (!/^\d+$/.test(pasted)) {
+                      e.preventDefault();
+                    }
+                  }}
                   error={errors.address?.postalCode}
+                  maxLength={5} //limit of numbers
                 />
               </div>
             </div>
@@ -203,7 +345,26 @@ const StepStudent = ({ isEdit = false }) => {
                   type="text"
                   name="address.city"
                   value={values.address?.city}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (/^[a-zA-ZÀ-ÿ\s]*$/.test(value)) {
+                      handleChange(e);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (
+                      !/^[a-zA-ZÀ-ÿ\s]$/.test(e.key) &&
+                      ![
+                        "Backspace",
+                        "Tab",
+                        "Delete",
+                        "ArrowLeft",
+                        "ArrowRight",
+                      ].includes(e.key)
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
                   error={errors.address?.city}
                 />
               </div>
