@@ -40,7 +40,6 @@ const TravelCard = ({ id, item, getData }) => {
       schoolId: item.routeData.schoolId,
       studentRequest: item.studentRequest.id,
     };
-    console.log("🚀 ~ handleClick ~ data:", data);
     try {
       await confirmTravelWithFriend(data);
       getData();
