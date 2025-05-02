@@ -37,56 +37,60 @@ const EXPECTED_HEADERS = [
   "apellido_materno_madre",
   "telefono_madre",
   "email_madre",
+  "existe_padre",
+  "existe_madre",
 ];
 
 // Function to map Excel data to the format expected by createParentsByForm
 const mapRowToStudentData = (rowData) => {
   return {
     // Student data
-    name: rowData.nombre_estudiante,
-    lastName: rowData.apellido_paterno_estudiante,
-    secondLastName: rowData.apellido_materno_estudiante,
-    birthDate: rowData.fecha_nacimiento_estudiante,
-    bloodType: rowData.tipo_sangre_estudiante,
-    allergies: rowData.alergias_estudiante,
-    grade: rowData.grado_estudiante,
-    group: rowData.grupo_estudiante,
-    enrollment: rowData.matricula_estudiante,
-    serviceType: rowData.tipo_servicio_estudiante,
+    name: rowData.nombre_estudiante?.trim(),
+    lastName: rowData.apellido_paterno_estudiante?.trim(),
+    secondLastName: rowData.apellido_materno_estudiante?.trim(),
+    birthDate: rowData.fecha_nacimiento_estudiante?.trim(),
+    bloodType: rowData.tipo_sangre_estudiante?.trim(),
+    allergies: rowData.alergias_estudiante?.trim(),
+    grade: rowData.grado_estudiante?.trim(),
+    group: rowData.grupo_estudiante?.trim(),
+    enrollment: rowData.matricula_estudiante?.trim(),
+    serviceType: rowData.tipo_servicio_estudiante?.trim(),
 
     // Address data
     address: {
-      street: rowData.calle_direccion,
-      number: rowData.numero_direccion,
-      interiorNumber: rowData.numero_interior_direccion,
-      neighborhood: rowData.colonia_direccion,
-      postalCode: rowData.codigo_postal_direccion,
-      city: rowData.ciudad_direccion,
-      state: rowData.estado_direccion,
+      street: rowData.calle_direccion?.trim(),
+      number: rowData.numero_direccion?.trim(),
+      interiorNumber: rowData.numero_interior_direccion?.trim(),
+      neighborhood: rowData.colonia_direccion?.trim(),
+      postalCode: rowData.codigo_postal_direccion?.trim(),
+      city: rowData.ciudad_direccion?.trim(),
+      state: rowData.estado_direccion?.trim(),
     },
 
     // Father data
     father: {
-      name: rowData.nombre_padre,
-      lastName: rowData.apellido_paterno_padre,
-      secondLastName: rowData.apellido_materno_padre,
-      phone: rowData.telefono_padre,
-      email: rowData.email_padre,
+      name: rowData.nombre_padre?.trim(),
+      lastName: rowData.apellido_paterno_padre?.trim(),
+      secondLastName: rowData.apellido_materno_padre?.trim(),
+      phone: rowData.telefono_padre?.trim(),
+      email: rowData.email_padre?.trim(),
     },
 
     // Mother data
     mother: {
-      name: rowData.nombre_madre,
-      lastName: rowData.apellido_paterno_madre,
-      secondLastName: rowData.apellido_materno_madre,
-      phone: rowData.telefono_madre,
-      email: rowData.email_madre,
+      name: rowData.nombre_madre?.trim(),
+      lastName: rowData.apellido_paterno_madre?.trim(),
+      secondLastName: rowData.apellido_materno_madre?.trim(),
+      phone: rowData.telefono_madre?.trim(),
+      email: rowData.email_madre?.trim(),
     },
 
     // Additional required fields
     includeFather: Boolean(rowData.nombre_padre),
     includeMother: Boolean(rowData.nombre_madre),
     countTutors: 0, // No tutors in bulk upload for now
+    existFather: rowData.existe_padre === "SI" ? true : false,
+    existMother: rowData.existe_madre === "SI" ? true : false,
   };
 };
 
@@ -146,17 +150,33 @@ const createParentProfileServer = async (
 
 // Server-side function to create student with parents
 const createStudentWithParentsServer = async (data, schoolId, schoolName) => {
-  const { father, mother, includeMother, includeFather, ...studentData } = data;
+  const {
+    father,
+    mother,
+    includeMother,
+    includeFather,
+    existFather,
+    existMother,
+    ...studentData
+  } = data;
 
   try {
     // Create parent profiles
     const [fatherProfile, motherProfile] = await Promise.all([
-      includeFather
+      !existFather
         ? createParentProfileServer(father, schoolId, ["user"], schoolName)
-        : null,
-      includeMother
+        : firestore()
+            .collection("profile")
+            .where("email", "==", father.email)
+            .get()
+            .then((snapshot) => snapshot.docs[0].data()),
+      !existMother
         ? createParentProfileServer(mother, schoolId, ["user"], schoolName)
-        : null,
+        : firestore()
+            .collection("profile")
+            .where("email", "==", mother.email)
+            .get()
+            .then((snapshot) => snapshot.docs[0].data()),
     ]);
 
     // Create student document
@@ -205,7 +225,9 @@ const createStudentWithParentsServer = async (data, schoolId, schoolName) => {
         .collection("students")
         .doc(studentRef.id)
         .update({
-          parents: parents.filter((parent) => parent?.id),
+          parents: parents.map((parent) =>
+            firestore().collection("profile").doc(parent.id),
+          ),
           tutors: [],
           tutorActive: null,
         }),
@@ -313,7 +335,6 @@ export async function POST(request) {
 
         // Map the row data to the format expected by createParentsByForm
         const studentData = mapRowToStudentData(rowData);
-
         // Create the student and parents using server-side function
         const result = await createStudentWithParentsServer(
           studentData,
