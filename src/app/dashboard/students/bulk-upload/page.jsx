@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/context/AuthContext";
+import { Download } from "lucide-react";
 
 export default function BulkUploadPage() {
   const [file, setFile] = useState(null);
@@ -76,9 +77,9 @@ export default function BulkUploadPage() {
         <CardHeader>
           <CardTitle>Carga Masiva de Estudiantes</CardTitle>
           <CardDescription>
-            Sube un archivo Excel o CSV para añadir múltiples estudiantes,
-            padres y tutores a la vez. Por favor asegúrate de que el archivo
-            siga el formato de plantilla requerido.
+            Sube un archivo Excel para añadir múltiples estudiantes y padres a
+            la vez. Por favor asegúrate de que el archivo siga el formato de
+            plantilla requerido.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -88,7 +89,7 @@ export default function BulkUploadPage() {
               <Input
                 id="file-upload"
                 type="file"
-                accept=".xlsx, .xls, .csv"
+                accept=".xlsx, .xls"
                 onChange={handleFileChange}
                 disabled={isLoading}
               />
@@ -105,7 +106,20 @@ export default function BulkUploadPage() {
               </p>
             )}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex justify-between">
+            <a
+              href="/templates/students_template.xlsx"
+              download="plantilla-estudiantes.xlsx"
+            >
+              <Button
+                type="button"
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Descargar Plantilla
+              </Button>
+            </a>
             <Button type="submit" disabled={!file || isLoading}>
               {isLoading ? "Procesando..." : "Subir Archivo"}
             </Button>

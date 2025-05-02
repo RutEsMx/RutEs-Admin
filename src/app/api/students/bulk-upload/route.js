@@ -270,8 +270,7 @@ export async function POST(request) {
     if (
       file.type !==
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" && // .xlsx
-      file.type !== "application/vnd.ms-excel" && // .xls
-      file.type !== "text/csv"
+      file.type !== "application/vnd.ms-excel" // .xls
     ) {
       // .csv
       return NextResponse.json(
