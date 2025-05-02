@@ -39,10 +39,10 @@ export async function GET(request) {
   try {
     const rolesQuery = () => {
       const array = ["user-school", "admin", "minor-user"];
-      if (profile?.roles?.includes("admin")) {
+      if (profile?.roles?.includes("admin-rutes")) {
+        array.unshift("admin-rutes");
         return array;
-      } else if (profile?.roles?.includes("admin-rutes")) {
-        array.push("admin-rutes");
+      } else if (profile?.roles?.includes("admin")) {
         return array;
       } else {
         return ["user-school"];

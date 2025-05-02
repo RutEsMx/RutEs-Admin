@@ -92,7 +92,8 @@ const getSchools = async ({ pageIndex, pageSize }) => {
       `/api/schools?pageIndex=${pageIndex}&pageSize=${pageSize}`,
       { cache: "no-store" },
     );
-    return { success: true, data: response };
+    const data = await response.json();
+    return { success: true, data: data };
   } catch (error) {
     return { error };
   }
