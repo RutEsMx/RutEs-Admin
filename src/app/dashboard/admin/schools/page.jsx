@@ -9,8 +9,8 @@ export default function Page() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getSchools();
-      setDataSchools(response);
+      const response = await getSchools({ pageIndex: 0, pageSize: 10 });
+      setDataSchools(response.data);
     };
     fetchData();
   }, []);
