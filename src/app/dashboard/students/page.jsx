@@ -15,6 +15,9 @@ const Students = () => {
           <ButtonLink icon={"plus"} href={"/dashboard/students/create"}>
             Agregar
           </ButtonLink>
+          <ButtonLink icon={"upload"} href={"/dashboard/students/bulk-upload"}>
+            Cargar masiva
+          </ButtonLink>
         </div>
       </div>
       <div className="grid grid-rows-1 gap-4">

@@ -17,7 +17,6 @@ export async function POST(request) {
       messageId: result.messageId,
     });
   } catch (error) {
-    console.error("Error al enviar email:", error);
     return NextResponse.json(
       {
         error: error.message || "Error al enviar el correo",
