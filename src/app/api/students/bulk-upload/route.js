@@ -103,49 +103,44 @@ const createParentProfileServer = async (
 ) => {
   if (!parent.email) return null;
 
-  try {
-    // Create user in Firebase Auth
-    const auth = getAuth();
-    const password = Math.random().toString(36).slice(-8);
-    const userCredential = await auth.createUser({
-      email: parent.email,
-      password: password,
-      displayName: `${parent?.name} ${parent?.lastName || ""} ${
-        parent?.secondLastName || ""
-      }`.trim(),
-    });
-    const uid = userCredential.uid;
+  // Create user in Firebase Auth
+  const auth = getAuth();
+  const password = Math.random().toString(36).slice(-8);
+  const userCredential = await auth.createUser({
+    email: parent.email,
+    password: password,
+    displayName: `${parent?.name} ${parent?.lastName || ""} ${
+      parent?.secondLastName || ""
+    }`.trim(),
+  });
+  const uid = userCredential.uid;
 
-    // Send welcome email with password
-    const context = {
-      name: `${parent?.name} ${parent?.lastName || ""} ${
-        parent?.secondLastName || ""
-      }`.trim(),
-      school: schoolName,
-      password,
-    };
-    await sendPassword(parent.email, context, "Cuenta creada", "WELCOME");
+  // Send welcome email with password
+  const context = {
+    name: `${parent?.name} ${parent?.lastName || ""} ${
+      parent?.secondLastName || ""
+    }`.trim(),
+    school: schoolName,
+    password,
+  };
+  await sendPassword(parent.email, context, "Cuenta creada", "WELCOME");
 
-    // Create profile document
-    const profileData = {
-      ...parent,
-      id: uid,
-      password,
-      roles: roles || ["user"],
-      schoolId,
-      avatar: null,
-      isFirstTime: roles.find((role) => role === "user" || role === "tutor")
-        ? true
-        : false,
-      isNeedPinDrop: roles.find((role) => role === "user") ? true : false,
-    };
+  // Create profile document
+  const profileData = {
+    ...parent,
+    id: uid,
+    password,
+    roles: roles || ["user"],
+    schoolId,
+    avatar: null,
+    isFirstTime: roles.find((role) => role === "user" || role === "tutor")
+      ? true
+      : false,
+    isNeedPinDrop: roles.find((role) => role === "user") ? true : false,
+  };
 
-    await firestore().collection("profile").doc(uid).set(profileData);
-    return { id: uid, ...profileData };
-  } catch (error) {
-    console.error("Error creating parent profile:", error);
-    throw error;
-  }
+  await firestore().collection("profile").doc(uid).set(profileData);
+  return { id: uid, ...profileData };
 };
 
 // Server-side function to create student with parents
@@ -160,86 +155,85 @@ const createStudentWithParentsServer = async (data, schoolId, schoolName) => {
     ...studentData
   } = data;
 
-  try {
-    // Create parent profiles
-    const [fatherProfile, motherProfile] = await Promise.all([
-      !existFather
-        ? createParentProfileServer(father, schoolId, ["user"], schoolName)
-        : firestore()
-            .collection("profile")
-            .where("email", "==", father.email)
-            .get()
-            .then((snapshot) => snapshot.docs[0].data()),
-      !existMother
-        ? createParentProfileServer(mother, schoolId, ["user"], schoolName)
-        : firestore()
-            .collection("profile")
-            .where("email", "==", mother.email)
-            .get()
-            .then((snapshot) => snapshot.docs[0].data()),
-    ]);
-
-    // Create student document
-    studentData.schoolId = schoolId;
-    studentData.fullName = [
-      studentData?.name,
-      studentData?.lastName,
-      studentData?.secondLastName,
-    ];
-
-    const studentRef = firestore().collection("students").doc();
-    await studentRef.set(studentData);
-
-    const parents = [];
-    const updates = [];
-
-    // Update father's profile with student reference
-    if (fatherProfile?.id) {
-      updates.push(
-        firestore()
+  // Create parent profiles
+  const [fatherProfile, motherProfile] = await Promise.all([
+    includeFather && !existFather
+      ? createParentProfileServer(father, schoolId, ["user"], schoolName)
+      : existFather
+      ? firestore()
           .collection("profile")
-          .doc(fatherProfile.id)
-          .update({
-            students: firestore.FieldValue.arrayUnion(studentRef),
-          }),
-      );
-      parents.push(fatherProfile);
-    }
-
-    // Update mother's profile with student reference
-    if (motherProfile?.id) {
-      updates.push(
-        firestore()
+          .where("email", "==", father.email)
+          .get()
+          .then((snapshot) => snapshot.docs[0].data())
+      : null,
+    includeMother && !existMother
+      ? createParentProfileServer(mother, schoolId, ["user"], schoolName)
+      : existMother
+      ? firestore()
           .collection("profile")
-          .doc(motherProfile.id)
-          .update({
-            students: firestore.FieldValue.arrayUnion(studentRef),
-          }),
-      );
-      parents.push(motherProfile);
-    }
+          .where("email", "==", mother.email)
+          .get()
+          .then((snapshot) => snapshot.docs[0].data())
+      : null,
+  ]);
 
-    // Update student with parent references
+  // Create student document
+  studentData.schoolId = schoolId;
+  studentData.fullName = [
+    studentData?.name,
+    studentData?.lastName,
+    studentData?.secondLastName,
+  ];
+
+  const studentRef = firestore().collection("students").doc();
+  await studentRef.set(studentData);
+
+  const parents = [];
+  const updates = [];
+
+  // Update father's profile with student reference
+  if (fatherProfile?.id) {
     updates.push(
       firestore()
-        .collection("students")
-        .doc(studentRef.id)
+        .collection("profile")
+        .doc(fatherProfile.id)
         .update({
-          parents: parents.map((parent) =>
-            firestore().collection("profile").doc(parent.id),
-          ),
-          tutors: [],
-          tutorActive: null,
+          students: firestore.FieldValue.arrayUnion(studentRef),
         }),
     );
-
-    await Promise.all(updates);
-
-    return { success: true, message: "Estudiante creado correctamente" };
-  } catch (error) {
-    console.error("Error creating student:", error);
-    throw error;
+    parents.push(fatherProfile);
   }
+
+  // Update mother's profile with student reference
+  if (motherProfile?.id) {
+    updates.push(
+      firestore()
+        .collection("profile")
+        .doc(motherProfile.id)
+        .update({
+          students: firestore.FieldValue.arrayUnion(studentRef),
+        }),
+    );
+    parents.push(motherProfile);
+  }
+
+  // Update student with parent references
+  updates.push(
+    firestore()
+      .collection("students")
+      .doc(studentRef.id)
+      .update({
+        parents: parents.map((parent) =>
+          firestore().collection("profile").doc(parent.id),
+        ),
+        tutors: [],
+        tutorActive: null,
+      }),
+  );
+
+  await Promise.all(updates);
+
+  return { success: true, message: "Estudiante creado correctamente" };
 };
 
 export async function POST(request) {
@@ -299,12 +293,6 @@ export async function POST(request) {
     const headerRow = data[0];
     // Validate headers
     if (JSON.stringify(headerRow) !== JSON.stringify(EXPECTED_HEADERS)) {
-      console.error(
-        "Invalid headers. Expected:",
-        EXPECTED_HEADERS,
-        "Got:",
-        headerRow,
-      );
       return NextResponse.json(
         {
           message:
@@ -347,7 +335,6 @@ export async function POST(request) {
 
         results.push({ row: rowNumber, status: "Success" });
       } catch (error) {
-        console.error(`Error processing row ${rowNumber}:`, error);
         errors.push({ row: rowNumber, error: error.message });
       }
     }
@@ -372,7 +359,6 @@ export async function POST(request) {
       );
     }
   } catch (error) {
-    console.error("Bulk upload error:", error);
     return NextResponse.json(
       { message: `Failed to process file: ${error.message}` },
       { status: 500 },

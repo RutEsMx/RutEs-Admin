@@ -16,7 +16,7 @@ const Students = () => {
             Agregar
           </ButtonLink>
           <ButtonLink icon={"upload"} href={"/dashboard/students/bulk-upload"}>
-            Subir masivo
+            Cargar masiva
           </ButtonLink>
         </div>
       </div>
