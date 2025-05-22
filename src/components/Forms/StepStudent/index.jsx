@@ -212,7 +212,7 @@ const StepStudent = ({ isEdit = false }) => {
                 options={SCHOOL_GRADES}
                 placeholder="Selecciona un grado"
                 value={values.grade}
-                onValueChange={handleChange}
+                onValueChange={(value) => setFieldValue("grade", value)}
               />
             </div>
 
