@@ -1,4 +1,5 @@
 "use client";
+
 import NavBar from "@/components/NavBar";
 import { useAuthContext } from "@/context/AuthContext";
 import { useEffect } from "react";
@@ -27,11 +28,13 @@ const DashboardLayout = ({ children }) => {
 
   useEffect(() => {
     if (!school) return;
+
     const q = query(
       collection(db, "routes"),
       where("schoolId", "==", school?.id),
       where("isDeleted", "==", false),
     );
+
     getDocs(q).then((querySnapshot) => {
       const routes = [];
       querySnapshot.forEach((doc) => {
@@ -45,8 +48,13 @@ const DashboardLayout = ({ children }) => {
     <>
       <NavBar />
       <div className="grid grid-cols-1 lg:grid-cols-5 h-screen">
-        <Sidebar className="hidden lg:block bg-muted-foreground" />
-        {children}
+        {/* Sticky Sidebar */}
+        <div className="hidden lg:block col-span-1 bg-muted-foreground sticky top-0 h-screen overflow-y-auto">
+          <Sidebar />
+        </div>
+
+        {/* Main content */}
+        <main className="col-span-4 overflow-y-auto p-4">{children}</main>
       </div>
     </>
   );
