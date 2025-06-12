@@ -47,8 +47,8 @@ const StepUnits = ({ isEdit }) => {
               name="model"
               value={values.model}
               onChange={handleChange}
-              onInput={(e) => handleAlphaNumInput(e, "model", 6)}
-              maxLength={6}
+              onInput={(e) => handleAlphaNumInput(e, "model", 10)}
+              maxLength={10}
               error={errors.model}
             />
           </div>
