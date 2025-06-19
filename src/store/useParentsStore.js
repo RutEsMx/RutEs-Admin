@@ -5,7 +5,9 @@ export const useParentsStore = create(
   persist(
     (set) => ({
       parents: [],
+      isLoading: false, // 👈 agregado
       setParents: (parents) => set({ parents }),
+      setLoading: (loading) => set({ isLoading: loading }), // 👈 agregado
     }),
     {
       name: "parents-storage",
