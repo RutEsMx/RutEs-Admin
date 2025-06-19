@@ -24,31 +24,31 @@ const COLORS = {
 const columnHelper = createColumnHelper();
 
 const studentsColumns = [
-  columnHelper.accessor("select", {
-    cell: ({ row }) => (
-      <div className="flex justify-center p-3">
-        <CheckboxTable
-          {...{
-            checked: row.getIsSelected(),
-            disabled: !row.getCanSelect(),
-            indeterminate: row.getIsSomeSelected(),
-            onChange: row.getToggleSelectedHandler(),
-          }}
-        />
-      </div>
-    ),
-    header: ({ table }) => (
-      <HeaderTable>
-        <CheckboxTable
-          {...{
-            checked: table.getIsAllRowsSelected(),
-            indeterminate: table.getIsSomeRowsSelected(),
-            onChange: table.getToggleAllRowsSelectedHandler(),
-          }}
-        />
-      </HeaderTable>
-    ),
-  }),
+  // columnHelper.accessor("select", {
+  //   cell: ({ row }) => (
+  //     <div className="flex justify-center p-3">
+  //       <CheckboxTable
+  //         {...{
+  //           checked: row.getIsSelected(),
+  //           disabled: !row.getCanSelect(),
+  //           indeterminate: row.getIsSomeSelected(),
+  //           onChange: row.getToggleSelectedHandler(),
+  //         }}
+  //       />
+  //     </div>
+  //   ),
+  //   header: ({ table }) => (
+  //     <HeaderTable>
+  //       <CheckboxTable
+  //         {...{
+  //           checked: table.getIsAllRowsSelected(),
+  //           indeterminate: table.getIsSomeRowsSelected(),
+  //           onChange: table.getToggleAllRowsSelectedHandler(),
+  //         }}
+  //       />
+  //     </HeaderTable>
+  //   ),
+  // }),
   {
     header: () => <HeaderTable>Estudiante</HeaderTable>,
     accessorKey: "students",

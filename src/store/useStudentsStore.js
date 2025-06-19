@@ -7,8 +7,12 @@ export const useStudentsStore = create(
       students: [],
       student: null,
       studentsRoutes: [],
+      isLoading: false, // ✅ nuevo estado
+
       setStudents: (students) => set({ students }),
       setStudent: (student) => set({ student }),
+      setLoading: (isLoading) => set({ isLoading }),
+
       updateStudent: (student) =>
         set((state) => ({
           student: {
@@ -16,6 +20,7 @@ export const useStudentsStore = create(
             ...student,
           },
         })),
+
       addStudents: (student) =>
         set((state) => ({
           students: {
@@ -23,6 +28,7 @@ export const useStudentsStore = create(
             rows: [...state.students.rows, student],
           },
         })),
+
       removeStudents: (studentId) =>
         set((state) => ({
           students: {
@@ -32,6 +38,7 @@ export const useStudentsStore = create(
             ),
           },
         })),
+
       updateStudents: (studentId, data) =>
         set((state) => ({
           students: {
@@ -41,10 +48,12 @@ export const useStudentsStore = create(
             ),
           },
         })),
+
       getStudent: (studentId) =>
         set((state) =>
           state.students.rows.find((student) => student.id === studentId),
         ),
+
       getStudentsRoutes: (studentsRoutes) => set({ studentsRoutes }),
     }),
     {
@@ -54,6 +63,7 @@ export const useStudentsStore = create(
   ),
 );
 
+// ✅ acceso directo a funciones fuera del componente
 const setStudents = useStudentsStore.getState().setStudents;
 const getStudent = useStudentsStore.getState().getStudent;
 const addStudents = useStudentsStore.getState().addStudents;
@@ -62,6 +72,7 @@ const removeStudents = useStudentsStore.getState().removeStudents;
 const setStudent = useStudentsStore.getState().setStudent;
 const updateStudent = useStudentsStore.getState().updateStudent;
 const getStudentsRoutes = useStudentsStore.getState().getStudentsRoutes;
+const setLoading = useStudentsStore.getState().setLoading;
 
 export {
   setStudents,
@@ -72,4 +83,5 @@ export {
   setStudent,
   updateStudent,
   getStudentsRoutes,
+  setLoading,
 };
