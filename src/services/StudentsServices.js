@@ -5,7 +5,7 @@ const getStudents = async () => {
   const setLoading = useStudentsStore.getState().setLoading;
 
   try {
-    setLoading(true); // activa loader
+    setLoading(true);
 
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_URL_API}api/students`,
@@ -17,13 +17,30 @@ const getStudents = async () => {
 
     const data = await response.json();
     const dataTable = setStructureDatatable(data);
-    setStudents(dataTable); // guarda los datos procesados
+    setStudents(dataTable);
 
     return true;
   } catch (error) {
     return { error: error?.message };
   } finally {
-    setLoading(false); // desactiva loader
+    setLoading(false);
+  }
+};
+
+const getStudentById = async (id) => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/students/${id}`,
+    );
+
+    if (response?.redirected) {
+      return { error: true, redirect: response.url };
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return { error: error?.message };
   }
 };
 
@@ -45,4 +62,4 @@ const deleteStudents = async (ids) => {
   }
 };
 
-export { getStudents, deleteStudents };
+export { getStudents, deleteStudents, getStudentById };
