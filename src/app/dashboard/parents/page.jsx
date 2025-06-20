@@ -6,30 +6,27 @@ import { useParentsStore } from "@/store/useParentsStore";
 import { getParents } from "@/services/ParentsSevices";
 
 const Parents = () => {
-  const { parents, isLoading } = useParentsStore();
+  const { parents, isLoading, setLoading } = useParentsStore();
 
   useEffect(() => {
-    getParents();
+    setLoading(true);
+    getParents().finally(() => setLoading(false));
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="text-center text-gray-500 mt-8">
-        Cargando datos de padres...
-      </div>
-    );
-  }
-
   return (
-    <div className="container mx-auto pb-8">
-      <LogoLayout />
-      <div className="grid grid-rows-1 gap-4">
-        {parents?.rows?.length === 0 ? (
-          <div className="text-center text-gray-500 mt-8">
+    <div className="flex flex-col gap-4 p-4 md:p-6">
+      <div className="flex justify-between items-center flex-wrap gap-4">
+        <LogoLayout />
+      </div>
+
+      <div className="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm">
+        {!isLoading && parents?.rows?.length > 0 && (
+          <DataTable type="parents" list={parents} />
+        )}
+        {!isLoading && parents?.rows?.length === 0 && (
+          <div className="p-4 text-center text-gray-500">
             No hay registros de padres disponibles.
           </div>
-        ) : (
-          <DataTable type={"parents"} list={parents} />
         )}
       </div>
     </div>

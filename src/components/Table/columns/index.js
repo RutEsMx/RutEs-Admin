@@ -134,9 +134,11 @@ const parentsColumns = [
     cell: (data) => {
       const { row } = data;
       return (
-        <Link href={`/dashboard/parents/edit/${row?.original?.id}`}>
-          {data.getValue()}
-        </Link>
+        <div className="flex flex-row items-center cursor-pointer px-4 py-2">
+          <Link href={`/dashboard/parents/edit/${row?.original?.id}`}>
+            <CellTable>{data.getValue()}</CellTable>
+          </Link>
+        </div>
       );
     },
   },
@@ -154,10 +156,10 @@ const parentsColumns = [
     cell: (data) => {
       const dataFormat = data.getValue()?.split(",");
       return (
-        <div className="flex flex-col">
-          {dataFormat?.map((student, index) => {
-            return <div key={index}>{student}</div>;
-          })}
+        <div className="flex flex-col px-4 py-2">
+          {dataFormat?.map((student, index) => (
+            <CellTable key={index}>{student}</CellTable>
+          ))}
         </div>
       );
     },
@@ -167,7 +169,12 @@ const parentsColumns = [
     header: () => <HeaderTable>Teléfono</HeaderTable>,
   }),
   columnHelper.accessor("email", {
-    cell: (info) => info.getValue(),
+    cell: (info) => (
+      <div className="px-4 py-2">
+        <CellTable>{info.getValue()}</CellTable>
+      </div>
+    ),
+
     header: () => <HeaderTable>Correo electrónico</HeaderTable>,
     enableGlobalFilter: false,
   }),

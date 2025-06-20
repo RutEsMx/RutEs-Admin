@@ -29,13 +29,7 @@ const Students = () => {
       </div>
 
       <div className="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm">
-        {loading ? (
-          <div className="p-4 text-center text-gray-500">
-            Cargando datos de estudiantes...
-          </div>
-        ) : (
-          <DataTable type="students" list={students} />
-        )}
+        {!loading && <DataTable type="students" list={students} />}
       </div>
     </div>
   );
