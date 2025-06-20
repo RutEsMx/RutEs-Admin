@@ -41,3 +41,6 @@ certificates
 
 # pnpm-lock.yaml
 pnpm-lock.yaml
+
+#webstorm
+.idea/
