@@ -11,6 +11,7 @@ const InputField = ({
   onChange,
   error,
   className,
+  style,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +29,7 @@ const InputField = ({
           className={`h-8 border border-gray rounded-sm p-1 w-full ${
             className || ""
           }`}
+          style={{ textTransform: "uppercase", ...style }}
           {...props}
         />
         {type === "password" ? (
