@@ -45,53 +45,19 @@ const DataTable = ({ type, list = [] }) => {
     globalFilterFn: fuzzyFilter,
   });
 
-  // const handleDelete = async () => {
-  //   if (type === "parents") {
-  //     return deleteParents(rowSelection)
-  //       .then((data) => {
-  //         if (data?.error && data?.redirect) {
-  //           removeCookies();
-  //           return router.push(data?.redirect);
-  //         }
-  //         setAlert({
-  //           type: "success",
-  //           message: "Padres eliminados correctamente",
-  //         });
-  //         fetchDataParents({
-  //           schoolId: profile?.schoolId,
-  //           pageIndex,
-  //           pageSize,
-  //         }).then((data) => {
-  //           setData(data);
-  //         });
-  //       })
-  //       .catch((error) => {
-  //         setAlert({ type: "error", message: error?.message });
-  //       });
-  //   }
-  // };
-
   return (
     <>
-      <div className="flex justify-end">
+      <div className="flex justify-end mt-4 mb-2">
         <FilterInput
           value={globalFilter ?? ""}
           onChange={(value) => setGlobalFilter(String(value))}
           placeholder="Buscar"
         />
       </div>
+
       <div className="grid grid-cols-4 gap-1">
-        <div className="col-span-1">
-          {type === "parents" && (
-            <div className="flex items-center">
-              {/* <ButtonAction onClick={handleDelete} color="bg-light-gray">
-                Eliminar
-              </ButtonAction> */}
-              {/* <ButtonAction onClick={handleSuspend}>Suspender</ButtonAction>
-                <ButtonAction onClick={handleReactivate}>Reactivar</ButtonAction> */}
-            </div>
-          )}
-        </div>
+        <div className="col-span-1"></div>
+
         <div className="col-span-1 flex items-center justify-end gap-2">
           <ButtonAction
             onClick={() => table.setPageIndex(0)}
@@ -118,15 +84,17 @@ const DataTable = ({ type, list = [] }) => {
             {">>"}
           </ButtonAction>
         </div>
+
         <div className="col-span-2 flex justify-between items-center">
           <div className="flex flex-1 justify-center">
             <span>
               <strong>
-                {table && table?.getState()?.pagination?.pageIndex + 1} de{" "}
-                {table?.getPageCount() || 1}
+                {table.getState().pagination.pageIndex + 1} de{" "}
+                {table.getPageCount() || 1}
               </strong>
             </span>
           </div>
+
           <div className="flex flex-1 justify-center">
             <span>
               | Ir a:
@@ -141,6 +109,7 @@ const DataTable = ({ type, list = [] }) => {
               />
             </span>
           </div>
+
           <div className="flex flex-1 justify-center">
             <select
               value={table.getState().pagination.pageSize}
@@ -158,13 +127,19 @@ const DataTable = ({ type, list = [] }) => {
           </div>
         </div>
       </div>
-      <table className="table-fixed rounded-md border">
-        {table?.getHeaderGroups()?.map((headerGroup) => (
-          <thead key={headerGroup.id}>
-            <tr>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <th className="bg-primary" key={header.id}>
+      <div className="overflow-x-auto w-full mt-6">
+        <table className="w-full table-auto rounded-md border border-gray-300 shadow-sm">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <thead
+              key={headerGroup.id}
+              className="bg-primary text-white sticky top-0 z-10"
+            >
+              <tr>
+                {headerGroup.headers.map((header) => (
+                  <th
+                    key={header.id}
+                    className="text-center px-4 py-3 text-sm font-semibold border-r border-white last:border-none"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -172,39 +147,44 @@ const DataTable = ({ type, list = [] }) => {
                           header.getContext(),
                         )}
                   </th>
-                );
-              })}
-            </tr>
-          </thead>
-        ))}
-        <tbody>
-          {table.getRowModel() ? (
-            table.getRowModel()?.rows.map((row, index) => {
-              let color = index % 2 === 0 ? "bg-light-gray" : "bg-white";
-              return (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <td key={cell.id} className={`${color}`}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    );
-                  })}
+                ))}
+              </tr>
+            </thead>
+          ))}
+
+          <tbody>
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <tr
+                  key={row.id}
+                  className="even:bg-gray-50 hover:bg-gray-100 transition duration-150"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      className="text-center px-4 py-2 text-sm border-t border-gray-200"
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  ))}
                 </tr>
-              );
-            })
-          ) : (
-            <tr>
-              <td colSpan={columns.length} className="text-center">
-                Cargando...
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  className="text-center py-4 text-gray-500"
+                >
+                  No hay datos disponibles.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 };

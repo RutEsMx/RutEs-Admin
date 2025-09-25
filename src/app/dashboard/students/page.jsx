@@ -1,27 +1,41 @@
 "use client";
+import { useEffect } from "react";
 import LogoLayout from "@/components/LogoLayout";
 import DataTable from "@/components/Table/DataTable";
 import ButtonLink from "@/components/ButtonLink";
-import { useStudentsStore } from "@/store/useStudentsStore";
+import { useStudentsStore, setLoading } from "@/store/useStudentsStore";
+import { getStudents } from "@/services/StudentsServices";
 
 const Students = () => {
-  const { students } = useStudentsStore();
+  const { students, loading } = useStudentsStore();
+
+  useEffect(() => {
+    setLoading(true);
+    getStudents().finally(() => setLoading(false));
+  }, []);
 
   return (
-    <div className="container mx-auto">
-      <div className="grid grid-cols-2 gap-4 p-2">
+    <div className="flex flex-col gap-4 p-4 md:p-6">
+      <div className="flex justify-between items-center flex-wrap gap-4">
         <LogoLayout />
-        <div className="flex justify-end items-center gap-4">
-          <ButtonLink icon={"plus"} href={"/dashboard/students/create"}>
+        <div className="flex flex-wrap gap-3 justify-end items-center">
+          <ButtonLink icon="plus" href="/dashboard/students/create">
             Agregar
           </ButtonLink>
-          <ButtonLink icon={"upload"} href={"/dashboard/students/bulk-upload"}>
-            Cargar masiva
+          <ButtonLink icon="upload" href="/dashboard/students/bulk-upload">
+            Carga masiva
           </ButtonLink>
         </div>
       </div>
-      <div className="grid grid-rows-1 gap-4">
-        <DataTable type={"students"} list={students} />
+
+      <div className="overflow-x-auto bg-white rounded-xl border border-gray-200 shadow-sm">
+        {loading ? (
+          <div className="p-4 text-center text-gray-500">
+            Cargando datos de estudiantes...
+          </div>
+        ) : (
+          <DataTable type="students" list={students} />
+        )}
       </div>
     </div>
   );

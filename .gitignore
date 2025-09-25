@@ -41,3 +41,5 @@ certificates
 
 # pnpm-lock.yaml
 pnpm-lock.yaml
+
+.idea
