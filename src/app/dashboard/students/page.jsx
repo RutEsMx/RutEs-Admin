@@ -1,18 +1,13 @@
 "use client";
-import { useEffect } from "react";
 import LogoLayout from "@/components/LogoLayout";
 import DataTable from "@/components/Table/DataTable";
 import ButtonLink from "@/components/ButtonLink";
-import { useStudentsStore, setLoading } from "@/store/useStudentsStore";
-import { getStudents } from "@/services/StudentsServices";
+import { useStudentsStore } from "@/store/useStudentsStore";
 
 const Students = () => {
   const { students, loading } = useStudentsStore();
 
-  useEffect(() => {
-    setLoading(true);
-    getStudents().finally(() => setLoading(false));
-  }, []);
+  // Data is now handled by the global listener in DashboardLayout
 
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">

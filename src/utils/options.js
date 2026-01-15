@@ -49,6 +49,10 @@ const STATUS_TRAVEL = {
   toSchool: "En camino a escuela",
   toHome: "En camino a casa",
   workshop: "En camino a casa desde taller",
+  waiting: "Esperando",
+  "in-transit": "En tránsito",
+  delivered: "Entregado",
+  finished: "Finalizado",
 };
 
 const COLORS = {
@@ -59,6 +63,9 @@ const COLORS = {
   toHome: "text-green-500",
   workshop: "text-gray-500",
   finished: "text-gray-500",
+  waiting: "text-orange-400",
+  "in-transit": "text-blue-500",
+  delivered: "text-green-600",
 };
 
 const COLORS_HEX = {
