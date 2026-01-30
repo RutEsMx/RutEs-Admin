@@ -1,6 +1,6 @@
 "use client";
 import FormStudentEdit from "@/components/MultiStepForm/StudentEdit";
-import { getStudentById } from "@/services/StudentsServices";
+import { subscribeStudentById } from "@/services/StudentsServices";
 import { useStudentsStore } from "@/store/useStudentsStore";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -10,11 +10,12 @@ const Page = ({ params }) => {
   const { student, setStudent } = useStudentsStore();
 
   useEffect(() => {
-    (!student || student?.id !== id) && getStudentById(id);
-    () => {
+    const unsub = subscribeStudentById(id);
+    return () => {
+      unsub && unsub();
       setStudent(null);
     };
-  }, [student, id, setStudent]);
+  }, [id, setStudent]);
 
   return (
     <div className="container mx-auto px-4 h-screen bg-white py-8">

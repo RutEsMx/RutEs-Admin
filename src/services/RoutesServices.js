@@ -16,6 +16,8 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { db } from "@/firebase/client";
+import { onSnapshot } from "firebase/firestore";
+import { setRoutes } from "@/store/useRoutesStore";
 
 const getRouteById = async (id) => {
   try {
@@ -426,4 +428,36 @@ const removeRoutes = async (id) => {
   }
 };
 
-export { createRoutesByForm, updateRoutesByForm, removeRoutes, getRouteById };
+const subscribeRoutes = (schoolId) => {
+  if (!schoolId) return;
+
+  const q = query(
+    collection(db, "routes"),
+    where("schoolId", "==", schoolId),
+    where("isDeleted", "==", false),
+  );
+
+  const unsubscribe = onSnapshot(
+    q,
+    (snapshot) => {
+      const routes = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setRoutes(routes);
+    },
+    (error) => {
+      console.error("Error subscribing to routes:", error);
+    },
+  );
+
+  return unsubscribe;
+};
+
+export {
+  createRoutesByForm,
+  updateRoutesByForm,
+  removeRoutes,
+  getRouteById,
+  subscribeRoutes,
+};
