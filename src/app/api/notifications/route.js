@@ -46,7 +46,7 @@ export async function POST(request) {
         ...notificationData,
       }));
 
-    // eslint-disable-next-line
+     
     const saveData = {
       ...restNotification,
       ...data,

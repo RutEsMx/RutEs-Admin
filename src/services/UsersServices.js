@@ -6,7 +6,7 @@ import { setStructureDatatable } from "./TableServices";
 import { setUsers } from "@/store/useUsersStore";
 
 const createUsersByForm = async (data) => {
-  // eslint-disable-next-line no-unused-vars
+   
   const { confirmPassword, ...restData } = data;
   const { email, avatar } = restData;
 

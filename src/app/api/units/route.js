@@ -7,7 +7,7 @@ import { getUSer } from "@/utils/functionsServer";
 customInitApp();
 
 export async function GET(request) {
-  const sessionid = cookies().get("sessionid");
+  const sessionid = (await cookies()).get("sessionid");
   const profile = await getUSer(sessionid?.value);
 
   if (profile?.error) {

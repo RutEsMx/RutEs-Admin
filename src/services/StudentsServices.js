@@ -5,7 +5,7 @@ import {
   getDocumentByField,
   updateDocument,
 } from "@/firebase/crud";
-import { onSnapshot, collection, query, where, doc } from "firebase/firestore";
+import { onSnapshot, collection, query, where, doc, getDoc } from "firebase/firestore";
 import { db } from "@/firebase/client";
 
 const getStudents = async () => {
@@ -137,6 +137,79 @@ const subscribeStudentById = (id) => {
   return unsubscribe;
 };
 
+const updateParentProfile = async (parent) => {
+  const { avatar } = parent;
+  let avatarFilename = avatar;
+
+  try {
+    if (avatar instanceof File) {
+      const dataFile = new FormData();
+      dataFile.set("avatar", avatar);
+      const responseAvatar = await fetch(`/api/images`, {
+        method: "POST",
+        body: dataFile,
+      });
+
+      const { result: resultAvatar } = await responseAvatar.json();
+      if (resultAvatar) avatarFilename = resultAvatar;
+    }
+
+    const profileData = {
+      ...parent,
+      avatar: avatarFilename,
+    };
+
+    await updateDocument("profile", profileData.id, profileData);
+    const userRef = doc(db, "profile", profileData.id);
+    return userRef;
+  } catch (error) {
+    return { error };
+  }
+};
+
+const createTutorProfile = async (parent, studentId, schoolId, roles) => {
+  if (parent.emailExist) return updateParentProfile(parent);
+  const { avatar } = parent;
+  let avatarFilename = avatar;
+
+  try {
+    if (avatar instanceof File) {
+      const dataFile = new FormData();
+      dataFile.set("avatar", avatar);
+      const responseAvatar = await fetch(`/api/images`, {
+        method: "POST",
+        body: dataFile,
+      });
+
+      const { result: resultAvatar } = await responseAvatar.json();
+      if (resultAvatar) avatarFilename = resultAvatar;
+    }
+
+    const parentProfile = {
+      ...parent,
+      students: [doc(db, `students/${studentId}`)],
+      schoolId,
+      roles,
+      avatar: avatarFilename,
+    };
+
+    const response = await fetch("/api/auth/profile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(parentProfile),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error);
+    }
+    return result;
+  } catch (error) {
+    return { error };
+  }
+};
+
 const createParentsByForm = async (data, schoolId) => {
   try {
     const response = await fetch("/api/students", {
@@ -178,6 +251,46 @@ const updateStudentByForm = async (data) => {
   }
 };
 
+const getStudentsForRoutes = async () => {
+  const { getStudentsRoutes } = useStudentsStore.getState();
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_URL_API}api/students`,
+    );
+
+    const data = await response.json();
+    const studentsOptions = await createStudentsOptions(data);
+    getStudentsRoutes(studentsOptions);
+  } catch (error) {
+    return { error: error?.message };
+  }
+}
+
+const createStudentsOptions = async (students) => {
+  // value, label
+  // get stops by student from firestore
+  const studentsPromise = students.map(async (student) => {
+    const stops = student?.stops ? await Promise.all(student.stops.map(async (stop) => {
+      // get stop reference from firestore
+      const docSnap = await getDoc(stop)
+      if (docSnap.exists())
+        return docSnap.data()
+      return null
+    })) : [];
+
+    return {
+      value: student.id,
+      label: `${student?.name || ''} ${student?.lastName || ''} ${student?.secondLastName || ''}`,
+      stops: stops || [],
+      serviceType: student?.serviceType,
+      name: student?.name || '',
+      lastName: student?.lastName || '',
+      secondLastName: student?.secondLastName || '',
+    };
+  });
+  return Promise.all(studentsPromise);
+}
+
 export {
   getStudents,
   deleteStudents,
@@ -186,4 +299,7 @@ export {
   subscribeStudentById,
   createParentsByForm,
   updateStudentByForm,
+  updateParentProfile,
+  createTutorProfile,
+  getStudentsForRoutes,
 };

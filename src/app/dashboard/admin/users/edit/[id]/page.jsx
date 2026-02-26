@@ -17,7 +17,8 @@ const getUser = async (id) => {
   }
 };
 
-const Page = async ({ params }) => {
+const Page = async props => {
+  const params = await props.params;
   const { id } = params;
   const user = await getUser(id);
 

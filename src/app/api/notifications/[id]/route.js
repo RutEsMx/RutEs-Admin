@@ -5,7 +5,8 @@ import { NextResponse } from "next/server";
 // Init the Firebase SDK every time the server is called
 customInitApp();
 
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   const { id } = params;
   const searchParams = request.nextUrl.searchParams;
   const schoolId = searchParams.get("schoolId");

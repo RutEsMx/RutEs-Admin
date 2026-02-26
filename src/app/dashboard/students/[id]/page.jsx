@@ -12,9 +12,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import useStopsStudentDetails from "@/hooks/useStopsStudentDetails";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 
-const Page = ({ params }) => {
+const Page = props => {
+  const params = use(props.params);
   const { student, updateStudent } = useStudentsStore();
   const { routes } = useRoutesStore();
   const { tutors } = useTutorsByStudents(student);

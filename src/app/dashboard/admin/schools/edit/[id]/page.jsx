@@ -16,7 +16,8 @@ const getSchool = async (id) => {
   }
 };
 
-const Page = async ({ params }) => {
+const Page = async props => {
+  const params = await props.params;
   const { id } = params;
   const school = await getSchool(id);
 

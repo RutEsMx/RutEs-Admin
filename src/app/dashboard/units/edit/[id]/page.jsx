@@ -3,7 +3,8 @@ import FormUnits from "@/components/MultiStepForm/Units";
 import { getUnit } from "@/services/UnitsServices";
 import Link from "next/link";
 
-const Page = async ({ params }) => {
+const Page = async props => {
+  const params = await props.params;
   const { id } = params;
   const unit = await getUnit(id);
 

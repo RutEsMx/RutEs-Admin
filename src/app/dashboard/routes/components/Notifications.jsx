@@ -20,7 +20,7 @@ const Notifications = () => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    let unsubscribe = () => {};
+    let unsubscribe = () => { };
     if (school?.id) {
       try {
         unsubscribe = onSnapshot(
@@ -60,9 +60,9 @@ const Notifications = () => {
       <div className="h-20 bg-primary justify-center flex items-center rounded-t-lg gap-4">
         <h1 className="font-bold text-xl">Permisos y Alertas</h1>
         {count > 0 && (
-          <span class="relative flex h-6 w-6 bottom-4">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-6 w-6 bg-red-500 items-center justify-center ">
+          <span className="relative flex h-6 w-6 bottom-4">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-6 w-6 bg-red-500 items-center justify-center ">
               <p className="text-white text-xs">{count}</p>
             </span>
           </span>
