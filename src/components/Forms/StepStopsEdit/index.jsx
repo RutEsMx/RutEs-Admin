@@ -10,12 +10,12 @@ import {
 import ButtonAction from "@/components/ButtonAction";
 import { useState } from "react";
 import { DAYS, DAYS_OPTIONS } from "@/utils/options";
-import SelectField from "@/components/SelectField";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import { validateServiceType } from "@/utils/functionsClient";
 import SelectAutocomplete from "@/components/SelectAutocomplete";
 import { useStudentsStore } from "@/store/useStudentsStore";
 import useStudentManager from "@/hooks/useStudentManager";
+import DayTypePicker from "@/components/DayTypePicker";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +30,6 @@ import { toast } from "sonner";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 
 const ALL_DAY = "all";
-const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
 const StepStopsEdit = ({ name }) => {
   const { values, setFieldValue } = useFormikContext();
@@ -303,23 +302,29 @@ const StepStopsEdit = ({ name }) => {
       </div>
       <div className="row-span-1">
         <div className="grid grid-flow-row gap-2">
-          <div className="mx-2 grid grid-cols-2">
-            <div className="form-control grid grid-cols-2 place-content-center">
+          {/* Días para asignar al alumno — siempre visibles */}
+          <div className="mx-2 mt-2">
+            <p className="text-xs text-gray-500 mb-1">Asignar para:</p>
+            <div className="flex flex-wrap gap-1">
               {DAYS_OPTIONS.map((day) => (
-                <div key={day.label} className="grid place-content-start">
-                  <label className="cursor-pointer label gap-1">
-                    <input
-                      type="checkbox"
-                      name={day.value}
-                      checked={selectedDay.includes(day.value)}
-                      className="checkbox checkbox-xs"
-                      onChange={handleSelect}
-                    />
-                    <span className="label-text text-xs text-start ml-2">
-                      {day.label}
-                    </span>
-                  </label>
-                </div>
+                <label
+                  key={day.label}
+                  className={`
+                    flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs cursor-pointer transition-colors
+                    ${selectedDay.includes(day.value)
+                      ? "bg-yellow border-yellow text-black font-semibold"
+                      : "bg-white border-gray-300 text-gray-600"}
+                  `}
+                >
+                  <input
+                    type="checkbox"
+                    name={day.value}
+                    checked={selectedDay.includes(day.value)}
+                    className="hidden"
+                    onChange={handleSelect}
+                  />
+                  {day.label}
+                </label>
               ))}
             </div>
           </div>
@@ -380,34 +385,23 @@ const StepStopsEdit = ({ name }) => {
         </div>
       </div>
       <div className="mx-2 row-span-1 my-6">
-        <div className="w-full bg-gray-hover px-2 my-4">
-          Información de Paradas
+        <div className="w-full bg-gray-hover px-2 my-2">
+          Paradas asignadas
         </div>
-        <SelectField
-          labelTitle="Día"
-          name="day"
-          options={SELECT_DAY}
-          value={selectedDayEdit}
-          onValueChange={(value) => {
+        <DayTypePicker
+          students={values?.students}
+          selectedDay={selectedDayEdit}
+          typeTravel={typeTravel}
+          onDayChange={(day) => {
             handleClearStudent();
-            setSelectedDayEdit(value);
+            setSelectedDayEdit(day);
           }}
+          onTypeChange={(type) => {
+            handleClearStudent();
+            setTypeTravel(type);
+          }}
+          isWorkshop={values?.workshop}
         />
-        {typeTravel !== "workshop" && (
-          <SelectField
-            labelTitle="Tipo de viaje"
-            name="typeTravel"
-            options={[
-              { label: "Viaje a Casa", value: "toHome" },
-              { label: "Viaje a Escuela", value: "toSchool" },
-            ]}
-            value={typeTravel}
-            onValueChange={(value) => {
-              handleClearStudent();
-              setTypeTravel(value);
-            }}
-          />
-        )}
         <ul ref={parentRef}>
           {studentsData?.map((student) => {
             if (!student) return null;
