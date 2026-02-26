@@ -10,7 +10,7 @@ const emailExists = async (email, obj) => {
     const exist = await fetchSignInMethodsForEmail(auth, email);
     if (exist.length > 0) return false;
     return true;
-  } catch (error) {
+  } catch {
     return false;
   }
 };

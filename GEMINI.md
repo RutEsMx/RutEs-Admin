@@ -132,3 +132,87 @@ NEXT_PUBLIC_FIREBASE_*       # Config pública de Firebase (SDK web)
 FIREBASE_ADMIN_*             # Credenciales del Admin SDK (privadas)
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY  # API Key de Google Maps
 ```
+
+---
+
+## 🗺️ Módulo de Rutas — Detalles Internos
+
+### Estructura de `values.students` en Formik (formulario de rutas)
+
+```js
+{
+  monday: {
+    toHome: [ { id, name, lastName, stop: { coords, id }, ... } ],
+    toSchool: [ ... ],
+    workshop: [ ... ],
+  },
+  tuesday: { ... },
+  // wednesday, thursday, friday
+}
+```
+
+### Cómo se cargan los alumnos disponibles (`studentsRoutes`)
+
+- **Función:** `getStudentsForRoutes()` → `createStudentsOptions()` en `StudentsServices.js`
+- **Regla crítica:** Las paradas de un alumno **NO** se leen del doc `students`. Se consultan directamente desde la colección `stops` con `where("student", "==", student.id)`.
+- El documento `students` en Firestore **nunca** almacena un campo `stops[]`. Las paradas viven separadas en `stops` con los campos: `student` (ID), `route` (ID), `day`, `type`, `coords`.
+- Cada objeto retornado por `createStudentsOptions` incluye: `id`, `value`, `label`, `stops[]`, `serviceType`, `name`, `lastName`, `secondLastName`, `address`.
+
+### Componente `DayTypePicker` (`src/components/DayTypePicker/index.jsx`)
+
+Navegación visual de días y tipo de viaje para el formulario de paradas. Reemplaza los dropdowns de "Día" y "Tipo de viaje".
+
+- Props: `students` (del Formik), `selectedDay`, `typeTravel`, `onDayChange`, `onTypeChange`, `isWorkshop`
+- Muestra pills de días (Lun→Vie) con badge del conteo de alumnos para ese día
+- Muestra tabs de tipo (A Casa / A Escuela) solo si `isWorkshop === false`
+- Los contadores se calculan en tiempo real desde `values.students`
+
+### Patrón anti-loop en `useEffect` con `useDragAndDrop`
+
+`StepStopsEdit` y `StepStops` tienen dos `useEffect` que pueden causar loop infinito:
+
+1. `studentsData` cambia → actualiza `values.students` en Formik
+2. `values` cambia → actualiza `studentsData` con el día/tipo actual
+
+**Solución:** usar una `ref` como flag:
+
+```js
+const isInternalUpdate = useRef(false);
+
+// Al cambiar día/tipo (programático):
+useEffect(() => {
+  isInternalUpdate.current = true; // marcar como update interno
+  setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
+}, [selectedDayEdit, typeTravel]); // ← NO incluir values en deps
+
+// Al hacer drag-and-drop (usuario):
+useEffect(() => {
+  if (isInternalUpdate.current) {
+    isInternalUpdate.current = false;
+    return; // ignorar si fue interno
+  }
+  setFieldValue("students", {
+    ...values?.students,
+    [selectedDayEdit]: { [typeTravel]: studentsData },
+  });
+}, [studentsData]);
+```
+
+### Gotcha: `validateServiceType` — editar coordenadas de parada
+
+En `src/utils/functionsClient.js`, el caso `complete + isEditStudent` de `validateServiceType`:
+
+```js
+// ✅ CORRECTO — usar el value recibido
+setPlace={(value) => setFieldValue(temporalName, value)}
+
+// ❌ INCORRECTO — ignora el value nuevo, siempre restaura coords originales
+setPlace={() => setFieldValue(temporalName, selectedStudent.stop.coords)}
+```
+
+### Next.js App Router — Regla Page async vs `"use client"`
+
+Un `page.jsx` **no puede** tener `"use client"` Y ser `async` al mismo tiempo.
+
+- Si la página hace `fetch` server-side → Server Component (sin `"use client"`)
+- Si necesita hooks del cliente → convertir a Client Component y mover el fetch a un loader/service separado
