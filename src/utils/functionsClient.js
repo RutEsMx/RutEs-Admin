@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import PlacesAutocomplete from "@/components/PlacesAutocomplete";
 
 const generatePassword = () => {
@@ -25,7 +26,6 @@ const validateServiceType = ({
   address,
   isEditStudent,
   typeTravel,
-  selectedStudent,
 }) => {
   let element = null;
   const travelName = bothTravels ? "Ambos viajes" : "A la casa";
@@ -81,9 +81,7 @@ const validateServiceType = ({
           <div className="flex flex-col ">
             <PlacesAutocomplete
               label={labelName}
-              setPlace={() =>
-                setFieldValue(temporalName, selectedStudent.stop.coords)
-              }
+              setPlace={(value) => setFieldValue(temporalName, value)}
               place={values?.[temporalName]}
               address={address}
             />
