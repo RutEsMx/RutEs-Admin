@@ -1,6 +1,10 @@
 import { setStudents, useStudentsStore } from "@/store/useStudentsStore";
 import { setStructureDatatable } from "./TableServices";
-import { getDocumentById, getDocumentByField } from "@/firebase/crud";
+import {
+  getDocumentById,
+  getDocumentByField,
+  updateDocument,
+} from "@/firebase/crud";
 import { onSnapshot, collection, query, where, doc } from "firebase/firestore";
 import { db } from "@/firebase/client";
 
@@ -133,10 +137,53 @@ const subscribeStudentById = (id) => {
   return unsubscribe;
 };
 
+const createParentsByForm = async (data, schoolId) => {
+  try {
+    const response = await fetch("/api/students", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...data, schoolId }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(
+        result.error || "Ocurrió un error al crear el estudiante",
+      );
+    }
+    return result;
+  } catch (error) {
+    return { error };
+  }
+};
+
+const updateStudentByForm = async (data) => {
+  try {
+    const { updateStudent } = useStudentsStore.getState();
+    data.fullName = [
+      data?.name?.toLowerCase(),
+      data?.lastName?.toLowerCase(),
+      data?.secondLastName?.toLowerCase(),
+    ].filter(Boolean);
+
+    const response = await updateDocument("students", data?.id, data);
+    if (response?.error) {
+      return { error: response.error };
+    }
+    updateStudent(data);
+    return { success: true, message: "Estudiante actualizado correctamente" };
+  } catch (error) {
+    return { error: error?.message || "Error al actualizar estudiante" };
+  }
+};
+
 export {
   getStudents,
   deleteStudents,
   getStudentById,
   subscribeStudents,
   subscribeStudentById,
+  createParentsByForm,
+  updateStudentByForm,
 };
