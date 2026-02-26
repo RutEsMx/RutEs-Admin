@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import StepStudent from "@/components/Forms/StepStudent";
@@ -14,7 +14,11 @@ import {
 import Button from "@/components/Button";
 import { createParentsByForm, getStudents } from "@/services/StudentsServices";
 import { useAuthContext } from "@/context/AuthContext";
-import { fatherMock, motherMock, studentMock } from "@/mocks/createStudent";
+import {
+  generateFatherMock,
+  generateMotherMock,
+  generateStudentMock,
+} from "@/mocks/createStudent";
 import { toast } from "sonner";
 
 const STEPS = [StepStudent];
@@ -28,87 +32,83 @@ const MultiStepFormStudent = () => {
   const navigation = useRouter();
   const { profile, school } = useAuthContext();
 
-  const initialValues = {
-    name: process.env.NODE_ENV === "development" ? studentMock.name : "",
-    lastName:
-      process.env.NODE_ENV === "development" ? studentMock.lastName : "",
-    secondLastName:
-      process.env.NODE_ENV === "development" ? studentMock.secondLastName : "",
-    birthDate:
-      process.env.NODE_ENV === "development" ? studentMock.birthDate : "",
-    bloodType:
-      process.env.NODE_ENV === "development" ? studentMock.bloodType : "",
-    allergies: "",
-    grade: process.env.NODE_ENV === "development" ? studentMock.grade : "",
-    group: process.env.NODE_ENV === "development" ? studentMock.group : "",
-    enrollment:
-      process.env.NODE_ENV === "development" ? studentMock.enrollment : "",
-    serviceType:
-      process.env.NODE_ENV === "development" ? studentMock.serviceType : "",
-    avatar: "",
-    includeFather:
-      process.env.NODE_ENV === "development"
-        ? studentMock.includeFather
-        : false,
-    includeMother:
-      process.env.NODE_ENV === "development"
-        ? studentMock.includeMother
-        : false,
-    status: "active",
-    father: {
-      name: process.env.NODE_ENV === "development" ? fatherMock.name : "",
-      lastName:
-        process.env.NODE_ENV === "development" ? fatherMock.lastName : "",
-      secondLastName:
-        process.env.NODE_ENV === "development" ? fatherMock.secondLastName : "",
-      phone: process.env.NODE_ENV === "development" ? fatherMock.phone : "",
-      email: process.env.NODE_ENV === "development" ? fatherMock.email : "",
+  const isDev = process.env.NODE_ENV === "development";
+
+  // Use state instead of useMemo to prevent random data generation during SSR
+  // causing hydration mismatches and infinite loops with Radix UI components.
+  const [initialValues, setInitialValues] = useState(null);
+
+  React.useEffect(() => {
+    const studentMock = isDev ? generateStudentMock() : {};
+    const fatherMock = isDev ? generateFatherMock() : {};
+    const motherMock = isDev ? generateMotherMock() : {};
+
+    setInitialValues({
+      name: studentMock.name || "",
+      lastName: studentMock.lastName || "",
+      secondLastName: studentMock.secondLastName || "",
+      birthDate: studentMock.birthDate || "",
+      bloodType: studentMock.bloodType || "",
+      allergies: studentMock.allergies || "",
+      grade: studentMock.grade || "",
+      group: studentMock.group || "",
+      enrollment: studentMock.enrollment || "",
+      serviceType: studentMock.serviceType || "",
       avatar: "",
-      emailExist: false,
-    },
-    mother: {
-      name: process.env.NODE_ENV === "development" ? motherMock.name : "",
-      lastName:
-        process.env.NODE_ENV === "development" ? motherMock.lastName : "",
-      secondLastName:
-        process.env.NODE_ENV === "development" ? motherMock.secondLastName : "",
-      phone: process.env.NODE_ENV === "development" ? motherMock.phone : "",
-      email: process.env.NODE_ENV === "development" ? motherMock.email : "",
-      avatar: "",
-      emailExist: false,
-    },
-    countTutors: process.env.NODE_ENV === "development" ? 0 : 0,
-    address: {
-      street:
-        process.env.NODE_ENV === "development"
-          ? studentMock?.address?.street
-          : "",
-      number:
-        process.env.NODE_ENV === "development"
-          ? studentMock?.address?.number
-          : "",
-      interiorNumber:
-        process.env.NODE_ENV === "development"
-          ? studentMock?.address?.interiorNumber
-          : "",
-      neighborhood:
-        process.env.NODE_ENV === "development"
-          ? studentMock?.address?.neighborhood
-          : "",
-      postalCode:
-        process.env.NODE_ENV === "development"
-          ? studentMock?.address?.postalCode
-          : "",
-      city:
-        process.env.NODE_ENV === "development"
-          ? studentMock?.address?.city
-          : "",
-      state:
-        process.env.NODE_ENV === "development"
-          ? studentMock?.address?.state
-          : "",
-    },
-  };
+      includeFather: studentMock.includeFather || false,
+      includeMother: studentMock.includeMother || false,
+      status: "active",
+      father: {
+        name: fatherMock.name || "",
+        lastName: fatherMock.lastName || "",
+        secondLastName: fatherMock.secondLastName || "",
+        phone: fatherMock.phone || "",
+        email: fatherMock.email || "",
+        avatar: "",
+        emailExist: false,
+      },
+      mother: {
+        name: motherMock.name || "",
+        lastName: motherMock.lastName || "",
+        secondLastName: motherMock.secondLastName || "",
+        phone: motherMock.phone || "",
+        email: motherMock.email || "",
+        avatar: "",
+        emailExist: false,
+      },
+      countTutors: 0,
+      address: {
+        street: studentMock.address?.street || "",
+        number: studentMock.address?.number || "",
+        interiorNumber: studentMock.address?.interiorNumber || "",
+        neighborhood: studentMock.address?.neighborhood || "",
+        postalCode: studentMock.address?.postalCode || "",
+        city: studentMock.address?.city || "",
+        state: studentMock.address?.state || "",
+      },
+    });
+  }, [isDev]);
+
+  if (!initialValues) {
+    return (
+      <div className="flex justify-center items-center h-full mt-20">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="w-10 h-10 animate-spin text-primary"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+          />
+        </svg>
+      </div>
+    );
+  }
 
   const handleNext = async (values) => {
     setIsLoading(true);
