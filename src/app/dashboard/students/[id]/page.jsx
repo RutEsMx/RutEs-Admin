@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
-import { getStudentById } from "@/services/StudentsServices";
+import { subscribeStudentById } from "@/services/StudentsServices";
 import { DAYS, OPTIONS_TYPE_SERVICES, TYPE_TRAVEL } from "@/utils/options";
 import Image from "next/image";
 import ButtonLink from "@/components/ButtonLink";
@@ -13,26 +12,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useRoutesStore } from "@/store/useRoutesStore";
 import useStopsStudentDetails from "@/hooks/useStopsStudentDetails";
+import { useState, useEffect, use } from "react";
 
-const Page = ({ params }) => {
+const Page = props => {
+  const params = use(props.params);
   const { student, updateStudent } = useStudentsStore();
   const { routes } = useRoutesStore();
   const { tutors } = useTutorsByStudents(student);
   const { stops } = useStopsStudentDetails(student);
-  const [imageUrl, setImageUrl] = useState("");
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    const getStudent = async () => {
-      const student = await getStudentById(params.id);
-
-      if (student?.avatar) {
-        setImageUrl(student?.avatar);
-      }
-    };
+    const unsub = subscribeStudentById(params.id);
     setIsClient(true);
-    getStudent();
-  }, []);
+    return () => {
+      unsub && unsub();
+    };
+  }, [params.id]);
 
   const handleStatus = async (tutorId) => {
     const status = student?.tutorActive === tutorId ? "" : tutorId;
@@ -165,8 +161,13 @@ const Page = ({ params }) => {
             </div>
           </div>
           <div>
-            {imageUrl && (
-              <Image src={imageUrl} alt="avatar" width={200} height={200} />
+            {student?.avatar && (
+              <Image
+                src={student?.avatar}
+                alt="avatar"
+                width={200}
+                height={200}
+              />
             )}
           </div>
         </div>

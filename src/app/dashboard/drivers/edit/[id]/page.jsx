@@ -17,7 +17,8 @@ const getDriver = async (id) => {
   }
 };
 
-const Page = async ({ params }) => {
+const Page = async props => {
+  const params = await props.params;
   const { id } = params;
   const driver = await getDriver(id);
 

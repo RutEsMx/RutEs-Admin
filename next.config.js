@@ -25,7 +25,7 @@ const nextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     // Resolver problema con Handlebars
     config.resolve.alias.handlebars = "handlebars/dist/handlebars.min.js";
 

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import {
   COLORS,
   CURRENT_DAY,
@@ -36,7 +36,8 @@ import { Label } from "@/components/ui/label";
 
 const SELECT_DAY = DAYS_OPTIONS.slice(1);
 
-const Page = ({ params }) => {
+const Page = props => {
+  const params = use(props.params);
   const [route, setRoute] = useState({});
   const [color, setColor] = useState("");
   const [statusName, setStatusName] = useState("");

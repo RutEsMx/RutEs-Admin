@@ -8,7 +8,7 @@ import { getUSer } from "@/utils/functionsServer";
 customInitApp();
 
 export async function GET(request) {
-  const sessionid = cookies().get("sessionid");
+  const sessionid = (await cookies()).get("sessionid");
   const profile = await getUSer(sessionid?.value);
 
   if (profile?.error) {
@@ -54,7 +54,7 @@ export async function GET(request) {
 
 export async function DELETE(request) {
   const data = await request.json();
-  const sessionid = cookies().get("sessionid");
+  const sessionid = (await cookies()).get("sessionid");
   const profile = await getUSer(sessionid?.value);
 
   if (profile?.error) {

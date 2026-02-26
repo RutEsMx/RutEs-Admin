@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Formik, Form } from "formik";
 import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
@@ -11,7 +11,7 @@ import { db } from "@/firebase/client";
 import ButtonAction from "@/components/ButtonAction";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useAuthContext } from "@/context/AuthContext";
-import { tutorMock } from "@/mocks/createStudent";
+import { generateTutorMock } from "@/mocks/createStudent";
 import { getParents } from "@/services/ParentsSevices";
 import { toast } from "sonner";
 
@@ -24,17 +24,23 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
   const [emailData, setEmailData] = useState(null);
   const { profile, school } = useAuthContext();
 
-  const initialValues = {
-    name: IS_DEV ? tutorMock.name : data?.name || "",
-    lastName: IS_DEV ? tutorMock.lastName : data?.lastName || "",
-    secondLastName: IS_DEV
-      ? tutorMock.secondLastName
-      : data?.secondLastName || "",
-    email: IS_DEV ? tutorMock.email : data?.email || "",
-    phone: IS_DEV ? tutorMock.phone : data?.phone || "",
-    isEdit,
-    avatar: data?.avatar || "",
-  };
+  const [initialValues, setInitialValues] = useState(null);
+
+  React.useEffect(() => {
+    const mock = IS_DEV ? generateTutorMock() : {};
+
+    setInitialValues({
+      name: mock.name || data?.name || "",
+      lastName: mock.lastName || data?.lastName || "",
+      secondLastName: mock.secondLastName || data?.secondLastName || "",
+      email: mock.email || data?.email || "",
+      phone: mock.phone || data?.phone || "",
+      isEdit,
+      avatar: data?.avatar || "",
+    });
+  }, [IS_DEV, data, isEdit]);
+
+  if (!initialValues) return null;
 
   const findEmailFirestore = async (e, setFieldValue) => {
     const email = e.target.value;
@@ -126,13 +132,13 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
-                    class="w-6 h-6 animate-spin text-white"
+                    className="w-6 h-6 animate-spin text-white"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
                     />
                   </svg>
@@ -150,13 +156,13 @@ const FormTutor = ({ data, isEdit = false, studentId }) => {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
-                    class="w-6 h-6 animate-spin text-black"
+                    className="w-6 h-6 animate-spin text-black"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
                     />
                   </svg>
