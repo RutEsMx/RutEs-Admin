@@ -11,17 +11,14 @@ const PlacesAutocomplete = ({ label, setPlace, place, address }) => {
   const [value, setValue] = useState(place);
 
   useEffect(() => {
-    const getPlaceId = async () => {
-      if (!place) {
-        setValue(null);
-        return;
-      } else {
-        if (place?.place_id) {
-          setValue(place);
-        }
-      }
-    };
-    getPlaceId();
+    if (!place) {
+      setValue(null);
+      return;
+    }
+    // Actualizar si tiene lat (viene del geocoder) o place_id (viene de Google Places directamente)
+    if (place?.lat || place?.place_id) {
+      setValue(place);
+    }
   }, [place]);
 
   const handleChange = async (newValue) => {

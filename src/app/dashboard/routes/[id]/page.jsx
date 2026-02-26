@@ -3,9 +3,11 @@ import { useEffect, useState, use } from "react";
 import {
   COLORS,
   CURRENT_DAY,
+  DAYS,
   DAYS_OPTIONS,
   STATUS_TRAVEL,
 } from "@/utils/options";
+import DayTypePicker from "@/components/DayTypePicker";
 import ButtonLink from "@/components/ButtonLink";
 import {
   collection,
@@ -31,12 +33,9 @@ import ButtonAction from "@/components/ButtonAction";
 import { removeRoutes } from "@/services/RoutesServices";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import SelectField from "@/components/SelectField";
 import { Label } from "@/components/ui/label";
 
-const SELECT_DAY = DAYS_OPTIONS.slice(1);
-
-const Page = props => {
+const Page = (props) => {
   const params = use(props.params);
   const [route, setRoute] = useState({});
   const [color, setColor] = useState("");
@@ -48,6 +47,7 @@ const Page = props => {
   const [typeTravel, setTypeTravel] = useState("toSchool");
   const [isWorkshop, setIsWorkshop] = useState(false);
   const [listStudents, setListStudents] = useState([]);
+  const [travelData, setTravelData] = useState({});
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -122,6 +122,20 @@ const Page = props => {
       try {
         if (!snp.exists()) return;
         const travel = snp.data();
+
+        // Convertir estructura de travels para el DayTypePicker
+        const formattedTravels = {};
+        Object.keys(DAYS_OPTIONS).forEach((_, idx) => {
+          if (idx === 0) return; // saltar 'all'
+          const dayKey = Object.keys(DAYS)[idx - 1]; // monday, tuesday...
+          formattedTravels[dayKey] = {
+            toHome: travel[dayKey]?.toHome?.students || [],
+            toSchool: travel[dayKey]?.toSchool?.students || [],
+            workshop: travel[dayKey]?.workshop?.students || [],
+          };
+        });
+        setTravelData(formattedTravels);
+
         let students = travel[selectedDay][typeTravel]?.students || [];
 
         if (isWorkshop) {
@@ -497,33 +511,10 @@ const Page = props => {
         </div>
       </div>
       <div className="border border-black px-4 py-2 mt-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
-          <div className="col-span-2 md:col-span-1 mx-3">
-            <span className="">{route?.name}</span>
-            {!isWorkshop && (
-              <SelectField
-                labelTitle="Tipo de viaje"
-                name="typeTravel"
-                options={[
-                  { label: "Viaje a Casa", value: "toHome" },
-                  { label: "Viaje a Escuela", value: "toSchool" },
-                ]}
-                value={typeTravel}
-                onValueChange={(value) => {
-                  setTypeTravel(value);
-                }}
-              />
-            )}
-            <SelectField
-              labelTitle="Día"
-              name="day"
-              options={SELECT_DAY}
-              value={selectedDay}
-              onValueChange={setSelectedDay}
-            />
-          </div>
-          <div className="col-span-2 md:col-span-1">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
+          <div className="col-span-1">
             <div className="flex flex-col justify-around">
+              <span className="font-bold text-xl mb-4">{route?.name}</span>
               <div className="flex flex-row gap-2">
                 <span className="font-bold">Capacidad:</span>
                 <span className="">{route?.capacity}</span>
@@ -532,24 +523,40 @@ const Page = props => {
                 <span className="font-bold">Estado:</span>
                 <span className={`${color}`}>{statusName}</span>
               </div>
-              <div className="flex flex-row gap-2 pt-2 mt-3 border-t-2">
+              <div className="mt-4 pb-2 border-b-2">
+                <DayTypePicker
+                  students={travelData}
+                  selectedDay={selectedDay}
+                  typeTravel={typeTravel}
+                  onDayChange={setSelectedDay}
+                  onTypeChange={setTypeTravel}
+                  isWorkshop={isWorkshop}
+                />
+              </div>
+              <div className="flex flex-row gap-2 pt-2 mt-1">
                 <Label className="text-2xl">Estudiantes</Label>
               </div>
-              <div className="flex flex-col gap-2 mt-2 border-t-2">
-                {listStudents.map((student) => {
-                  return (
-                    <div
-                      key={student.id}
-                      className="flex flex-row cursor-pointer mt-2"
-                      onClick={() => handleStudent(student)}
-                    >
-                      <Label className="cursor-pointer">
-                        {student.name} {student.lastName}{" "}
-                        {student.secondLastName}
-                      </Label>
-                    </div>
-                  );
-                })}
+              <div className="flex flex-col gap-2 mt-2 border-t-2 pt-2">
+                {listStudents.length > 0 ? (
+                  listStudents.map((student) => {
+                    return (
+                      <div
+                        key={student.id}
+                        className="flex flex-row cursor-pointer mt-2"
+                        onClick={() => handleStudent(student)}
+                      >
+                        <Label className="cursor-pointer">
+                          {student.name} {student.lastName}{" "}
+                          {student.secondLastName}
+                        </Label>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <span className="text-gray-500 text-sm italic">
+                    No hay estudiantes asignados
+                  </span>
+                )}
               </div>
             </div>
           </div>
