@@ -397,30 +397,105 @@ const updateRoutesByForm = async (data) => {
 
 const removeRoutes = async (id) => {
   try {
+    const routeDoc = await getDoc(doc(db, "routes", id));
+    if (!routeDoc.exists()) return { error: "Ruta no encontrada" };
+    const routeData = routeDoc.data();
+    const routeToQuery = routeData?.workshop ? "routeWorkshop" : "route";
+
     const qAuxiliar = query(
       collection(db, "profile"),
-      where("route", "==", id),
+      where(routeToQuery, "array-contains", id),
     );
-    const qDriver = query(collection(db, "drivers"), where("route", "==", id));
-    const qUnit = query(collection(db, "units"), where("route", "==", id));
+    // Para retrocompatibilidad por si aún no actualizaron a arrays o todavía hay rutas simples
+    const qAuxiliarSimple = query(
+      collection(db, "profile"),
+      where(routeToQuery, "==", id),
+    );
+
+    const qDriver = query(
+      collection(db, "drivers"),
+      where(routeToQuery, "array-contains", id),
+    );
+    const qDriverSimple = query(
+      collection(db, "drivers"),
+      where(routeToQuery, "==", id),
+    );
+
+    const qUnit = query(
+      collection(db, "units"),
+      where(routeToQuery, "array-contains", id),
+    );
+    const qUnitSimple = query(
+      collection(db, "units"),
+      where(routeToQuery, "==", id),
+    );
+
     const qStops = query(collection(db, "stops"), where("route", "==", id));
 
-    const getAuxiliar = (await getDocs(qAuxiliar)).docs[0]?.ref;
-    const getDriver = (await getDocs(qDriver)).docs[0]?.ref;
-    const getUnit = (await getDocs(qUnit)).docs[0]?.ref;
-    const getStops = (await getDocs(qStops)).docs.map((el) => el.ref);
-
-    await Promise.all([
-      getAuxiliar && updateDoc(getAuxiliar, { route: null }),
-      getDriver && updateDoc(getDriver, { route: null }),
-      getUnit && updateDoc(getUnit, { route: null }),
-      getStops.length > 0 &&
-        getStops.map(async (el) => {
-          await deleteDoc(el);
-        }),
-      deleteDocument("travels", id),
-      deleteDocument("routes", id),
+    const [
+      auxiliars,
+      auxiliarsSimple,
+      drivers,
+      driversSimple,
+      units,
+      unitsSimple,
+      stops,
+    ] = await Promise.all([
+      getDocs(qAuxiliar),
+      getDocs(qAuxiliarSimple),
+      getDocs(qDriver),
+      getDocs(qDriverSimple),
+      getDocs(qUnit),
+      getDocs(qUnitSimple),
+      getDocs(qStops),
     ]);
+
+    // Unir queries de array y simples.
+    const allAuxiliars = [...auxiliars.docs, ...auxiliarsSimple.docs].filter(
+      (v, i, a) => a.findIndex((v2) => v2.id === v.id) === i,
+    );
+    const allDrivers = [...drivers.docs, ...driversSimple.docs].filter(
+      (v, i, a) => a.findIndex((v2) => v2.id === v.id) === i,
+    );
+    const allUnits = [...units.docs, ...unitsSimple.docs].filter(
+      (v, i, a) => a.findIndex((v2) => v2.id === v.id) === i,
+    );
+
+    const getStopsRef = stops.docs.map((el) => el.ref);
+
+    const promises = [];
+    allAuxiliars.forEach((doc) =>
+      promises.push(
+        updateDoc(doc.ref, {
+          [routeToQuery]: routeData?.workshop ? arrayRemove(id) : null,
+        }),
+      ),
+    );
+    allDrivers.forEach((doc) =>
+      promises.push(
+        updateDoc(doc.ref, {
+          [routeToQuery]: routeData?.workshop ? arrayRemove(id) : null,
+        }),
+      ),
+    );
+    allUnits.forEach((doc) =>
+      promises.push(
+        updateDoc(doc.ref, {
+          [routeToQuery]: routeData?.workshop ? arrayRemove(id) : null,
+        }),
+      ),
+    );
+
+    if (getStopsRef.length > 0) {
+      getStopsRef.forEach((el) => {
+        promises.push(deleteDoc(el));
+      });
+    }
+
+    promises.push(deleteDocument("travels", id));
+    promises.push(deleteDocument("routes", id));
+
+    await Promise.all(promises);
 
     return { success: true, message: "Ruta eliminada correctamente" };
   } catch (error) {
