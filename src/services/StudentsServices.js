@@ -5,7 +5,7 @@ import {
   getDocumentByField,
   updateDocument,
 } from "@/firebase/crud";
-import { onSnapshot, collection, query, where, doc, getDoc } from "firebase/firestore";
+import { onSnapshot, collection, query, where, doc, getDocs } from "firebase/firestore";
 import { db } from "@/firebase/client";
 
 const getStudents = async () => {
@@ -267,29 +267,30 @@ const getStudentsForRoutes = async () => {
 }
 
 const createStudentsOptions = async (students) => {
-  // value, label
-  // get stops by student from firestore
   const studentsPromise = students.map(async (student) => {
-    const stops = student?.stops ? await Promise.all(student.stops.map(async (stop) => {
-      // get stop reference from firestore
-      const docSnap = await getDoc(stop)
-      if (docSnap.exists())
-        return docSnap.data()
-      return null
-    })) : [];
+    // Consultar la colección stops donde student == id del alumno
+    const stopsQuery = query(
+      collection(db, "stops"),
+      where("student", "==", student.id)
+    );
+    const stopsSnap = await getDocs(stopsQuery);
+    const stops = stopsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
     return {
+      id: student.id,
       value: student.id,
       label: `${student?.name || ''} ${student?.lastName || ''} ${student?.secondLastName || ''}`,
-      stops: stops || [],
+      stops,
       serviceType: student?.serviceType,
       name: student?.name || '',
       lastName: student?.lastName || '',
       secondLastName: student?.secondLastName || '',
+      address: student?.address || null,
     };
   });
   return Promise.all(studentsPromise);
 }
+
 
 export {
   getStudents,
