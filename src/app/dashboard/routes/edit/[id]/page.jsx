@@ -1,4 +1,3 @@
-"use client";
 import FormRoute from "@/components/MultiStepForm/Route";
 import Link from "next/link";
 
@@ -19,7 +18,8 @@ const getRoute = async (id) => {
   }
 };
 
-const Page = async ({ params }) => {
+const Page = async props => {
+  const params = await props.params;
   const { id } = params;
   const route = await getRoute(id);
 

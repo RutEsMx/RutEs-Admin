@@ -17,7 +17,8 @@ const getAuxiliar = async (id) => {
   }
 };
 
-const Page = async ({ params }) => {
+const Page = async props => {
+  const params = await props.params;
   const { id } = params;
   const auxiliar = await getAuxiliar(id);
 

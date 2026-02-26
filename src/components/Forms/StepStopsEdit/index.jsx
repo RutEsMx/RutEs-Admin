@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useRef } from "react";
 import {
   MapPinIcon,
   CheckIcon,
@@ -53,7 +53,16 @@ const StepStopsEdit = ({ name }) => {
     setSelectedDay(["all"]);
   }, []);
 
+  // Ref para saber si el cambio de studentsData fue iniciado por el usuario (drag-and-drop)
+  // o por nosotros (al cambiar día/tipo). Evita el loop infinito.
+  const isInternalUpdate = useRef(false);
+
   useEffect(() => {
+    // Solo sincronizar con Formik si el cambio fue por drag-and-drop del usuario
+    if (isInternalUpdate.current) {
+      isInternalUpdate.current = false;
+      return;
+    }
     setFieldValue("students", {
       ...values?.students,
       [selectedDayEdit]: {
@@ -89,8 +98,10 @@ const StepStopsEdit = ({ name }) => {
   const { addOrUpdateStudent, resetForm } = useStudentManager();
 
   useEffect(() => {
+    // Marcamos el update como interno para que el otro useEffect no lo propague a Formik
+    isInternalUpdate.current = true;
     setStudentsData(values?.students?.[selectedDayEdit]?.[typeTravel] || []);
-  }, [selectedDayEdit, typeTravel, values]);
+  }, [selectedDayEdit, typeTravel]);
 
   useEffect(() => {
     if (selectedDay.includes(ALL_DAY)) {
@@ -317,9 +328,8 @@ const StepStopsEdit = ({ name }) => {
               {isEditStudent ? (
                 <div className="ml-2 text-sm bg-slate-300 opacity-80 p-2">
                   <span>
-                    {`${selectedStudent?.name || ""} ${
-                      selectedStudent?.lastName || ""
-                    } ${selectedStudent?.secondLastName || ""}`}
+                    {`${selectedStudent?.name || ""} ${selectedStudent?.lastName || ""
+                      } ${selectedStudent?.secondLastName || ""}`}
                   </span>
                 </div>
               ) : (
@@ -340,12 +350,9 @@ const StepStopsEdit = ({ name }) => {
                 values,
                 bothTravels,
                 address:
-                  `${selectedStudent?.address?.street || ""} ${
-                    selectedStudent?.address?.number || ""
-                  } ${selectedStudent?.address?.interiorNumber || ""} ${
-                    selectedStudent?.address?.neighborhood || ""
-                  } ${selectedStudent?.address?.postalCode || ""} ${
-                    selectedStudent?.address?.city || ""
+                  `${selectedStudent?.address?.street || ""} ${selectedStudent?.address?.number || ""
+                  } ${selectedStudent?.address?.interiorNumber || ""} ${selectedStudent?.address?.neighborhood || ""
+                  } ${selectedStudent?.address?.postalCode || ""} ${selectedStudent?.address?.city || ""
                   } ${selectedStudent?.address?.state || ""}` || "",
                 isEditStudent,
                 typeTravel,
@@ -414,11 +421,9 @@ const StepStopsEdit = ({ name }) => {
                   <div className="flex flex-row items-center">
                     <MapPinIcon className="h-4 w-4 text-yellow" />
                     <div className="flex ps-2">
-                      <span className="text-sm font-semibold">{`${
-                        student?.name || ""
-                      } ${student?.lastName || ""} ${
-                        student?.secondLastName || ""
-                      }`}</span>
+                      <span className="text-sm font-semibold">{`${student?.name || ""
+                        } ${student?.lastName || ""} ${student?.secondLastName || ""
+                        }`}</span>
                     </div>
                   </div>
                 </div>

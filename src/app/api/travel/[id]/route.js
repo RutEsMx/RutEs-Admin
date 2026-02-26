@@ -16,7 +16,8 @@ customInitApp();
  * @param {string} request.nextUrl.searchParams.type - The type of travel (e.g., 'workshop').
  * @returns {Promise<Object>} - A promise that resolves to the JSON response containing the travel routes.
  */
-export async function GET(request, { params }) {
+export async function GET(request, props) {
+  const params = await props.params;
   try {
     const { id } = params;
     const searchParams = request.nextUrl.searchParams;
@@ -68,13 +69,13 @@ const getTravels = async (routes, day, type) => {
           if (type !== "workshop" && type !== "toSchool") {
             statusTravel =
               !studentData.data().statusTravel ||
-              studentData.data().statusTravel === "cancelToSchool"
+                studentData.data().statusTravel === "cancelToSchool"
                 ? await validateStudentTravelWorkshop(student, day)
                 : (studentData.data().statusTravel !== "workshop" &&
-                    studentData.data().statusTravel) ||
-                  (studentData.data().statusTravel === "workshop" &&
-                    studentData.data().statusTravel) ||
-                  "";
+                  studentData.data().statusTravel) ||
+                (studentData.data().statusTravel === "workshop" &&
+                  studentData.data().statusTravel) ||
+                "";
           }
 
           return {
@@ -144,6 +145,7 @@ const validateStudentTravelWorkshop = async (student, day) => {
       .get();
     return response.docs.length > 0 ? "workshop" : "";
   } catch (error) {
+    console.log("Error:", error);
     return "";
   }
 };
