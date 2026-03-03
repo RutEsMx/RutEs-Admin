@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 import { firestore } from "firebase-admin";
 import { getAuth } from "firebase-admin/auth";
 import { sendPassword } from "@/services/MailService";
@@ -277,11 +277,17 @@ export async function POST(request) {
     }
 
     const buffer = await file.arrayBuffer();
-    const workbook = XLSX.read(buffer, { type: "buffer" });
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(Buffer.from(buffer));
 
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
-    const data = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+    const worksheet = workbook.worksheets[0];
+    // Convert worksheet rows into arrays (header + data rows)
+    const data = [];
+    worksheet.eachRow((row) => {
+      // row.values is 1-based; ignore index 0
+      const values = Array.isArray(row.values) ? row.values.slice(1) : [];
+      data.push(values);
+    });
 
     if (!data || data.length <= 1) {
       return NextResponse.json(
