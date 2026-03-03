@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 
 const Button = ({
   children,
+  icon,
   color = "bg-primary",
   className = "",
   disabled = false,
@@ -33,6 +35,20 @@ const Button = ({
       {...props}
     >
       {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+      {icon
+        ? (() => {
+            switch (icon) {
+              case "plus":
+                return <PlusIcon data-testid="plus-icon" className="h-4 w-4" />;
+              case "minus":
+                return (
+                  <MinusIcon data-testid="minus-icon" className="h-4 w-4" />
+                );
+              default:
+                return null;
+            }
+          })()
+        : null}
       {children}
     </button>
   );
