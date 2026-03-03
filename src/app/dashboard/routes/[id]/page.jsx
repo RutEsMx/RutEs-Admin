@@ -136,6 +136,15 @@ const Page = (props) => {
         });
         setTravelData(formattedTravels);
 
+        // Verificar si existe el día seleccionado
+        if (!travel[selectedDay]) {
+          setMarkers([]);
+          setListStudents([]);
+          setStatusName("Sin viaje");
+          setColor(COLORS.finished);
+          return;
+        }
+
         let students = travel[selectedDay][typeTravel]?.students || [];
 
         if (isWorkshop) {

@@ -55,7 +55,7 @@ const DataTable = ({ type, list = [] }) => {
         />
       </div>
 
-      <div className="flex items-center justify-between gap-4 mt-2">
+      <div className="flex flex-row flex-wrap items-center justify-between gap-3 mt-2">
         <div className="flex items-center gap-2">
           <ButtonAction
             onClick={() => table.setPageIndex(0)}
@@ -83,15 +83,17 @@ const DataTable = ({ type, list = [] }) => {
           </ButtonAction>
         </div>
 
-        <div className="flex flex-col items-center gap-2">
-          <div className="text-sm">
+        <div className="flex items-center gap-3 text-sm flex-shrink-0">
+          <div className="whitespace-nowrap">
             <strong>
               {table.getState().pagination.pageIndex + 1} de{" "}
               {table.getPageCount() || 1}
             </strong>
           </div>
-          <div className="flex items-center gap-2 text-sm">
-            <span>| Ir a:</span>
+
+          <div className="flex items-center gap-2">
+            <label className="sr-only">Ir a página</label>
+            <span className="hidden sm:inline">| Ir a:</span>
             <input
               type="number"
               defaultValue={table.getState().pagination.pageIndex + 1}
@@ -99,7 +101,7 @@ const DataTable = ({ type, list = [] }) => {
                 const page = e.target.value ? Number(e.target.value) - 1 : 0;
                 table.setPageIndex(page);
               }}
-              className="border p-1 rounded w-16"
+              className="border p-1 rounded w-14 text-sm"
             />
           </div>
         </div>
