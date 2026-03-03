@@ -13,7 +13,7 @@ import {
 import MapStops from "@/components/MapStops";
 import StepStopsEdit from "@/components/Forms/StepStopsEdit";
 import { useRoutesStore } from "@/store/useRoutesStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 
@@ -21,6 +21,7 @@ const FormRoute = ({ data, isEdit = false }) => {
   const navigation = useRouter();
   const { profile } = useAuthContext() || {};
   const { setTypeTravel } = useRoutesStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const initialValues = {
     name: data?.name || "",
@@ -36,7 +37,10 @@ const FormRoute = ({ data, isEdit = false }) => {
     temporalToHome: undefined,
   };
 
-  const handleNext = async (values) => {
+  const handleSubmit = async (values) => {
+    if (isLoading) return;
+
+    setIsLoading(true);
     try {
       values.schoolId = profile?.schoolId;
       if (isEdit) values.id = data?.id;
@@ -44,7 +48,7 @@ const FormRoute = ({ data, isEdit = false }) => {
         ? await updateRoutesByForm(values)
         : await createRoutesByForm(values);
       if (error) {
-        toast.error(error?.message);
+        toast.error(error?.message || "Error al guardar");
       }
       if (success) {
         toast.success(message);
@@ -52,7 +56,9 @@ const FormRoute = ({ data, isEdit = false }) => {
       }
       setTypeTravel("toHome");
     } catch (error) {
-      toast.error(error?.message);
+      toast.error(error?.message || "Error inesperado");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -72,21 +78,27 @@ const FormRoute = ({ data, isEdit = false }) => {
     <>
       <Formik
         initialValues={initialValues}
-        onSubmit={handleNext}
+        onSubmit={handleSubmit}
         validationSchema={validateRoute}
         validateOnBlur={false}
         validateOnChange={true}
         validateOnMount={false}
       >
-        {({ isSubmitting, handleSubmit, values }) => (
+        {({ isSubmitting, handleSubmit: formikSubmit, values }) => (
           <Form>
             <div className="flex justify-end gap-4 -mt-8 mb-4">
-              <Button onClick={handleBack} color="bg-light-gray" type="button">
+              <Button
+                onClick={handleBack}
+                color="bg-light-gray"
+                type="button"
+                disabled={isLoading}
+              >
                 Cancelar
               </Button>
               <Button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
+                onClick={formikSubmit}
+                disabled={isSubmitting || isLoading}
+                loading={isLoading}
                 type="button"
               >
                 {isEdit ? "Guardar" : "Crear"}

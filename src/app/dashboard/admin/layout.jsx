@@ -24,14 +24,14 @@ const Layout = ({ children }) => {
   }, [pathname]);
 
   return (
-    <div className="col-span-3 lg:col-span-4 mt-16 mx-8">
+    <div className="col-span-3 lg:col-span-4 mx-8">
       <div className="container mx-auto px-4 py-10">
         <div className="grid grid-cols-2 gap-4 p-2">
           <div>
             <h1 className="font-bold">Administrador</h1>
           </div>
           <div className="col-span-2 border border-gray rounded-md min-h-[200px]">
-            <div className="grid grid-cols-5 gap-4 p-2 h-screen">
+            <div className="grid grid-cols-5 gap-4 p-2">
               <div className="space-y-1 flex justify-start flex-col">
                 <Button variant="secondary" className="w-full" asChild>
                   <Link

@@ -21,7 +21,7 @@ export const Sidebar = ({ className }) => {
     profile?.roles?.includes("admin") ||
     profile?.roles?.includes("admin-rutes");
   return (
-    <div className={cn("pb-12 mt-14", className)}>
+    <div className={cn("py-4 h-full", className)}>
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="space-y-1">

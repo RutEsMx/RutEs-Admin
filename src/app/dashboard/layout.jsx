@@ -39,14 +39,14 @@ const DashboardLayout = ({ children }) => {
   return (
     <>
       <NavBar />
-      <div className="grid grid-cols-1 lg:grid-cols-5 h-screen">
-        {/* Sticky Sidebar */}
-        <div className="hidden lg:block col-span-1 bg-muted-foreground sticky top-0 h-screen overflow-y-auto">
+      <div className="flex h-screen pt-16">
+        {/* Sidebar */}
+        <aside className="hidden lg:block w-64 bg-muted border-r h-full overflow-y-auto">
           <Sidebar />
-        </div>
+        </aside>
 
         {/* Main content */}
-        <main className="col-span-4 overflow-y-auto p-4">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4">{children}</main>
       </div>
     </>
   );

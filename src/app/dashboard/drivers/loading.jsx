@@ -8,9 +8,9 @@ export default function Loading() {
         <Skeleton variant="text" className="w-32 h-10" />
       </div>
 
-      <div className="space-y-3">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <Skeleton key={i} variant="card" className="h-20" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {[1, 2, 3].map((i) => (
+          <Skeleton key={i} variant="card" className="h-32" />
         ))}
       </div>
     </div>

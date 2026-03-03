@@ -9,8 +9,8 @@ export default function Loading() {
       </div>
 
       <div className="space-y-3">
-        {[1, 2, 3, 4, 5].map((i) => (
-          <Skeleton key={i} variant="card" className="h-20" />
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} variant="card" className="h-24" />
         ))}
       </div>
     </div>
