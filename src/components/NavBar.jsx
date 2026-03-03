@@ -10,6 +10,7 @@ import {
 } from "@heroicons/react/24/solid";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Sidebar } from "./Sidebar";
+import { Avatar } from "@/components/ui/avatar";
 
 const ADMIN = "admin";
 const ADMIN_RUTES = "admin-rutes";
@@ -79,15 +80,9 @@ const NavBar = () => {
       <div className="flex items-center mr-6">
         {user ? (
           <>
-            <div className="flex flex-row items-center me-4">
-              <img
-                src={avatarSrc}
-                alt="avatar"
-                className="m-2 rounded-full ring-2 ring-white"
-                width={32}
-                height={32}
-              />
-              <span className="">{name || ""}</span>
+            <div className="flex flex-row items-center me-4 gap-2">
+              <Avatar src={avatarSrc} alt={name} size="sm" />
+              <span className="text-sm">{name || ""}</span>
             </div>
             {isAdmin && (
               <Link href="/dashboard/admin/school">
