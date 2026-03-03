@@ -1,35 +1,41 @@
-import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
+"use client";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
-export default function ButtonStep({
-  icon,
-  color = "bg-primary",
+const Button = ({
   children,
-  className,
+  color = "bg-primary",
+  className = "",
+  disabled = false,
+  loading = false,
+  onClick,
+  type = "button",
   ...props
-}) {
+}) => {
   const colorClasses = {
-    "bg-primary": "bg-primary hover:bg-primary-hover",
-    "bg-light-gray": "bg-muted hover:bg-muted-hover",
+    "bg-primary":
+      "bg-primary hover:bg-primary-hover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-primary",
+    "bg-light-gray":
+      "bg-muted hover:bg-muted-hover active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-muted",
   };
 
-  function Icon(props) {
-    switch (icon) {
-      case "plus":
-        return <PlusIcon {...props} />;
-      case "minus":
-        return <MinusIcon {...props} />;
-      default:
-        return null;
-    }
-  }
+  const handleClick = async (e) => {
+    if (disabled || loading || !onClick) return;
+    await onClick(e);
+  };
 
   return (
     <button
-      className={`${colorClasses[color]} px-4 py-2 rounded-md flex items-center ${className} justify-center`}
+      type={type}
+      onClick={handleClick}
+      disabled={disabled || loading}
+      className={`${colorClasses[color]} px-4 py-2 rounded-md flex items-center justify-center gap-2 transition-all duration-200 ease-in-out ${className}`}
       {...props}
     >
-      <Icon className="h-4 w-4 text-black" />
+      {loading && <Loader2 className="h-4 w-4 animate-spin" />}
       {children}
     </button>
   );
-}
+};
+
+export default Button;
