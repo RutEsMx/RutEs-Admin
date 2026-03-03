@@ -7,6 +7,7 @@ import RoutesCards from "@/components/RoutesCards";
 import { Suspense } from "react";
 import Notifications from "./components/Notifications";
 import LogoLayout from "@/components/LogoLayout";
+import RoutesLoading from "./loading";
 
 const Routes = () => {
   return (
@@ -14,10 +15,9 @@ const Routes = () => {
       <div className="grid grid-cols-2 gap-4 p-2">
         <LogoLayout />
         <div className="flex justify-end items-center gap-4">
-          {/* <span>Filtrar rutas</span> */}
           <ButtonLink
             href="/dashboard/routes/create"
-            className="bg-primary hover:bg-primary-dark"
+            className="bg-primary hover:bg-primary-hover"
           >
             Crear ruta
           </ButtonLink>
@@ -25,7 +25,7 @@ const Routes = () => {
       </div>
       <div className="grid grid-flow-row gap-4">
         <div className="row-span-1">
-          <Suspense fallback={<div>Cargando...</div>}>
+          <Suspense fallback={<RoutesLoading />}>
             <MainMap />
           </Suspense>
         </div>
@@ -35,7 +35,7 @@ const Routes = () => {
               <Notifications />
             </div>
             <div className="col-span-2 md:pt-8">
-              <Suspense fallback={<div>Cargando...</div>}>
+              <Suspense fallback={<RoutesLoading />}>
                 <RoutesCards />
               </Suspense>
             </div>
