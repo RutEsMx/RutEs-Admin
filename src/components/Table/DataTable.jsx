@@ -55,10 +55,8 @@ const DataTable = ({ type, list = [] }) => {
         />
       </div>
 
-      <div className="grid grid-cols-4 gap-1">
-        <div className="col-span-1"></div>
-
-        <div className="col-span-1 flex items-center justify-end gap-2">
+      <div className="flex items-center justify-between gap-4 mt-2">
+        <div className="flex items-center gap-2">
           <ButtonAction
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
@@ -85,46 +83,41 @@ const DataTable = ({ type, list = [] }) => {
           </ButtonAction>
         </div>
 
-        <div className="col-span-2 flex justify-between items-center">
-          <div className="flex flex-1 justify-center">
-            <span>
-              <strong>
-                {table.getState().pagination.pageIndex + 1} de{" "}
-                {table.getPageCount() || 1}
-              </strong>
-            </span>
+        <div className="flex flex-col items-center gap-2">
+          <div className="text-sm">
+            <strong>
+              {table.getState().pagination.pageIndex + 1} de{" "}
+              {table.getPageCount() || 1}
+            </strong>
           </div>
-
-          <div className="flex flex-1 justify-center">
-            <span>
-              | Ir a:
-              <input
-                type="number"
-                defaultValue={table.getState().pagination.pageIndex + 1}
-                onChange={(e) => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                  table.setPageIndex(page);
-                }}
-                className="border p-1 rounded w-16 ms-2"
-              />
-            </span>
-          </div>
-
-          <div className="flex flex-1 justify-center">
-            <select
-              value={table.getState().pagination.pageSize}
+          <div className="flex items-center gap-2 text-sm">
+            <span>| Ir a:</span>
+            <input
+              type="number"
+              defaultValue={table.getState().pagination.pageIndex + 1}
               onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                table.setPageIndex(page);
               }}
-              className="md:hidden lg:flex"
-            >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Mostrar {pageSize}
-                </option>
-              ))}
-            </select>
+              className="border p-1 rounded w-16"
+            />
           </div>
+        </div>
+
+        <div className="flex items-center justify-end">
+          <select
+            value={table.getState().pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            className="hidden md:inline-block border rounded p-1"
+          >
+            {[10, 20, 30, 40, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Mostrar {pageSize}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="overflow-x-auto w-full mt-6">

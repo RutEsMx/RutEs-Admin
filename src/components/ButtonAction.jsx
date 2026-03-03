@@ -12,17 +12,14 @@ export default function ButtonAction({
   ...props
 }) {
   const colorClasses = {
-    "bg-primary":
-      "bg-primary hover:bg-primary-hover active:scale-[0.98] disabled:opacity-50",
-    "bg-light-gray":
-      "bg-muted hover:bg-muted-hover active:scale-[0.98] disabled:opacity-50",
-    "bg-warning":
-      "bg-destructive hover:bg-destructive-foreground text-white hover:text-black active:scale-[0.98] disabled:opacity-50",
+    "bg-primary": "bg-primary hover:bg-primary-hover text-white",
+    "bg-light-gray": "bg-muted hover:bg-muted-hover text-black",
+    "bg-warning": "bg-destructive hover:bg-destructive-foreground text-white",
   };
 
   return (
     <Button
-      className={`${colorClasses[color]} rounded-md px-2 py-1 w-fit flex flex-row items-center justify-center cursor-pointer gap-2 transition-all duration-200 ease-in-out`}
+      className={`${colorClasses[color]} rounded-md px-3 py-2 min-w-[44px] flex items-center justify-center gap-2 shadow-sm hover:shadow-md transition transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed`}
       onClick={onClick}
       disabled={disabled || loading}
       {...props}

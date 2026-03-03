@@ -31,7 +31,6 @@ import { useDragAndDrop } from "@formkit/drag-and-drop/react";
 
 const ALL_DAY = "all";
 
-
 const StepStops = ({ name }) => {
   const { values, setFieldValue, errors } = useFormikContext();
   const { studentsRoutes, getStudentsRoutes } = useStudentsStore();
@@ -289,9 +288,11 @@ const StepStops = ({ name }) => {
                   key={day.label}
                   className={`
                     flex items-center gap-1 px-2 py-0.5 rounded-full border text-xs cursor-pointer transition-colors
-                    ${selectedDay.includes(day.value)
-                      ? "bg-yellow border-yellow text-black font-semibold"
-                      : "bg-white border-gray-300 text-gray-600"}
+                    ${
+                      selectedDay.includes(day.value)
+                        ? "bg-yellow border-yellow text-black font-semibold"
+                        : "bg-white border-gray-300 text-gray-600"
+                    }
                   `}
                 >
                   <input
@@ -324,9 +325,12 @@ const StepStops = ({ name }) => {
                 values,
                 bothTravels,
                 address:
-                  `${selectedStudent?.address?.street || ""} ${selectedStudent?.address?.number || ""
-                  } ${selectedStudent?.address?.interiorNumber || ""} ${selectedStudent?.address?.neighborhood || ""
-                  } ${selectedStudent?.address?.postalCode || ""} ${selectedStudent?.address?.city || ""
+                  `${selectedStudent?.address?.street || ""} ${
+                    selectedStudent?.address?.number || ""
+                  } ${selectedStudent?.address?.interiorNumber || ""} ${
+                    selectedStudent?.address?.neighborhood || ""
+                  } ${selectedStudent?.address?.postalCode || ""} ${
+                    selectedStudent?.address?.city || ""
                   } ${selectedStudent?.address?.state || ""}` || "",
                 isEditStudent,
                 typeTravel,
@@ -354,9 +358,7 @@ const StepStops = ({ name }) => {
         </div>
       </div>
       <div className="mx-2 row-span-1 my-6">
-        <div className="w-full bg-gray-hover px-2 my-2">
-          Paradas asignadas
-        </div>
+        <div className="w-full bg-gray-hover px-2 my-2">Paradas asignadas</div>
         <DayTypePicker
           students={values?.students}
           selectedDay={selectedDayEdit}
@@ -382,9 +384,11 @@ const StepStops = ({ name }) => {
                 <div className="flex flex-row items-center">
                   <MapPinIcon className="h-4 w-4 text-yellow" />
                   <div className="flex ps-2 items-center">
-                    <span className="text-sm font-semibold leading-6">{`${student?.name || ""
-                      } ${student?.lastName || ""} ${student?.secondLastName || ""
-                      }`}</span>
+                    <span className="text-sm font-semibold leading-6">{`${
+                      student?.name || ""
+                    } ${student?.lastName || ""} ${
+                      student?.secondLastName || ""
+                    }`}</span>
                   </div>
                 </div>
               </div>
@@ -395,9 +399,15 @@ const StepStops = ({ name }) => {
                     onOpenChange={() => openDeleteModal(student)}
                   >
                     <DialogTrigger asChild>
-                      <ButtonAction disabled={false} color="bg-light-gray">
-                        <TrashIcon className="h-4 w-4 text-black" />
-                      </ButtonAction>
+                      <div>
+                        <IconButton
+                          ariaLabel="Eliminar parada"
+                          title="Eliminar"
+                          variant="ghost"
+                        >
+                          <TrashIcon className="h-4 w-4 text-black" />
+                        </IconButton>
+                      </div>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                       <DialogHeader>
