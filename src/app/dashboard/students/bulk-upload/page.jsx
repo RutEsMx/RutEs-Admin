@@ -13,7 +13,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/context/AuthContext";
-import { Download, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  ArrowDownTrayIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
+} from "@heroicons/react/24/outline";
 
 export default function BulkUploadPage() {
   const [file, setFile] = useState(null);
@@ -116,9 +120,9 @@ export default function BulkUploadPage() {
         >
           <div className="flex items-center gap-2">
             {status === "error" ? (
-              <AlertCircle className="w-5 h-5 text-red-500" />
+              <ExclamationTriangleIcon className="w-5 h-5 text-red-500" />
             ) : (
-              <CheckCircle2 className="w-5 h-5 text-green-500" />
+              <CheckCircleIcon className="w-5 h-5 text-green-500" />
             )}
             <p className="text-sm font-medium">{message}</p>
           </div>
@@ -133,7 +137,7 @@ export default function BulkUploadPage() {
                   key={index}
                   className="text-sm text-red-600 flex items-start gap-2 p-2 hover:bg-red-50 rounded-lg"
                 >
-                  <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <ExclamationTriangleIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>
                     Fila {error.row}: {error.error}
                   </span>
@@ -199,7 +203,7 @@ export default function BulkUploadPage() {
                     variant="outline"
                     className="flex items-center gap-2"
                   >
-                    <Download className="w-4 h-4" />
+                    <ArrowDownTrayIcon className="w-4 h-4" />
                     Descargar Plantilla
                   </Button>
                 </a>

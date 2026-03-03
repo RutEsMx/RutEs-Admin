@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Button } from "./ui/button";
-import { Loader2 } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 
 export default function ButtonAction({
   onClick,
@@ -24,7 +24,7 @@ export default function ButtonAction({
       disabled={disabled || loading}
       {...props}
     >
-      {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+      {loading && <Spinner className="h-4 w-4" />}
       {children}
     </Button>
   );

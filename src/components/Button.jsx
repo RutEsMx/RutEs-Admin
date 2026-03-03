@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import Spinner from "@/components/ui/Spinner";
 import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
 
 const Button = ({
@@ -34,7 +34,7 @@ const Button = ({
       className={`${colorClasses[color]} px-4 py-2 rounded-md flex items-center justify-center gap-2 transition-all duration-200 ease-in-out ${className}`}
       {...props}
     >
-      {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+      {loading && <Spinner className="h-4 w-4" />}
       {icon
         ? (() => {
             switch (icon) {
