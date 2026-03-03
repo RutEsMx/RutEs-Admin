@@ -1,5 +1,9 @@
 import "@testing-library/jest-dom";
 
+// Agregar React globalmente para que esté disponible en todos los componentes
+const React = require("react");
+global.React = React;
+
 // Mock Firebase
 jest.mock("@/firebase/client", () => ({
   auth: {

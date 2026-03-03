@@ -6,7 +6,10 @@ module.exports = {
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
   transform: {
-    "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
+    "^.+\\.(js|jsx|ts|tsx)$": [
+      "babel-jest",
+      { presets: ["@babel/preset-env", "@babel/preset-react"] },
+    ],
   },
   moduleFileExtensions: ["js", "jsx", "ts", "tsx", "json"],
   testMatch: ["<rootDir>/src/**/*.test.{js,jsx,ts,tsx}"],
