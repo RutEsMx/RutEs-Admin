@@ -6,9 +6,9 @@ import StudentsLoading from "./loading";
 import TableShell from "@/components/Table/TableShell";
 
 const Students = () => {
-  const { students, loading } = useStudentsStore();
+  const { students, isLoading } = useStudentsStore();
 
-  if (loading) {
+  if (isLoading) {
     return <StudentsLoading />;
   }
 

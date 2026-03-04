@@ -5,8 +5,8 @@ export default function CellTableRoute({ className = "", children }) {
   const { routes } = useRoutesStore();
   const route = routes?.find((route) => route?.id === children);
   return (
-    <div className={`m-1 w-100 ${className}`}>
-      <span>{route?.name}</span>
+    <div className={`max-w-full truncate ${className}`}>
+      <span title={route?.name}>{route?.name}</span>
     </div>
   );
 }

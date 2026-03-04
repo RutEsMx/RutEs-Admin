@@ -10,7 +10,6 @@ import { getAuxiliars } from "@/services/AuxiliarsServices";
 import { getDrivers } from "@/services/DriverServices";
 import { getUnits } from "@/services/UnitsServices";
 import { getParents } from "@/services/ParentsSevices";
-import { getStudents } from "@/services/StudentsServices";
 
 export const AuthContext = createContext();
 
@@ -60,12 +59,13 @@ export function AuthContextProvider({ children }) {
         setLoading(false);
 
         // Cargar datos adicionales
+        // Nota: students se carga via subscribeStudents() en dashboard/layout.jsx
+        // para incluir las paradas (stops) de cada estudiante
         Promise.all([
           getAuxiliars(),
           getDrivers(),
           getUnits(),
           getParents(),
-          getStudents(),
         ]).catch((error) => {
           console.error("Error al cargar datos adicionales:", error);
         });

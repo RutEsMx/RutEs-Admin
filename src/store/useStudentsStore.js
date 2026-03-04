@@ -59,6 +59,11 @@ export const useStudentsStore = create(
     {
       name: "students-storage",
       storage: createJSONStorage(() => sessionStorage),
+      // students / student son datos en tiempo real (Firestore onSnapshot).
+      // No persistirlos evita que datos stale (sin stops) se muestren al recargar.
+      partialize: (state) => ({
+        studentsRoutes: state.studentsRoutes,
+      }),
     },
   ),
 );
