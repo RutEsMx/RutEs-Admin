@@ -5,7 +5,14 @@ import {
   getDocumentByField,
   updateDocument,
 } from "@/firebase/crud";
-import { onSnapshot, collection, query, where, doc, getDocs } from "firebase/firestore";
+import {
+  onSnapshot,
+  collection,
+  query,
+  where,
+  doc,
+  getDocs,
+} from "firebase/firestore";
 import { db } from "@/firebase/client";
 
 const getStudents = async () => {
@@ -79,21 +86,73 @@ const subscribeStudents = (schoolId) => {
 
   const setLoading = useStudentsStore.getState().setLoading;
 
+  // Nota: NO filtramos por isDeleted == false porque en Firestore ese operador
+  // excluye documentos donde el campo no existe (undefined/missing).
+  // En cambio filtramos isDeleted === true en JavaScript después de obtener los docs.
   const q = query(
     collection(db, "students"),
     where("schoolId", "==", schoolId),
-    where("isDeleted", "==", false),
   );
 
-  setLoading(true);
+  // Solo mostrar skeleton si aún no hay datos en el store
+  const hasData = (useStudentsStore.getState().students?.rows?.length ?? 0) > 0;
+  if (!hasData) setLoading(true);
+
+  // Token de cancelación: descarta resultados de fetches obsoletos
+  // cuando onSnapshot dispara múltiples veces (caché local + servidor)
+  let fetchToken = 0;
+
   const unsubscribe = onSnapshot(
     q,
-    (snapshot) => {
-      const students = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      const dataTable = setStructureDatatable(students);
+    async (snapshot) => {
+      const currentToken = ++fetchToken;
+
+      const students = snapshot.docs
+        .map((doc) => ({ id: doc.id, ...doc.data() }))
+        // Excluir solo los marcados explícitamente como eliminados
+        .filter((s) => s.isDeleted !== true);
+
+      let studentsWithStops = students;
+
+      try {
+        // Fetch stops for all students in batches (Firestore 'in' limit is 30)
+        const studentIds = students.map((s) => s.id);
+        const allStops = [];
+
+        for (let i = 0; i < studentIds.length; i += 30) {
+          const chunk = studentIds.slice(i, i + 30);
+          const stopsQuery = query(
+            collection(db, "stops"),
+            where("student", "in", chunk),
+          );
+          const stopsSnapshot = await getDocs(stopsQuery);
+          stopsSnapshot.docs.forEach((doc) => {
+            allStops.push({ id: doc.id, ...doc.data() });
+          });
+        }
+
+        // Verificar que no llegó un snapshot más nuevo mientras fetcheábamos
+        if (currentToken !== fetchToken) return;
+
+        // Group stops by student ID and attach to each student
+        const stopsByStudent = allStops.reduce((acc, stop) => {
+          const sid = stop.student;
+          if (!acc[sid]) acc[sid] = [];
+          acc[sid].push(stop);
+          return acc;
+        }, {});
+
+        studentsWithStops = students.map((student) => ({
+          ...student,
+          stops: stopsByStudent[student.id] || [],
+        }));
+      } catch (error) {
+        console.error("Error fetching stops for students:", error);
+        // Si hubo error y este ya no es el fetch más reciente, ignorar
+        if (currentToken !== fetchToken) return;
+      }
+
+      const dataTable = setStructureDatatable(studentsWithStops);
       setStudents(dataTable);
       setLoading(false);
     },
@@ -264,14 +323,14 @@ const getStudentsForRoutes = async () => {
   } catch (error) {
     return { error: error?.message };
   }
-}
+};
 
 const createStudentsOptions = async (students) => {
   const studentsPromise = students.map(async (student) => {
     // Consultar la colección stops donde student == id del alumno
     const stopsQuery = query(
       collection(db, "stops"),
-      where("student", "==", student.id)
+      where("student", "==", student.id),
     );
     const stopsSnap = await getDocs(stopsQuery);
     const stops = stopsSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -279,18 +338,19 @@ const createStudentsOptions = async (students) => {
     return {
       id: student.id,
       value: student.id,
-      label: `${student?.name || ''} ${student?.lastName || ''} ${student?.secondLastName || ''}`,
+      label: `${student?.name || ""} ${student?.lastName || ""} ${
+        student?.secondLastName || ""
+      }`,
       stops,
       serviceType: student?.serviceType,
-      name: student?.name || '',
-      lastName: student?.lastName || '',
-      secondLastName: student?.secondLastName || '',
+      name: student?.name || "",
+      lastName: student?.lastName || "",
+      secondLastName: student?.secondLastName || "",
       address: student?.address || null,
     };
   });
   return Promise.all(studentsPromise);
-}
-
+};
 
 export {
   getStudents,

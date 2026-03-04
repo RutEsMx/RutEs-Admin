@@ -123,7 +123,7 @@ const DataTable = ({ type, list = [] }) => {
         </div>
       </div>
       <div className="overflow-x-auto w-full mt-6">
-        <table className="w-full table-auto rounded-md border border-gray-300 shadow-sm">
+        <table className="w-full table-fixed rounded-md border border-gray-300 shadow-sm">
           {table.getHeaderGroups().map((headerGroup) => (
             <thead
               key={headerGroup.id}
@@ -133,6 +133,7 @@ const DataTable = ({ type, list = [] }) => {
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
+                    style={{ width: `${header.column.getSize()}px` }}
                     className="text-center px-4 py-3 text-sm font-semibold border-r border-white last:border-none"
                   >
                     {header.isPlaceholder
@@ -157,7 +158,8 @@ const DataTable = ({ type, list = [] }) => {
                   {row.getVisibleCells().map((cell) => (
                     <td
                       key={cell.id}
-                      className="text-center px-4 py-2 text-sm border-t border-gray-200"
+                      style={{ width: `${cell.column.getSize()}px` }}
+                      className="text-center px-4 py-2 text-sm border-t border-gray-200 overflow-hidden"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,

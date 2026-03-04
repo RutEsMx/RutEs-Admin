@@ -6,11 +6,13 @@ import { useRouter } from "next/navigation";
 import { Sidebar } from "@/components/Sidebar";
 import { subscribeRoutes } from "@/services/RoutesServices";
 import { subscribeStudents } from "@/services/StudentsServices";
+import { useStudentsStore } from "@/store/useStudentsStore";
 import { useEffect } from "react";
 
 const DashboardLayout = ({ children }) => {
   const { user, loading, profile, school } = useAuthContext();
   const router = useRouter();
+  const setStudents = useStudentsStore((s) => s.setStudents);
 
   const isAdmin =
     profile?.roles?.includes("admin") ||
@@ -31,10 +33,12 @@ const DashboardLayout = ({ children }) => {
     const unsubStudents = subscribeStudents(school.id);
 
     return () => {
-      unsubRoutes();
-      unsubStudents();
+      unsubRoutes?.();
+      unsubStudents?.();
+      // Limpiar al desmontar → próxima carga siempre parte de cero (sin stale data)
+      setStudents({ rows: [] });
     };
-  }, [school?.id]);
+  }, [school?.id, setStudents]);
 
   return (
     <>
