@@ -18,7 +18,7 @@ Este documento describe las funcionalidades actualizadas del backend que la app 
 
 ### Modelo de Ruta
 
-```
+```javascript
 routes/{routeId} = {
   name: string,                   // "Ruta Norte"
   schoolId: string,
@@ -46,7 +46,7 @@ routes/{routeId} = {
 
 Cada ruta tiene un documento espejo en `travels` con el mismo ID:
 
-```
+```javascript
 travels/{routeId} = {
   monday: {
     toSchool: {
@@ -114,7 +114,7 @@ Retorna las rutas del auxiliar con la lista de estudiantes para el dia y tipo es
 
 Las paradas ahora se almacenan como documentos individuales en la coleccion `stops`:
 
-```
+```javascript
 stops/{stopId} = {
   student: string,               // ID del estudiante
   route: string,                 // ID de la ruta
@@ -151,7 +151,7 @@ firestore()
 
 Las paradas de estudiantes invitados (viaje con amigo) tienen un ID deterministico:
 
-```
+```text
 {studentRequestId}_{routeId}_{day}_friend
 ```
 
@@ -179,7 +179,7 @@ Estas paradas incluyen `isTravelWithFriend: true`.
 
 ### Transiciones de Estado (App del Auxiliar)
 
-```
+```text
 Estado Inicial ("")
   |
   ├── "waiting"      → Estudiante esta en la lista de espera
@@ -476,7 +476,7 @@ Retorna todas las solicitudes del estudiante con datos enriquecidos:
 
 ### Modelo de Datos
 
-```
+```javascript
 travelsWithFriend/{studentRequestId} = {
   monday: {
     route: string,           // ID de la ruta del amigo
@@ -589,7 +589,7 @@ messaging().onNotificationOpenedApp((remoteMessage) => {
 
 ### Almacenamiento de Notificaciones
 
-```
+```javascript
 notificationsSchool/{schoolId}/notifications/{notificationId} = {
   notification: { title, body },
   data: {
@@ -613,7 +613,7 @@ La app puede leer notificaciones con un listener en tiempo real y marcar como le
 
 ## 9. Estructura de Datos del Estudiante
 
-```
+```javascript
 students/{studentId} = {
   name: string,
   lastName: string,
@@ -662,6 +662,22 @@ students/{studentId} = {
 | GET    | `/api/routes/{routeId}`               | Detalle de ruta con estudiantes    | Dashboard/Apps  |
 | POST   | `/api/notifications`                  | Enviar notificacion                | Dashboard       |
 | GET    | `/api/notifications?schoolId`         | Listar notificaciones              | Apps            |
+
+### Respuestas de Error Comunes
+
+| Código  | Significado                         | Ejemplo de Respuesta                         |
+| ------- | ----------------------------------- | -------------------------------------------- |
+| 400     | Solicitud inválida                  | `{ "error": "No hay espacio en la unidad" }` |
+| 401/403 | Error de autenticación/autorización | `{ "error": "No autorizado" }`               |
+| 404     | Recurso no encontrado               | `{ "error": "No hay ruta asignada..." }`     |
+| 500     | Error del servidor                  | `{ "error": "Error interno del servidor" }`  |
+
+**Nota sobre errores por endpoint:**
+
+- **Validación (400):** Comunes en `POST /api/travel-with-friend`, `PATCH /api/travel-with-friend`, `POST /api/notifications`.
+- **Autenticación (401/403):** Esperados en rutas protegidas.
+- **No encontrado (404):** Comunes en `GET /api/travel/{auxiliarId}`, `GET /api/routes/{routeId}` si el recurso no existe.
+- **Servidor (500):** Posibles en cualquier endpoint por fallos internos.
 
 ---
 
