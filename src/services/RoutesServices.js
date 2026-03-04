@@ -12,6 +12,7 @@ import {
   getDoc,
   updateDoc,
   deleteDoc,
+  deleteField,
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
@@ -490,6 +491,33 @@ const removeRoutes = async (id) => {
       getStopsRef.forEach((el) => {
         promises.push(deleteDoc(el));
       });
+    }
+
+    // Cleanup travelsWithFriend entries referencing this route
+    const travelsDoc = await getDoc(doc(db, "travels", id));
+    if (travelsDoc.exists()) {
+      const travelsData = travelsDoc.data();
+      const days = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+      for (const day of days) {
+        const types = ["toHome", "workshop"];
+        for (const type of types) {
+          const friendStudents =
+            travelsData?.[day]?.[type]?.travelWithFriend || [];
+          for (const studentId of friendStudents) {
+            const friendRef = doc(db, "travelsWithFriend", studentId);
+            promises.push(updateDoc(friendRef, { [day]: deleteField() }));
+            // Also reset the student's statusTravel if it's "travelWithFriend"
+            const studentRef = doc(db, "students", studentId);
+            const studentDoc = await getDoc(studentRef);
+            if (
+              studentDoc.exists() &&
+              studentDoc.data()?.statusTravel === "travelWithFriend"
+            ) {
+              promises.push(updateDoc(studentRef, { statusTravel: "" }));
+            }
+          }
+        }
+      }
     }
 
     promises.push(deleteDocument("travels", id));
