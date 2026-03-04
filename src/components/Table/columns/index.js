@@ -405,6 +405,7 @@ const auxiliarsColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -420,6 +421,7 @@ const auxiliarsColumns = [
   {
     header: () => <HeaderTable>Ruta taller</HeaderTable>,
     accessorKey: "routeWorkshop",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -538,6 +540,7 @@ const driversColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -553,6 +556,7 @@ const driversColumns = [
   {
     header: () => <HeaderTable>Ruta taller</HeaderTable>,
     accessorKey: "routeWorkshop",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -657,6 +661,7 @@ const unitsColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -672,6 +677,7 @@ const unitsColumns = [
   {
     header: () => <HeaderTable>Ruta taller</HeaderTable>,
     accessorKey: "routeWorkshop",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">

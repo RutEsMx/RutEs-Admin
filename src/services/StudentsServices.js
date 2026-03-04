@@ -117,7 +117,7 @@ const subscribeStudents = (schoolId) => {
       try {
         // Fetch stops for all students in batches (Firestore 'in' limit is 30)
         const studentIds = students.map((s) => s.id);
-        const allStops = [];
+        const stopsPromises = [];
 
         for (let i = 0; i < studentIds.length; i += 30) {
           const chunk = studentIds.slice(i, i + 30);
@@ -125,11 +125,16 @@ const subscribeStudents = (schoolId) => {
             collection(db, "stops"),
             where("student", "in", chunk),
           );
-          const stopsSnapshot = await getDocs(stopsQuery);
-          stopsSnapshot.docs.forEach((doc) => {
+          stopsPromises.push(getDocs(stopsQuery));
+        }
+
+        const stopsSnapshots = await Promise.all(stopsPromises);
+        const allStops = [];
+        stopsSnapshots.forEach((snap) => {
+          snap.docs.forEach((doc) => {
             allStops.push({ id: doc.id, ...doc.data() });
           });
-        }
+        });
 
         // Verificar que no llegó un snapshot más nuevo mientras fetcheábamos
         if (currentToken !== fetchToken) return;
