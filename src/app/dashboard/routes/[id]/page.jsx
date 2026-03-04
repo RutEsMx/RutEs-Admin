@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, use } from "react";
+
+import { useEffect, useState, useCallback, useRef, use } from "react";
 import {
   COLORS,
   CURRENT_DAY,
@@ -33,11 +34,12 @@ import ButtonAction from "@/components/ButtonAction";
 import { removeRoutes } from "@/services/RoutesServices";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Label } from "@/components/ui/label";
+import RouteInfo from "@/components/RouteDetail/RouteInfo";
 
 const Page = (props) => {
   const params = use(props.params);
-  const [route, setRoute] = useState({});
+  const [route, setRoute] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [color, setColor] = useState("");
   const [statusName, setStatusName] = useState("");
   const router = useRouter();
@@ -49,85 +51,102 @@ const Page = (props) => {
   const [listStudents, setListStudents] = useState([]);
   const [travelData, setTravelData] = useState({});
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.permissions.query({ name: "geolocation" }).then((result) => {
-        if (result.state === "prompt" || result.state === "granted") {
-          var options = {
-            enableHighAccuracy: true,
-            timeout: 5000,
-            maximumAge: 0,
-          };
-          navigator.geolocation.getCurrentPosition(
-            successPosition,
-            errorPosition,
-            options,
-          );
-        }
-      });
-    }
+  const unsubscribeStudentsRef = useRef([]);
+
+  // Cleanup function for Firebase listeners
+  const cleanupListeners = useCallback(() => {
+    unsubscribeStudentsRef.current.forEach((unsub) => {
+      if (typeof unsub === "function") unsub();
+    });
+    unsubscribeStudentsRef.current = [];
   }, []);
 
-  const successPosition = (position) => {
-    const { latitude, longitude } = position.coords;
-    setCenter({ lat: latitude, lng: longitude });
-  };
-
-  const errorPosition = () => {};
-
+  // Get user location
   useEffect(() => {
-    // Obtiene la ubicación en tiempo real del autobús
-    const qTracking = doc(db, "tracking", params.id);
-    const unsubscribeTracking = onSnapshot(qTracking, (doc) => {
-      if (!doc.exists()) return;
-      const { tracking } = doc.data();
-      setCenter({ lat: tracking?._lat, lng: tracking?._long });
-      setMarkers((prev) => [
-        ...prev,
-        {
-          lat: tracking?._lat,
-          lng: tracking?._long,
-          studentId: params.id,
-          color: "#000",
-          name: "Autobús",
-        },
-      ]);
+    if (typeof navigator === "undefined" || !navigator.geolocation) return;
+
+    navigator.permissions.query({ name: "geolocation" }).then((result) => {
+      if (result.state === "prompt" || result.state === "granted") {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setCenter({ lat: latitude, lng: longitude });
+          },
+          () => {}, // Silent fail
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 },
+        );
+      }
     });
-    // Obtiene la ruta una sola vez
+  }, []);
+
+  // Fetch route data
+  useEffect(() => {
     const getRoute = async () => {
       try {
         const q = doc(db, "routes", params.id);
         const routeData = await getDoc(q);
         if (!routeData.exists()) {
           toast.error("Ruta no encontrada");
+          router.push("/dashboard/routes");
           return;
         }
-        if (routeData.data()["workshop"]) setIsWorkshop(true);
-        setRoute({ ...routeData.data(), id: routeData.id });
+        const data = { ...routeData.data(), id: routeData.id };
+        setRoute(data);
+        if (data.workshop) setIsWorkshop(true);
       } catch (error) {
         toast.error("Error al obtener la ruta");
+      } finally {
+        setIsLoading(false);
       }
     };
+
     getRoute();
-    return () => {
-      unsubscribeTracking();
-    };
+
+    return () => cleanupListeners();
+  }, [params.id, router, cleanupListeners]);
+
+  // Real-time tracking subscription
+  useEffect(() => {
+    const qTracking = doc(db, "tracking", params.id);
+    const unsubscribeTracking = onSnapshot(qTracking, (doc) => {
+      if (!doc.exists()) return;
+      const { tracking } = doc.data();
+      if (tracking?._lat && tracking?._long) {
+        setCenter({ lat: tracking._lat, lng: tracking._long });
+        setMarkers((prev) => {
+          const filtered = prev.filter((m) => m.studentId !== params.id);
+          return [
+            ...filtered,
+            {
+              lat: tracking._lat,
+              lng: tracking._long,
+              studentId: params.id,
+              color: "#000",
+              name: "Autobús",
+            },
+          ];
+        });
+      }
+    });
+
+    return () => unsubscribeTracking();
   }, [params.id]);
 
+  // Travel data subscription
   useEffect(() => {
-    const qTravel = doc(db, "travels", params.id);
-    const unsubscribeStudents = [];
+    cleanupListeners();
     setListStudents([]);
+
+    const qTravel = doc(db, "travels", params.id);
     const unsubscribeTravel = onSnapshot(qTravel, (snp) => {
       try {
         if (!snp.exists()) return;
         const travel = snp.data();
 
-        // Convertir estructura de travels para el DayTypePicker
         const formattedTravels = {};
         Object.keys(DAYS_OPTIONS).forEach((_, idx) => {
-          if (idx === 0) return; // saltar 'all'
-          const dayKey = Object.keys(DAYS)[idx - 1]; // monday, tuesday...
+          if (idx === 0) return;
+          const dayKey = Object.keys(DAYS)[idx - 1];
           formattedTravels[dayKey] = {
             toHome: travel[dayKey]?.toHome?.students || [],
             toSchool: travel[dayKey]?.toSchool?.students || [],
@@ -136,265 +155,93 @@ const Page = (props) => {
         });
         setTravelData(formattedTravels);
 
-        // Verificar si existe el día seleccionado
         if (!travel[selectedDay]) {
-          setMarkers([]);
+          setMarkers((prev) => prev.filter((m) => m.studentId === params.id));
           setListStudents([]);
           setStatusName("Sin viaje");
           setColor(COLORS.finished);
           return;
         }
 
-        let students = travel[selectedDay][typeTravel]?.students || [];
+        const travelType = isWorkshop ? "workshop" : typeTravel;
+        let students = travel[selectedDay]?.[travelType]?.students || [];
 
-        if (isWorkshop) {
-          const startWorkshop = travel[selectedDay]["workshop"]?.start
-            ? STATUS_TRAVEL["workshop"]
-            : "Viaje de taller finalizado";
-          students = travel[selectedDay]["workshop"]?.students || [];
-          students.forEach(async (student) => {
-            // ref student
-            const qStudent = doc(db, "students", student.id);
-            // ref stops
-            const qStops = query(
-              collection(db, "stops"),
-              where("student", "==", student.id),
-              where("day", "==", selectedDay),
-              where("type", "==", "workshop"),
-            );
-            const stopResponse = await getDocs(qStops);
-
-            const unsubscribeStudent = onSnapshot(
-              qStudent,
-              async (snpStudent) => {
-                if (!snpStudent.exists()) return;
-                const studentData = snpStudent.data();
-                const colorMarker =
-                  studentData["workshop"]?.delivered &&
-                  travel[selectedDay]["workshop"]?.start
-                    ? "#4F504F"
-                    : studentData["workshop"]?.pickedUp
-                    ? "#FFBF3B"
-                    : "#4F504F";
-                stopResponse.forEach(async (stop) => {
-                  if (stop.exists() === false) return;
-                  const { coords } = stop.data();
-                  setMarkers((prev) => {
-                    const state = [...prev];
-                    const index = state.findIndex(
-                      (item) => item.studentId === student.id,
-                    );
-                    if (index !== -1) {
-                      state[index] = {
-                        lat: coords.lat,
-                        lng: coords.lng,
-                        color: colorMarker,
-                        studentId: student.id,
-                        fullName: `${studentData.name || ""} ${
-                          studentData.lastName || ""
-                        } ${studentData.secondLastName || ""}`,
-                      };
-                    } else {
-                      state.push({
-                        lat: coords.lat,
-                        lng: coords.lng,
-                        color: colorMarker,
-                        studentId: student.id,
-                        fullName: `${studentData.name || ""} ${
-                          studentData.lastName || ""
-                        } ${studentData.secondLastName || ""}`,
-                      });
-                    }
-                    return state;
-                  });
-
-                  // setListStudents push into same position
-                  setListStudents((prev) => {
-                    const state = [...prev];
-                    // find student.id in list and update
-                    const index = state.findIndex(
-                      (item) => item.id === student.id,
-                    );
-                    if (index !== -1) {
-                      state[index] = {
-                        id: student.id,
-                        name: studentData.name,
-                        lastName: studentData.lastName,
-                        secondLastName: studentData.secondLastName,
-                        stop: {
-                          lat: coords.lat,
-                          lng: coords.lng,
-                        },
-                      };
-                    } else {
-                      state.push({
-                        id: student.id,
-                        name: studentData.name,
-                        lastName: studentData.lastName,
-                        secondLastName: studentData.secondLastName,
-                        stop: {
-                          lat: coords.lat,
-                          lng: coords.lng,
-                        },
-                      });
-                    }
-                    return state;
-                  });
-                });
-              },
-            );
-            unsubscribeStudents.push(unsubscribeStudent);
-          });
-          setStatusName(startWorkshop);
-          return setColor(COLORS.workshop);
-        }
-
-        if (typeTravel === "toSchool") {
-          const startFromSchool = travel[selectedDay][typeTravel]
-            ?.startTravelFromSchool
-            ? STATUS_TRAVEL[typeTravel]
-            : "Viaje a escuela finalizado";
-          students.forEach(async (student) => {
-            // ref student
-            const qStudent = doc(db, "students", student.id);
-            // ref stops
-            const qStops = query(
-              collection(db, "stops"),
-              where("student", "==", student.id),
-              where("day", "==", selectedDay),
-              where("type", "==", typeTravel),
-            );
-            const stopResponse = await getDocs(qStops);
-
-            const unsubscribeStudent = onSnapshot(
-              qStudent,
-              async (snpStudent) => {
-                if (!snpStudent.exists()) return;
-                const studentData = snpStudent.data();
-                const colorMarker =
-                  studentData[typeTravel]?.delivered &&
-                  !travel[selectedDay][typeTravel]?.startTravelFromSchool
-                    ? "#4F504F"
-                    : studentData[typeTravel]?.pickedUp
-                    ? "#FFBF3B"
-                    : "#4F504F";
-                stopResponse.forEach(async (stop) => {
-                  if (stop.exists() === false) return;
-                  const { coords } = stop.data();
-                  setMarkers((prev) => {
-                    const state = [...prev];
-                    const index = state.findIndex(
-                      (item) => item?.studentId === student?.id,
-                    );
-                    if (index !== -1) {
-                      state[index] = {
-                        lat: coords.lat,
-                        lng: coords.lng,
-                        color: colorMarker,
-                        studentId: student.id,
-                        fullName: `${studentData.name || ""} ${
-                          studentData.lastName || ""
-                        } ${studentData.secondLastName || ""}`,
-                      };
-                    } else {
-                      state.push({
-                        lat: coords.lat,
-                        lng: coords.lng,
-                        color: colorMarker,
-                        studentId: student.id,
-                        fullName: `${studentData.name || ""} ${
-                          studentData.lastName || ""
-                        } ${studentData.secondLastName || ""}`,
-                      });
-                    }
-                    return state;
-                  });
-                  // setListStudents push into same position
-                  setListStudents((prev) => {
-                    const state = [...prev];
-                    // find student.id in list and update
-                    const index = state.findIndex(
-                      (item) => item.id === student.id,
-                    );
-                    if (index !== -1) {
-                      state[index] = {
-                        id: student.id,
-                        name: studentData.name,
-                        lastName: studentData.lastName,
-                        secondLastName: studentData.secondLastName,
-                        stop: {
-                          lat: coords.lat,
-                          lng: coords.lng,
-                        },
-                      };
-                    } else {
-                      state.push({
-                        id: student.id,
-                        name: studentData.name,
-                        lastName: studentData.lastName,
-                        secondLastName: studentData.secondLastName,
-                        stop: {
-                          lat: coords.lat,
-                          lng: coords.lng,
-                        },
-                      });
-                    }
-                    return state;
-                  });
-                });
-              },
-            );
-            unsubscribeStudents.push(unsubscribeStudent);
-          });
-          setStatusName(startFromSchool);
-          if (startFromSchool.includes("finalizado")) {
-            return setColor(COLORS.finished);
+        const getStatusText = () => {
+          if (isWorkshop) {
+            return travel[selectedDay]?.workshop?.start
+              ? STATUS_TRAVEL["workshop"]
+              : "Viaje de taller finalizado";
           }
-          return setColor(COLORS.toHome);
-        } else if (typeTravel === "toHome") {
-          const startFromHome = travel[selectedDay][typeTravel]?.start
-            ? STATUS_TRAVEL[typeTravel]
+          if (typeTravel === "toSchool") {
+            return travel[selectedDay]?.toSchool?.startTravelFromSchool
+              ? STATUS_TRAVEL["toSchool"]
+              : "Viaje a escuela finalizado";
+          }
+          return travel[selectedDay]?.toHome?.start
+            ? STATUS_TRAVEL["toHome"]
             : "Viaje a casa finalizado";
-          students.forEach(async (student) => {
-            // ref student
+        };
+
+        setStatusName(getStatusText());
+        const statusColor = getStatusText().includes("finalizado")
+          ? COLORS.finished
+          : isWorkshop
+          ? COLORS.workshop
+          : typeTravel === "toSchool"
+          ? COLORS.toSchool
+          : COLORS.toHome;
+        setColor(statusColor);
+
+        // Use for...of instead of forEach for async
+        const loadStudentData = async () => {
+          for (const student of students) {
             const qStudent = doc(db, "students", student.id);
-            // ref stops
             const qStops = query(
               collection(db, "stops"),
               where("student", "==", student.id),
               where("day", "==", selectedDay),
-              where("type", "==", typeTravel),
+              where("type", "==", travelType),
             );
-            const stopResponse = await getDocs(qStops);
-            const unsubscribeStudent = onSnapshot(
-              qStudent,
-              async (snpStudent) => {
+
+            try {
+              const stopResponse = await getDocs(qStops);
+              const unsubscribeStudent = onSnapshot(qStudent, (snpStudent) => {
                 if (!snpStudent.exists()) return;
                 const studentData = snpStudent.data();
+                const delivered = studentData[travelType]?.delivered;
+                const pickedUp = studentData[travelType]?.pickedUp;
+                const started =
+                  travel[selectedDay]?.[travelType]?.start ||
+                  travel[selectedDay]?.[travelType]?.startTravelFromSchool;
+
                 const colorMarker =
-                  studentData[typeTravel]?.delivered &&
-                  travel[selectedDay][typeTravel]?.start
+                  delivered && started
                     ? "#4F504F"
-                    : studentData[typeTravel]?.pickedUp
+                    : pickedUp
                     ? "#FFBF3B"
                     : "#4F504F";
-                stopResponse.forEach(async (stop) => {
-                  if (stop.exists() === false) return;
+
+                stopResponse.forEach((stop) => {
+                  if (!stop.exists()) return;
                   const { coords } = stop.data();
+                  if (!coords) return;
+
                   setMarkers((prev) => {
                     const state = [...prev];
                     const index = state.findIndex(
                       (item) => item.studentId === student.id,
                     );
+                    const fullName = `${studentData.name || ""} ${
+                      studentData.lastName || ""
+                    } ${studentData.secondLastName || ""}`.trim();
+
                     if (index !== -1) {
                       state[index] = {
                         lat: coords.lat,
                         lng: coords.lng,
                         color: colorMarker,
                         studentId: student.id,
-                        fullName: `${studentData.name || ""} ${
-                          studentData.lastName || ""
-                        } ${studentData.secondLastName || ""}`,
+                        fullName,
                       };
                     } else {
                       state.push({
@@ -402,17 +249,14 @@ const Page = (props) => {
                         lng: coords.lng,
                         color: colorMarker,
                         studentId: student.id,
-                        fullName: `${studentData.name || ""} ${
-                          studentData.lastName || ""
-                        } ${studentData.secondLastName || ""}`,
+                        fullName,
                       });
                     }
                     return state;
                   });
-                  // setListStudents push into same position
+
                   setListStudents((prev) => {
                     const state = [...prev];
-                    // find student.id in list and update
                     const index = state.findIndex(
                       (item) => item.id === student.id,
                     );
@@ -422,10 +266,7 @@ const Page = (props) => {
                         name: studentData.name,
                         lastName: studentData.lastName,
                         secondLastName: studentData.secondLastName,
-                        stop: {
-                          lat: coords.lat,
-                          lng: coords.lng,
-                        },
+                        stop: { lat: coords.lat, lng: coords.lng },
                       };
                     } else {
                       state.push({
@@ -433,35 +274,32 @@ const Page = (props) => {
                         name: studentData.name,
                         lastName: studentData.lastName,
                         secondLastName: studentData.secondLastName,
-                        stop: {
-                          lat: coords.lat,
-                          lng: coords.lng,
-                        },
+                        stop: { lat: coords.lat, lng: coords.lng },
                       });
                     }
                     return state;
                   });
                 });
-              },
-            );
-            unsubscribeStudents.push(unsubscribeStudent);
-          });
-          setStatusName(startFromHome);
-          if (startFromHome.includes("finalizado")) {
-            return setColor(COLORS.finished);
+              });
+              unsubscribeStudentsRef.current.push(unsubscribeStudent);
+            } catch (err) {
+              console.error("Error loading student:", err);
+            }
           }
-          return setColor(COLORS.toSchool);
-        }
+        };
+
+        loadStudentData();
       } catch (error) {
+        console.error("Error in travel snapshot:", error);
         toast.error("Error al obtener el estado del viaje");
       }
     });
 
     return () => {
       unsubscribeTravel();
-      unsubscribeStudents.forEach((unsubscribe) => unsubscribe());
+      cleanupListeners();
     };
-  }, [params.id, selectedDay, typeTravel, isWorkshop]);
+  }, [params.id, selectedDay, typeTravel, isWorkshop, cleanupListeners]);
 
   const handleDelete = async (id) => {
     const response = await removeRoutes(id);
@@ -470,34 +308,70 @@ const Page = (props) => {
       return;
     }
     toast.success("Ruta eliminada correctamente");
-    return router.replace("/dashboard/routes");
+    router.replace("/dashboard/routes");
   };
 
-  const handleStudent = (student) => {
-    // recenter map
-    setCenter(student.stop);
-  };
+  const handleStudentClick = useCallback((student) => {
+    if (student.stop) {
+      setCenter(student.stop);
+    }
+  }, []);
+
+  const handleDayChange = useCallback((day) => {
+    setSelectedDay(day);
+  }, []);
+
+  const handleTypeChange = useCallback((type) => {
+    setTypeTravel(type);
+  }, []);
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 pb-12 pt-10">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-48 mb-4"></div>
+          <div className="h-96 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // Not found state
+  if (!route) {
+    return (
+      <div className="container mx-auto px-4 pb-12 pt-10 text-center">
+        <h1 className="text-2xl font-bold text-gray-600">Ruta no encontrada</h1>
+        <ButtonLink href="/dashboard/routes" className="mt-4">
+          Volver a rutas
+        </ButtonLink>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 pb-12 h-screen pt-10">
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
-          <h1 className="font-bold text-3xl">Datos de ruta</h1>
-        </div>
-        <div className="flex justify-end gap-2">
+    <div className="container mx-auto px-4 pb-12 pt-10">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h1 className="font-bold text-2xl sm:text-3xl">Datos de ruta</h1>
+
+        <div className="flex flex-wrap gap-2">
           <Dialog>
             <DialogTrigger asChild>
-              <ButtonAction color="bg-warning">Eliminar</ButtonAction>
+              <ButtonAction color="bg-warning" aria-label="Eliminar ruta">
+                Eliminar
+              </ButtonAction>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>
-                  ¿Deseas eliminar la parada todos los dias?
-                </DialogTitle>
+                <DialogTitle>¿Eliminar esta ruta?</DialogTitle>
               </DialogHeader>
-              <DialogFooter>
+              <p className="text-sm text-gray-600">
+                Esta acción no se puede deshacer. Se eliminarán todos los datos
+                asociados.
+              </p>
+              <DialogFooter className="gap-2 sm:justify-end">
                 <DialogClose asChild>
-                  <ButtonAction color="bg-warning">Cancelar</ButtonAction>
+                  <ButtonAction color="bg-light-gray">Cancelar</ButtonAction>
                 </DialogClose>
                 <ButtonAction
                   color="bg-primary"
@@ -508,73 +382,49 @@ const Page = (props) => {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-          <ButtonLink color="bg-light-gray" href={`/dashboard/routes/`}>
+          <ButtonLink
+            color="bg-light-gray"
+            href="/dashboard/routes/"
+            aria-label="Volver a rutas"
+          >
             Atrás
           </ButtonLink>
           <ButtonLink
             color="bg-primary"
             href={`/dashboard/routes/edit/${params.id}`}
+            aria-label="Editar ruta"
           >
             Editar
           </ButtonLink>
         </div>
-      </div>
-      <div className="border border-black px-4 py-2 mt-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
-          <div className="col-span-1">
-            <div className="flex flex-col justify-around">
-              <span className="font-bold text-xl mb-4">{route?.name}</span>
-              <div className="flex flex-row gap-2">
-                <span className="font-bold">Capacidad:</span>
-                <span className="">{route?.capacity}</span>
-              </div>
-              <div className="flex flex-row gap-2">
-                <span className="font-bold">Estado:</span>
-                <span className={`${color}`}>{statusName}</span>
-              </div>
-              <div className="mt-4 pb-2 border-b-2">
-                <DayTypePicker
-                  students={travelData}
-                  selectedDay={selectedDay}
-                  typeTravel={typeTravel}
-                  onDayChange={setSelectedDay}
-                  onTypeChange={setTypeTravel}
-                  isWorkshop={isWorkshop}
-                />
-              </div>
-              <div className="flex flex-row gap-2 pt-2 mt-1">
-                <Label className="text-2xl">Estudiantes</Label>
-              </div>
-              <div className="flex flex-col gap-2 mt-2 border-t-2 pt-2">
-                {listStudents.length > 0 ? (
-                  listStudents.map((student) => {
-                    return (
-                      <div
-                        key={student.id}
-                        className="flex flex-row cursor-pointer mt-2"
-                        onClick={() => handleStudent(student)}
-                      >
-                        <Label className="cursor-pointer">
-                          {student.name} {student.lastName}{" "}
-                          {student.secondLastName}
-                        </Label>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <span className="text-gray-500 text-sm italic">
-                    No hay estudiantes asignados
-                  </span>
-                )}
-              </div>
-            </div>
+      </header>
+
+      <section
+        className="border border-gray-200 rounded-lg p-4"
+        aria-label="Información de la ruta"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <RouteInfo
+              route={route}
+              travelData={travelData}
+              selectedDay={selectedDay}
+              typeTravel={typeTravel}
+              isWorkshop={isWorkshop}
+              onDayChange={handleDayChange}
+              onTypeChange={handleTypeChange}
+              listStudents={listStudents}
+              onStudentClick={handleStudentClick}
+            />
           </div>
 
-          <div className="col-span-2 bg-gray md:h-[500px] w-full">
-            <Maps markers={markers} center={center} />
+          <div className="lg:col-span-2 min-h-[400px]">
+            <div className="h-full min-h-[400px] bg-gray-100 rounded-lg overflow-hidden">
+              <Maps markers={markers} center={center} />
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
