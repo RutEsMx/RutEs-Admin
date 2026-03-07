@@ -43,10 +43,11 @@ export async function PATCH(request) {
   try {
     // Start a new transaction
     await firestore().runTransaction(async (transaction) => {
-      // Get a reference to the travelsWithFriend document
+      // Get a reference to the travelsWithFriend document and read it
       const travelsWithFriendRef = firestore()
         .collection("travelsWithFriend")
         .doc(body.id);
+      const travelsWithFriendDoc = await transaction.get(travelsWithFriendRef);
 
       // Update travelsWithFriend collection
       transaction.update(travelsWithFriendRef, {
@@ -57,28 +58,65 @@ export async function PATCH(request) {
       // Get a reference to the travels document
       const travelsRef = firestore().collection("travels").doc(body.route);
 
-      // Get a reference of route data
+      // Determine the type: prefer the saved type, fallback to route data
+      const savedType = travelsWithFriendDoc.data()?.[body.day]?.type;
       const routeData = await getRouteData(body.route);
+      const type = savedType || (routeData?.workshop ? "workshop" : "toHome");
 
       // Update travels collection based on the status
       if (body.status === "accepted") {
-        const studentRequestData = firestore()
+        const studentRequestRef = firestore()
           .collection("students")
           .doc(body.studentRequest);
-        const type = routeData?.workshop ? "workshop" : "toHome";
+        const studentRequestDoc = await transaction.get(studentRequestRef);
+
         transaction.update(travelsRef, {
           [`${body.day}.${type}.travelWithFriend`]:
             firestore.FieldValue.arrayUnion(body.studentRequest),
         });
         // update statusTravel of the studentRequest
-        transaction.update(studentRequestData, {
-          [`statusTravel`]: "travelWithFriend",
+        transaction.update(studentRequestRef, {
+          statusTravel: "travelWithFriend",
         });
+
+        // Create a temporary stop for the friend student on this route
+        const studentCoords = studentRequestDoc.data()?.address?.coords;
+        if (studentCoords) {
+          const friendStopId = `${body.studentRequest}_${body.route}_${body.day}_friend`;
+          const friendStopRef = firestore()
+            .collection("stops")
+            .doc(friendStopId);
+          transaction.set(friendStopRef, {
+            student: body.studentRequest,
+            route: body.route,
+            day: body.day,
+            type,
+            coords: studentCoords,
+            isTravelWithFriend: true,
+          });
+        }
       } else {
+        const studentRequestRef = firestore()
+          .collection("students")
+          .doc(body.studentRequest);
+        const studentDoc = await transaction.get(studentRequestRef);
+
         transaction.update(travelsRef, {
-          [`${body.day}.toHome.travelWithFriend`]:
+          [`${body.day}.${type}.travelWithFriend`]:
             firestore.FieldValue.arrayRemove(body.studentRequest),
         });
+
+        // Only reset statusTravel if it's currently "travelWithFriend"
+        if (studentDoc.data()?.statusTravel === "travelWithFriend") {
+          transaction.update(studentRequestRef, {
+            statusTravel: "",
+          });
+        }
+
+        // Delete the temporary stop created for travel-with-friend
+        const friendStopId = `${body.studentRequest}_${body.route}_${body.day}_friend`;
+        const friendStopRef = firestore().collection("stops").doc(friendStopId);
+        transaction.delete(friendStopRef);
       }
     });
     const tokens = await getTokensFromParents(body.id);
@@ -145,9 +183,10 @@ async function getRouteData(route) {
 }
 
 // Function to get the travel data
-async function getTravelData(route, day) {
+async function getTravelData(route, day, isWorkshop = false) {
   const travelRef = await firestore().collection("travels").doc(route).get();
-  return travelRef.data()[day]?.toHome;
+  const type = isWorkshop ? "workshop" : "toHome";
+  return travelRef.data()[day]?.[type];
 }
 
 // Function to get the unit data
@@ -172,6 +211,7 @@ async function createTravelWithFriendRequest(
   student,
   studentRequest,
   date,
+  type,
 ) {
   const data = {
     [day]: {
@@ -180,6 +220,7 @@ async function createTravelWithFriendRequest(
       status: "pending",
       student,
       date,
+      type,
     },
   };
   const travelsWithFriendRef = firestore()
@@ -198,7 +239,7 @@ export async function POST(request) {
   try {
     const route = await getStudentRoute(student, day);
     const routeData = await getRouteData(route);
-    const travel = await getTravelData(route, day);
+    const travel = await getTravelData(route, day, routeData?.workshop);
     const unitData = await getUnitData(routeData?.unit);
     const studentRequestData = await getStudentData(studentRequest);
 
@@ -222,6 +263,7 @@ export async function POST(request) {
         student,
         studentRequest,
         date,
+        routeData?.workshop ? "workshop" : "toHome",
       );
       fetch(`${process.env.NEXT_PUBLIC_URL_API}api/notifications`, {
         method: "POST",

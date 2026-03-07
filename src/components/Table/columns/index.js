@@ -8,7 +8,7 @@ import CellTable from "@/components/Table/elements/CellTable";
 import CellTableRoute from "@/components/Table/elements/CellTableRoute";
 // eslint-disable-next-line no-unused-vars
 import CheckboxTable from "@/components/Table/elements/CheckboxTable";
-import { STATUS_TRAVEL } from "@/utils/options";
+import { STATUS_TRAVEL, OPTIONS_TYPE_SERVICES, DAYS } from "@/utils/options";
 import {
   // eslint-disable-next-line no-unused-vars
   CheckCircleIcon,
@@ -61,6 +61,7 @@ const studentsColumns = [
   {
     header: () => <HeaderTable>Estudiante</HeaderTable>,
     accessorKey: "students",
+    size: 220,
     accessorFn: (data) => {
       return `${data.name} ${data.lastName} ${data.secondLastName}`;
     },
@@ -78,15 +79,15 @@ const studentsColumns = [
   {
     header: () => <HeaderTable>Estado</HeaderTable>,
     accessorKey: "statusTravel",
+    size: 70,
     cell: (data) => {
-      const { row } = data;
-      const isActive = row?.original?.status === "active";
-      if (!isActive) return null;
-      const colorStatusTravel = COLORS[data.getValue()] ?? "";
+      const value = data.getValue();
+      if (!value) return null;
+      const colorStatusTravel = COLORS[value] ?? "";
       return (
         <div className="flex flex-row items-center justify-center">
           <CellTable className={colorStatusTravel}>
-            {STATUS_TRAVEL[data.getValue()]}
+            {STATUS_TRAVEL[value]}
           </CellTable>
         </div>
       );
@@ -94,37 +95,78 @@ const studentsColumns = [
   },
   {
     header: () => <HeaderTable>Servicio</HeaderTable>,
-    accessorKey: "service",
+    accessorKey: "serviceType",
+    size: 150,
     cell: (data) => {
-      const { row } = data;
-      const isActive = row?.original?.status === "active";
+      const value = data.getValue();
+      const label = OPTIONS_TYPE_SERVICES.find(
+        (opt) => opt.value === value,
+      )?.label;
       return (
-        <div className="flex flex-row items-center justify-center">
-          <CellTable>
-            {isActive ? (
-              <CheckCircleIcon className="h-5 w-5 text-green" />
-            ) : (
-              <NoSymbolIcon className="h-5 w-5 text-red-500" />
-            )}
-          </CellTable>
+        <div className="flex flex-row items-center justify-center gap-1">
+          {label ? (
+            <>
+              <CheckCircleIcon className="h-5 w-5 text-green-500" />
+              <CellTable>{label}</CellTable>
+            </>
+          ) : (
+            <NoSymbolIcon className="h-5 w-5 text-red-500" />
+          )}
         </div>
       );
     },
   },
   columnHelper.accessor("stops", {
+    size: 280,
     cell: (info) => {
+      const stops = info.getValue() || [];
+      if (stops.length === 0) return null;
+
+      // Agrupar por tipo+ruta → coleccionar días únicos
+      const grouped = stops.reduce((acc, stop) => {
+        if (!stop?.type || !stop?.route) return acc;
+        const key = `${stop.type}-${stop.route}`;
+        if (!acc[key])
+          acc[key] = { type: stop.type, route: stop.route, days: new Set() };
+        if (stop.day) acc[key].days.add(stop.day);
+        return acc;
+      }, {});
+
+      const order = ["toSchool", "toHome", "workshop"];
+      const typeLabel = {
+        toSchool: "A la escuela:",
+        toHome: "A casa:",
+        workshop: "Taller:",
+      };
+      const dayOrder = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+
       return (
-        <div className="flex flex-col items-start justify-start">
-          {info.getValue()?.map((stop) => {
-            const type =
-              stop?.type === "toSchool" ? "A la escuela:" : "A casa:";
-            return (
-              <div key={stop?.id} className="text-xs flex flex-row">
-                <CellTable className="font-semibold ">{type}</CellTable>
-                <CellTableRoute>{stop?.route}</CellTableRoute>
-              </div>
-            );
-          })}
+        <div className="flex flex-col items-start justify-start gap-0.5 min-w-0 w-full">
+          {order.map((type) =>
+            Object.values(grouped)
+              .filter((g) => g.type === type)
+              .map((g) => {
+                const sortedDays = dayOrder
+                  .filter((d) => g.days.has(d))
+                  .map((d) => DAYS[d]?.slice(0, 3));
+                return (
+                  <div
+                    key={type + g.route}
+                    className="text-xs flex flex-row flex-wrap items-baseline gap-1 min-w-0"
+                  >
+                    <span className="font-semibold whitespace-nowrap">
+                      {typeLabel[type]}
+                    </span>
+                    <CellTableRoute>{g.route}</CellTableRoute>
+                    {sortedDays.length > 0 && (
+                      <span className="text-gray-400 whitespace-nowrap">
+                        ({sortedDays.join(", ")})
+                      </span>
+                    )}
+                  </div>
+                );
+              }),
+          )}
         </div>
       );
     },
@@ -363,6 +405,7 @@ const auxiliarsColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -378,6 +421,7 @@ const auxiliarsColumns = [
   {
     header: () => <HeaderTable>Ruta taller</HeaderTable>,
     accessorKey: "routeWorkshop",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -496,6 +540,7 @@ const driversColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -511,6 +556,7 @@ const driversColumns = [
   {
     header: () => <HeaderTable>Ruta taller</HeaderTable>,
     accessorKey: "routeWorkshop",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -615,6 +661,7 @@ const unitsColumns = [
   {
     header: () => <HeaderTable>Ruta</HeaderTable>,
     accessorKey: "route",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">
@@ -630,6 +677,7 @@ const unitsColumns = [
   {
     header: () => <HeaderTable>Ruta taller</HeaderTable>,
     accessorKey: "routeWorkshop",
+    size: 280,
     cell: (info) => {
       return (
         <div className="flex flex-col items-center justify-start">

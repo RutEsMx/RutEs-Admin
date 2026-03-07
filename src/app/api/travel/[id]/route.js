@@ -69,13 +69,13 @@ const getTravels = async (routes, day, type) => {
           if (type !== "workshop" && type !== "toSchool") {
             statusTravel =
               !studentData.data().statusTravel ||
-                studentData.data().statusTravel === "cancelToSchool"
+              studentData.data().statusTravel === "cancelToSchool"
                 ? await validateStudentTravelWorkshop(student, day)
                 : (studentData.data().statusTravel !== "workshop" &&
-                  studentData.data().statusTravel) ||
-                (studentData.data().statusTravel === "workshop" &&
-                  studentData.data().statusTravel) ||
-                "";
+                    studentData.data().statusTravel) ||
+                  (studentData.data().statusTravel === "workshop" &&
+                    studentData.data().statusTravel) ||
+                  "";
           }
 
           return {
@@ -106,11 +106,23 @@ const getTravels = async (routes, day, type) => {
               const friendIndex = travelWithFriend.findIndex(
                 (item) => item.friendId === travelStudent?.friendId,
               );
+
+              // Fetch friend student stop coordinates
+              const friendStopId = `${travelStudent.studentId}_${route.id}_${day}_friend`;
+              const friendStopDoc = await firestore()
+                .collection("stops")
+                .doc(friendStopId)
+                .get();
+              const friendCoords = friendStopDoc.exists
+                ? friendStopDoc.data()?.coords
+                : null;
+
               // Agregarlo en el orden despues del friendIndex
               studentsResponse.splice(friendIndex + 1, 0, {
                 [travelStudent?.studentId]: {
                   statusTravel: "accepted",
                   studentFriend: travelStudent?.friendId,
+                  coords: friendCoords,
                 },
               });
             }

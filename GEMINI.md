@@ -4,29 +4,38 @@
 
 **RutEs-Admin** es un panel de administración escolar para la gestión de rutas de transporte. Permite a los administradores de escuelas gestionar alumnos, padres/tutores, conductores, auxiliares, unidades (vehículos) y las rutas escolares diarias.
 
+Este proyecto es parte de un ecosistema de tres aplicaciones:
+
+1. **RutEs-Admin** (Web/Next.js) — Panel administrativo para escuelas
+2. **App de Padres** (Móvil iOS/Android) — Seguimiento de hijos en tiempo real
+3. **App de Auxiliar** (Móvil iOS/Android) — Registro de entregas y asistencia
+
+Todas comparten la misma infraestructura Firebase (Firestore, Auth, FCM, Storage).
+
 **Idioma del proyecto:** Todo el código de usuario (mensajes UI, toasts, validaciones) está en **Español**. El código fuente está en Inglés.
 
 ---
 
 ## 🏗️ Stack Tecnológico
 
-| Tecnología                 | Versión          | Uso                                                 |
-| -------------------------- | ---------------- | --------------------------------------------------- |
-| **Next.js**                | 14+ (App Router) | Framework fullstack                                 |
-| **React**                  | 18.2             | UI con componentes                                  |
-| **Firebase SDK (web)**     | v9 (modular)     | Auth y datos cliente                                |
-| **Firebase Admin SDK**     | v11              | Operaciones backend/server                          |
-| **Firestore**              | —                | Base de datos NoSQL                                 |
-| **Formik**                 | v2               | Manejo de formularios                               |
-| **Zustand**                | v4               | Estado global del cliente                           |
-| **Yup**                    | v1               | Validaciones de esquema                             |
-| **TailwindCSS + DaisyUI**  | 3.x              | Estilos                                             |
-| **Radix UI**               | —                | Componentes accesibles (Select, Tabs, Dialog, etc.) |
-| **Tanstack Table**         | v8               | Tablas de datos                                     |
-| **Sonner**                 | v1               | Toast notifications                                 |
-| **Nodemailer**             | v6               | Envío de correos                                    |
-| **@formkit/drag-and-drop** | —                | DnD en paradas de rutas                             |
-| **@react-google-maps/api** | —                | Mapas para coordenadas de paradas                   |
+| Tecnología                 | Versión | Uso                                                 |
+| -------------------------- | ------- | --------------------------------------------------- |
+| **Next.js**                | 15      | Framework fullstack (App Router)                    |
+| **React**                  | 19      | UI con componentes                                  |
+| **Firebase SDK (web)**     | v12     | Auth y datos cliente (modular)                      |
+| **Firebase Admin SDK**     | v13     | Operaciones backend/server                          |
+| **Firestore**              | —       | Base de datos NoSQL                                 |
+| **Formik**                 | v2      | Manejo de formularios                               |
+| **Zustand**                | v5      | Estado global del cliente                           |
+| **Yup**                    | v1      | Validaciones de esquema                             |
+| **TailwindCSS**            | v4      | Estilos utilitarios                                 |
+| **DaisyUI**                | v3      | Componentes pre-estilizados (tablas, etc.)          |
+| **Radix UI**               | —       | Componentes accesibles (Select, Tabs, Dialog, etc.) |
+| **Tanstack Table**         | v8      | Tablas de datos                                     |
+| **Sonner**                 | v1      | Toast notifications                                 |
+| **Nodemailer**             | v8      | Envío de correos                                    |
+| **@formkit/drag-and-drop** | —       | DnD en paradas de rutas                             |
+| **@react-google-maps/api** | v2      | Mapas para coordenadas de paradas                   |
 
 ---
 
@@ -35,35 +44,52 @@
 ```
 src/
 ├── app/
-│   ├── api/              # Route Handlers (App Router) — backend con firebase-admin
-│   │   ├── students/     # CRUD alumnos (GET lista, POST crear con tutores)
-│   │   ├── routes/       # CRUD rutas
-│   │   ├── drivers/      # CRUD conductores
+│   ├── api/                    # Route Handlers (App Router) — backend con firebase-admin
+│   │   ├── students/           # CRUD alumnos (GET lista, POST crear con tutores)
+│   │   ├── routes/             # CRUD rutas
+│   │   ├── drivers/            # CRUD conductores
+│   │   ├── travel/             # Viajes del auxiliar (GET lista con estudiantes)
+│   │   ├── travel-with-friend/ # Viaje con amigo (POST solicitud, PATCH aprobar/rechazar, GET consulta)
+│   │   ├── notifications/      # Notificaciones push (POST enviar, GET listar)
 │   │   └── ...
-│   └── dashboard/        # Páginas del panel de administración
-│       ├── students/     # Lista y detalle de alumnos
-│       ├── routes/       # Lista y formulario de rutas
+│   └── dashboard/              # Páginas del panel de administración
+│       ├── students/           # Lista y detalle de alumnos
+│       ├── routes/             # Lista y formulario de rutas
+│       ├── travel/             # Administración de solicitudes de viaje con amigo
 │       └── ...
 ├── components/
-│   ├── Forms/            # Pasos de formularios (StepStudent, StepRoute, StepStops…)
-│   └── MultiStepForm/    # Orquestadores de formularios multi-paso (Students, Route, etc.)
-├── services/             # Funciones de cliente: fetch a API o Firestore (SDK web)
+│   ├── Forms/                  # Pasos de formularios (StepStudent, StepRoute, StepStops…)
+│   ├── MultiStepForm/          # Orquestadores de formularios multi-paso (Students, Route, etc.)
+│   └── ui/                     # Componentes Radix UI (Label, Tabs, Dialog, etc.)
+├── services/                   # Funciones de cliente: fetch a API o Firestore (SDK web)
 │   ├── StudentsServices.js
 │   ├── RoutesServices.js
+│   ├── TravelWithFriendServices.js
 │   └── ...
-├── store/                # Stores de Zustand por entidad
+├── store/                      # Stores de Zustand por entidad
 │   ├── useStudentsStore.js
 │   ├── useRoutesStore.js
 │   └── ...
-├── hooks/                # Custom hooks
-│   └── useStudentManager.js   # Manejo de asignación de paradas en formulario de rutas
+├── hooks/                      # Custom hooks
+│   ├── useStudentManager.js    # Manejo de asignación de paradas en formulario de rutas
+│   └── useStopsStudentDetails.js  # Paradas en detalle de alumno
 ├── firebase/
-│   ├── client.js         # Inicialización SDK web de Firebase (para cliente)
-│   ├── admin.js          # Inicialización Firebase Admin SDK (para server)
-│   └── crud.js           # Funciones genéricas: createDocument, updateDocument, etc.
+│   ├── client.js               # Inicialización SDK web de Firebase (para cliente)
+│   ├── admin.js                # Inicialización Firebase Admin SDK (para server)
+│   └── crud.js                 # Funciones genéricas: createDocument, updateDocument, etc.
 └── utils/
-    ├── validationSchemas.js  # Todos los esquemas Yup del proyecto
-    └── options.js            # Constantes: DAYS, SCHOOL_GRADES, tipos de sangre, etc.
+    ├── validationSchemas.js    # Todos los esquemas Yup del proyecto
+    └── options.js              # Constantes: DAYS, SCHOOL_GRADES, STATUS_TRAVEL, TRAVEL_WITH_FRIEND_*, etc.
+```
+
+### Documentación
+
+```
+docs/
+├── viaje-con-un-amigo.md       # Documentación del feature "Viaje con un Amigo"
+└── prompt-mobile-app.md        # Especificación para la app móvil
+BASE_DATOS.md                   # Esquema detallado de Firestore
+INTEGRACION_MOVIL.md            # Integración con apps móviles
 ```
 
 ---
@@ -74,17 +100,19 @@ El esquema está documentado en detalle en `BASE_DATOS.md`. Los puntos clave:
 
 ### Colecciones Principales
 
-- **`students`** — Info personal del alumno. Referencias a `profile` (padres/tutores). Campo `tutorActive` indica tutor principal.
-- **`profile`** — Perfiles de usuarios (padres, tutores, admin, conductores auxiliares). Campo `students[]` contiene referencias a sus alumnos.
-- **`routes`** — Define la ruta escolar: `name`, `capacity`, `unit`, `driver`, `auxiliar`, `workshop` (bool), `schoolId`.
-- **`travels`** — Viajes de una ruta. Estructura anidada por día (`monday`…`sunday`) → tipo (`toSchool`, `toHome`, `workshop`) → `students[]` (refs).
-- **`stops`** — Paradas individuales: `student` (ID), `route` (ID), `day`, `type`, `coords`.
+- **`students`** — Info personal del alumno. Referencias a `profile` (padres/tutores). Campo `tutorActive` indica tutor principal. Campo `statusTravel` indica estado actual del viaje.
+- **`profile`** — Perfiles de usuarios (padres, tutores, admin, conductores auxiliares). Campo `students[]` contiene referencias a sus alumnos. Campo `tokens[]` para FCM.
+- **`routes`** — Define la ruta escolar: `name`, `unit`, `driver`, `auxiliar`, `workshop` (bool), `schoolId`. El campo `workshop: true` indica ruta de taller.
+- **`travels`** — Viajes de una ruta. Mismo ID que la ruta. Estructura anidada por día (`monday`…`friday`) → tipo (`toSchool`, `toHome`, `workshop`) → `students[]` (refs) + `travelWithFriend[]` (IDs).
+- **`stops`** — Paradas individuales: `student` (ID), `route` (ID), `day`, `type`, `coords`. Las paradas temporales de viaje con amigo incluyen `isTravelWithFriend: true`.
+- **`travelsWithFriend`** — Solicitudes de viaje con amigo. ID = studentRequestId. Estructura por día con `route`, `day`, `status`, `student`, `date`, `type`.
 - **`drivers`** — Conductores. Campo `route` o `routeWorkshop[]` con IDs de rutas.
-- **`units`** — Vehículos. Campo `route` o `routeWorkshop[]`.
+- **`units`** — Vehículos. Campo `route` o `routeWorkshop[]`. Campo `passengers` para capacidad.
+- **`notificationsSchool`** — Notificaciones por escuela (subcolección `notifications`).
 
 ### Regla de Oro del Esquema
 
-> Las paradas (`stops`) **NO** se crean al crear un alumno. Se crean al asignar un alumno a una ruta mediante el formulario de rutas. El álumno en sí solo almacena datos personales y referencias a sus tutores.
+> Las paradas (`stops`) **NO** se crean al crear un alumno. Se crean al asignar un alumno a una ruta mediante el formulario de rutas. El alumno en sí solo almacena datos personales y referencias a sus tutores.
 
 ---
 
@@ -92,10 +120,11 @@ El esquema está documentado en detalle en `BASE_DATOS.md`. Los puntos clave:
 
 ### 1. Operaciones Críticas → API Routes (Server)
 
-Las operaciones que involucran **Firebase Auth** (crear usuarios) se DEBEN hacer desde `src/app/api/` usando `firebase-admin` para evitar que el SDK web del cliente cambie la sesión activa del administrador.
+Las operaciones que involucran **Firebase Auth** (crear usuarios) o **transacciones Firestore** se DEBEN hacer desde `src/app/api/` usando `firebase-admin` para evitar que el SDK web del cliente cambie la sesión activa del administrador.
 
 ```
 Crear alumno con papás → POST /api/students → firebase-admin crea usuarios en Auth
+Aprobar viaje con amigo → PATCH /api/travel-with-friend → transacción Firestore
 Editar datos básicos del alumno → updateDocument() directamente desde el cliente está OK
 ```
 
@@ -113,14 +142,28 @@ Los stores de Zustand tienen accesores estáticos (`useStudentsStore.getState()`
 
 ---
 
+## 🚌 Feature: Viaje con un Amigo
+
+Documentado en detalle en `docs/viaje-con-un-amigo.md`. Resumen:
+
+- Un padre solicita que su hijo viaje en la ruta de un amigo (`POST /api/travel-with-friend`)
+- El admin escolar aprueba o rechaza desde el dashboard (`PATCH /api/travel-with-friend`)
+- Al aceptar: se crea parada temporal en `stops` con ID `{studentRequest}_{route}_{day}_friend`, se actualiza `statusTravel` a `"travelWithFriend"`
+- Al rechazar: se limpia la parada temporal, se resetea `statusTravel` (solo si es `"travelWithFriend"`)
+- El auxiliar ve al estudiante invitado insertado después de su amigo en la lista de viaje
+- El `type` (`toHome`/`workshop`) se guarda en el documento `travelsWithFriend` para evitar inconsistencias
+
+---
+
 ## 🚨 Convenciones Importantes
 
 1. **Idioma de mensajes UI**: Siempre en **Español** (modales, toasts, validaciones, etiquetas).
 2. **`isDeleted`**: El borrado es **lógico** — nunca se borra fisicamente. Siempre se usa `isDeleted: true`.
-3. **Rutas de Taller (`workshop: true`)**: Usan el campo `routeWorkshop` (array) en lugar de `route` (string) en drivers, units y profile de auxiliares. Esto permite que un conductor tenga ruta principal Y rutas de taller.
+3. **Rutas de Taller (`workshop: true`)**: Usan el campo `routeWorkshop` (array) en lugar de `route` (string) en drivers, units y profile de auxiliares. Esto permite que un conductor tenga ruta principal Y rutas de taller. El viaje de regreso usa tipo `workshop` en lugar de `toHome`.
 4. **`tutorActive`**: Campo en `students` que guarda el ID del tutor cuya app mostrará la info del alumno en tiempo real.
 5. **`fullName`**: Array `[name, lastName, secondLastName]` en minúsculas para búsqueda textual en Firestore.
 6. **Importaciones**: Usar alias `@/` que apunta a `src/`.
+7. **`statusTravel`**: Campo en `students` que indica el estado del viaje. Valores: `""`, `"waiting"`, `"in-transit"`, `"delivered"`, `"finished"`, `"absent"`, `"toSchool"`, `"toHome"`, `"workshop"`, `"travelWithFriend"`, `"cancelToSchool"`.
 
 ---
 
@@ -166,6 +209,18 @@ Navegación visual de días y tipo de viaje para el formulario de paradas. Reemp
 - Muestra pills de días (Lun→Vie) con badge del conteo de alumnos para ese día
 - Muestra tabs de tipo (A Casa / A Escuela) solo si `isWorkshop === false`
 - Los contadores se calculan en tiempo real desde `values.students`
+
+### Al eliminar una Ruta
+
+```
+removeRoutes(id) →
+  1. Leer la ruta para saber si es workshop
+  2. Eliminar todos los `stops` donde route == id
+  3. Marcar `isDeleted: true` en `travels` y `routes`
+  4. Limpiar campo `route` o `routeWorkshop` en driver, auxiliar y unit
+  5. Limpiar registros de `travelsWithFriend` asociados a la ruta
+  6. Resetear `statusTravel` de estudiantes afectados por viaje con amigo
+```
 
 ### Patrón anti-loop en `useEffect` con `useDragAndDrop`
 
