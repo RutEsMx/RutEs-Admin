@@ -4,11 +4,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthContext } from "@/context/AuthContext";
 import { db } from "@/firebase/client";
 import { collection, getDocs, limit, query, where } from "firebase/firestore";
-import { useState, use } from "react";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 
-const Page = props => {
-  const params = use(props.params);
+const Page = () => {
+  const params = useParams();
   const { id } = params;
   const [notificationsData, setNotificationsData] = useState([]);
   const { profile } = useAuthContext();
