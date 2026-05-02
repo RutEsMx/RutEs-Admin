@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, use } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import {
   confirmTravelWithFriend,
   getTravelWithFriend,
@@ -143,8 +144,8 @@ const TravelCard = ({ id, item, getData }) => {
   );
 };
 
-const Page = props => {
-  const params = use(props.params);
+const Page = () => {
+  const params = useParams();
   const [data, setData] = useState();
 
   const getData = async () => {

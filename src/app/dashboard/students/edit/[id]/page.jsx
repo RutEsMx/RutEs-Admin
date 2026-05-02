@@ -3,10 +3,11 @@ import FormStudentEdit from "@/components/MultiStepForm/StudentEdit";
 import { subscribeStudentById } from "@/services/StudentsServices";
 import { useStudentsStore } from "@/store/useStudentsStore";
 import Link from "next/link";
-import { useEffect, use } from "react";
+import { useEffect } from "react";
+import { useParams } from "next/navigation";
 
-const Page = props => {
-  const params = use(props.params);
+const Page = () => {
+  const params = useParams();
   const { id } = params;
   const { student, setStudent } = useStudentsStore();
 

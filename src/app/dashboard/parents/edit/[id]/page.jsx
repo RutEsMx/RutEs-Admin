@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label";
 import { useAuthContext } from "@/context/AuthContext";
 import { db } from "@/firebase/client";
 import { doc, updateDoc } from "firebase/firestore";
-import { useState, use } from "react";
+import { useState } from "react";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
@@ -26,8 +27,8 @@ const getParent = async (id) => {
   }
 };
 
-const Page = props => {
-  const params = use(props.params);
+const Page = () => {
+  const params = useParams();
   const { id } = params;
   const [parent, setParent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);

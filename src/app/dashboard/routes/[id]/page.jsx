@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef, use } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { useParams } from "next/navigation";
 import {
   COLORS,
   CURRENT_DAY,
@@ -36,8 +37,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import RouteInfo from "@/components/RouteDetail/RouteInfo";
 
-const Page = (props) => {
-  const params = use(props.params);
+const Page = () => {
+  const params = useParams();
   const [route, setRoute] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [color, setColor] = useState("");
