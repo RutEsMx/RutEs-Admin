@@ -80,9 +80,14 @@ const NavBar = () => {
       <div className="flex items-center mr-6">
         {user ? (
           <>
-            <div className="flex flex-row items-center me-4 gap-2">
+            <div className="flex flex-row items-center me-4 gap-3">
               <Avatar src={avatarSrc} alt={name} size="sm" />
-              <span className="text-sm">{name || ""}</span>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium">{name || ""}</span>
+                <span className="text-[11px] opacity-80">
+                  {user?.email || ""}
+                </span>
+              </div>
             </div>
             {isAdmin && (
               <Link href="/dashboard/admin/school">
