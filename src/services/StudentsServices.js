@@ -21,9 +21,7 @@ const getStudents = async () => {
   try {
     setLoading(true); // activa loader
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/students`,
-    );
+    const response = await fetch(`/api/students`);
 
     if (response?.redirected) {
       return { error: true, redirect: response.url };
@@ -315,12 +313,38 @@ const updateStudentByForm = async (data) => {
   }
 };
 
+const formatStudentsAsOptions = (students) => {
+  return students.map((student) => ({
+    id: student.id,
+    value: student.id,
+    label: `${student?.name || ""} ${student?.lastName || ""} ${
+      student?.secondLastName || ""
+    }`,
+    stops: student.stops || [],
+    serviceType: student?.serviceType,
+    name: student?.name || "",
+    lastName: student?.lastName || "",
+    secondLastName: student?.secondLastName || "",
+    address: student?.address || null,
+  }));
+};
+
 const getStudentsForRoutes = async () => {
   const { getStudentsRoutes } = useStudentsStore.getState();
+
+  // Intentar reusar datos del store (ya cargados por subscribeStudents con stops)
+  const { students } = useStudentsStore.getState();
+  const rows = students?.rows || [];
+
+  if (rows.length > 0) {
+    const studentsOptions = formatStudentsAsOptions(rows);
+    getStudentsRoutes(studentsOptions);
+    return;
+  }
+
+  // Fallback: si el store aún no tiene datos, fetch del API
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/students`,
-    );
+    const response = await fetch(`/api/students`);
 
     const data = await response.json();
     const studentsOptions = await createStudentsOptions(data);

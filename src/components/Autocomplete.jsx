@@ -31,16 +31,23 @@ const Autocomplete = ({
   };
 
   useEffect(() => {
-    if (value === null) {
+    if (value === null || value === undefined || value === "") {
       setSearch("");
     } else {
       const option = options.find((option) => {
         return option.id === value;
       });
-      const full = `${option?.name || ""} ${option?.lastName || ""} ${
-        option?.secondLastName || ""
-      }`;
-      setSearch(full || "");
+
+      if (option) {
+        const full = `${option?.name || ""} ${option?.lastName || ""} ${
+          option?.secondLastName || ""
+        }`.trim();
+        setSearch(full || option.id || "");
+      } else {
+        // Si no se encuentra la opción pero hay un valor, podría estar cargando
+        // Mostramos el ID o un placeholder si es necesario, pero evitamos los espacios vacíos
+        setSearch(value.length > 20 ? "Cargando..." : value);
+      }
     }
   }, [value, options]);
 

@@ -38,7 +38,7 @@ const updateUnitsByForm = async (data) => {
 
 const getUnits = async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}api/units`);
+    const response = await fetch(`/api/units`);
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
@@ -52,7 +52,7 @@ const getUnits = async () => {
 
 const getUnitsRoutes = async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}api/units`);
+    const response = await fetch(`/api/units`);
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
@@ -73,10 +73,7 @@ const getUnitsRoutes = async () => {
 
 const getUnit = async (id) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/units/${id}/`,
-      { cache: "no-store" },
-    );
+    const response = await fetch(`/api/units/${id}/`, { cache: "no-store" });
     if (!response.ok) return { error: true };
     const data = await response.json();
     data.id = id;
