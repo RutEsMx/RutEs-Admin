@@ -22,12 +22,9 @@ import { setRoutes } from "@/store/useRoutesStore";
 
 const getRouteById = async (id) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/routes/${id}/`,
-      {
-        cache: "no-store",
-      },
-    );
+    const response = await fetch(`/api/routes/${id}/`, {
+      cache: "no-store",
+    });
     if (!response.ok) return { error: true };
     const data = await response.json();
     data.id = id;
