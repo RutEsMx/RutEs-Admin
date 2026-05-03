@@ -3,9 +3,7 @@ import { setStructureDatatable } from "./TableServices";
 
 const getAuxiliars = async () => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/auxiliars`,
-    );
+    const response = await fetch(`/api/auxiliars`);
 
     if (response?.redirected) {
       return { error: true, redirect: response.url };
@@ -19,16 +17,14 @@ const getAuxiliars = async () => {
 };
 const getAuxiliarsRoutes = async (isEdit = false) => {
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/auxiliars`,
-    );
+    const response = await fetch(`/api/auxiliars`);
 
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
     const data = await response.json();
     const dataFilter = data.filter((auxiliar) => auxiliar.route === null);
-    
+
     if (isEdit) {
       return setAuxiliarsRoutes(data);
     } else {

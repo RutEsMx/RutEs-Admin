@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useDragAndDrop } from "@formkit/drag-and-drop/react";
+import IconButton from "@/components/ui/IconButton";
 
 const ALL_DAY = "all";
 

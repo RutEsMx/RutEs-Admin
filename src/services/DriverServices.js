@@ -62,7 +62,6 @@ const updateDriverByForm = async (data) => {
 };
 
 const getDriver = async ({ pageIndex, pageSize, schoolId }) => {
-  
   try {
     const response = await fetch(
       `/api/drivers?pageIndex=${pageIndex}&pageSize=${pageSize}&schoolId=${schoolId}`,
@@ -74,11 +73,8 @@ const getDriver = async ({ pageIndex, pageSize, schoolId }) => {
 };
 
 const getDrivers = async () => {
-
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/drivers`,
-    );
+    const response = await fetch(`/api/drivers`);
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
@@ -90,11 +86,8 @@ const getDrivers = async () => {
   }
 };
 const getDriversRoutes = async (isEdit = false) => {
-
   try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}api/drivers`,
-    );
+    const response = await fetch(`/api/drivers`);
     if (response?.redirected) {
       return { error: true, redirect: response.url };
     }
@@ -105,12 +98,15 @@ const getDriversRoutes = async (isEdit = false) => {
     } else {
       return setDriversRoutes(dataFilter);
     }
-    
   } catch (error) {
     return { error: error?.message };
   }
 };
 
-
-
-export { createDriverByForm, updateDriverByForm, getDriver, getDrivers, getDriversRoutes };
+export {
+  createDriverByForm,
+  updateDriverByForm,
+  getDriver,
+  getDrivers,
+  getDriversRoutes,
+};
